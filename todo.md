@@ -81,3 +81,19 @@
 - [x] Add disclaimer text about prices
 - [x] Test all new sections on desktop and mobile
 - [x] Run all tests and verify they pass (10/10)
+
+## SEO Fixes and Design Refinements
+- [x] Add meta description (50-160 characters)
+- [x] Add meta keywords
+- [x] Update page title with keywords
+- [x] Add Open Graph meta tags
+- [x] Update logo to match current website design
+- [x] Change category tabs to links with blue color
+- [x] Search and add real destination images
+- [x] Add destination thumbnails to grid cards
+- [ ] Add real airline logos (not emoji) - using emoji placeholders for now
+- [x] Fix sticky banner text to "Letenky do 1 500 Kč"
+- [x] Add country labels under prices in destination grid
+- [x] Test SEO meta tags
+- [x] Create sitemap.xml
+- [x] Create robots.txt

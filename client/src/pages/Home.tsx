@@ -1,41 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
-import { cs } from "date-fns/locale";
-import { CalendarIcon, MapPin, Phone, Users, Heart, ChevronRight } from "lucide-react";
+import { Phone, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SocialProofWidget from "@/components/SocialProofWidget";
 
 export default function Home() {
-  const [fromCity, setFromCity] = useState("");
-  const [toCity, setToCity] = useState("");
-  const [date, setDate] = useState<Date>();
-  const [passengers, setPassengers] = useState("1");
   const [isScrolled, setIsScrolled] = useState(false);
   const [showStickyBanner, setShowStickyBanner] = useState(false);
-
-  // Fetch featured flights
-  const { data: featuredFlights, isLoading: featuredLoading } = trpc.flights.featured.useQuery();
-  
-  // Fetch all flights for main listing
-  const { data: allFlights, isLoading: allLoading } = trpc.flights.list.useQuery();
 
   // Handle scroll for sticky elements
   useEffect(() => {
@@ -53,67 +25,59 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSearch = () => {
-    console.log("Searching flights:", { fromCity, toCity, date, passengers });
-  };
-
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
   };
 
-  const formatRating = (rating: number) => {
-    return (rating / 10).toFixed(1);
-  };
-
-  // Popular destinations data
+  // Popular destinations data with real images
   const popularDestinations = [
-    { city: "Londýn", price: 733, country: "Anglie", image: "/hero-bg.jpg" },
-    { city: "New York", price: 7490, country: "USA", image: "/hero-bg.jpg" },
+    { city: "Londýn", price: 733, country: "Anglie", image: "/london.jpg" },
+    { city: "New York", price: 7490, country: "USA", image: "/newyork.jpg" },
     { city: "Afrika", price: 7990, country: "Afrika", image: "/hero-bg.jpg" },
     { city: "Maroko", price: 1426, country: "Maroko", image: "/hero-bg.jpg" },
-    { city: "Paříž", price: 1027, country: "Francie", image: "/hero-bg.jpg" },
+    { city: "Paříž", price: 1027, country: "Francie", image: "/paris.jpg" },
     { city: "Vietnam", price: 7990, country: "Vietnam", image: "/hero-bg.jpg" },
-    { city: "Bali", price: 12190, country: "Indonésie", image: "/hero-bg.jpg" },
+    { city: "Bali", price: 12190, country: "Indonésie", image: "/bali.jpg" },
     { city: "Srí Lanka", price: 13091, country: "Srí Lanka", image: "/hero-bg.jpg" },
-    { city: "Dubaj", price: 5183, country: "SAE", image: "/hero-bg.jpg" },
+    { city: "Dubaj", price: 5183, country: "SAE", image: "/dubai.jpg" },
     { city: "Thajsko", price: 12390, country: "Thajsko", image: "/hero-bg.jpg" },
     { city: "Santorini", price: 1791, country: "Řecko", image: "/hero-bg.jpg" },
     { city: "Jordánsko", price: 1114, country: "Ammán", image: "/hero-bg.jpg" },
-    { city: "Řím", price: 712, country: "Itálie", image: "/hero-bg.jpg" },
+    { city: "Řím", price: 712, country: "Itálie", image: "/rome.jpg" },
     { city: "Island", price: 1460, country: "Island", image: "/hero-bg.jpg" },
     { city: "Miami", price: 9490, country: "USA", image: "/hero-bg.jpg" },
-    { city: "Barcelona", price: 746, country: "Španělsko", image: "/hero-bg.jpg" },
+    { city: "Barcelona", price: 746, country: "Španělsko", image: "/barcelona.jpg" },
   ];
 
-  // Featured European cities
+  // Featured European cities with real images
   const featuredCities = [
     {
       from: "Praha",
       to: "Londýn",
       price: 733,
       description: "Londýn – obchodní i kulturní centrum plné příležitostí a zážitků.",
-      image: "/hero-bg.jpg",
+      image: "/london.jpg",
     },
     {
       from: "Praha",
       to: "Paříž",
       price: 1027,
       description: "Město lásky, umění, módy i gastronomie.",
-      image: "/hero-bg.jpg",
+      image: "/paris.jpg",
     },
     {
       from: "Praha",
       to: "Řím",
       price: 712,
       description: "Věčné město – památky, historie a skvělé jídlo.",
-      image: "/hero-bg.jpg",
+      image: "/rome.jpg",
     },
     {
       from: "Praha",
       to: "Barcelona",
       price: 946,
       description: "Gaudí, tapas a městské pláže. Skvělá volba po celý rok.",
-      image: "/hero-bg.jpg",
+      image: "/barcelona.jpg",
     },
   ];
 
@@ -134,50 +98,59 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#F5F7FA]">
       {/* Sticky Navigation Header */}
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled
-            ? "bg-white shadow-md py-3"
-            : "bg-white/90 backdrop-blur-sm py-4"
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-sm",
+          isScrolled ? "py-2" : "py-3"
         )}
       >
         <div className="container flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">✈</span>
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#FFD700] rounded-md flex items-center justify-center">
+              <span className="text-black font-bold text-xl">✈</span>
             </div>
-            <span className="text-xl font-bold text-foreground">
-              akcni-letenky.com
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-black leading-tight">
+                AKČNÍ-
+              </span>
+              <span className="text-sm font-bold text-black leading-tight">
+                LETENKY.com
+              </span>
+            </div>
+            <span className="text-blue-600 font-medium ml-2">
+              Nejlevnější Lety
             </span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="/" className="text-foreground hover:text-primary transition-colors font-medium">
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center gap-6">
+            <a href="/" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               💸 LEVNÉ LETENKY
             </a>
-            <a href="/dovolena" className="text-foreground hover:text-primary transition-colors font-medium">
+            <a href="/dovolena" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               ⭐ DOVOLENÁ
             </a>
-            <a href="/aerolinky" className="text-foreground hover:text-primary transition-colors font-medium">
+            <a href="/aerolinky" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               ✈️ AEROLINKY
             </a>
-            <a href="/rezervace" className="text-foreground hover:text-primary transition-colors font-medium">
+            <a href="/rezervace" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               🚀 RYCHLÁ REZERVACE
             </a>
           </nav>
 
+          {/* Phone */}
           <div className="flex items-center gap-2 text-[#FF8C00]">
-            <Phone className="w-5 h-5" />
-            <span className="font-semibold text-lg">223 340 510</span>
+            <Phone className="w-4 h-4" />
+            <span className="font-semibold">223 340 510</span>
           </div>
         </div>
       </header>
 
       {/* Yellow Banner */}
-      <div className="bg-[#FFD700] py-6 mt-16">
+      <div className="bg-[#FFD700] py-8 mt-16">
         <div className="container">
           <h1 className="text-3xl md:text-4xl font-black text-center text-black tracking-wide">
             NEJLEVNĚJŠÍ AKČNÍ LETENKY
@@ -185,42 +158,31 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div className="bg-white border-b border-border">
+      {/* Category Links */}
+      <div className="bg-white py-4 border-b border-border">
         <div className="container">
-          <Tabs defaultValue="dovolena" className="w-full">
-            <TabsList className="w-full justify-start h-auto p-0 bg-transparent border-none">
-              <TabsTrigger
-                value="dovolena"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-4"
-              >
-                Dovolená se slevou až 80 %
-              </TabsTrigger>
-              <TabsTrigger
-                value="eurovíkendy"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-4"
-              >
-                Eurovíkendy
-              </TabsTrigger>
-              <TabsTrigger
-                value="hotely"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-4"
-              >
-                Hotely
-              </TabsTrigger>
-              <TabsTrigger
-                value="nejlevnejsi"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-4"
-              >
-                Nejlevnější letenky od 590 Kč
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+            <a href="#dovolena" className="text-blue-600 hover:underline font-medium">
+              Dovolená se slevou až 80 %
+            </a>
+            <span className="text-muted-foreground">|</span>
+            <a href="#eurovikendy" className="text-blue-600 hover:underline font-medium">
+              Eurovíkendy
+            </a>
+            <span className="text-muted-foreground">|</span>
+            <a href="#hotely" className="text-blue-600 hover:underline font-medium">
+              Hotely
+            </a>
+            <span className="text-muted-foreground">|</span>
+            <a href="#nejlevnejsi" className="text-blue-600 hover:underline font-medium">
+              Nejlevnější letenky od 590 Kč
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Featured European Cities */}
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-white">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCities.map((city, index) => (
@@ -232,18 +194,19 @@ export default function Home() {
                   className="h-48 bg-cover bg-center"
                   style={{ backgroundImage: `url(${city.image})` }}
                 />
-                <div className="p-4">
+                <div className="p-5">
                   <h3 className="font-bold text-lg mb-2">
                     {city.from} ⇄ {city.to}
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                     {city.description}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-[#FF8C00]">
-                      od {formatPrice(city.price)}
-                    </span>
-                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full border-[#FF8C00] text-[#FF8C00] hover:bg-[#FF8C00] hover:text-white font-semibold"
+                  >
+                    od {formatPrice(city.price)}
+                  </Button>
                 </div>
               </div>
             ))}
@@ -252,7 +215,7 @@ export default function Home() {
       </section>
 
       {/* Zpáteční levné letenky Grid */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-16 bg-[#F5F7FA]">
         <div className="container">
           <h2 className="text-3xl font-bold text-center mb-12">
             Zpáteční levné letenky
@@ -263,15 +226,19 @@ export default function Home() {
               <a
                 key={index}
                 href={`#${dest.city}`}
-                className="bg-card rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow group"
+                className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-all group"
               >
+                <div
+                  className="w-full h-24 bg-cover bg-center rounded-md mb-3"
+                  style={{ backgroundImage: `url(${dest.image})` }}
+                />
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
+                  <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors">
                     {dest.city}
                   </h3>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-blue-600 transition-colors" />
                 </div>
-                <p className="text-sm font-semibold text-primary mb-1">
+                <p className="text-sm font-semibold text-muted-foreground mb-1">
                   od {formatPrice(dest.price)}
                 </p>
                 <p className="text-xs text-muted-foreground">{dest.country}</p>
@@ -286,33 +253,33 @@ export default function Home() {
       </section>
 
       {/* Trust Building Section */}
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-white">
         <div className="container max-w-4xl">
           <h2 className="text-2xl font-bold text-center mb-4">
             Akční letenky: hledejte nejvýhodnější spojení snadno
           </h2>
-          <p className="text-center text-muted-foreground">
+          <p className="text-center text-muted-foreground leading-relaxed">
             Náš přehled akčních letenek vám pomůže rychle porovnat ceny napříč aerolinkami a agenturami, hlídat změny cen a najít termíny s nejlepší cenou. Zobrazené částky jsou obvykle konečné (daně/poplatky); další služby mohou být zpoplatněny u poskytovatele.
           </p>
         </div>
       </section>
 
       {/* Airline Logos Section */}
-      <section className="py-12 bg-muted/20">
+      <section className="py-12 bg-[#F5F7FA]">
         <div className="container">
           <h2 className="text-2xl font-bold text-center mb-8">
             Letecké společnosti
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-w-5xl mx-auto">
             {airlines.map((airline, index) => (
               <a
                 key={index}
                 href={`#${airline.name}`}
-                className="bg-card rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow flex flex-col items-center justify-center gap-2 group"
+                className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow flex flex-col items-center justify-center gap-2 group min-h-[100px]"
               >
-                <span className="text-4xl">{airline.logo}</span>
-                <span className="text-sm text-center font-medium group-hover:text-primary transition-colors">
+                <span className="text-3xl">{airline.logo}</span>
+                <span className="text-xs text-center font-medium group-hover:text-blue-600 transition-colors">
                   {airline.name}
                 </span>
               </a>
@@ -323,23 +290,23 @@ export default function Home() {
 
       {/* Sticky Bottom Banner */}
       {showStickyBanner && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#FFD700] py-4 shadow-lg animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#FFD700] py-3 shadow-lg animate-in slide-in-from-bottom-5">
           <div className="container">
-            <div className="flex flex-wrap items-center justify-center gap-4 text-black font-semibold">
-              <span className="text-sm md:text-base">Akční nabídka:</span>
-              <a href="#letenky" className="hover:underline text-sm md:text-base">
+            <div className="flex flex-wrap items-center justify-center gap-3 text-black text-sm font-semibold">
+              <span>Akční nabídka:</span>
+              <a href="#letenky" className="hover:underline text-red-600">
                 Letenky do 1 500 Kč
               </a>
-              <span className="text-muted-foreground">|</span>
-              <a href="#dovolena" className="hover:underline text-sm md:text-base">
+              <span>|</span>
+              <a href="#dovolena" className="hover:underline">
                 Dovolená se slevou až 80 %
               </a>
-              <span className="text-muted-foreground">|</span>
-              <a href="#eurovikendy" className="hover:underline text-sm md:text-base">
+              <span>|</span>
+              <a href="#eurovikendy" className="hover:underline">
                 Eurovíkendy
               </a>
-              <span className="text-muted-foreground">|</span>
-              <a href="#business" className="hover:underline text-sm md:text-base">
+              <span>|</span>
+              <a href="#business" className="hover:underline">
                 Business class
               </a>
             </div>
