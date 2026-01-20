@@ -10,6 +10,23 @@
     <meta name="description" content="Najděte nejlevnější akční letenky do celého světa. Porovnejte ceny letenek z Prahy do Londýna, Paříže, Barcelony a dalších destinací. Last minute slevy až 80%." />
     <meta name="keywords" content="akční letenky, levné letenky, last minute letenky, letenky z prahy, nejlevnější letenky, letenky do evropy, letenky do usa, letenky do asie" />
     
+    <!-- SEO Advanced -->
+    <link rel="canonical" href="https://www.akcni-letenky.com/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="language" content="Czech" />
+    <link rel="alternate" hreflang="cs" href="https://www.akcni-letenky.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.akcni-letenky.com/" />
+    <meta name="author" content="Akční Letenky" />
+    <meta name="revisit-after" content="1 days" />
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/london.jpg" as="image" type="image/jpeg" />
+    <link rel="preload" href="/paris.jpg" as="image" type="image/jpeg" />
+    <link rel="preload" href="/rome.jpg" as="image" type="image/jpeg" />
+    <link rel="preload" href="/barcelona.jpg" as="image" type="image/jpeg" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.akcni-letenky.com/" />
@@ -22,7 +39,114 @@
     <meta property="twitter:url" content="https://www.akcni-letenky.com/" />
     <meta property="twitter:title" content="Nejlevnější Akční Letenky - Last Minute z Prahy" />
     <meta property="twitter:description" content="Najděte nejlevnější akční letenky do celého světa. Porovnejte ceny letenek z Prahy. Last minute slevy až 80%." />
-    <meta property="twitter:image" content="https://www.akcni-letenky.com/hero-bg.jpg" />    
+    <meta property="twitter:image" content="https://www.akcni-letenky.com/hero-bg.jpg" />
+    
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Akční Letenky",
+      "url": "https://www.akcni-letenky.com",
+      "logo": "https://www.akcni-letenky.com/logo.png",
+      "description": "Najděte nejlevnější akční letenky do celého světa. Porovnejte ceny letenek z Prahy.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+420-223-340-510",
+        "contactType": "Customer Service",
+        "areaServed": "CZ",
+        "availableLanguage": ["Czech"]
+      },
+      "sameAs": [
+        "https://www.facebook.com/akcniletenky",
+        "https://www.instagram.com/akcniletenky"
+      ]
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Akční Letenky",
+      "url": "https://www.akcni-letenky.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.akcni-letenky.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "Flight",
+            "name": "Praha → Londýn",
+            "description": "Londýn – obchodní i kulturní centrum plné příležitostí a zážitků.",
+            "offers": {
+              "@type": "Offer",
+              "price": "733",
+              "priceCurrency": "CZK",
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "Flight",
+            "name": "Praha → Paříž",
+            "description": "Město lásky, umění, módy i gastronomie.",
+            "offers": {
+              "@type": "Offer",
+              "price": "1027",
+              "priceCurrency": "CZK",
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "Flight",
+            "name": "Praha → Řím",
+            "description": "Věčné město – památky, historie a skvělé jídlo.",
+            "offers": {
+              "@type": "Offer",
+              "price": "712",
+              "priceCurrency": "CZK",
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "item": {
+            "@type": "Flight",
+            "name": "Praha → Barcelona",
+            "description": "Gaudí, tapas a městské pláže. Skvělá volba po celý rok.",
+            "offers": {
+              "@type": "Offer",
+              "price": "946",
+              "priceCurrency": "CZK",
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        }
+      ]
+    }
+    </script>
+    
     <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

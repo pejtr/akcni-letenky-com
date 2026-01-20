@@ -97,3 +97,22 @@
 - [x] Test SEO meta tags
 - [x] Create sitemap.xml
 - [x] Create robots.txt
+
+## Advanced SEO Optimizations
+- [x] Add Schema.org JSON-LD for Organization
+- [x] Add Schema.org JSON-LD for WebSite with SearchAction
+- [x] Add Schema.org JSON-LD for ItemList with Flight offers
+- [x] Add canonical URL meta tag
+- [x] Add hreflang meta tags for Czech language
+- [x] Add meta robots tag with max-image-preview
+- [x] Add language and author meta tags
+- [x] Add revisit-after meta tag
+- [x] Implement breadcrumbs with BreadcrumbList schema
+- [x] Add semantic HTML5 tags (article, section, nav, header)
+- [x] Add ARIA labels and roles for accessibility
+- [x] Optimize images with alt tags and aria-labels
+- [x] Add preload tags for critical images
+- [x] Add dns-prefetch and preconnect for fonts
+- [ ] Test structured data with Google Rich Results Test
+- [ ] Test with Google PageSpeed Insights
+- [ ] Validate HTML5 with W3C Validator

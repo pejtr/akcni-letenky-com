@@ -99,8 +99,23 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
+      {/* Breadcrumbs with Schema.org */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Domů",
+              "item": "https://www.akcni-letenky.com/"
+            }
+          ]
+        })}
+      </script>
       {/* Sticky Navigation Header */}
-      <header
+      <header role="banner"
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-sm",
           isScrolled ? "py-2" : "py-3"
@@ -126,7 +141,7 @@ export default function Home() {
           </div>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav role="navigation" aria-label="Main navigation" className="hidden md:flex items-center gap-6">
             <a href="/" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               💸 LEVNÉ LETENKY
             </a>
@@ -182,7 +197,8 @@ export default function Home() {
       </div>
 
       {/* Featured European Cities */}
-      <section className="py-12 bg-white">
+      <section aria-labelledby="featured-cities" className="py-12 bg-white">
+        <h2 id="featured-cities" className="sr-only">Nejlevnější letenky do evropských měst</h2>
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCities.map((city, index) => (
@@ -193,6 +209,8 @@ export default function Home() {
                 <div
                   className="h-48 bg-cover bg-center"
                   style={{ backgroundImage: `url(${city.image})` }}
+                  role="img"
+                  aria-label={`Fotografie ${city.to}`}
                 />
                 <div className="p-5">
                   <h3 className="font-bold text-lg mb-2">
@@ -215,9 +233,9 @@ export default function Home() {
       </section>
 
       {/* Zpáteční levné letenky Grid */}
-      <section className="py-16 bg-[#F5F7FA]">
+      <section aria-labelledby="return-flights" className="py-16 bg-[#F5F7FA]">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 id="return-flights" className="text-3xl font-bold text-center mb-12">
             Zpáteční levné letenky
           </h2>
 
@@ -231,6 +249,8 @@ export default function Home() {
                 <div
                   className="w-full h-24 bg-cover bg-center rounded-md mb-3"
                   style={{ backgroundImage: `url(${dest.image})` }}
+                  role="img"
+                  aria-label={`Fotografie ${dest.city}, ${dest.country}`}
                 />
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors">
@@ -253,7 +273,7 @@ export default function Home() {
       </section>
 
       {/* Trust Building Section */}
-      <section className="py-12 bg-white">
+      <article className="py-12 bg-white">
         <div className="container max-w-4xl">
           <h2 className="text-2xl font-bold text-center mb-4">
             Akční letenky: hledejte nejvýhodnější spojení snadno
@@ -262,12 +282,12 @@ export default function Home() {
             Náš přehled akčních letenek vám pomůže rychle porovnat ceny napříč aerolinkami a agenturami, hlídat změny cen a najít termíny s nejlepší cenou. Zobrazené částky jsou obvykle konečné (daně/poplatky); další služby mohou být zpoplatněny u poskytovatele.
           </p>
         </div>
-      </section>
+      </article>
 
       {/* Airline Logos Section */}
-      <section className="py-12 bg-[#F5F7FA]">
+      <section aria-labelledby="airlines" className="py-12 bg-[#F5F7FA]">
         <div className="container">
-          <h2 className="text-2xl font-bold text-center mb-8">
+          <h2 id="airlines" className="text-2xl font-bold text-center mb-8">
             Letecké společnosti
           </h2>
 
