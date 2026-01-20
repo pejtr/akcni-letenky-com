@@ -63,6 +63,21 @@
 - [x] Check color scheme consistency
 - [x] Test flight search functionality
 - [x] Test chatbot interactions
-- [ ] Test mobile responsiveness
-- [ ] Create first checkpoint
-- [ ] Deliver to user
+- [x] Test mobile responsiveness
+- [x] Create first checkpoint
+- [x] Deliver to user
+
+## Landing Page Enhancements (Based on Current akcni-letenky.com)
+- [x] Add yellow "NEJLEVNĚJŠÍ AKČNÍ LETENKY" banner at top
+- [x] Implement category tabs (Dovolená se slevou až 80%, Eurovíkendy, Hotely, Nejlevnější letenky)
+- [x] Create featured European cities section (Praha → Londýn, Paříž, Řím, Barcelona)
+- [x] Create "Zpáteční levné letenky" destination grid section (4x4 grid)
+- [x] Add destination cards with prices and country labels
+- [x] Implement airline logos section (Austrian, Emirates, Qatar, Ryanair, KLM, etc.)
+- [x] Add "Akční letenky: hledejte nejvýhodnější spojení snadno" trust text
+- [x] Create sticky bottom yellow promotional banner
+- [x] Add "Letenky do 1 500 Kč | Dovolená se slevou až 80%" to sticky banner
+- [x] Ensure sticky banner appears on scroll down (after 50% page)
+- [x] Add disclaimer text about prices
+- [x] Test all new sections on desktop and mobile
+- [x] Run all tests and verify they pass (10/10)
