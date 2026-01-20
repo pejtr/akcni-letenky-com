@@ -1,0 +1,178 @@
+import { drizzle } from "drizzle-orm/mysql2";
+import { flights } from "./drizzle/schema.ts";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const db = drizzle(process.env.DATABASE_URL);
+
+const sampleFlights = [
+  {
+    source: "pelikan",
+    sourceId: "PKN001",
+    fromCity: "Praha",
+    toCity: "Barcelona",
+    departureDate: new Date("2026-02-15"),
+    returnDate: new Date("2026-02-22"),
+    price: 12090,
+    originalPrice: 17000,
+    discountPercent: 30,
+    airline: "Ryanair",
+    stops: 0,
+    duration: "2h 30m",
+    rating: 45,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://pelikan.cz/flight/barcelona",
+    isFeatured: 1,
+    remainingSeats: 8,
+  },
+  {
+    source: "pelikan",
+    sourceId: "PKN002",
+    fromCity: "Praha",
+    toCity: "Malaga",
+    departureDate: new Date("2026-02-10"),
+    returnDate: new Date("2026-02-17"),
+    price: 8990,
+    originalPrice: 12500,
+    discountPercent: 28,
+    airline: "Smartwings",
+    stops: 0,
+    duration: "3h 15m",
+    rating: 45,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://pelikan.cz/flight/malaga",
+    isFeatured: 1,
+    remainingSeats: 5,
+  },
+  {
+    source: "kiwi",
+    sourceId: "KW003",
+    fromCity: "Praha",
+    toCity: "Istanbul",
+    departureDate: new Date("2026-02-12"),
+    returnDate: new Date("2026-02-19"),
+    price: 16990,
+    originalPrice: 24000,
+    discountPercent: 30,
+    airline: "Turkish Airlines",
+    stops: 0,
+    duration: "2h 45m",
+    rating: 46,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://kiwi.com/flight/istanbul",
+    isFeatured: 1,
+    remainingSeats: 12,
+  },
+  {
+    source: "pelikan",
+    sourceId: "PKN004",
+    fromCity: "Praha",
+    toCity: "Egypt",
+    departureDate: new Date("2026-02-20"),
+    returnDate: new Date("2026-02-27"),
+    price: 13364,
+    originalPrice: 19000,
+    discountPercent: 30,
+    airline: "Egypt Air",
+    stops: 0,
+    duration: "4h 20m",
+    rating: 46,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://pelikan.cz/flight/egypt",
+    isFeatured: 1,
+    remainingSeats: 6,
+  },
+  {
+    source: "kiwi",
+    sourceId: "KW005",
+    fromCity: "Praha",
+    toCity: "Řím",
+    departureDate: new Date("2026-02-08"),
+    returnDate: new Date("2026-02-12"),
+    price: 12090,
+    originalPrice: 15000,
+    discountPercent: 20,
+    airline: "Wizz Air",
+    stops: 0,
+    duration: "1h 50m",
+    rating: 45,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://kiwi.com/flight/rome",
+    isFeatured: 0,
+    remainingSeats: 10,
+  },
+  {
+    source: "pelikan",
+    sourceId: "PKN006",
+    fromCity: "Praha",
+    toCity: "Paříž",
+    departureDate: new Date("2026-02-14"),
+    returnDate: new Date("2026-02-17"),
+    price: 9500,
+    originalPrice: 13000,
+    discountPercent: 27,
+    airline: "Air France",
+    stops: 0,
+    duration: "1h 45m",
+    rating: 48,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://pelikan.cz/flight/paris",
+    isFeatured: 0,
+    remainingSeats: 7,
+  },
+  {
+    source: "kiwi",
+    sourceId: "KW007",
+    fromCity: "Praha",
+    toCity: "Londýn",
+    departureDate: new Date("2026-02-11"),
+    returnDate: new Date("2026-02-15"),
+    price: 8200,
+    originalPrice: 11000,
+    discountPercent: 25,
+    airline: "British Airways",
+    stops: 0,
+    duration: "2h 10m",
+    rating: 47,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://kiwi.com/flight/london",
+    isFeatured: 0,
+    remainingSeats: 15,
+  },
+  {
+    source: "pelikan",
+    sourceId: "PKN008",
+    fromCity: "Praha",
+    toCity: "Amsterdam",
+    departureDate: new Date("2026-02-18"),
+    returnDate: new Date("2026-02-21"),
+    price: 7800,
+    originalPrice: 10500,
+    discountPercent: 26,
+    airline: "KLM",
+    stops: 0,
+    duration: "1h 35m",
+    rating: 46,
+    imageUrl: "/hero-bg.jpg",
+    affiliateUrl: "https://pelikan.cz/flight/amsterdam",
+    isFeatured: 0,
+    remainingSeats: 9,
+  },
+];
+
+async function seed() {
+  console.log("Seeding database with sample flights...");
+  
+  for (const flight of sampleFlights) {
+    await db.insert(flights).values(flight);
+  }
+  
+  console.log(`✓ Seeded ${sampleFlights.length} flights`);
+  process.exit(0);
+}
+
+seed().catch((error) => {
+  console.error("Error seeding database:", error);
+  process.exit(1);
+});

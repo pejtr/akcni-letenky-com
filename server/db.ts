@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, flights, Flight, InsertFlight, wishlists, Wishlist, InsertWishlist, offerViews, OfferView, InsertOfferView } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,144 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Flight Offers Queries
+
+export async function getFeaturedFlights(): Promise<Flight[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select()
+    .from(flights)
+    .where(eq(flights.isFeatured, 1))
+    .orderBy(desc(flights.createdAt))
+    .limit(4);
+
+  return result;
+}
+
+export async function getAllFlights(): Promise<Flight[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select()
+    .from(flights)
+    .orderBy(desc(flights.createdAt));
+
+  return result;
+}
+
+export async function getFlightById(id: number): Promise<Flight | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(flights)
+    .where(eq(flights.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function searchFlights(params: {
+  fromCity?: string;
+  toCity?: string;
+  departureDate?: Date;
+  maxPrice?: number;
+}): Promise<Flight[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+
+  if (params.fromCity) {
+    conditions.push(eq(flights.fromCity, params.fromCity));
+  }
+  if (params.toCity) {
+    conditions.push(eq(flights.toCity, params.toCity));
+  }
+  if (params.departureDate) {
+    conditions.push(gte(flights.departureDate, params.departureDate));
+  }
+  if (params.maxPrice) {
+    conditions.push(lte(flights.price, params.maxPrice));
+  }
+
+  const result = await db
+    .select()
+    .from(flights)
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .orderBy(desc(flights.createdAt));
+
+  return result;
+}
+
+export async function insertFlight(flight: InsertFlight): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.insert(flights).values(flight);
+}
+
+// Wishlist Queries
+
+export async function getUserWishlists(userId: number): Promise<Wishlist[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select()
+    .from(wishlists)
+    .where(eq(wishlists.userId, userId));
+
+  return result;
+}
+
+export async function addToWishlist(userId: number, flightId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.insert(wishlists).values({ userId, flightId });
+}
+
+export async function removeFromWishlist(userId: number, flightId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .delete(wishlists)
+    .where(and(eq(wishlists.userId, userId), eq(wishlists.flightId, flightId)));
+}
+
+// Offer Views Queries
+
+export async function getOfferViews(flightId: number): Promise<OfferView | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db
+    .select()
+    .from(offerViews)
+    .where(eq(offerViews.flightId, flightId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function incrementOfferViews(flightId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  const existing = await getOfferViews(flightId);
+
+  if (existing) {
+    await db
+      .update(offerViews)
+      .set({ viewCount: (existing.viewCount || 0) + 1, lastUpdated: new Date() })
+      .where(eq(offerViews.flightId, flightId));
+  } else {
+    await db.insert(offerViews).values({ flightId, viewCount: 1 });
+  }
+}
