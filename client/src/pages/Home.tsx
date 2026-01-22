@@ -29,72 +29,72 @@ export default function Home() {
     return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
   };
 
-  // Popular destinations data with real images
+  // Popular destinations data with original images
   const popularDestinations = [
-    { city: "Londýn", price: 733, country: "Anglie", image: "/london.jpg" },
-    { city: "New York", price: 7490, country: "USA", image: "/newyork.jpg" },
-    { city: "Afrika", price: 7990, country: "Afrika", image: "/hero-bg.jpg" },
-    { city: "Maroko", price: 1426, country: "Maroko", image: "/hero-bg.jpg" },
-    { city: "Paříž", price: 1027, country: "Francie", image: "/paris.jpg" },
-    { city: "Vietnam", price: 7990, country: "Vietnam", image: "/hero-bg.jpg" },
-    { city: "Bali", price: 12790, country: "Indonésie", image: "/bali.jpg" },
-    { city: "Srí Lanka", price: 13990, country: "Srí Lanka", image: "/hero-bg.jpg" },
-    { city: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/dubai.jpg" },
-    { city: "Thajsko", price: 12390, country: "Thajsko", image: "/hero-bg.jpg" },
-    { city: "Santorini", price: 1791, country: "Řecko", image: "/hero-bg.jpg" },
-    { city: "Jordánsko", price: 1114, country: "Ammán", image: "/hero-bg.jpg" },
-    { city: "Řím", price: 712, country: "Itálie", image: "/rome.jpg" },
-    { city: "Island", price: 1460, country: "Island", image: "/hero-bg.jpg" },
-    { city: "Miami", price: 9490, country: "USA", image: "/hero-bg.jpg" },
-    { city: "Barcelona", price: 746, country: "Španělsko", image: "/barcelona.jpg" },
+    { city: "Londýn", price: 733, country: "Anglie", image: "/dest-london.webp" },
+    { city: "New York", price: 7490, country: "USA", image: "/dest-newyork.webp" },
+    { city: "Afrika", price: 7990, country: "Afrika", image: "/dest-africa.webp" },
+    { city: "Maroko", price: 1426, country: "Maroko", image: "/dest-maroko.webp" },
+    { city: "Paříž", price: 1027, country: "Francie", image: "/dest-paris.webp" },
+    { city: "Vietnam", price: 7990, country: "Vietnam", image: "/dest-vietnam.webp" },
+    { city: "Bali", price: 12790, country: "Indonésie", image: "/dest-bali.webp" },
+    { city: "Srí Lanka", price: 13990, country: "Srí Lanka", image: "/dest-srilanka.webp" },
+    { city: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/dest-dubai.webp" },
+    { city: "Thajsko", price: 12390, country: "Thajsko", image: "/dest-thailand.webp" },
+    { city: "Santorini", price: 1791, country: "Řecko", image: "/dest-santorini.webp" },
+    { city: "Jordánsko", price: 1114, country: "Ammán", image: "/dest-jordan.webp" },
+    { city: "Řím", price: 712, country: "Itálie", image: "/dest-rome.webp" },
+    { city: "Island", price: 1460, country: "Island", image: "/dest-iceland.webp" },
+    { city: "Miami", price: 9490, country: "USA", image: "/dest-miami.webp" },
+    { city: "Barcelona", price: 746, country: "Španělsko", image: "/dest-barcelona.webp" },
   ];
 
-  // Featured European cities with real images and tourists
+  // Featured European cities with original images
   const featuredCities = [
     {
       from: "Praha",
       to: "Londýn",
       price: 733,
       description: "Londýn – obchodní i kulturní centrum plné příležitostí a zážitků.",
-      image: "/london.jpg",
+      image: "/featured-london.webp",
     },
     {
       from: "Praha",
       to: "Paříž",
       price: 1027,
       description: "Město lásky, umění, módy i gastronomie.",
-      image: "/paris.jpg",
+      image: "/featured-paris.webp",
     },
     {
       from: "Praha",
       to: "Řím",
       price: 712,
       description: "Věčné město – památky, historie a skvělé jídlo.",
-      image: "/rome.jpg",
+      image: "/featured-rome.webp",
     },
     {
       from: "Praha",
       to: "Barcelona",
       price: 946,
       description: "Gaudí, tapas a městské pláže. Skvělá volba po celý rok.",
-      image: "/barcelona.jpg",
+      image: "/featured-barcelona.webp",
     },
   ];
 
-  // Airlines data
+  // Airlines data with original logos
   const airlines = [
-    { name: "Austrian Airlines", logo: "🇦🇹" },
-    { name: "Emirates", logo: "🇦🇪" },
-    { name: "Qatar Airways", logo: "🇶🇦" },
-    { name: "Ryanair", logo: "🇮🇪" },
-    { name: "Air France", logo: "🇫🇷" },
-    { name: "Lufthansa", logo: "🇩🇪" },
-    { name: "Icelandair", logo: "🇮🇸" },
-    { name: "Turkish Airlines", logo: "🇹🇷" },
-    { name: "KLM", logo: "🇳🇱" },
-    { name: "British Airways", logo: "🇬🇧" },
-    { name: "Wizz Air", logo: "🇭🇺" },
-    { name: "LOT", logo: "🇵🇱" },
+    { name: "Austrian Airlines", logo: "/logo-austrian.webp" },
+    { name: "Emirates", logo: "/logo-emirates.webp" },
+    { name: "Qatar Airways", logo: "/logo-qatar.webp" },
+    { name: "Ryanair", logo: "/logo-ryanair.webp" },
+    { name: "Air France", logo: "/logo-airfrance.webp" },
+    { name: "Lufthansa", logo: "/logo-lufthansa.webp" },
+    { name: "Icelandair", logo: "/logo-icelandair.webp" },
+    { name: "Turkish Airlines", logo: "/logo-turkish.webp" },
+    { name: "KLM", logo: "/logo-klm.webp" },
+    { name: "British Airways", logo: "/logo-british.webp" },
+    { name: "Wizz Air", logo: "/logo-wizzair.webp" },
+    { name: "LOT", logo: "/logo-lot.webp" },
   ];
 
   return (

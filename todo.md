@@ -137,3 +137,23 @@
 - [x] Ensure sticky banner stays as-is (already good)
 - [x] Test all layout changes on desktop and mobile
 - [x] Run all tests and verify they pass (10/10)
+
+## Use Original Graphics from www.akcni-letenky.com
+- [x] Download featured city images (Praha → Londýn, Paříž, Řím, Barcelona)
+- [x] Download destination thumbnails (12 of 16 destinations)
+- [x] Download real airline logos (Austrian Airlines, Emirates, Qatar Airways, Ryanair, Air France, Lufthansa, Icelandair, Turkish Airlines, KLM, British Airways, Wizz Air, LOT)
+- [x] Replace placeholder images with original graphics
+- [x] Update image paths in Home.tsx
+- [x] Test all images load correctly
+
+## Database Migration and Airline Pages
+- [ ] Connect to original MySQL database (a054um.forpsi.com)
+- [ ] Explore database schema and tables
+- [ ] Extract flight offers data
+- [ ] Extract airline data
+- [ ] Extract destination data
+- [ ] Migrate useful data to new database
+- [ ] Create airline-specific pages (e.g., /letecke-spolecnosti/ryanair-letenky/)
+- [ ] Add flight listings filtered by airline
+- [ ] Update navigation with airline links
+- [ ] Test all airline pages
