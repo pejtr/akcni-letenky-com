@@ -269,13 +269,15 @@ export default function Home() {
       </section>
 
       {/* Zpáteční levné letenky Grid */}
-      <section aria-labelledby="return-flights" className="py-12 bg-white">
+      <section aria-labelledby="return-flights" className="py-12 bg-[#F5F7FA]">
         <div className="container">
           {/* Yellow Banner Title */}
-          <div className="bg-[#FFD700] py-3 px-6 inline-block rounded-lg mb-8 mx-auto block text-center">
-            <h2 id="return-flights" className="text-xl font-bold text-black">
-              Zpáteční levné letenky
-            </h2>
+          <div className="flex justify-center mb-8">
+            <div className="bg-[#FFD700] py-3 px-6 rounded-lg">
+              <h2 id="return-flights" className="text-xl font-bold text-black">
+                Zpáteční levné letenky
+              </h2>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
@@ -326,7 +328,7 @@ export default function Home() {
       </article>
 
       {/* Airline Logos Section */}
-      <section aria-labelledby="airlines" className="py-12 bg-white">
+      <section aria-labelledby="airlines" className="py-12 bg-[#F5F7FA]">
         <div className="container">
           <h2 id="airlines" className="text-2xl font-bold text-center mb-8">
             Letecké společnosti

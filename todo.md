@@ -279,3 +279,16 @@
 - [x] Add "Zobrazit nejvýhodnější letenky" CTA button
 - [x] Add copyright and legal info
 - [ ] Test footer on all pages
+
+### Download All Destination Images
+- [x] Download all 16 destination thumbnail images from original website
+- [x] Verify all images are properly saved in client/public directory
+- [x] Test that all destination cards display images correctly
+- [x] Ensure images are optimized for web (proper size and format)
+
+### Update Background Colors and Styling
+- [x] Change all sections background to light gray (#F5F7FA) to match original
+- [x] Ensure destination cards have white background with proper shadow
+- [x] Update airline logos section styling
+- [ ] Add "Kategorie dovolených" section with category cards
+- [ ] Match exact spacing and layout from original website
