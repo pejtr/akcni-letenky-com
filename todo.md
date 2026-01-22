@@ -146,14 +146,83 @@
 - [x] Update image paths in Home.tsx
 - [x] Test all images load correctly
 
-## Database Migration and Airline Pages
-- [ ] Connect to original MySQL database (a054um.forpsi.com)
-- [ ] Explore database schema and tables
-- [ ] Extract flight offers data
-- [ ] Extract airline data
-- [ ] Extract destination data
-- [ ] Migrate useful data to new database
-- [ ] Create airline-specific pages (e.g., /letecke-spolecnosti/ryanair-letenky/)
-- [ ] Add flight listings filtered by airline
+## Airline Pages Implementation
+- [ ] Create /letecke-spolecnosti route structure
+- [ ] Build dynamic airline page component
+- [ ] Add airline-specific flight filtering
+- [ ] Create pages for all 12 airlines (Ryanair, Wizz Air, etc.)
+- [ ] Add airline logo and description to each page
+- [ ] Implement SEO meta tags for airline pages
 - [ ] Update navigation with airline links
 - [ ] Test all airline pages
+
+## Database and Flight Data
+- [ ] Create comprehensive seed data for flights
+- [ ] Add more realistic flight offers (50+ flights)
+- [ ] Include multiple airlines in seed data
+- [ ] Add destination variety
+- [ ] Implement 24-hour caching for performance
+
+## Functional Search Form
+- [ ] Connect hero search form to backend
+- [ ] Implement search by destination
+- [ ] Implement search by date
+- [ ] Implement search by number of passengers
+- [ ] Add search results page
+- [ ] Display filtered flight results
+- [ ] Test search functionality
+
+## Automated Content Generation System (Target: 1000+ daily visitors)
+
+### Database Schema
+- [x] Create articles table (title, slug, content, meta description, keywords, featured image, author, published date, category)
+- [x] Create destinations table (name, slug, description, country, region, featured image, SEO meta)
+- [x] Create article_destinations relationship table
+- [x] Add indexes for SEO-friendly URLs and fast queries
+- [x] Run database migration
+
+### AI Article Generator
+- [x] Create automated article generation service using LLM
+- [x] Implement daily cron job (runs at 6:00 AM)
+- [x] Generate article templates for different types (destination guides, airline reviews, travel tips, seasonal deals)
+- [x] Include mandatory in-article photos for SEO
+- [ ] Implement internal linking to existing pages
+- [ ] Add Schema.org Article structured data
+- [x] Generate SEO-optimized titles and meta descriptions
+
+### Destination Landing Pages
+- [ ] Create /letenky-do-[destination] route structure
+- [ ] Build dynamic destination page component
+- [ ] Add destination description, photos, and flight offers
+- [ ] Implement breadcrumbs with BreadcrumbList schema
+- [ ] Add SEO meta tags for each destination
+- [ ] Create pages for top 50 destinations
+- [ ] Add internal links between related destinations
+
+### Blog System
+- [x] Create /blog route and listing page
+- [x] Build article detail page component
+- [ ] Add article categories and filtering
+- [ ] Implement pagination for article listings
+- [x] Add related articles section
+- [ ] Create RSS feed for blog
+- [ ] Add social sharing buttons
+
+### API Integration for Real Flight Data
+- [ ] Research Pelikán.cz API documentation
+- [ ] Research Kiwi.com API documentation
+- [ ] Implement API client for Pelikán
+- [ ] Implement API client for Kiwi.com
+- [ ] Create data normalization layer
+- [ ] Implement 24-hour caching (refresh at midnight)
+- [ ] Add error handling and fallback logic
+- [ ] Test API integration with real data
+
+### SEO Optimizations
+- [ ] Update sitemap.xml with priority values (homepage: 1.0, blog: 0.8, articles: 0.6)
+- [ ] Add dynamic sitemap generation for all pages
+- [ ] Update robots.txt with blog allow rules
+- [ ] Create custom 404 page with search and useful links
+- [ ] Implement automatic image optimization
+- [ ] Add Open Graph and Twitter Card meta tags to all pages
+- [ ] Test with Google Search Console and PageSpeed Insights

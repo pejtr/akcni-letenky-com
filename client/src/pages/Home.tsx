@@ -141,6 +141,9 @@ export default function Home() {
             <a href="/dovolena" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               ⭐ DOVOLENÁ
             </a>
+            <a href="/blog" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+              📝 BLOG
+            </a>
             <a href="/aerolinky" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               ✈️ AEROLINKY
             </a>

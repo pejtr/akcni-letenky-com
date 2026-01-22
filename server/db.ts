@@ -230,3 +230,101 @@ export async function incrementOfferViews(flightId: number): Promise<void> {
     await db.insert(offerViews).values({ flightId, viewCount: 1 });
   }
 }
+
+// Article Queries
+
+export async function getAllArticles(limit?: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { articles } = await import("../drizzle/schema");
+  
+  let query = db
+    .select()
+    .from(articles)
+    .where(eq(articles.status, "published"))
+    .orderBy(desc(articles.publishedAt));
+
+  if (limit) {
+    query = query.limit(limit) as any;
+  }
+
+  return await query;
+}
+
+export async function getArticleBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const { articles } = await import("../drizzle/schema");
+
+  const result = await db
+    .select()
+    .from(articles)
+    .where(and(eq(articles.slug, slug), eq(articles.status, "published")))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getRecentArticles(limit: number = 5) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { articles } = await import("../drizzle/schema");
+
+  const result = await db
+    .select()
+    .from(articles)
+    .where(eq(articles.status, "published"))
+    .orderBy(desc(articles.publishedAt))
+    .limit(limit);
+
+  return result;
+}
+
+// Destination Queries
+
+export async function getAllDestinations() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { destinations } = await import("../drizzle/schema");
+
+  const result = await db
+    .select()
+    .from(destinations)
+    .orderBy(desc(destinations.createdAt));
+
+  return result;
+}
+
+export async function getDestinationBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const { destinations } = await import("../drizzle/schema");
+
+  const result = await db
+    .select()
+    .from(destinations)
+    .where(eq(destinations.slug, slug))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getFeaturedDestinations(limit: number = 8) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { destinations } = await import("../drizzle/schema");
+
+  const result = await db
+    .select()
+    .from(destinations)
+    .orderBy(desc(destinations.popularityScore))
+    .limit(limit);
+
+  return result;
+}

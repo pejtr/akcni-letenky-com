@@ -81,3 +81,61 @@ export const wishlists = mysqlTable("wishlists", {
 
 export type Wishlist = typeof wishlists.$inferSelect;
 export type InsertWishlist = typeof wishlists.$inferInsert;
+/**
+ * Articles table - stores blog posts and SEO content
+ */
+export const articles = mysqlTable("articles", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"), // Short summary for listings
+  metaDescription: varchar("metaDescription", { length: 160 }),
+  keywords: text("keywords"), // Comma-separated SEO keywords
+  featuredImage: text("featuredImage"),
+  author: varchar("author", { length: 100 }).default("Akční Letenky"),
+  category: varchar("category", { length: 50 }).default("general"), // 'deals', 'guides', 'airlines', 'destinations'
+  status: mysqlEnum("status", ["draft", "published"]).default("draft"),
+  publishedAt: timestamp("publishedAt"),
+  viewCount: int("viewCount").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Article = typeof articles.$inferSelect;
+export type InsertArticle = typeof articles.$inferInsert;
+
+/**
+ * Destinations table - stores information about travel destinations
+ */
+export const destinations = mysqlTable("destinations", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  country: varchar("country", { length: 100 }).notNull(),
+  region: varchar("region", { length: 100 }), // e.g., "Europe", "Asia"
+  description: text("description"),
+  featuredImage: text("featuredImage"),
+  metaDescription: varchar("metaDescription", { length: 160 }),
+  keywords: text("keywords"),
+  averagePrice: int("averagePrice"), // Average flight price in CZK
+  popularityScore: int("popularityScore").default(0), // For sorting
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Destination = typeof destinations.$inferSelect;
+export type InsertDestination = typeof destinations.$inferInsert;
+
+/**
+ * Article-Destination relationship table
+ */
+export const articleDestinations = mysqlTable("article_destinations", {
+  id: int("id").autoincrement().primaryKey(),
+  articleId: int("articleId").notNull(),
+  destinationId: int("destinationId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ArticleDestination = typeof articleDestinations.$inferSelect;
+export type InsertArticleDestination = typeof articleDestinations.$inferInsert;

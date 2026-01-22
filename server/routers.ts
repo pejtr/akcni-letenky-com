@@ -13,7 +13,14 @@ import {
   removeFromWishlist,
   getOfferViews,
   incrementOfferViews,
+  getAllArticles,
+  getArticleBySlug,
+  getRecentArticles,
+  getAllDestinations,
+  getDestinationBySlug,
+  getFeaturedDestinations,
 } from "./db";
+import { generateDailyArticles } from "./articleGenerator";
 
 export const appRouter = router({
   system: systemRouter,
@@ -60,6 +67,7 @@ export const appRouter = router({
           toCity: z.string().optional(),
           departureDate: z.date().optional(),
           maxPrice: z.number().optional(),
+          airline: z.string().optional(),
         })
       )
       .query(async ({ input }) => {
@@ -105,6 +113,71 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         await removeFromWishlist(ctx.user.id, input.flightId);
         return { success: true };
+      }),
+  }),
+
+  articles: router({
+    // Get all published articles
+    list: publicProcedure
+      .input(z.object({ limit: z.number().optional() }).optional())
+      .query(async ({ input }) => {
+        const articles = await getAllArticles(input?.limit);
+        return articles;
+      }),
+
+    // Get article by slug
+    bySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const article = await getArticleBySlug(input.slug);
+        if (!article) {
+          throw new Error("Article not found");
+        }
+        return article;
+      }),
+
+    // Get recent articles
+    recent: publicProcedure
+      .input(z.object({ limit: z.number().default(5) }))
+      .query(async ({ input }) => {
+        const articles = await getRecentArticles(input.limit);
+        return articles;
+      }),
+
+    // Generate daily articles (admin only)
+    generateDaily: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      await generateDailyArticles();
+      return { success: true };
+    }),
+  }),
+
+  destinations: router({
+    // Get all destinations
+    list: publicProcedure.query(async () => {
+      const destinations = await getAllDestinations();
+      return destinations;
+    }),
+
+    // Get destination by slug
+    bySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const destination = await getDestinationBySlug(input.slug);
+        if (!destination) {
+          throw new Error("Destination not found");
+        }
+        return destination;
+      }),
+
+    // Get featured destinations
+    featured: publicProcedure
+      .input(z.object({ limit: z.number().default(8) }))
+      .query(async ({ input }) => {
+        const destinations = await getFeaturedDestinations(input.limit);
+        return destinations;
       }),
   }),
 });

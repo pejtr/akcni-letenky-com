@@ -15,6 +15,13 @@
       "when": 1768869199395,
       "tag": "0001_boring_whiplash",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769079869761,
+      "tag": "0002_eager_joseph",
+      "breakpoints": true
     }
   ]
 }
