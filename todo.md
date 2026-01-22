@@ -226,3 +226,56 @@
 - [ ] Implement automatic image optimization
 - [ ] Add Open Graph and Twitter Card meta tags to all pages
 - [ ] Test with Google Search Console and PageSpeed Insights
+
+## Destination Landing Pages & Blog Improvements (Current Task)
+
+### Destination Landing Page for Paris
+- [ ] Create DestinationPage component with dynamic routing
+- [ ] Add route /letenky-do-parize to App.tsx
+- [ ] Display destination hero section with featured image
+- [ ] Show destination description and travel information
+- [ ] Filter and display flights to Paris
+- [ ] Add "Why visit Paris" section with highlights
+- [ ] Include practical information (airport, visa, best time to visit)
+- [ ] Add SEO meta tags (title, description, keywords)
+- [ ] Implement Schema.org Place structured data
+- [ ] Add breadcrumbs with BreadcrumbList schema
+- [ ] Include call-to-action for flight search
+- [ ] Add related articles section
+- [ ] Test Paris landing page
+
+### Blog Related Articles Section
+- [ ] Add "Související články" section to article detail page
+- [ ] Filter articles by same destination or category
+- [ ] Display 3-4 related article cards
+- [ ] Add internal linking between articles
+
+### Blog Article Filtering by Category
+- [ ] Add category filter dropdown to blog listing page
+- [ ] Implement category filtering in tRPC endpoint
+- [ ] Add category badges to article cards
+- [ ] Test category filtering functionality
+
+### SEO Title Fix
+- [x] Change SEO title from "Akční Letenky - Last Minute Flights" to fully Czech version
+- [x] Update all page titles to Czech language
+- [x] Verify title in index.html and meta tags
+
+### Update Logo and Images from Original Website
+- [ ] Copy new logo from uploaded file to project
+- [ ] Download all destination images from www.akcni-letenky.com
+- [ ] Update logo references in all components
+- [ ] Verify all images display correctly
+
+### Update Hero Banner Style
+- [ ] Change hero banner to yellow background with blue text
+- [ ] Match original website design exactly
+- [ ] Update banner styling in Home.tsx
+
+### Add Footer Section
+- [x] Create footer with orange background matching original design
+- [x] Add "Proč rezervovat u nás?" section with bullet points
+- [x] Add Facebook community links section
+- [x] Add "Zobrazit nejvýhodnější letenky" CTA button
+- [x] Add copyright and legal info
+- [ ] Test footer on all pages

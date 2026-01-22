@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import AirlinePage from "./pages/AirlinePage";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import DestinationPage from "./pages/DestinationPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -15,6 +16,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path="/letecke-spolecnosti/:airline" component={AirlinePage} />
+      <Route path="/letenky-do-:slug" component={DestinationPage} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path={"/404"} component={NotFound} />

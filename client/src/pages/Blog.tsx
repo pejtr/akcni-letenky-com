@@ -14,18 +14,12 @@ export default function Blog() {
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/">
-              <a className="flex items-center gap-2">
-                <img src="/logo.png" alt="Akční Letenky" className="h-10" />
-              </a>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="Akční Letenky" className="h-10" />
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/">
-                <a className="text-gray-700 hover:text-pink-600 transition-colors">Domů</a>
-              </Link>
-              <Link href="/blog">
-                <a className="text-pink-600 font-semibold">Blog</a>
-              </Link>
+              <Link href="/" className="text-gray-700 hover:text-pink-600 transition-colors">Domů</Link>
+              <Link href="/blog" className="text-pink-600 font-semibold">Blog</Link>
               <a href="tel:+420123456789" className="text-gray-700 hover:text-pink-600 transition-colors">
                 📞 +420 123 456 789
               </a>
@@ -97,12 +91,10 @@ export default function Blog() {
                   </CardContent>
                   <CardFooter>
                     <Link href={`/blog/${article.slug}`}>
-                      <a>
-                        <Button variant="outline" className="group">
-                          Číst více
-                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                      </a>
+                      <Button variant="outline" className="group">
+                        Číst více
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
                     </Link>
                   </CardFooter>
                 </Card>
@@ -113,9 +105,7 @@ export default function Blog() {
               <h2 className="text-2xl font-semibold text-gray-700 mb-4">Zatím zde nejsou žádné články</h2>
               <p className="text-gray-500 mb-8">Brzy přidáme nové zajímavé články o cestování a levných letenkách.</p>
               <Link href="/">
-                <a>
-                  <Button>Zpět na hlavní stránku</Button>
-                </a>
+                <Button>Zpět na hlavní stránku</Button>
               </Link>
             </div>
           )}

@@ -160,12 +160,14 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Yellow Banner */}
-      <div className="bg-[#FFD700] py-8 mt-16">
-        <div className="container">
-          <h1 className="text-3xl md:text-4xl font-black text-center text-black tracking-wide">
-            NEJLEVNĚJŠÍ AKČNÍ LETENKY
-          </h1>
+      {/* Yellow Banner with Blue Text */}
+      <div className="bg-[#FFD700] py-6 mt-16">
+        <div className="container flex justify-center">
+          <div className="bg-[#FFD700] px-8 py-4 rounded-lg inline-block">
+            <h1 className="text-3xl md:text-4xl font-black text-center text-[#003087] tracking-wide">
+              NEJLEVNĚJŠÍ AKČNÍ LETENKY
+            </h1>
+          </div>
         </div>
       </div>
 
@@ -284,11 +286,11 @@ export default function Home() {
                 className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-all group"
               >
                 <div className="flex items-start gap-3 mb-3">
-                  <div
-                    className="w-16 h-16 bg-cover bg-center rounded-md flex-shrink-0"
-                    style={{ backgroundImage: `url(${dest.image})` }}
-                    role="img"
-                    aria-label={`Fotografie ${dest.city}, ${dest.country}`}
+                  <img
+                    src={dest.image}
+                    alt={`${dest.city}, ${dest.country}`}
+                    className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                    loading="lazy"
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors mb-1">
@@ -359,6 +361,109 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Footer Section */}
+      <footer className="bg-[#FF9800] py-16">
+        <div className="container">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-5xl mx-auto">
+            {/* Main Heading */}
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-[#FFD700] rounded-lg flex items-center justify-center">
+                  <span className="text-3xl">✈️</span>
+                </div>
+                <h2 className="text-3xl font-black text-[#003087]">AKČNÍ-LETENKY.com</h2>
+              </div>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Objevte <strong>nejlevnější letenky</strong> a splňte si své cestovatelské sny. Porovnáváme za vás nabídky od desítek leteckých společností, abyste mohli letět chytře a za zlevněné ceny.
+              </p>
+            </div>
+
+            {/* Yellow Banner */}
+            <div className="bg-[#FFD700] rounded-lg px-6 py-3 mb-8 flex items-center justify-center gap-4 flex-wrap">
+              <span className="text-sm font-semibold text-[#003087]">⭐ Business class</span>
+              <span className="text-sm font-semibold text-[#003087]">✈️ Přímé lety</span>
+              <span className="text-sm font-semibold text-[#003087]">💰 Časté dotazy</span>
+            </div>
+
+            {/* Two Columns */}
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              {/* Left Column - Why Book With Us */}
+              <div>
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <span className="text-blue-600">✓</span>
+                  Proč rezervovat u nás?
+                </h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">✓</span>
+                    <span className="text-sm">Garantujeme <strong>nejlevnější letenky</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">✓</span>
+                    <span className="text-sm">Denně čerstvé <strong>akční letenky</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">✓</span>
+                    <span className="text-sm">Přehledné porovnání desítek aerolinek</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">✓</span>
+                    <span className="text-sm">Snadná a bezpečná online rezervace</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Right Column - Community */}
+              <div>
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <span className="text-blue-600">👥</span>
+                  Přidejte se ke komunitě 60 tis. + členů
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-[#1877F2] rounded flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-bold">f</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">Akční letenky a cestování</p>
+                      <p className="text-xs text-muted-foreground">Tipy a rady od komunity</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-[#1877F2] rounded flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-bold">f</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">Tour De Svět - Cestování</p>
+                      <p className="text-xs text-muted-foreground">Inspirace pro vaše cesty</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="text-center">
+              <Button size="lg" className="bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold px-8 py-6 text-lg rounded-full shadow-lg">
+                ✈️ Zobrazit nejvýhodnější letenky
+              </Button>
+            </div>
+
+            {/* Bottom Yellow Banner */}
+            <div className="bg-[#FFD700] rounded-lg px-6 py-3 mt-8 text-center">
+              <p className="text-sm text-[#003087]">
+                Půjčka na dovolenou s úrokem od <strong>4,49 %</strong>! To je výhodné financování se Zonky! →
+              </p>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="text-center mt-8 text-white text-sm">
+            <p>© 2026 AKČNÍ-LETENKY.com | Všechna práva vyhrazena</p>
+          </div>
+        </div>
+      </footer>
 
       {/* Chatbot Widget */}
       <ChatbotWidget />
