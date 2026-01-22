@@ -116,3 +116,24 @@
 - [ ] Test structured data with Google Rich Results Test
 - [ ] Test with Google PageSpeed Insights
 - [ ] Validate HTML5 with W3C Validator
+
+## Newest and Most Popular Flights Section
+- [ ] Update flights table schema to track view counts
+- [ ] Add createdAt timestamp to flights table
+- [ ] Create tRPC endpoint for newest flights (sorted by createdAt DESC)
+- [ ] Create tRPC endpoint for most popular flights (sorted by views DESC)
+- [ ] Build UI section with tabs for "Nejnovější" and "Nejžádanější"
+- [ ] Add visual indicators (NEW badge, fire icon for popular)
+- [ ] Implement caching for performance (24h refresh cycle)
+- [ ] Test newest and most popular flights display
+- [ ] Write vitest tests for new endpoints
+
+## Design Refinements to Match Original
+- [x] Add hero search form with 4 fields (Kam se chystáte?, Kdy?, Kolik osob?, VYHLEDAT DOVOLENOU)
+- [x] Make featured cities cards larger with rounded corners and orange border buttons
+- [x] Add yellow banner title for "Zpáteční levné letenky" section
+- [x] Update destination grid cards with horizontal layout (small image left, text center, arrow right)
+- [x] Add country label below price in destination cards
+- [x] Ensure sticky banner stays as-is (already good)
+- [x] Test all layout changes on desktop and mobile
+- [x] Run all tests and verify they pass (10/10)

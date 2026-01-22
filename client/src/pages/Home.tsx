@@ -37,9 +37,9 @@ export default function Home() {
     { city: "Maroko", price: 1426, country: "Maroko", image: "/hero-bg.jpg" },
     { city: "Paříž", price: 1027, country: "Francie", image: "/paris.jpg" },
     { city: "Vietnam", price: 7990, country: "Vietnam", image: "/hero-bg.jpg" },
-    { city: "Bali", price: 12190, country: "Indonésie", image: "/bali.jpg" },
-    { city: "Srí Lanka", price: 13091, country: "Srí Lanka", image: "/hero-bg.jpg" },
-    { city: "Dubaj", price: 5183, country: "SAE", image: "/dubai.jpg" },
+    { city: "Bali", price: 12790, country: "Indonésie", image: "/bali.jpg" },
+    { city: "Srí Lanka", price: 13990, country: "Srí Lanka", image: "/hero-bg.jpg" },
+    { city: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/dubai.jpg" },
     { city: "Thajsko", price: 12390, country: "Thajsko", image: "/hero-bg.jpg" },
     { city: "Santorini", price: 1791, country: "Řecko", image: "/hero-bg.jpg" },
     { city: "Jordánsko", price: 1114, country: "Ammán", image: "/hero-bg.jpg" },
@@ -49,7 +49,7 @@ export default function Home() {
     { city: "Barcelona", price: 746, country: "Španělsko", image: "/barcelona.jpg" },
   ];
 
-  // Featured European cities with real images
+  // Featured European cities with real images and tourists
   const featuredCities = [
     {
       from: "Praha",
@@ -123,19 +123,12 @@ export default function Home() {
       >
         <div className="container flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#FFD700] rounded-md flex items-center justify-center">
-              <span className="text-black font-bold text-xl">✈</span>
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-[#FFD700] rounded-lg flex items-center justify-center">
+              <span className="text-2xl">✈️</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-black leading-tight">
-                AKČNÍ-
-              </span>
-              <span className="text-sm font-bold text-black leading-tight">
-                LETENKY.com
-              </span>
-            </div>
-            <span className="text-blue-600 font-medium ml-2">
+            <span className="font-bold text-lg">AKČNÍ-<br/>LETENKY.com</span>
+            <span className="hidden md:inline text-sm text-blue-600 ml-2">
               Nejlevnější Lety
             </span>
           </div>
@@ -157,7 +150,7 @@ export default function Home() {
           </nav>
 
           {/* Phone */}
-          <div className="flex items-center gap-2 text-[#FF8C00]">
+          <div className="flex items-center gap-2 text-[#FF6B35]">
             <Phone className="w-4 h-4" />
             <span className="font-semibold">223 340 510</span>
           </div>
@@ -170,6 +163,44 @@ export default function Home() {
           <h1 className="text-3xl md:text-4xl font-black text-center text-black tracking-wide">
             NEJLEVNĚJŠÍ AKČNÍ LETENKY
           </h1>
+        </div>
+      </div>
+
+      {/* Hero Search Form */}
+      <div className="bg-white py-8 border-b border-border">
+        <div className="container max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <label className="block text-xs text-muted-foreground mb-1">Kam se chystáte?</label>
+              <input
+                type="text"
+                placeholder="Např. Barcelona"
+                className="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="relative">
+              <label className="block text-xs text-muted-foreground mb-1">Kdy?</label>
+              <input
+                type="date"
+                className="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="relative">
+              <label className="block text-xs text-muted-foreground mb-1">Kolik osob?</label>
+              <select className="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="1">1 osoba</option>
+                <option value="2">2 osoby</option>
+                <option value="3">3 osoby</option>
+                <option value="4">4 osoby</option>
+                <option value="5">5+ osob</option>
+              </select>
+            </div>
+            <div className="flex items-end">
+              <Button className="w-full bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold py-3 rounded-md">
+                VYHLEDAT DOVOLENOU
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -197,14 +228,14 @@ export default function Home() {
       </div>
 
       {/* Featured European Cities */}
-      <section aria-labelledby="featured-cities" className="py-12 bg-white">
+      <section aria-labelledby="featured-cities" className="py-10 bg-[#F0F4F8]">
         <h2 id="featured-cities" className="sr-only">Nejlevnější letenky do evropských měst</h2>
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCities.map((city, index) => (
               <div
                 key={index}
-                className="bg-card rounded-lg shadow-md overflow-hidden border border-border hover:shadow-xl transition-shadow"
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <div
                   className="h-48 bg-cover bg-center"
@@ -213,15 +244,15 @@ export default function Home() {
                   aria-label={`Fotografie ${city.to}`}
                 />
                 <div className="p-5">
-                  <h3 className="font-bold text-lg mb-2">
+                  <h3 className="font-bold text-lg text-blue-700 mb-2 text-center">
                     {city.from} ⇄ {city.to}
                   </h3>
-                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                  <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
                     {city.description}
                   </p>
                   <Button
                     variant="outline"
-                    className="w-full border-[#FF8C00] text-[#FF8C00] hover:bg-[#FF8C00] hover:text-white font-semibold"
+                    className="w-full border-2 border-[#FF8C00] text-[#FF8C00] hover:bg-[#FF8C00] hover:text-white font-bold rounded-lg"
                   >
                     od {formatPrice(city.price)}
                   </Button>
@@ -233,35 +264,40 @@ export default function Home() {
       </section>
 
       {/* Zpáteční levné letenky Grid */}
-      <section aria-labelledby="return-flights" className="py-16 bg-[#F5F7FA]">
+      <section aria-labelledby="return-flights" className="py-12 bg-white">
         <div className="container">
-          <h2 id="return-flights" className="text-3xl font-bold text-center mb-12">
-            Zpáteční levné letenky
-          </h2>
+          {/* Yellow Banner Title */}
+          <div className="bg-[#FFD700] py-3 px-6 inline-block rounded-lg mb-8 mx-auto block text-center">
+            <h2 id="return-flights" className="text-xl font-bold text-black">
+              Zpáteční levné letenky
+            </h2>
+          </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
             {popularDestinations.map((dest, index) => (
               <a
                 key={index}
                 href={`#${dest.city}`}
                 className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-all group"
               >
-                <div
-                  className="w-full h-24 bg-cover bg-center rounded-md mb-3"
-                  style={{ backgroundImage: `url(${dest.image})` }}
-                  role="img"
-                  aria-label={`Fotografie ${dest.city}, ${dest.country}`}
-                />
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors">
-                    {dest.city}
-                  </h3>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-blue-600 transition-colors" />
+                <div className="flex items-start gap-3 mb-3">
+                  <div
+                    className="w-16 h-16 bg-cover bg-center rounded-md flex-shrink-0"
+                    style={{ backgroundImage: `url(${dest.image})` }}
+                    role="img"
+                    aria-label={`Fotografie ${dest.city}, ${dest.country}`}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors mb-1">
+                      {dest.city}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">od {formatPrice(dest.price)}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-blue-600 transition-colors flex-shrink-0 mt-1" />
                 </div>
-                <p className="text-sm font-semibold text-muted-foreground mb-1">
-                  od {formatPrice(dest.price)}
-                </p>
-                <p className="text-xs text-muted-foreground">{dest.country}</p>
+                <div className="text-center">
+                  <p className="text-sm font-semibold text-foreground">{dest.country}</p>
+                </div>
               </a>
             ))}
           </div>
@@ -273,7 +309,7 @@ export default function Home() {
       </section>
 
       {/* Trust Building Section */}
-      <article className="py-12 bg-white">
+      <article className="py-12 bg-[#F5F7FA]">
         <div className="container max-w-4xl">
           <h2 className="text-2xl font-bold text-center mb-4">
             Akční letenky: hledejte nejvýhodnější spojení snadno
@@ -285,7 +321,7 @@ export default function Home() {
       </article>
 
       {/* Airline Logos Section */}
-      <section aria-labelledby="airlines" className="py-12 bg-[#F5F7FA]">
+      <section aria-labelledby="airlines" className="py-12 bg-white">
         <div className="container">
           <h2 id="airlines" className="text-2xl font-bold text-center mb-8">
             Letecké společnosti
@@ -293,16 +329,15 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-w-5xl mx-auto">
             {airlines.map((airline, index) => (
-              <a
+              <div
                 key={index}
-                href={`#${airline.name}`}
-                className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow flex flex-col items-center justify-center gap-2 group min-h-[100px]"
+                className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow flex flex-col items-center justify-center gap-2"
               >
                 <span className="text-3xl">{airline.logo}</span>
-                <span className="text-xs text-center font-medium group-hover:text-blue-600 transition-colors">
+                <span className="text-xs text-center font-medium text-muted-foreground">
                   {airline.name}
                 </span>
-              </a>
+              </div>
             ))}
           </div>
         </div>
@@ -310,26 +345,14 @@ export default function Home() {
 
       {/* Sticky Bottom Banner */}
       {showStickyBanner && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#FFD700] py-3 shadow-lg animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-3 px-4 shadow-lg z-40 animate-in slide-in-from-bottom">
           <div className="container">
-            <div className="flex flex-wrap items-center justify-center gap-3 text-black text-sm font-semibold">
-              <span>Akční nabídka:</span>
-              <a href="#letenky" className="hover:underline text-red-600">
-                Letenky do 1 500 Kč
-              </a>
-              <span>|</span>
-              <a href="#dovolena" className="hover:underline">
-                Dovolená se slevou až 80 %
-              </a>
-              <span>|</span>
-              <a href="#eurovikendy" className="hover:underline">
-                Eurovíkendy
-              </a>
-              <span>|</span>
-              <a href="#business" className="hover:underline">
-                Business class
-              </a>
-            </div>
+            <p className="text-center text-sm md:text-base font-bold text-black">
+              Akční nabídka: <span className="text-[#E91E63]">Letenky do 1 500 Kč</span> | 
+              <span className="text-blue-700"> Dovolená se slevou až 80 %</span> | 
+              <span className="text-blue-700"> Eurovíkendy</span> | 
+              <span className="text-blue-700"> Business class</span>
+            </p>
           </div>
         </div>
       )}
