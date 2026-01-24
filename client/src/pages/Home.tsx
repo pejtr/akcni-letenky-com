@@ -352,9 +352,9 @@ export default function Home() {
 
       {/* Sticky Bottom Banner */}
       {showStickyBanner && (
-        <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-3 px-4 shadow-lg z-40 animate-in slide-in-from-bottom">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-4 px-4 shadow-lg z-40 animate-in slide-in-from-bottom">
           <div className="container">
-            <p className="text-center text-sm md:text-base font-bold text-black">
+            <p className="text-center text-base md:text-lg font-bold text-black">
               Akční nabídka: <span className="text-[#E91E63]">Letenky do 1 500 Kč</span> | 
               <span className="text-blue-700"> Dovolená se slevou až 80 %</span> | 
               <span className="text-blue-700"> Eurovíkendy</span> | 

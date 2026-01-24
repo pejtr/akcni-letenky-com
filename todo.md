@@ -292,3 +292,23 @@
 - [x] Update airline logos section styling
 - [ ] Add "Kategorie dovolených" section with category cards
 - [ ] Match exact spacing and layout from original website
+
+## Shared API Chatbot Integration
+- [ ] Analyze reference chatbot from https://manus.im/share/c4EsDWGrjsskP2UORfE57w
+- [ ] Design shared API architecture for multi-project chatbot synchronization
+- [ ] Create database schema for chatbot conversations, reports, and analytics
+- [ ] Implement backend API endpoints for chatbot data sync
+- [ ] Build chatbot UI component with sales conversation flow
+- [ ] Integrate chatbot with shared API for knowledge synchronization
+- [ ] Add conversation tracking and reporting system
+- [ ] Implement conversion tracking and trend analysis
+- [ ] Test chatbot across multiple projects
+- [ ] Document API integration and chatbot setup
+
+## UI Improvements - Chatbot and Notifications
+- [x] Enlarge chatbot widget for better visibility (16px → 20px)
+- [x] Add pulsing animation to chatbot widget
+- [x] Change chatbot icon color from white to green
+- [x] Move notification cards closer to bottom edge (bottom-24 → bottom-6)
+- [x] Enlarge bottom "Akční nabídka" banner (py-3 → py-4, text-sm → text-base)
+- [ ] Test all UI changes on desktop and mobile

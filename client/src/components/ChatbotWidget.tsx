@@ -39,11 +39,11 @@ export default function ChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 group"
+          className="fixed bottom-6 right-6 z-50 group animate-pulse"
         >
           <div className="relative">
             {/* Avatar */}
-            <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-xl hover:scale-110 transition-transform">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-xl hover:scale-110 transition-transform">
               <img
                 src="/travel-expert.jpg"
                 alt="Travel Expert"
@@ -51,7 +51,7 @@ export default function ChatbotWidget() {
               />
             </div>
             {/* Online indicator */}
-            <div className="absolute bottom-0 right-0 w-5 h-5 bg-secondary rounded-full border-2 border-white animate-pulse" />
+            <div className="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-2 border-white animate-pulse" />
           </div>
           {/* Tooltip */}
           <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
