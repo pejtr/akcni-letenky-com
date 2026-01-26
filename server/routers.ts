@@ -20,6 +20,11 @@ import {
   getDestinationBySlug,
   getFeaturedDestinations,
 } from "./db";
+import {
+  processChatbotMessage,
+  trackChatbotConversion,
+  trackCommunityJoin,
+} from "./chatbot";
 import { generateDailyArticles } from "./articleGenerator";
 
 export const appRouter = router({
@@ -178,6 +183,62 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const destinations = await getFeaturedDestinations(input.limit);
         return destinations;
+      }),
+  }),
+
+  chatbot: router({
+    // Send message to chatbot
+    sendMessage: publicProcedure
+      .input(
+        z.object({
+          sessionId: z.string(),
+          message: z.string(),
+          projectId: z.string().default("akcni-letenky"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const result = await processChatbotMessage(
+          input.sessionId,
+          input.message,
+          input.projectId
+        );
+        return result;
+      }),
+
+    // Track conversion (booking completed)
+    trackConversion: publicProcedure
+      .input(
+        z.object({
+          conversationId: z.number(),
+          flightId: z.number(),
+          bookingValue: z.number(),
+          commissionRate: z.number().default(5),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const result = await trackChatbotConversion(
+          input.conversationId,
+          input.flightId,
+          input.bookingValue,
+          input.commissionRate
+        );
+        return result;
+      }),
+
+    // Track community join (FB/WhatsApp)
+    trackCommunityJoin: publicProcedure
+      .input(
+        z.object({
+          conversationId: z.number(),
+          communityType: z.enum(["facebook", "whatsapp"]),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const result = await trackCommunityJoin(
+          input.conversationId,
+          input.communityType
+        );
+        return result;
       }),
   }),
 });

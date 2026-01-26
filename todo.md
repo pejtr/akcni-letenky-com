@@ -312,3 +312,19 @@
 - [x] Move notification cards closer to bottom edge (bottom-24 → bottom-6)
 - [x] Enlarge bottom "Akční nabídka" banner (py-3 → py-4, text-sm → text-base)
 - [ ] Test all UI changes on desktop and mobile
+
+## High-Converting Sales Chatbot Implementation (Alex Hormozi Principles)
+- [x] Design chatbot conversation flow using Hormozi sales principles (Value First, Scarcity, Urgency, Social Proof)
+- [x] Create database schema for chatbot conversations, leads, conversions, and analytics
+- [x] Implement LLM-powered chatbot backend with proactive offers
+- [x] Build chatbot UI with real-time messaging and auto-scroll
+- [x] Add proactive flight offer buttons in chat messages
+- [x] Integrate FB group CTAs (33,500 + 29,200 members)
+- [x] Add WhatsApp community invitation system
+- [x] Track conversions and community joins via tRPC
+- [x] Add loading indicator ("Píše...") during AI response
+- [ ] Implement shared API for multi-project synchronization
+- [ ] Create analytics dashboard for ROI tracking
+- [ ] Test chatbot with real conversations
+- [ ] Generate daily analytics reports
+- [ ] Add email capture for newsletter

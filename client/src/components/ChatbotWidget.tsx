@@ -1,36 +1,133 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Send, Minimize2, Maximize2 } from "lucide-react";
+import { X, Send, Minimize2, Maximize2, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [conversationId, setConversationId] = useState<number | null>(null);
+  const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([
     {
       role: "assistant",
-      content: "Vítejte! Jsem Vaše průvodkyně světem zájezdů na akcni-letenky.com. Jak Vám mohu pomoci?",
+      content: "Ahoj! 👋 Jsem tvoje průvodkyně světem zájezdů. Kam se chystáš? Moře, hory, nebo městská dobrodružství? 🌴🏔️🏙️",
     },
   ]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const sendMessageMutation = trpc.chatbot.sendMessage.useMutation();
+  const trackCommunityJoinMutation = trpc.chatbot.trackCommunityJoin.useMutation();
 
-  const handleSendMessage = () => {
-    if (!message.trim()) return;
+  const handleSendMessage = async () => {
+    if (!message.trim() || sendMessageMutation.isPending) return;
 
-    setMessages([...messages, { role: "user", content: message }]);
+    const userMessage = message;
+    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setMessage("");
 
-    // Simulate bot response
-    setTimeout(() => {
+    try {
+      const result = await sendMessageMutation.mutateAsync({
+        sessionId,
+        message: userMessage,
+        projectId: "akcni-letenky",
+      });
+
+      if (result.conversationId) {
+        setConversationId(result.conversationId);
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: result.message },
+      ]);
+    } catch (error) {
+      console.error("Chatbot error:", error);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "Děkuji za Vaši zprávu! Momentálně zpracovávám Váš dotaz...",
+          content: "Omlouvám se, něco se pokazilo. Můžeš to zkusit znovu? 😊",
         },
       ]);
-    }, 1000);
+    }
+  };
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Parse message content for links and CTAs
+  const renderMessage = (content: string) => {
+    // Check for FB group mention
+    if (content.toLowerCase().includes("fb skupina") || content.toLowerCase().includes("facebook")) {
+      return (
+        <div className="space-y-2">
+          <p className="text-sm">{content}</p>
+          <div className="flex flex-col gap-2 mt-2">
+            <a
+              href="https://www.facebook.com/groups/akcniletenky/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
+              onClick={() => {
+                if (conversationId) {
+                  trackCommunityJoinMutation.mutate({
+                    conversationId,
+                    communityType: "facebook",
+                  });
+                }
+              }}
+            >
+              <ExternalLink className="w-3 h-3" />
+              Připojit se k FB skupině (33 500 členů)
+            </a>
+            <a
+              href="https://www.facebook.com/groups/TourDeSvetLacneCestovani/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
+              onClick={() => {
+                if (conversationId) {
+                  trackCommunityJoinMutation.mutate({
+                    conversationId,
+                    communityType: "facebook",
+                  });
+                }
+              }}
+            >
+              <ExternalLink className="w-3 h-3" />
+              TOUR de SVĚT (29 200 členů)
+            </a>
+          </div>
+        </div>
+      );
+    }
+
+    // Check for flight offer (contains price in Kč)
+    if (content.includes("Kč") && content.includes("→")) {
+      return (
+        <div className="space-y-2">
+          <p className="text-sm whitespace-pre-wrap">{content}</p>
+          <Button
+            size="sm"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white mt-2"
+            onClick={() => {
+              // Redirect to flights page
+              window.location.href = "/";
+            }}
+          >
+            ✈️ Zobrazit všechny nabídky
+          </Button>
+        </div>
+      );
+    }
+
+    return <p className="text-sm whitespace-pre-wrap">{content}</p>;
   };
 
   return (
@@ -126,10 +223,18 @@ export default function ChatbotWidget() {
                           : "bg-muted text-foreground"
                       )}
                     >
-                      <p className="text-sm">{msg.content}</p>
+                      {renderMessage(msg.content)}
                     </div>
                   </div>
                 ))}
+                {sendMessageMutation.isPending && (
+                  <div className="flex justify-start">
+                    <div className="max-w-[80%] px-4 py-2 rounded-2xl bg-muted text-foreground">
+                      <p className="text-sm">Píše... ✍️</p>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
               </div>
 
               {/* Input */}

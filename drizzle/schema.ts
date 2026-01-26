@@ -139,3 +139,132 @@ export const articleDestinations = mysqlTable("article_destinations", {
 
 export type ArticleDestination = typeof articleDestinations.$inferSelect;
 export type InsertArticleDestination = typeof articleDestinations.$inferInsert;
+
+/**
+ * Chatbot conversations table - stores all chatbot interactions
+ */
+export const chatbotConversations = mysqlTable("chatbot_conversations", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull().unique(), // Unique session identifier
+  userId: int("userId"), // Optional - if user is logged in
+  projectId: varchar("projectId", { length: 64 }).notNull(), // Which project this conversation belongs to
+  status: mysqlEnum("status", ["active", "converted", "abandoned"]).default("active"),
+  leadQuality: mysqlEnum("leadQuality", ["hot", "warm", "cold"]).default("cold"),
+  // Lead qualification data
+  destination: varchar("destination", { length: 100 }),
+  budget: int("budget"), // In CZK
+  travelDate: timestamp("travelDate"),
+  passengers: int("passengers").default(1),
+  // Contact information
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 20 }),
+  name: varchar("name", { length: 100 }),
+  // Conversion tracking
+  clickedOffer: int("clickedOffer").default(0), // 1 if clicked any offer
+  joinedCommunity: int("joinedCommunity").default(0), // 1 if joined FB/WhatsApp
+  converted: int("converted").default(0), // 1 if booking confirmed
+  conversionValue: int("conversionValue"), // Commission earned in CZK
+  // Analytics
+  messageCount: int("messageCount").default(0),
+  lastMessageAt: timestamp("lastMessageAt").defaultNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChatbotConversation = typeof chatbotConversations.$inferSelect;
+export type InsertChatbotConversation = typeof chatbotConversations.$inferInsert;
+
+/**
+ * Chatbot messages table - stores individual messages in conversations
+ */
+export const chatbotMessages = mysqlTable("chatbot_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  role: mysqlEnum("role", ["user", "assistant", "system"]).notNull(),
+  content: text("content").notNull(),
+  // Metadata for analytics
+  containsOffer: int("containsOffer").default(0), // 1 if message contains flight offer
+  containsCommunityInvite: int("containsCommunityInvite").default(0), // 1 if invites to FB/WhatsApp
+  userClicked: int("userClicked").default(0), // 1 if user clicked any link in this message
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ChatbotMessage = typeof chatbotMessages.$inferSelect;
+export type InsertChatbotMessage = typeof chatbotMessages.$inferInsert;
+
+/**
+ * Chatbot leads table - stores qualified leads for follow-up
+ */
+export const chatbotLeads = mysqlTable("chatbot_leads", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  name: varchar("name", { length: 100 }),
+  destination: varchar("destination", { length: 100 }),
+  budget: int("budget"),
+  travelDate: timestamp("travelDate"),
+  passengers: int("passengers"),
+  leadSource: varchar("leadSource", { length: 50 }).default("chatbot"), // 'chatbot', 'form', etc.
+  leadQuality: mysqlEnum("leadQuality", ["hot", "warm", "cold"]).default("warm"),
+  status: mysqlEnum("status", ["new", "contacted", "converted", "lost"]).default("new"),
+  notes: text("notes"), // Internal notes about the lead
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChatbotLead = typeof chatbotLeads.$inferSelect;
+export type InsertChatbotLead = typeof chatbotLeads.$inferInsert;
+
+/**
+ * Chatbot conversions table - tracks successful bookings and commissions
+ */
+export const chatbotConversions = mysqlTable("chatbot_conversions", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull(),
+  leadId: int("leadId"),
+  flightId: int("flightId"), // Which flight was booked
+  bookingValue: int("bookingValue").notNull(), // Total booking value in CZK
+  commissionRate: int("commissionRate").default(5), // Commission % (e.g., 5 for 5%)
+  commissionAmount: int("commissionAmount").notNull(), // Calculated commission in CZK
+  affiliateSource: varchar("affiliateSource", { length: 100 }), // 'pelikan', 'kiwi', etc.
+  affiliateClickId: varchar("affiliateClickId", { length: 255 }), // Tracking ID from affiliate
+  conversionType: mysqlEnum("conversionType", ["flight", "hotel", "package"]).default("flight"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ChatbotConversion = typeof chatbotConversions.$inferSelect;
+export type InsertChatbotConversion = typeof chatbotConversions.$inferInsert;
+
+/**
+ * Chatbot analytics table - daily aggregated metrics
+ */
+export const chatbotAnalytics = mysqlTable("chatbot_analytics", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: varchar("projectId", { length: 64 }).notNull(),
+  date: timestamp("date").notNull(),
+  // Conversation metrics
+  totalConversations: int("totalConversations").default(0),
+  activeConversations: int("activeConversations").default(0),
+  convertedConversations: int("convertedConversations").default(0),
+  abandonedConversations: int("abandonedConversations").default(0),
+  // Lead metrics
+  totalLeads: int("totalLeads").default(0),
+  hotLeads: int("hotLeads").default(0),
+  warmLeads: int("warmLeads").default(0),
+  coldLeads: int("coldLeads").default(0),
+  // Conversion metrics
+  totalConversions: int("totalConversions").default(0),
+  totalRevenue: int("totalRevenue").default(0), // Total booking value
+  totalCommissions: int("totalCommissions").default(0), // Total earned commissions
+  // Community metrics
+  fbGroupJoins: int("fbGroupJoins").default(0),
+  whatsappGroupJoins: int("whatsappGroupJoins").default(0),
+  // ROI metrics
+  conversionRate: int("conversionRate").default(0), // Percentage * 100 (e.g., 525 = 5.25%)
+  avgCommissionPerConversation: int("avgCommissionPerConversation").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ChatbotAnalytics = typeof chatbotAnalytics.$inferSelect;
+export type InsertChatbotAnalytics = typeof chatbotAnalytics.$inferInsert;
