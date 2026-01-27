@@ -309,9 +309,14 @@ export default function Home() {
           </div>
           
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl font-bold text-white mb-8" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-            Ušetřete do 50% na letu
-          </p>
+          <div className="mb-8">
+            <p className="text-xl md:text-2xl font-bold text-white mb-1" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+              Ušetřete do 50% na letu
+            </p>
+            <p className="text-xs md:text-sm text-white/90" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              Zpáteční letenka je již zahrnuta v ceně
+            </p>
+          </div>
           
           {/* Search Form Card */}
           <div className="bg-white rounded-xl shadow-2xl p-6 max-w-4xl mx-auto">
