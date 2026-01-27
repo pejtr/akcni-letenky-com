@@ -43,6 +43,13 @@
       "when": 1769504361950,
       "tag": "0005_gigantic_wolfpack",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1769506414878,
+      "tag": "0006_complete_warstar",
+      "breakpoints": true
     }
   ]
 }

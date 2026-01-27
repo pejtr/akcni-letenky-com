@@ -1,0 +1,61 @@
+CREATE TABLE `chatbot_personas` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`name` varchar(50) NOT NULL,
+	`displayName` varchar(100) NOT NULL,
+	`avatar` varchar(255),
+	`tone` enum('energetic','professional','friendly') NOT NULL,
+	`useEmoji` int DEFAULT 1,
+	`formalityLevel` enum('informal','neutral','formal') DEFAULT 'neutral',
+	`systemPromptAddition` text,
+	`greetingMessage` text NOT NULL,
+	`ctaStyle` varchar(100),
+	`targetAgeMin` int,
+	`targetAgeMax` int,
+	`targetAudience` varchar(255),
+	`isActive` int DEFAULT 1,
+	`weight` int DEFAULT 33,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `chatbot_personas_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `persona_assignments` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`sessionId` varchar(64) NOT NULL,
+	`personaId` int NOT NULL,
+	`userId` int,
+	`assignedAt` timestamp NOT NULL DEFAULT (now()),
+	`assignmentMethod` enum('random','targeted','manual') DEFAULT 'random',
+	`messagesExchanged` int DEFAULT 0,
+	`conversationDepth` int DEFAULT 0,
+	`linksClicked` int DEFAULT 0,
+	`offersViewed` int DEFAULT 0,
+	`converted` int DEFAULT 0,
+	`fbGroupJoined` int DEFAULT 0,
+	`sessionStartedAt` timestamp DEFAULT (now()),
+	`sessionEndedAt` timestamp,
+	`sessionDurationSeconds` int,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `persona_assignments_id` PRIMARY KEY(`id`),
+	CONSTRAINT `persona_assignments_sessionId_unique` UNIQUE(`sessionId`)
+);
+--> statement-breakpoint
+CREATE TABLE `persona_metrics` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`personaId` int NOT NULL,
+	`date` timestamp NOT NULL,
+	`totalSessions` int DEFAULT 0,
+	`totalMessages` int DEFAULT 0,
+	`avgMessagesPerSession` int DEFAULT 0,
+	`avgSessionDuration` int DEFAULT 0,
+	`engagementRate` int DEFAULT 0,
+	`clickThroughRate` int DEFAULT 0,
+	`conversionRate` int DEFAULT 0,
+	`fbJoinRate` int DEFAULT 0,
+	`totalClicks` int DEFAULT 0,
+	`totalConversions` int DEFAULT 0,
+	`estimatedRevenue` int DEFAULT 0,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `persona_metrics_id` PRIMARY KEY(`id`)
+);

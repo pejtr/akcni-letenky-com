@@ -505,3 +505,29 @@
 - [x] Add memory-aware system prompt instructions
 - [x] Update frontend to show memory indicator (🧠 Paměť badge)
 - [x] Write vitest tests for RAG system (44 tests passing)
+
+## Fix Destination Images and Airline Logos (URGENT)
+- [ ] Download correct destination thumbnail images from original website
+- [ ] Download correct airline logo images (Austrian, Emirates, Qatar, Ryanair, etc.)
+- [ ] Update Home.tsx with proper image paths and layout
+- [ ] Test all images display correctly
+
+## A/B Testing - 3 Chatbot Personas
+- [ ] Create database schema for persona assignment and tracking
+- [ ] Implement Persona A: "Lucka" - Energická cestovatelka (young, emoji, informal)
+- [ ] Implement Persona B: "Martin" - Profesionální poradce (formal, data-driven)
+- [ ] Implement Persona C: "Anička" - Přátelská průvodkyně (warm, empathetic)
+- [ ] Add automatic persona assignment for new users (33% each)
+- [ ] Track metrics: engagement rate, conversation depth, CTR, conversion rate
+- [ ] Update ChatbotWidget to show persona-specific avatar and name
+- [ ] Write vitest tests for A/B testing system
+
+## Pelikán Feed Pages (Levné letenky & Dovolené)
+- [x] Review do-italie.cz/nabidky design for reference
+- [x] Parse Pelikán XML feeds (flights and vacations)
+- [x] Create backend API for fetching and caching feed data (30min cache)
+- [x] Create /levne-letenky page with flight offers (filters, sorting, pagination)
+- [x] Create /dovolene page with vacation offers (filters, sorting, pagination)
+- [x] Update navigation menu (Dovolená → Dovolené)
+- [x] Add affiliate tracking to all offer clicks
+- [x] Write vitest tests for feed parsing (51 tests passing)

@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Phone, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -122,55 +123,55 @@ export default function Home() {
     return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
   };
 
-  // Popular destinations data with original images
+  // Popular destinations data with correct images
   const popularDestinations = [
-    { city: "Londýn", price: 733, country: "Anglie", image: "/dest-london.webp" },
-    { city: "New York", price: 7490, country: "USA", image: "/dest-newyork.webp" },
-    { city: "Afrika", price: 7990, country: "Afrika", image: "/dest-africa.webp" },
-    { city: "Maroko", price: 1426, country: "Maroko", image: "/dest-maroko.webp" },
-    { city: "Paříž", price: 1027, country: "Francie", image: "/dest-paris.webp" },
-    { city: "Vietnam", price: 7990, country: "Vietnam", image: "/dest-vietnam.webp" },
-    { city: "Bali", price: 12790, country: "Indonésie", image: "/dest-bali.webp" },
-    { city: "Srí Lanka", price: 13990, country: "Srí Lanka", image: "/dest-srilanka.webp" },
-    { city: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/dest-dubai.webp" },
-    { city: "Thajsko", price: 12390, country: "Thajsko", image: "/dest-thailand.webp" },
-    { city: "Santorini", price: 1791, country: "Řecko", image: "/dest-santorini.webp" },
-    { city: "Jordánsko", price: 1114, country: "Ammán", image: "/dest-jordan.webp" },
-    { city: "Řím", price: 712, country: "Itálie", image: "/dest-rome.webp" },
-    { city: "Island", price: 1460, country: "Island", image: "/dest-iceland.webp" },
-    { city: "Miami", price: 9490, country: "USA", image: "/dest-miami.webp" },
-    { city: "Barcelona", price: 746, country: "Španělsko", image: "/dest-barcelona.webp" },
+    { city: "Londýn", price: 733, country: "Anglie", image: "/destinations/london.jpg" },
+    { city: "New York", price: 7490, country: "USA", image: "/destinations/newyork.jpg" },
+    { city: "Afrika", price: 7990, country: "Afrika", image: "/destinations/africa.jpg" },
+    { city: "Maroko", price: 1426, country: "Maroko", image: "/destinations/morocco.jpg" },
+    { city: "Paříž", price: 1027, country: "Francie", image: "/destinations/paris.jpg" },
+    { city: "Vietnam", price: 7990, country: "Vietnam", image: "/destinations/vietnam.jpg" },
+    { city: "Bali", price: 12790, country: "Indonésie", image: "/destinations/bali.jpg" },
+    { city: "Srí Lanka", price: 13990, country: "Srí Lanka", image: "/destinations/srilanka.jpg" },
+    { city: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/destinations/dubai.jpg" },
+    { city: "Thajsko", price: 12390, country: "Thajsko", image: "/destinations/thailand.jpg" },
+    { city: "Santorini", price: 1791, country: "Řecko", image: "/destinations/santorini.jpg" },
+    { city: "Jordánsko", price: 1114, country: "Ammán", image: "/destinations/jordan.jpg" },
+    { city: "Řím", price: 712, country: "Itálie", image: "/destinations/rome.jpg" },
+    { city: "Island", price: 1460, country: "Island", image: "/destinations/iceland.jpg" },
+    { city: "Miami", price: 9490, country: "USA", image: "/destinations/miami.jpg" },
+    { city: "Barcelona", price: 746, country: "Španělsko", image: "/destinations/barcelona.jpg" },
   ];
 
-  // Featured European cities with original images
+  // Featured European cities with correct images
   const featuredCities = [
     {
       from: "Praha",
       to: "Londýn",
       price: 733,
       description: "Londýn – obchodní i kulturní centrum plné příležitostí a zážitků.",
-      image: "/featured-london.webp",
+      image: "/destinations/london.jpg",
     },
     {
       from: "Praha",
       to: "Paříž",
       price: 1027,
       description: "Město lásky, umění, módy i gastronomie.",
-      image: "/featured-paris.webp",
+      image: "/destinations/paris.jpg",
     },
     {
       from: "Praha",
       to: "Řím",
       price: 712,
       description: "Věčné město – památky, historie a skvělé jídlo.",
-      image: "/featured-rome.webp",
+      image: "/destinations/rome.jpg",
     },
     {
       from: "Praha",
       to: "Barcelona",
       price: 946,
       description: "Gaudí, tapas a městské pláže. Skvělá volba po celý rok.",
-      image: "/featured-barcelona.webp",
+      image: "/destinations/barcelona.jpg",
     },
   ];
 
@@ -202,20 +203,20 @@ export default function Home() {
     }
   ];
 
-  // Airlines data with original logos
+  // Airlines data with correct logos
   const airlines = [
-    { name: "Austrian Airlines", logo: "/logo-austrian.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/austrian-airlines-letenky/" },
-    { name: "Emirates", logo: "/logo-emirates.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/emirates-letenky/" },
-    { name: "Qatar Airways", logo: "/logo-qatar.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/qatar-airways-letenky/" },
-    { name: "Ryanair", logo: "/logo-ryanair.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/ryanair-letenky/" },
-    { name: "Air France", logo: "/logo-airfrance.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/air-france-letenky/" },
-    { name: "Lufthansa", logo: "/logo-lufthansa.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/lufthansa-letenky/" },
-    { name: "Icelandair", logo: "/logo-icelandair.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/icelandair-letenky/" },
-    { name: "Turkish Airlines", logo: "/logo-turkish.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/turkish-airlines-letenky/" },
-    { name: "KLM", logo: "/logo-klm.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/klm-letenky/" },
-    { name: "British Airways", logo: "/logo-british.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/british-airways-letenky/" },
-    { name: "Wizz Air", logo: "/logo-wizzair.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/wizzair-letenky/" },
-    { name: "LOT", logo: "/logo-lot.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/lot-letenky/" },
+    { name: "Austrian Airlines", logo: "/airlines/austrian.png", url: "https://www.austrian.com/" },
+    { name: "Emirates", logo: "/airlines/emirates.png", url: "https://www.emirates.com/" },
+    { name: "Qatar Airways", logo: "/airlines/qatar.jpg", url: "https://www.qatarairways.com/" },
+    { name: "Ryanair", logo: "/airlines/ryanair.png", url: "https://www.ryanair.com/" },
+    { name: "Air France", logo: "/airlines/airfrance.jpg", url: "https://www.airfrance.com/" },
+    { name: "Lufthansa", logo: "/airlines/lufthansa.png", url: "https://www.lufthansa.com/" },
+    { name: "Icelandair", logo: "/airlines/icelandair.png", url: "https://www.icelandair.com/" },
+    { name: "Turkish Airlines", logo: "/airlines/turkish.png", url: "https://www.turkishairlines.com/" },
+    { name: "KLM", logo: "/airlines/klm.jpeg", url: "https://www.klm.com/" },
+    { name: "British Airways", logo: "/airlines/british.png", url: "https://www.britishairways.com/" },
+    { name: "Wizz Air", logo: "/airlines/wizz.png", url: "https://wizzair.com/" },
+    { name: "LOT", logo: "/airlines/lot.jpg", url: "https://www.lot.com/" },
   ];
 
   return (
@@ -257,19 +258,19 @@ export default function Home() {
 
           {/* Navigation */}
           <nav role="navigation" aria-label="Main navigation" className="hidden md:flex items-center gap-6">
-            <a href="/" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            <Link href="/levne-letenky" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               💸 LEVNÉ LETENKY
-            </a>
-            <a href="/dovolena" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
-              ⭐ DOVOLENÁ
-            </a>
-            <a href="/blog" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            </Link>
+            <Link href="/dovolene" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+              ⭐ DOVOLENÉ
+            </Link>
+            <Link href="/blog" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               📝 BLOG
-            </a>
-            <a href="/aerolinky" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            </Link>
+            <a href="#airlines" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               ✈️ AEROLINKY
             </a>
-            <a href="/rezervace" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            <a href="#search" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               🚀 RYCHLÁ REZERVACE
             </a>
           </nav>

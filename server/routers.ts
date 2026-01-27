@@ -33,6 +33,13 @@ import {
 } from "./chatbot";
 import { generateDailyArticles } from "./articleGenerator";
 import { adminAnalyticsRouter } from "./adminAnalytics";
+import {
+  fetchFlights,
+  fetchVacations,
+  getCacheStatus,
+  type FlightOffer,
+  type VacationOffer,
+} from "./pelikanFeed";
 
 export const appRouter = router({
   system: systemRouter,
@@ -328,6 +335,97 @@ export const appRouter = router({
 
   // Admin analytics dashboard
   admin: adminAnalyticsRouter,
+
+  // Pelikán feed endpoints
+  pelikan: router({
+    // Get all flights from Pelikán feed
+    getFlights: publicProcedure
+      .input(
+        z.object({
+          country: z.string().optional(),
+          departure: z.string().optional(),
+          sortBy: z.enum(["price_asc", "price_desc", "default"]).default("default"),
+          limit: z.number().default(100),
+        }).optional()
+      )
+      .query(async ({ input }) => {
+        let flights = await fetchFlights();
+        
+        // Filter by country
+        if (input?.country) {
+          flights = flights.filter(f => 
+            f.country.toLowerCase().includes(input.country!.toLowerCase())
+          );
+        }
+        
+        // Filter by departure
+        if (input?.departure) {
+          flights = flights.filter(f => 
+            f.departure.toLowerCase().includes(input.departure!.toLowerCase())
+          );
+        }
+        
+        // Sort
+        if (input?.sortBy === "price_asc") {
+          flights = [...flights].sort((a, b) => a.salePrice - b.salePrice);
+        } else if (input?.sortBy === "price_desc") {
+          flights = [...flights].sort((a, b) => b.salePrice - a.salePrice);
+        }
+        
+        // Limit
+        return flights.slice(0, input?.limit || 100);
+      }),
+
+    // Get all vacations from Pelikán feed
+    getVacations: publicProcedure
+      .input(
+        z.object({
+          country: z.string().optional(),
+          sortBy: z.enum(["price_asc", "price_desc", "default"]).default("default"),
+          limit: z.number().default(100),
+        }).optional()
+      )
+      .query(async ({ input }) => {
+        let vacations = await fetchVacations();
+        
+        // Filter by country
+        if (input?.country) {
+          vacations = vacations.filter(v => 
+            v.country.toLowerCase().includes(input.country!.toLowerCase())
+          );
+        }
+        
+        // Sort
+        if (input?.sortBy === "price_asc") {
+          vacations = [...vacations].sort((a, b) => a.salePrice - b.salePrice);
+        } else if (input?.sortBy === "price_desc") {
+          vacations = [...vacations].sort((a, b) => b.salePrice - a.salePrice);
+        }
+        
+        // Limit
+        return vacations.slice(0, input?.limit || 100);
+      }),
+
+    // Get cache status (admin only)
+    getCacheStatus: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      return getCacheStatus();
+    }),
+
+    // Force refresh feeds (admin only)
+    refreshFeeds: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      await Promise.all([
+        fetchFlights(true),
+        fetchVacations(true),
+      ]);
+      return { success: true, status: getCacheStatus() };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

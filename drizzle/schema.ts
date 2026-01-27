@@ -348,3 +348,94 @@ export const knowledgeBase = mysqlTable("knowledge_base", {
 
 export type KnowledgeBase = typeof knowledgeBase.$inferSelect;
 export type InsertKnowledgeBase = typeof knowledgeBase.$inferInsert;
+
+
+/**
+ * Chatbot personas for A/B testing - defines different chatbot personalities
+ */
+export const chatbotPersonas = mysqlTable("chatbot_personas", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 50 }).notNull(), // 'lucka', 'martin', 'anicka'
+  displayName: varchar("displayName", { length: 100 }).notNull(), // 'Lucka', 'Martin', 'Anička'
+  avatar: varchar("avatar", { length: 255 }), // Path to avatar image
+  // Personality configuration
+  tone: mysqlEnum("tone", ["energetic", "professional", "friendly"]).notNull(),
+  useEmoji: int("useEmoji").default(1), // 1 = yes, 0 = no
+  formalityLevel: mysqlEnum("formalityLevel", ["informal", "neutral", "formal"]).default("neutral"),
+  // System prompt additions
+  systemPromptAddition: text("systemPromptAddition"), // Additional instructions for this persona
+  greetingMessage: text("greetingMessage").notNull(), // First message when chat opens
+  // CTA style
+  ctaStyle: varchar("ctaStyle", { length: 100 }), // e.g., "Jedu do toho! 🔥" vs "Zobrazit nabídky"
+  // Target audience
+  targetAgeMin: int("targetAgeMin"),
+  targetAgeMax: int("targetAgeMax"),
+  targetAudience: varchar("targetAudience", { length: 255 }), // Description of target audience
+  // A/B test configuration
+  isActive: int("isActive").default(1), // 1 = active in rotation
+  weight: int("weight").default(33), // Weight in percentage for distribution (33 = 33%)
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChatbotPersona = typeof chatbotPersonas.$inferSelect;
+export type InsertChatbotPersona = typeof chatbotPersonas.$inferInsert;
+
+/**
+ * Persona assignments - tracks which persona is assigned to each session
+ */
+export const personaAssignments = mysqlTable("persona_assignments", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull().unique(), // Unique session identifier
+  personaId: int("personaId").notNull(), // Reference to chatbotPersonas
+  userId: int("userId"), // Optional - if user is logged in
+  // Assignment metadata
+  assignedAt: timestamp("assignedAt").defaultNow().notNull(),
+  assignmentMethod: mysqlEnum("assignmentMethod", ["random", "targeted", "manual"]).default("random"),
+  // Engagement metrics for this assignment
+  messagesExchanged: int("messagesExchanged").default(0),
+  conversationDepth: int("conversationDepth").default(0), // Number of back-and-forth exchanges
+  linksClicked: int("linksClicked").default(0),
+  offersViewed: int("offersViewed").default(0),
+  converted: int("converted").default(0), // 1 if user converted (clicked affiliate link)
+  fbGroupJoined: int("fbGroupJoined").default(0),
+  // Session duration
+  sessionStartedAt: timestamp("sessionStartedAt").defaultNow(),
+  sessionEndedAt: timestamp("sessionEndedAt"),
+  sessionDurationSeconds: int("sessionDurationSeconds"),
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PersonaAssignment = typeof personaAssignments.$inferSelect;
+export type InsertPersonaAssignment = typeof personaAssignments.$inferInsert;
+
+/**
+ * Persona metrics - aggregated daily metrics per persona for A/B comparison
+ */
+export const personaMetrics = mysqlTable("persona_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  personaId: int("personaId").notNull(),
+  date: timestamp("date").notNull(),
+  // Engagement metrics
+  totalSessions: int("totalSessions").default(0),
+  totalMessages: int("totalMessages").default(0),
+  avgMessagesPerSession: int("avgMessagesPerSession").default(0), // * 100 for precision
+  avgSessionDuration: int("avgSessionDuration").default(0), // In seconds
+  // Conversion metrics
+  engagementRate: int("engagementRate").default(0), // % who replied to first message * 100
+  clickThroughRate: int("clickThroughRate").default(0), // % who clicked affiliate links * 100
+  conversionRate: int("conversionRate").default(0), // % who converted * 100
+  fbJoinRate: int("fbJoinRate").default(0), // % who joined FB group * 100
+  // Revenue metrics
+  totalClicks: int("totalClicks").default(0),
+  totalConversions: int("totalConversions").default(0),
+  estimatedRevenue: int("estimatedRevenue").default(0), // In CZK
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PersonaMetrics = typeof personaMetrics.$inferSelect;
+export type InsertPersonaMetrics = typeof personaMetrics.$inferInsert;
