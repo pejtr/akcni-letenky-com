@@ -74,20 +74,48 @@ export default function Home() {
     },
   ];
 
+  // FAQ data for rich snippets
+  const faqData = [
+    {
+      question: "Jak najít nejlevnější letenky?",
+      answer: "Nejlevnější letenky najdete porovnáním cen napříč aerolinkami. Doporučujeme rezervovat 2-3 měsíce předem, být flexibilní s daty a využívat naše denní akční nabídky. Sledujte také naši FB skupinu s 33 500 členy pro exkluzivní tipy."
+    },
+    {
+      question: "Jsou uvedené ceny konečné?",
+      answer: "Ano, zobrazené ceny jsou obvykle konečné včetně daní a poplatků. Další služby jako zavazadla, výběr sedadla nebo strava mohou být zpoplatněny zvlášť u dopravce nebo agentury."
+    },
+    {
+      question: "Jak funguje rezervace letenek?",
+      answer: "Po výběru letu vás přesměrujeme na web partnera (Pelikán, Kiwi.com), kde dokončíte rezervaci. Platba probíhá přímo u partnera, který zajistí vystavení letenek a potvrzení."
+    },
+    {
+      question: "Mohu letenku stornovat nebo změnit?",
+      answer: "Podmínky storna a změn závisí na tarifu a aerolince. Levné tarify jsou obvykle nevratné, dražší tarify umožňují změny za poplatek. Doporučujeme cestovní pojištění pro případ nečekaných událostí."
+    },
+    {
+      question: "Kdy je nejlepší čas na nákup letenek?",
+      answer: "Obecně platí: čím dříve, tím levněji. Pro evropské destinace rezervujte 1-2 měsíce předem, pro dálkové lety 3-6 měsíců. Last minute nabídky mohou být výhodné, ale výběr je omezený."
+    },
+    {
+      question: "Jaké dokumenty potřebuji k cestě?",
+      answer: "Pro cesty po EU stačí občanský průkaz. Pro mimoevropské destinace potřebujete platný cestovní pas (minimálně 6 měsíců platnosti). Některé země vyžadují víza - ověřte si požadavky před cestou."
+    }
+  ];
+
   // Airlines data with original logos
   const airlines = [
-    { name: "Austrian Airlines", logo: "/logo-austrian.webp" },
-    { name: "Emirates", logo: "/logo-emirates.webp" },
-    { name: "Qatar Airways", logo: "/logo-qatar.webp" },
-    { name: "Ryanair", logo: "/logo-ryanair.webp" },
-    { name: "Air France", logo: "/logo-airfrance.webp" },
-    { name: "Lufthansa", logo: "/logo-lufthansa.webp" },
-    { name: "Icelandair", logo: "/logo-icelandair.webp" },
-    { name: "Turkish Airlines", logo: "/logo-turkish.webp" },
-    { name: "KLM", logo: "/logo-klm.webp" },
-    { name: "British Airways", logo: "/logo-british.webp" },
-    { name: "Wizz Air", logo: "/logo-wizzair.webp" },
-    { name: "LOT", logo: "/logo-lot.webp" },
+    { name: "Austrian Airlines", logo: "/logo-austrian.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/austrian-airlines-letenky/" },
+    { name: "Emirates", logo: "/logo-emirates.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/emirates-letenky/" },
+    { name: "Qatar Airways", logo: "/logo-qatar.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/qatar-airways-letenky/" },
+    { name: "Ryanair", logo: "/logo-ryanair.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/ryanair-letenky/" },
+    { name: "Air France", logo: "/logo-airfrance.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/air-france-letenky/" },
+    { name: "Lufthansa", logo: "/logo-lufthansa.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/lufthansa-letenky/" },
+    { name: "Icelandair", logo: "/logo-icelandair.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/icelandair-letenky/" },
+    { name: "Turkish Airlines", logo: "/logo-turkish.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/turkish-airlines-letenky/" },
+    { name: "KLM", logo: "/logo-klm.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/klm-letenky/" },
+    { name: "British Airways", logo: "/logo-british.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/british-airways-letenky/" },
+    { name: "Wizz Air", logo: "/logo-wizzair.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/wizzair-letenky/" },
+    { name: "LOT", logo: "/logo-lot.webp", url: "https://www.akcni-letenky.com/letecke-spolecnosti/lot-letenky/" },
   ];
 
   return (
@@ -146,61 +174,90 @@ export default function Home() {
           </nav>
 
           {/* Phone */}
-          <div className="flex items-center gap-2 text-[#FF6B35]">
+          <div className="flex items-center gap-2 text-[#E91E63]">
             <Phone className="w-4 h-4" />
             <span className="font-semibold">223 340 510</span>
           </div>
         </div>
       </header>
 
-      {/* Yellow Banner with Blue Text */}
-      <div className="bg-[#FFD700] py-6 mt-16">
-        <div className="container flex justify-center">
-          <div className="bg-[#FFD700] px-8 py-4 rounded-lg inline-block">
-            <h1 className="text-3xl md:text-4xl font-black text-center text-[#003087] tracking-wide">
+      {/* Hero Section with Background Image */}
+      <section className="relative mt-16 min-h-[500px] md:min-h-[600px] flex items-center justify-center">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/hero-coastal.jpg')" }}
+        >
+          {/* Gradient overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-orange-400/30 via-transparent to-black/20" />
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 container text-center px-4">
+          {/* Yellow Banner */}
+          <div className="inline-block bg-[#FFD700] px-8 py-4 rounded-lg mb-4 shadow-lg">
+            <h1 className="text-2xl md:text-4xl font-black text-[#003087] tracking-wide">
               NEJLEVNĚJŠÍ AKČNÍ LETENKY
             </h1>
           </div>
-        </div>
-      </div>
-
-      {/* Hero Search Form */}
-      <div className="bg-white py-8 border-b border-border">
-        <div className="container max-w-4xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <label className="block text-xs text-muted-foreground mb-1">Kam se chystáte?</label>
-              <input
-                type="text"
-                placeholder="Např. Barcelona"
-                className="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl font-bold text-white mb-8" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            Ušetřete do 50% na letu
+          </p>
+          
+          {/* Search Form Card */}
+          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative text-left">
+                <label className="block text-xs text-muted-foreground mb-1">kam se chystáte?</label>
+                <input
+                  type="text"
+                  placeholder="Napiš. Barcelona"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50"
+                />
+              </div>
+              <div className="relative text-left">
+                <label className="block text-xs text-muted-foreground mb-1">kdy?</label>
+                <input
+                  type="text"
+                  placeholder="dd.mm.rrrr"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50"
+                />
+              </div>
+              <div className="relative text-left">
+                <label className="block text-xs text-muted-foreground mb-1">kolik osob?</label>
+                <select className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 appearance-none">
+                  <option value="1">1 osoba</option>
+                  <option value="2">2 osoby</option>
+                  <option value="3">3 osoby</option>
+                  <option value="4">4 osoby</option>
+                  <option value="5">5+ osob</option>
+                </select>
+              </div>
+              <div className="flex items-end">
+                <Button className="w-full bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-bold py-3 rounded-md text-sm">
+                  VYHLEDAT DOVOLENOU
+                </Button>
+              </div>
             </div>
-            <div className="relative">
-              <label className="block text-xs text-muted-foreground mb-1">Kdy?</label>
-              <input
-                type="date"
-                className="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          </div>
+          
+          {/* Trust Badges */}
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <div className="bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
+              <span className="text-[#FF6B35] font-bold text-lg">500+</span>
+              <span className="text-xs text-gray-600">Recenzí</span>
             </div>
-            <div className="relative">
-              <label className="block text-xs text-muted-foreground mb-1">Kolik osob?</label>
-              <select className="w-full px-4 py-3 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="1">1 osoba</option>
-                <option value="2">2 osoby</option>
-                <option value="3">3 osoby</option>
-                <option value="4">4 osoby</option>
-                <option value="5">5+ osob</option>
-              </select>
+            <div className="bg-white rounded-full p-3 shadow-lg">
+              <span className="text-2xl">⭐</span>
             </div>
-            <div className="flex items-end">
-              <Button className="w-full bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold py-3 rounded-md">
-                VYHLEDAT DOVOLENOU
-              </Button>
+            <div className="bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
+              <span className="text-blue-600 font-bold">Certifikace</span>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Category Links */}
       <div className="bg-white py-4 border-b border-border">
@@ -278,25 +335,25 @@ export default function Home() {
               <a
                 key={index}
                 href={`#${dest.city}`}
-                className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-all group"
+                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all group p-4"
               >
-                <div className="flex items-start gap-3 mb-3">
+                <div className="flex items-center gap-4">
                   <img
                     src={dest.image}
                     alt={`${dest.city}, ${dest.country}`}
-                    className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                    className="w-20 h-20 object-cover rounded-md flex-shrink-0"
                     loading="lazy"
                   />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors mb-1">
+                    <h3 className="font-bold text-lg mb-1 group-hover:underline">
                       {dest.city}
                     </h3>
-                    <p className="text-sm text-muted-foreground">od {formatPrice(dest.price)}</p>
+                    <p className="text-sm text-gray-500">od {formatPrice(dest.price)}</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-blue-600 transition-colors flex-shrink-0 mt-1" />
+                  <ChevronRight className="w-6 h-6 text-gray-400 flex-shrink-0" />
                 </div>
-                <div className="text-center">
-                  <p className="text-sm font-semibold text-foreground">{dest.country}</p>
+                <div className="mt-3 text-center">
+                  <p className="text-sm font-bold text-black">{dest.country}</p>
                 </div>
               </a>
             ))}
@@ -327,17 +384,63 @@ export default function Home() {
             Letecké společnosti
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {airlines.map((airline, index) => (
-              <div
+              <a
                 key={index}
-                className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow flex flex-col items-center justify-center gap-2"
+                href={`#${airline.name.toLowerCase().replace(/\s+/g, '-')}`}
+                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all p-4 flex items-center gap-3 group"
               >
-                <span className="text-3xl">{airline.logo}</span>
-                <span className="text-xs text-center font-medium text-muted-foreground">
+                <img
+                  src={airline.logo}
+                  alt={`${airline.name} logo`}
+                  className="w-12 h-12 object-contain flex-shrink-0"
+                  loading="lazy"
+                />
+                <span className="text-sm font-medium text-blue-600 group-hover:underline">
                   {airline.name}
                 </span>
-              </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section with Schema.org FAQPage */}
+      <section aria-labelledby="faq" className="py-12 bg-white">
+        {/* FAQPage Schema.org JSON-LD */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqData.map(faq => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+              }
+            }))
+          })}
+        </script>
+        <div className="container max-w-4xl">
+          <h2 id="faq" className="text-2xl font-bold text-center mb-8">
+            Často kladené otázky
+          </h2>
+          <div className="space-y-4">
+            {faqData.map((faq, index) => (
+              <details
+                key={index}
+                className="bg-[#F5F7FA] rounded-lg shadow-sm group"
+              >
+                <summary className="flex items-center justify-between p-5 cursor-pointer list-none font-semibold text-lg hover:bg-gray-100 rounded-lg transition-colors">
+                  <span>{faq.question}</span>
+                  <span className="text-[#E91E63] text-2xl group-open:rotate-45 transition-transform">+</span>
+                </summary>
+                <div className="px-5 pb-5 text-muted-foreground leading-relaxed">
+                  {faq.answer}
+                </div>
+              </details>
             ))}
           </div>
         </div>

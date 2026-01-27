@@ -375,3 +375,32 @@
 - [x] Make banner always visible (fixed position)
 - [x] Ensure proper z-index hierarchy (below main menu, above content)
 - [ ] Test on desktop and mobile
+
+## Fix Destination and Airline Cards to Match Original Design
+- [ ] Update destination cards with white background and gray shadow
+- [ ] Add hover effect with underline on destination name
+- [ ] Ensure proper layout (image left, text center, arrow right)
+- [ ] Update airline cards with white background
+- [ ] Add blue text color for airline names
+- [ ] Add hover effect with blue underline on airline names
+- [ ] Verify all destination links match www.akcni-letenky.com
+- [ ] Verify all airline links match www.akcni-letenky.com
+- [ ] Test hover effects on desktop and mobile
+
+## Change Magenta to Gold Color
+- [x] Keep magenta as CTA color (matches original website)
+- [x] Update phone number color to magenta (#E91E63)
+
+## FAQ Schema Markup for Rich Snippets
+- [x] Create FAQ section with 6 common questions about flight booking
+- [x] Implement Schema.org FAQPage JSON-LD structured data
+- [x] Add FAQ component to homepage with accordion UI
+- [ ] Write vitest tests for FAQ schema
+
+## Hero Section Redesign (Match Original Website)
+- [x] Add full-width hero background image (coastal city Vernazza, Cinque Terre)
+- [x] Update yellow banner with "NEJLEVNĚJŠÍ AKČNÍ LETENKY" text
+- [x] Add white subtitle "Ušetřete do 50% na letu" with text shadow
+- [x] Move search form into white card overlay on hero
+- [x] Add trust badges (500+ Recenzí, hvězdička, Certifikace)
+- [x] Test hero section on desktop
