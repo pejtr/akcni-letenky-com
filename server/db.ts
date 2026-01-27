@@ -1,4 +1,4 @@
-import { eq, desc, and, gte, lte } from "drizzle-orm";
+import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import * as schema from "../drizzle/schema";
 import { InsertUser, users, flights, Flight, InsertFlight, wishlists, Wishlist, InsertWishlist, offerViews, OfferView, InsertOfferView } from "../drizzle/schema";
@@ -325,6 +325,162 @@ export async function getFeaturedDestinations(limit: number = 8) {
     .select()
     .from(destinations)
     .orderBy(desc(destinations.popularityScore))
+    .limit(limit);
+
+  return result;
+}
+
+
+// Affiliate Click Tracking
+
+export async function recordAffiliateClick(data: {
+  destination: string;
+  destinationSlug: string;
+  source: string;
+  affiliatePartner?: string;
+  affiliateUrl: string;
+  userAgent?: string;
+  referrer?: string;
+  sessionId?: string;
+  userId?: number;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const { affiliateClicks } = await import("../drizzle/schema");
+
+  const result = await db.insert(affiliateClicks).values({
+    destination: data.destination,
+    destinationSlug: data.destinationSlug,
+    source: data.source,
+    affiliatePartner: data.affiliatePartner || "kiwi",
+    affiliateUrl: data.affiliateUrl,
+    userAgent: data.userAgent || null,
+    referrer: data.referrer || null,
+    sessionId: data.sessionId || null,
+    userId: data.userId || null,
+  });
+
+  return result;
+}
+
+export async function getAffiliateClickStats() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const { affiliateClicks } = await import("../drizzle/schema");
+
+  // Get total clicks
+  const totalResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(affiliateClicks);
+  const totalClicks = totalResult[0]?.count || 0;
+
+  // Get today's clicks
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(affiliateClicks)
+    .where(gte(affiliateClicks.createdAt, today));
+  const todayClicks = todayResult[0]?.count || 0;
+
+  // Get this week's clicks
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(affiliateClicks)
+    .where(gte(affiliateClicks.createdAt, weekAgo));
+  const weekClicks = weekResult[0]?.count || 0;
+
+  // Get this month's clicks
+  const monthAgo = new Date();
+  monthAgo.setDate(monthAgo.getDate() - 30);
+  const monthResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(affiliateClicks)
+    .where(gte(affiliateClicks.createdAt, monthAgo));
+  const monthClicks = monthResult[0]?.count || 0;
+
+  return {
+    total: totalClicks,
+    today: todayClicks,
+    thisWeek: weekClicks,
+    thisMonth: monthClicks,
+  };
+}
+
+export async function getTopDestinationsByClicks(limit: number = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { affiliateClicks } = await import("../drizzle/schema");
+
+  const result = await db
+    .select({
+      destination: affiliateClicks.destination,
+      destinationSlug: affiliateClicks.destinationSlug,
+      clicks: sql<number>`count(*)`,
+    })
+    .from(affiliateClicks)
+    .groupBy(affiliateClicks.destination, affiliateClicks.destinationSlug)
+    .orderBy(desc(sql`count(*)`))
+    .limit(limit);
+
+  return result;
+}
+
+export async function getClicksBySource() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { affiliateClicks } = await import("../drizzle/schema");
+
+  const result = await db
+    .select({
+      source: affiliateClicks.source,
+      clicks: sql<number>`count(*)`,
+    })
+    .from(affiliateClicks)
+    .groupBy(affiliateClicks.source)
+    .orderBy(desc(sql`count(*)`));
+
+  return result;
+}
+
+export async function getClickTrend(days: number = 30) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { affiliateClicks } = await import("../drizzle/schema");
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  const result = await db
+    .select({
+      date: sql<string>`DATE(createdAt)`,
+      clicks: sql<number>`count(*)`,
+    })
+    .from(affiliateClicks)
+    .where(gte(affiliateClicks.createdAt, startDate))
+    .groupBy(sql`DATE(createdAt)`)
+    .orderBy(sql`DATE(createdAt)`);
+
+  return result;
+}
+
+export async function getRecentClicks(limit: number = 20) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { affiliateClicks } = await import("../drizzle/schema");
+
+  const result = await db
+    .select()
+    .from(affiliateClicks)
+    .orderBy(desc(affiliateClicks.createdAt))
     .limit(limit);
 
   return result;

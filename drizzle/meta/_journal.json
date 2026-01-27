@@ -29,6 +29,13 @@
       "when": 1769464732304,
       "tag": "0003_minor_the_hood",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1769503216243,
+      "tag": "0004_bored_sentry",
+      "breakpoints": true
     }
   ]
 }

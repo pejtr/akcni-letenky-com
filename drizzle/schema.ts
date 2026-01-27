@@ -268,3 +268,28 @@ export const chatbotAnalytics = mysqlTable("chatbot_analytics", {
 
 export type ChatbotAnalytics = typeof chatbotAnalytics.$inferSelect;
 export type InsertChatbotAnalytics = typeof chatbotAnalytics.$inferInsert;
+
+
+/**
+ * Affiliate clicks table - tracks all clicks on affiliate links
+ */
+export const affiliateClicks = mysqlTable("affiliate_clicks", {
+  id: int("id").autoincrement().primaryKey(),
+  destination: varchar("destination", { length: 100 }).notNull(), // City name
+  destinationSlug: varchar("destinationSlug", { length: 100 }).notNull(), // URL slug
+  source: varchar("source", { length: 50 }).notNull(), // 'featured', 'grid', 'search', 'banner'
+  affiliatePartner: varchar("affiliatePartner", { length: 50 }).default("kiwi"), // 'kiwi', 'pelikan', etc.
+  affiliateUrl: text("affiliateUrl").notNull(), // Full URL that was clicked
+  // User info (anonymous)
+  userAgent: text("userAgent"),
+  referrer: text("referrer"),
+  ipCountry: varchar("ipCountry", { length: 2 }), // Country code
+  // Session tracking
+  sessionId: varchar("sessionId", { length: 64 }), // To group clicks by session
+  userId: int("userId"), // If logged in
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AffiliateClick = typeof affiliateClicks.$inferSelect;
+export type InsertAffiliateClick = typeof affiliateClicks.$inferInsert;

@@ -347,9 +347,14 @@
 - [ ] Test API with multiple project instances
 
 ## Admin Analytics Dashboard
-- [ ] Create /admin route with authentication
-- [ ] Build dashboard layout with key metrics cards
-- [ ] Implement real-time conversion rate tracking
+- [x] Create /admin route with authentication
+- [x] Build dashboard layout with key metrics cards
+- [x] Implement affiliate click tracking (today, week, month, total)
+- [x] Add top destinations by clicks chart
+- [x] Add clicks by source breakdown (featured, grid, search)
+- [x] Add click trend chart (30 days)
+- [x] Add recent clicks list
+- [x] Write vitest tests for affiliate tracking (32 tests passing)
 - [ ] Add ROI calculator (commission revenue vs. costs)
 - [ ] Display top destinations by clicks and conversions
 - [ ] Show chatbot conversation statistics
@@ -466,3 +471,14 @@
 - [x] Copy new logo to public folder
 - [x] Update header to use new logo image
 - [x] Test logo display
+
+## Admin Dashboard - Affiliate Click Tracking
+- [ ] Create affiliateClicks database table (destination, source, timestamp, userAgent)
+- [ ] Create tRPC endpoints for recording clicks and retrieving analytics
+- [ ] Add click tracking to all affiliate links on homepage
+- [ ] Create Admin Dashboard page with:
+  - [ ] Total clicks overview (today, week, month, all time)
+  - [ ] Top destinations by clicks
+  - [ ] Click trend chart (last 30 days)
+  - [ ] Click source breakdown (featured/grid/search)
+- [ ] Write vitest tests for click tracking

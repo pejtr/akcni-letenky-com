@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Phone, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SocialProofWidget from "@/components/SocialProofWidget";
 
@@ -56,6 +57,20 @@ export default function Home() {
   const [departureDate, setDepartureDate] = useState("");
   const [passengers, setPassengers] = useState("1");
   
+  // Affiliate click tracking
+  const trackClickMutation = trpc.affiliate.trackClick.useMutation();
+  
+  // Helper function to track affiliate clicks
+  const trackAffiliateClick = (dest: string, destSlug: string, source: string, url: string) => {
+    trackClickMutation.mutate({
+      destination: dest,
+      destinationSlug: destSlug,
+      source: source,
+      affiliatePartner: "kiwi",
+      affiliateUrl: url,
+    });
+  };
+  
   // Handle search - redirect to Kiwi.com with affiliate link
   const handleSearch = () => {
     const destLower = destination.toLowerCase().trim();
@@ -79,6 +94,9 @@ export default function Home() {
     }
     
     kiwiUrl += `?adults=${passengers}`;
+    
+    // Track the click
+    trackAffiliateClick(destination, destSlug, "search", kiwiUrl);
     
     // Open in new tab
     window.open(kiwiUrl, "_blank");
@@ -391,6 +409,7 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow block"
+                  onClick={() => trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl)}
                 >
                   <div
                     className="h-48 bg-cover bg-center"
@@ -439,6 +458,7 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all group p-4"
+                  onClick={() => trackAffiliateClick(dest.city, destSlug, "grid", kiwiUrl)}
                 >
                   <div className="flex items-center gap-4">
                     <img

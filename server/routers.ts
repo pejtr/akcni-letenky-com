@@ -19,6 +19,12 @@ import {
   getAllDestinations,
   getDestinationBySlug,
   getFeaturedDestinations,
+  recordAffiliateClick,
+  getAffiliateClickStats,
+  getTopDestinationsByClicks,
+  getClicksBySource,
+  getClickTrend,
+  getRecentClicks,
 } from "./db";
 import {
   processChatbotMessage,
@@ -184,6 +190,83 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const destinations = await getFeaturedDestinations(input.limit);
         return destinations;
+      }),
+  }),
+
+  // Affiliate click tracking
+  affiliate: router({
+    // Record a click on an affiliate link
+    trackClick: publicProcedure
+      .input(
+        z.object({
+          destination: z.string(),
+          destinationSlug: z.string(),
+          source: z.string(), // 'featured', 'grid', 'search', 'banner'
+          affiliatePartner: z.string().default("kiwi"),
+          affiliateUrl: z.string(),
+          sessionId: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const userAgent = ctx.req.headers["user-agent"] || undefined;
+        const referrer = ctx.req.headers["referer"] || undefined;
+        const userId = ctx.user?.id;
+
+        await recordAffiliateClick({
+          ...input,
+          userAgent,
+          referrer,
+          userId,
+        });
+
+        return { success: true };
+      }),
+
+    // Get click statistics (admin only)
+    getStats: protectedProcedure.query(async ({ ctx }) => {
+      // Only allow admin users
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      return await getAffiliateClickStats();
+    }),
+
+    // Get top destinations by clicks (admin only)
+    getTopDestinations: protectedProcedure
+      .input(z.object({ limit: z.number().default(10) }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        return await getTopDestinationsByClicks(input.limit);
+      }),
+
+    // Get clicks by source (admin only)
+    getClicksBySource: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      return await getClicksBySource();
+    }),
+
+    // Get click trend (admin only)
+    getClickTrend: protectedProcedure
+      .input(z.object({ days: z.number().default(30) }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        return await getClickTrend(input.days);
+      }),
+
+    // Get recent clicks (admin only)
+    getRecentClicks: protectedProcedure
+      .input(z.object({ limit: z.number().default(20) }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        return await getRecentClicks(input.limit);
       }),
   }),
 
