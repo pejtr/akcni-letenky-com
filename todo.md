@@ -461,3 +461,8 @@
 - [x] Airline logos section: horizontal rows with logo + name
 - [x] All destination cards clickable with Kiwi.com affiliate links
 - [x] Fix non-working click handlers - now all cards link to Kiwi.com
+
+## Logo Update
+- [x] Copy new logo to public folder
+- [x] Update header to use new logo image
+- [x] Test logo display

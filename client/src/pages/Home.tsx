@@ -226,15 +226,16 @@ export default function Home() {
       >
         <div className="container flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-[#FFD700] rounded-lg flex items-center justify-center">
-              <span className="text-2xl">✈️</span>
-            </div>
-            <span className="font-bold text-lg">AKČNÍ-<br/>LETENKY.com</span>
+          <a href="/" className="flex items-center gap-2">
+            <img 
+              src="/logo-akcni-letenky.png" 
+              alt="Akční Letenky" 
+              className="h-12 w-auto"
+            />
             <span className="hidden md:inline text-sm text-blue-600 ml-2">
               Nejlevnější Lety
             </span>
-          </div>
+          </a>
 
           {/* Navigation */}
           <nav role="navigation" aria-label="Main navigation" className="hidden md:flex items-center gap-6">
