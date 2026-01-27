@@ -115,6 +115,7 @@ export default function SocialProofWidget() {
           <button
             onClick={() => setIsVisible(false)}
             className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+            title="Zavřít notifikaci"
           >
             <X className="w-4 h-4" />
           </button>

@@ -616,3 +616,4 @@
 - [x] Move chatbot icon more to the right (right-4→right-2 on mobile, right-6→right-4 on desktop)
 - [x] Yellow bottom CTA banner stays visible permanently after first appearance (after 50% scroll)
 - [x] Remove maximize button (↗️) from mobile chatbot header completely
+- [x] Fix notification close button tooltip from "Travel Expert" to "Zavřít notifikaci"
