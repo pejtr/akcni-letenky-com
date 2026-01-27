@@ -293,3 +293,58 @@ export const affiliateClicks = mysqlTable("affiliate_clicks", {
 
 export type AffiliateClick = typeof affiliateClicks.$inferSelect;
 export type InsertAffiliateClick = typeof affiliateClicks.$inferInsert;
+
+
+/**
+ * Chatbot user memory - stores persistent user preferences and context
+ */
+export const chatbotUserMemory = mysqlTable("chatbot_user_memory", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(), // Session identifier
+  userId: int("userId"), // Optional - if user is logged in
+  // User preferences extracted from conversations
+  preferredDestinations: text("preferredDestinations"), // JSON array of destinations
+  preferredBudget: int("preferredBudget"), // Typical budget in CZK
+  preferredTravelStyle: varchar("preferredTravelStyle", { length: 50 }), // 'budget', 'comfort', 'luxury'
+  preferredAirlines: text("preferredAirlines"), // JSON array of airlines
+  travelFrequency: varchar("travelFrequency", { length: 50 }), // 'frequent', 'occasional', 'rare'
+  // Context from last conversation
+  lastDestinationAsked: varchar("lastDestinationAsked", { length: 100 }),
+  lastBudgetMentioned: int("lastBudgetMentioned"),
+  lastTravelDate: timestamp("lastTravelDate"),
+  lastPassengerCount: int("lastPassengerCount"),
+  // Engagement metrics
+  totalConversations: int("totalConversations").default(0),
+  totalMessages: int("totalMessages").default(0),
+  lastInteractionAt: timestamp("lastInteractionAt").defaultNow(),
+  // Summary of past interactions
+  conversationSummary: text("conversationSummary"), // AI-generated summary of past conversations
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChatbotUserMemory = typeof chatbotUserMemory.$inferSelect;
+export type InsertChatbotUserMemory = typeof chatbotUserMemory.$inferInsert;
+
+/**
+ * Knowledge base for RAG - stores indexed content for retrieval
+ */
+export const knowledgeBase = mysqlTable("knowledge_base", {
+  id: int("id").autoincrement().primaryKey(),
+  contentType: mysqlEnum("contentType", ["flight", "destination", "article", "faq", "airline"]).notNull(),
+  contentId: int("contentId"), // Reference to original content (flightId, destinationId, etc.)
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(), // Full text content for search
+  keywords: text("keywords"), // Extracted keywords for matching
+  metadata: text("metadata"), // JSON with additional data (price, dates, etc.)
+  // Search optimization
+  searchVector: text("searchVector"), // Preprocessed text for search
+  relevanceScore: int("relevanceScore").default(0), // Base relevance score
+  // Timestamps
+  lastUpdated: timestamp("lastUpdated").defaultNow().onUpdateNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type KnowledgeBase = typeof knowledgeBase.$inferSelect;
+export type InsertKnowledgeBase = typeof knowledgeBase.$inferInsert;

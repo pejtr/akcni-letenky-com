@@ -36,6 +36,13 @@
       "when": 1769503216243,
       "tag": "0004_bored_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769504361950,
+      "tag": "0005_gigantic_wolfpack",
+      "breakpoints": true
     }
   ]
 }

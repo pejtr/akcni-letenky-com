@@ -482,3 +482,26 @@
   - [ ] Click trend chart (last 30 days)
   - [ ] Click source breakdown (featured/grid/search)
 - [ ] Write vitest tests for click tracking
+
+## Chatbot Enhancement - Persistent Memory & RAG System
+- [ ] Create chatbot_memory table for storing user preferences and context
+- [ ] Create knowledge_base table for RAG content indexing
+- [ ] Implement RAG retrieval functions for flights, destinations, articles
+- [ ] Add semantic search for finding relevant content
+- [ ] Store conversation history per user/session
+- [ ] Extract and remember user preferences (destinations, budget, travel dates)
+- [ ] Update LLM prompt to include RAG context and user memory
+- [ ] Add memory indicators in chatbot UI
+- [ ] Write vitest tests for memory and RAG functions
+- [ ] Test chatbot with improved context awareness
+
+
+## Chatbot Enhancement - Persistent Memory & RAG (COMPLETED)
+- [x] Create chatbotUserMemory table for storing user preferences
+- [x] Create knowledgeBase table for RAG content indexing
+- [x] Implement RAG retrieval functions (flights, destinations, articles)
+- [x] Add user memory extraction from conversations (LLM-powered)
+- [x] Update chatbot backend to use RAG context
+- [x] Add memory-aware system prompt instructions
+- [x] Update frontend to show memory indicator (🧠 Paměť badge)
+- [x] Write vitest tests for RAG system (44 tests passing)

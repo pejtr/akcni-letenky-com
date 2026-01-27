@@ -7,6 +7,14 @@ import { getDb } from "./db";
 import { chatbotConversations, chatbotMessages, chatbotLeads, chatbotConversions, flights, destinations } from "../drizzle/schema";
 import { invokeLLM } from "./_core/llm";
 import { eq, and, gte, desc } from "drizzle-orm";
+import { 
+  getUserMemory, 
+  updateUserMemory, 
+  extractPreferencesFromMessage, 
+  retrieveRAGContext, 
+  buildEnhancedContext,
+  generateConversationSummary 
+} from "./chatbotRAG";
 
 // System prompt with Hormozi sales principles
 const CHATBOT_SYSTEM_PROMPT = `Jsi expertní cestovní poradce pro Akční-Letenky.com s výjimečnými prodejními schopnostmi.
@@ -81,7 +89,19 @@ DŮLEŽITÉ:
 - VŽDY pozvi do FB/WhatsApp komunity
 - NIKDY netlač, buď nápomocný
 - Používej krátké zprávy (max 3-4 věty)
-- Používej emojis pro teplejší komunikaci`;
+- Používej emojis pro teplejší komunikaci
+
+PAMĚŤ UŽIVATELE:
+- Pokud máš informace o uživateli z minulých konverzací, VYUŽIJ JE!
+- Přivej vracejcí se uživatele osobně: "Ráda tě zase vidím! 👋 Naposledy jsi se ptal na [destinace]..."
+- Nabídni relevantní letenky na základě jejich preferencí
+- Pamatuj si jejich rozpočet a styl cestování
+- Pokud uživatel zmínil destinaci dříve, nabídni aktualizované ceny
+
+PROAKTIVNÍ ODKAZY:
+- Když zmíníš destinaci, nabídni odkaz na článek: "Mrkni na náš průvodce po [destinace] 📚"
+- Když zmíníš letenku, nabídni přímý odkaz na rezervaci
+- Propojuj obsah webu pro lepší engagement`;
 
 export interface ChatbotContext {
   sessionId: string;
@@ -166,24 +186,31 @@ export async function processChatbotMessage(
   // Get conversation history
   const messages = await db.select().from(chatbotMessages).where(eq(chatbotMessages.conversationId, conversation.id)).orderBy(chatbotMessages.createdAt);
 
-  // Get relevant flight offers for context
-  const relevantFlights = await getRelevantFlights(userMessage);
+  // ============================================
+  // RAG: Retrieve relevant context and user memory
+  // ============================================
+  const ragContext = await retrieveRAGContext(userMessage, sessionId, conversation.userId ?? undefined);
   
-  // Get popular destinations for suggestions
-  const popularDestinations = await db.select().from(destinations).orderBy(desc(destinations.popularityScore)).limit(5);
+  // Extract preferences from user message and update memory
+  const conversationHistory = messages.map((m: typeof messages[0]) => ({ role: m.role, content: m.content }));
+  const extractedPrefs = await extractPreferencesFromMessage(userMessage, conversationHistory);
+  
+  // Update user memory with extracted preferences
+  if (extractedPrefs.destinations.length > 0 || extractedPrefs.budget || extractedPrefs.travelStyle) {
+    await updateUserMemory(sessionId, {
+      preferredDestinations: extractedPrefs.destinations,
+      preferredBudget: extractedPrefs.budget ?? undefined,
+      preferredTravelStyle: extractedPrefs.travelStyle ?? undefined,
+      preferredAirlines: extractedPrefs.airlines,
+      lastDestinationAsked: extractedPrefs.destinations[0],
+      lastBudgetMentioned: extractedPrefs.budget ?? undefined,
+      lastTravelDate: extractedPrefs.travelDate ? new Date(extractedPrefs.travelDate) : undefined,
+      lastPassengerCount: extractedPrefs.passengerCount ?? undefined,
+    }, conversation.userId ?? undefined);
+  }
 
-  // Build context for LLM
-  const contextInfo = `
-AKTUÁLNÍ NABÍDKY:
-${relevantFlights.map((f: typeof relevantFlights[0]) => `- ${f.fromCity} → ${f.toCity}: ${f.price} Kč (zbývá ${f.remainingSeats} míst)`).join("\n")}
-
-POPULÁRNÍ DESTINACE:
-${popularDestinations.map((d: typeof popularDestinations[0]) => `- ${d.name} (${d.country}): průměrně ${d.averagePrice} Kč`).join("\n")}
-
-FB SKUPINY:
-- AKČNÍ LETENKY & CESTOVÁNÍ ✈️🌎: 33 500 členů
-- TOUR de SVĚT 🌏 Levné letenky: 29 200 členů
-`;
+  // Build enhanced context with RAG and memory
+  const contextInfo = buildEnhancedContext(ragContext);
 
   // Generate AI response
   const llmMessages = [
@@ -213,9 +240,26 @@ FB SKUPINY:
   // Extract lead information from conversation
   await extractLeadInfo(conversation.id, userMessage, assistantMessage);
 
+  // Generate conversation summary every 5 messages for memory
+  const messageCount = conversation.messageCount || 0;
+  if (messageCount > 0 && messageCount % 5 === 0) {
+    const summary = await generateConversationSummary(conversation.id);
+    if (summary) {
+      await updateUserMemory(sessionId, {
+        conversationSummary: summary,
+      }, conversation.userId ?? undefined);
+    }
+  }
+
+  // Include memory status in response
+  const hasMemory = ragContext.userMemory !== null;
+  const returningUser = (ragContext.userMemory?.totalConversations || 0) > 1;
+
   return {
     message: assistantMessage,
     conversationId: conversation.id,
+    hasMemory,
+    returningUser,
   };
 }
 

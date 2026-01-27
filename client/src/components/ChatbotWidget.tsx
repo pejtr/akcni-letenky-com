@@ -18,6 +18,8 @@ export default function ChatbotWidget() {
       content: "Ahoj! 👋 Jsem tvoje průvodkyně světem zájezdů. Kam se chystáš? Moře, hory, nebo městská dobrodružství? 🌴🏔️🏙️",
     },
   ]);
+  const [hasMemory, setHasMemory] = useState(false);
+  const [isReturningUser, setIsReturningUser] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const sendMessageMutation = trpc.chatbot.sendMessage.useMutation();
@@ -39,6 +41,14 @@ export default function ChatbotWidget() {
 
       if (result.conversationId) {
         setConversationId(result.conversationId);
+      }
+      
+      // Update memory status from response
+      if (result.hasMemory !== undefined) {
+        setHasMemory(result.hasMemory);
+      }
+      if (result.returningUser !== undefined) {
+        setIsReturningUser(result.returningUser);
       }
 
       setMessages((prev) => [
@@ -196,7 +206,17 @@ export default function ChatbotWidget() {
               </div>
               <div>
                 <p className={cn("font-semibold", isExpanded ? "text-xl" : "text-lg")}>Travel Expert</p>
-                <p className={cn("opacity-90", isExpanded ? "text-sm" : "text-xs")}>Online</p>
+                <div className="flex items-center gap-2">
+                  <p className={cn("opacity-90", isExpanded ? "text-sm" : "text-xs")}>Online</p>
+                  {hasMemory && (
+                    <span className={cn(
+                      "px-2 py-0.5 bg-yellow-400 text-yellow-900 rounded-full font-medium",
+                      isExpanded ? "text-xs" : "text-[10px]"
+                    )} title="Pamatuji si tě z minulých konverzací">
+                      🧠 Paměť
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
