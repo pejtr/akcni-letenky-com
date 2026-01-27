@@ -328,3 +328,10 @@
 - [ ] Test chatbot with real conversations
 - [ ] Generate daily analytics reports
 - [ ] Add email capture for newsletter
+
+## SEO Title Optimization (Alex Hormozi Principles)
+- [x] Change title from "Nejlevnější AKČNÍ LETENKY Kamkoliv - LAST MINUTE z Prahy ✈ » Nejlevnější Lety" to "Akční Letenky z Prahy od 590 Kč | Sleva až -80% | Last Minute 2026"
+- [x] Update Open Graph title
+- [x] Update Twitter Card title
+- [x] Verify title length is under 60 characters (currently 59)
+- [ ] Test title display in Google SERP preview
