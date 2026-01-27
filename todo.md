@@ -404,3 +404,33 @@
 - [x] Move search form into white card overlay on hero
 - [x] Add trust badges (500+ Recenzí, hvězdička, Certifikace)
 - [x] Test hero section on desktop
+
+## Sticky Bottom Banner - Show After 60% Scroll
+- [x] Add scroll percentage tracking state
+- [x] Show banner only after user scrolls 60% of page
+- [x] Test banner appearance behavior
+
+## Affiliate API Integration (Pelikán, Kiwi.com)
+- [ ] Research Pelikán affiliate API documentation
+- [ ] Research Kiwi.com affiliate API documentation
+- [ ] Implement search form submission to affiliate APIs
+- [ ] Display real flight results from APIs
+- [ ] Add affiliate tracking parameters
+
+## Destination Landing Pages (SEO)
+- [ ] Create /letenky-do-parize landing page
+- [ ] Create /letenky-do-londyna landing page
+- [ ] Create /letenky-do-rima landing page
+- [ ] Add SEO meta tags and structured data for each page
+- [ ] Link from main page to destination pages
+
+## FAQ "Zobrazit více" Button
+- [ ] Add "Zobrazit více" button to FAQ section
+- [ ] Implement dynamic loading of additional FAQ items
+- [ ] Store extended FAQ data in database or JSON
+
+## Chatbot Widget Enlargement
+- [x] Increase chatbot font size for better readability (text-base default, text-lg expanded)
+- [x] Add expand/fullscreen button to chatbot header
+- [x] Implement expanded view (700px x 85vh) with larger chat area
+- [ ] Test chatbot on desktop and mobile

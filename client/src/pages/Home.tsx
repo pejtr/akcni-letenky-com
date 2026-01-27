@@ -7,11 +7,18 @@ import SocialProofWidget from "@/components/SocialProofWidget";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
-  // Handle scroll for sticky navigation
+  const [showBottomBanner, setShowBottomBanner] = useState(false);
+  
+  // Handle scroll for sticky navigation and bottom banner
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 50;
       setIsScrolled(scrolled);
+      
+      // Calculate scroll percentage for bottom banner
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (window.scrollY / scrollHeight) * 100;
+      setShowBottomBanner(scrollPercent > 60);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -446,8 +453,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sticky Bottom Banner - Always Visible */}
-      {true && (
+      {/* Sticky Bottom Banner - Shows after 60% scroll */}
+      {showBottomBanner && (
         <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-4 px-4 shadow-lg z-40 animate-in slide-in-from-bottom">
           <div className="container">
             <p className="text-center text-base md:text-lg font-bold text-black">
