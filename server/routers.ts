@@ -26,6 +26,7 @@ import {
   trackCommunityJoin,
 } from "./chatbot";
 import { generateDailyArticles } from "./articleGenerator";
+import { adminAnalyticsRouter } from "./adminAnalytics";
 
 export const appRouter = router({
   system: systemRouter,
@@ -241,6 +242,9 @@ export const appRouter = router({
         return result;
       }),
   }),
+
+  // Admin analytics dashboard
+  admin: adminAnalyticsRouter,
 });
 
 export type AppRouter = typeof appRouter;

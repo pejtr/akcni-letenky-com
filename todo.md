@@ -335,3 +335,43 @@
 - [x] Update Twitter Card title
 - [x] Verify title length is under 60 characters (currently 59)
 - [ ] Test title display in Google SERP preview
+
+## Central API for Multi-Project Synchronization
+- [ ] Design REST API architecture for cross-project data sharing
+- [ ] Create API endpoints for syncing conversations across projects
+- [ ] Implement lead sharing and deduplication logic
+- [ ] Add analytics aggregation endpoints
+- [ ] Create API authentication and project identification system
+- [ ] Build webhook system for real-time sync
+- [ ] Document API for integration with other projects
+- [ ] Test API with multiple project instances
+
+## Admin Analytics Dashboard
+- [ ] Create /admin route with authentication
+- [ ] Build dashboard layout with key metrics cards
+- [ ] Implement real-time conversion rate tracking
+- [ ] Add ROI calculator (commission revenue vs. costs)
+- [ ] Display top destinations by clicks and conversions
+- [ ] Show chatbot conversation statistics
+- [ ] Add lead quality scoring system
+- [ ] Create date range filters and export functionality
+- [ ] Implement real-time updates with WebSocket or polling
+- [ ] Add charts for trends visualization (Chart.js or Recharts)
+
+## A/B Testing: Three Chatbot Personas (Charmed Model)
+- [ ] Design three distinct personas based on Charmed sisters
+- [ ] Persona 1: "Energetic" (Phoebe-inspired) - enthusiastic, emoji-heavy, casual
+- [ ] Persona 2: "Royal/Deliberate" (Piper-inspired) - professional, helpful, structured
+- [ ] Persona 3: "Royal/Deliberate" (Prue-inspired) - confident, direct, results-focused
+- [ ] Create unique avatar images for each persona
+- [ ] Implement persona rotation logic (33% split)
+- [ ] Track conversion rates per persona
+- [ ] Add persona identifier to conversation tracking
+- [ ] Build comparison dashboard for persona performance
+- [ ] Test all three personas with real conversations
+
+## Fix Sticky Bottom Banner
+- [x] Remove hide-on-scroll behavior from bottom "Akční nabídka" banner
+- [x] Make banner always visible (fixed position)
+- [x] Ensure proper z-index hierarchy (below main menu, above content)
+- [ ] Test on desktop and mobile
