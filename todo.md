@@ -622,3 +622,4 @@
 - [x] Move "Aktuální nabídky" section AFTER article content on airline pages
 - [x] Fix mobile display of offer cards (proper alignment, text wrapping, button sizing)
 - [x] Increase z-index of notification to be above chatbot (prevent tooltip overlap)
+- [x] Update SEO title to "Levné Letenky z Prahy od 590 Kč | Sleva až -80% | Akční Letenky 2026"
