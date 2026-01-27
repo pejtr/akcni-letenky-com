@@ -33,6 +33,7 @@ export interface FlightOffer {
   destination: string;
   departure: string;
   discount: string;
+  airline?: string;
   type: 'flight';
 }
 

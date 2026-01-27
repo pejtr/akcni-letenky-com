@@ -57,17 +57,17 @@ export default function SocialProofWidget() {
       setCurrentNotification(randomNotification);
       setIsVisible(true);
 
-      // Hide after 5 seconds
+      // Hide after 8 seconds
       setTimeout(() => {
         setIsVisible(false);
-      }, 5000);
+      }, 8000);
     };
 
-    // Show first notification after 3 seconds
-    const initialTimeout = setTimeout(showNotification, 3000);
+    // Show first notification after 5 seconds
+    const initialTimeout = setTimeout(showNotification, 5000);
 
-    // Show notifications every 15 seconds
-    const interval = setInterval(showNotification, 15000);
+    // Show notifications every 25 seconds
+    const interval = setInterval(showNotification, 25000);
 
     return () => {
       clearTimeout(initialTimeout);
@@ -80,53 +80,55 @@ export default function SocialProofWidget() {
   return (
     <div
       className={cn(
-        "fixed bottom-6 left-6 z-40 bg-card border border-border rounded-xl shadow-2xl max-w-sm animate-in slide-in-from-left-5 fade-in duration-500",
+        "fixed bottom-16 md:bottom-6 left-4 md:left-6 z-40 bg-card border border-border rounded-xl shadow-2xl max-w-sm animate-in slide-in-from-left-5 fade-in duration-500",
         !isVisible && "animate-out slide-out-to-left-5 fade-out"
       )}
     >
-      <div className="flex items-center gap-4 p-4">
-        {/* Circular thumbnail */}
-        <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary animate-pulse">
-          <img
-            src={currentNotification.imageUrl}
-            alt={currentNotification.destination}
-            className="w-full h-full object-cover"
-          />
+      <div className="p-3">
+        <div className="flex items-center gap-3 mb-2">
+          {/* Circular thumbnail */}
+          <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary animate-pulse">
+            <img
+              src={currentNotification.imageUrl}
+              alt={currentNotification.destination}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-foreground">
+              {currentNotification.name} z {currentNotification.city}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              právě zakoupil letenku do{" "}
+              <span className="font-semibold text-primary">
+                {currentNotification.destination}
+              </span>
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              za {currentNotification.price}
+            </p>
+          </div>
+
+          {/* Close button */}
+          <button
+            onClick={() => setIsVisible(false)}
+            className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-foreground">
-            {currentNotification.name} z {currentNotification.city}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            právě zakoupil letenku do{" "}
-            <span className="font-semibold text-primary">
-              {currentNotification.destination}
-            </span>
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            za {currentNotification.price}
-          </p>
-        </div>
-
-        {/* CTA Button */}
+        {/* CTA Button - Below content */}
         <button
-          className="flex-shrink-0 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold hover:bg-primary/90 transition-colors whitespace-nowrap"
+          className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-bold hover:bg-primary/90 transition-colors"
           onClick={() => {
             // TODO: Navigate to offer
             console.log("Navigate to offer");
           }}
         >
           TAM CHCI &gt;
-        </button>
-
-        {/* Close button */}
-        <button
-          onClick={() => setIsVisible(false)}
-          className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"
-        >
-          <X className="w-4 h-4" />
         </button>
       </div>
     </div>

@@ -110,14 +110,19 @@ export default function Home() {
       setIsScrolled(scrolled);
       
       // Calculate scroll percentage for bottom banner
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (window.scrollY / scrollHeight) * 100;
-      setShowBottomBanner(scrollPercent > 60);
+      // Once banner appears (after 50% scroll), it stays visible permanently
+      if (!showBottomBanner) {
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (window.scrollY / scrollHeight) * 100;
+        if (scrollPercent > 50) {
+          setShowBottomBanner(true);
+        }
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [showBottomBanner]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
@@ -203,20 +208,20 @@ export default function Home() {
     }
   ];
 
-  // Airlines data with correct logos
+  // Airlines data with correct logos and slugs for internal pages
   const airlines = [
-    { name: "Austrian Airlines", logo: "/airlines/austrian.png", url: "https://www.austrian.com/" },
-    { name: "Emirates", logo: "/airlines/emirates.png", url: "https://www.emirates.com/" },
-    { name: "Qatar Airways", logo: "/airlines/qatar.jpg", url: "https://www.qatarairways.com/" },
-    { name: "Ryanair", logo: "/airlines/ryanair.png", url: "https://www.ryanair.com/" },
-    { name: "Air France", logo: "/airlines/airfrance.jpg", url: "https://www.airfrance.com/" },
-    { name: "Lufthansa", logo: "/airlines/lufthansa.png", url: "https://www.lufthansa.com/" },
-    { name: "Icelandair", logo: "/airlines/icelandair.png", url: "https://www.icelandair.com/" },
-    { name: "Turkish Airlines", logo: "/airlines/turkish.png", url: "https://www.turkishairlines.com/" },
-    { name: "KLM", logo: "/airlines/klm.jpeg", url: "https://www.klm.com/" },
-    { name: "British Airways", logo: "/airlines/british.png", url: "https://www.britishairways.com/" },
-    { name: "Wizz Air", logo: "/airlines/wizz.png", url: "https://wizzair.com/" },
-    { name: "LOT", logo: "/airlines/lot.jpg", url: "https://www.lot.com/" },
+    { name: "Austrian Airlines", logo: "/airlines/austrian.png", slug: "austrian-airlines" },
+    { name: "Emirates", logo: "/airlines/emirates.png", slug: "emirates" },
+    { name: "Qatar Airways", logo: "/airlines/qatar.jpg", slug: "qatar-airways" },
+    { name: "Ryanair", logo: "/airlines/ryanair.png", slug: "ryanair" },
+    { name: "Air France", logo: "/airlines/airfrance.jpg", slug: "air-france" },
+    { name: "Lufthansa", logo: "/airlines/lufthansa.png", slug: "lufthansa" },
+    { name: "Icelandair", logo: "/airlines/icelandair.png", slug: "icelandair" },
+    { name: "Turkish Airlines", logo: "/airlines/turkish.png", slug: "turkish-airlines" },
+    { name: "KLM", logo: "/airlines/klm.jpeg", slug: "klm" },
+    { name: "British Airways", logo: "/airlines/british.png", slug: "british-airways" },
+    { name: "Wizz Air", logo: "/airlines/wizz.png", slug: "wizz-air" },
+    { name: "LOT", logo: "/airlines/lot.jpg", slug: "lot" },
   ];
 
   return (
@@ -373,9 +378,9 @@ export default function Home() {
       </section>
 
       {/* Category Links */}
-      <div className="bg-white py-4 border-b border-border">
+      <div className="bg-[#f5f5f5] py-6 border-b border-border">
         <div className="container">
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+          <div className="flex flex-wrap items-center justify-center gap-8 text-base md:text-lg">
             <a href="#dovolena" className="text-blue-600 hover:underline font-medium">
               Dovolená se slevou až 80 %
             </a>
@@ -409,23 +414,33 @@ export default function Home() {
                   href={kiwiUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow block"
+                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
                   onClick={() => trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl)}
                 >
-                  <div
-                    className="h-48 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${city.image})` }}
-                    role="img"
-                    aria-label={`Fotografie ${city.to}`}
-                  />
+                  <div className="relative h-48 overflow-hidden">
+                    <div
+                      className="h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                      style={{ backgroundImage: `url(${city.image})` }}
+                      role="img"
+                      aria-label={`Fotografie ${city.to}`}
+                    />
+                    {/* Airplane overlay on hover */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <svg className="w-16 h-16 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                      </svg>
+                    </div>
+                  </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-lg text-blue-700 mb-2 text-center">
-                      {city.from} ⇄ {city.to}
+                    <h3 className="font-bold text-lg mb-2 text-center">
+                      <span className="text-blue-700">{city.from}</span>{" "}
+                      <span className="text-[#FF6B35]">⇄</span>{" "}
+                      <span className="text-blue-700">{city.to}</span>
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
                       {city.description}
                     </p>
-                    <div className="w-full border-2 border-[#FF8C00] text-[#FF8C00] hover:bg-[#FF8C00] hover:text-white font-bold rounded-lg py-2 text-center transition-colors">
+                    <div className="w-full border-2 border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white font-bold rounded-lg py-2 text-center transition-colors">
                       od {formatPrice(city.price)}
                     </div>
                   </div>
@@ -448,7 +463,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {popularDestinations.map((dest, index) => {
               const destSlug = cityToSlug[dest.city.toLowerCase()] || dest.city.toLowerCase().replace(/\s+/g, "-");
               const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
@@ -458,26 +473,35 @@ export default function Home() {
                   href={kiwiUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all group p-4"
+                  className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden"
                   onClick={() => trackAffiliateClick(dest.city, destSlug, "grid", kiwiUrl)}
                 >
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={dest.image}
-                      alt={`${dest.city}, ${dest.country}`}
-                      className="w-20 h-20 object-cover rounded-md flex-shrink-0"
-                      loading="lazy"
-                    />
+                  <div className="flex items-center gap-4 p-4">
+                    {/* Thumbnail with hover airplane overlay */}
+                    <div className="relative w-36 h-36 flex-shrink-0 overflow-hidden rounded-lg">
+                      <img
+                        src={dest.image}
+                        alt={`${dest.city}, ${dest.country}`}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                      {/* Airplane overlay on hover */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <svg className="w-14 h-14 text-white" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                        </svg>
+                      </div>
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-lg mb-1 group-hover:underline">
+                      <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors">
                         {dest.city}
                       </h3>
                       <p className="text-sm text-gray-500">od {formatPrice(dest.price)}</p>
                     </div>
-                    <ChevronRight className="w-6 h-6 text-gray-400 flex-shrink-0" />
+                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 flex-shrink-0 transition-colors" />
                   </div>
-                  <div className="mt-3 text-center">
-                    <p className="text-sm font-bold text-black">{dest.country}</p>
+                  <div className="px-4 pb-4 text-center border-t border-gray-100 pt-3">
+                    <p className="text-sm font-semibold text-gray-600 group-hover:underline">{dest.country}</p>
                   </div>
                 </a>
               );
@@ -511,21 +535,21 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {airlines.map((airline, index) => (
-              <a
+              <Link
                 key={index}
-                href={`#${airline.name.toLowerCase().replace(/\s+/g, '-')}`}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all p-4 flex items-center gap-3 group"
+                href={`/letecka-spolecnost/${airline.slug}`}
+                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all p-5 flex flex-col items-center gap-3 group"
               >
                 <img
                   src={airline.logo}
                   alt={`${airline.name} logo`}
-                  className="w-12 h-12 object-contain flex-shrink-0"
+                  className="w-20 h-20 md:w-24 md:h-24 object-contain flex-shrink-0"
                   loading="lazy"
                 />
-                <span className="text-sm font-medium text-blue-600 group-hover:underline">
+                <span className="text-sm md:text-base font-medium text-blue-600 group-hover:underline text-center">
                   {airline.name}
                 </span>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -571,11 +595,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sticky Bottom Banner - Shows after 60% scroll */}
+      {/* Sticky Bottom Banner - Shows after 50% scroll */}
       {showBottomBanner && (
-        <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-4 px-4 shadow-lg z-40 animate-in slide-in-from-bottom">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-30 animate-in slide-in-from-bottom">
           <div className="container">
-            <p className="text-center text-base md:text-lg font-bold text-black">
+            <p className="text-center text-sm md:text-base font-bold text-black">
               Akční nabídka: <span className="text-[#E91E63]">Letenky do 1 500 Kč</span> | 
               <span className="text-blue-700"> Dovolená se slevou až 80 %</span> | 
               <span className="text-blue-700"> Eurovíkendy</span> | 
@@ -668,7 +692,7 @@ export default function Home() {
 
             {/* CTA Button */}
             <div className="text-center">
-              <Button size="lg" className="bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold px-8 py-6 text-lg rounded-full shadow-lg">
+              <Button size="lg" className="bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold px-8 py-6 text-base md:text-lg rounded-full shadow-lg max-w-full whitespace-normal">
                 ✈️ Zobrazit nejvýhodnější letenky
               </Button>
             </div>

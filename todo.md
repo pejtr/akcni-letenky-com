@@ -531,3 +531,88 @@
 - [x] Update navigation menu (Dovolená → Dovolené)
 - [x] Add affiliate tracking to all offer clicks
 - [x] Write vitest tests for feed parsing (51 tests passing)
+
+## A/B Testing - 3 Chatbot Personas (Implementation)
+- [ ] Create chatbotPersonaAssignment table in database schema
+- [ ] Implement automatic persona assignment (33% each: Lucka, Martin, Anička)
+- [ ] Create Persona A: "Lucka" - Energická cestovatelka (emoji, informal, enthusiastic)
+- [ ] Create Persona B: "Martin" - Profesionální poradce (formal, data-driven, structured)
+- [ ] Create Persona C: "Anička" - Přátelská průvodkyně (warm, empathetic, personal stories)
+- [ ] Update ChatbotWidget to show persona name and avatar
+- [ ] Track conversion metrics per persona
+- [ ] Write vitest tests for persona system
+
+## Dovolena.cz XML Feed Integration
+- [ ] Research Dovolena.cz XML feed URL and structure
+- [ ] Create parser for Dovolena.cz feed format
+- [ ] Interleave Dovolena.cz offers with Pelikán offers (balanced ratio)
+- [ ] Add source indicator to offer cards
+- [ ] Update /levne-letenky and /dovolene pages with combined feeds
+- [ ] Write vitest tests for combined feed
+
+## 24-Hour Caching with Midnight Refresh
+- [ ] Change cache duration from 30min to 24h
+- [ ] Implement midnight refresh scheduler (cron job at 00:00)
+- [ ] Add cache status endpoint for monitoring
+- [ ] Test cache refresh functionality
+
+## Destination Cards Design Update
+- [x] Increase card size and thumbnail size (larger images)
+- [x] Add white background with subtle shadow to cards
+- [x] Implement hover effect with airplane icon overlay
+- [x] Update text styling (gray price and country text)
+- [ ] Test hover effect on desktop
+
+## Airline Pages with Flight Offers (Current Task)
+- [ ] Enlarge airline logos 2x in homepage section
+- [ ] Create individual airline pages (/letecka-spolecnost/:slug)
+- [ ] Show flight offers from Pelikán feed filtered by airline on each page
+- [ ] Add company description section to airline pages
+- [ ] Link airline logos to internal pages instead of external URLs
+- [ ] Add Schema.org structured data for airline pages
+- [ ] Test all 12 airline pages
+
+## UI Improvements - Hover Effects and Thumbnails (Current Task)
+- [x] Add hover effect with airplane icon to top offers (Praha ⇄ Londýn, Paříž, Řím, Barcelona)
+- [x] Enlarge thumbnails in "Zpáteční levné letenky" section by 50% (from 96px to 144px)
+- [x] Enlarge category links section (Dovolená se slevou až 80%, Eurovíkendy, Hotely, Nejlevnější letenky)
+- [x] Change category links background to light gray (#f5f5f5)
+- [x] Enlarge airplane hover icon in destination grid (from 40px to 56px)
+- [x] Add third expansion stage to chatbot widget
+- [x] Enlarge chatbot avatar thumbnail (from 80px to 96px)
+
+## Color Palette Simplification - Variant #1 (Current Task)
+- [x] Change featured cities border from orange (#FF8C00) to blue (#2563EB)
+- [x] Change chatbot online status from green to orange (#FF6B35)
+- [x] Verify color consistency across all sections
+- [x] Document final color palette (Primary: Orange, Secondary: Blue, Accent: Yellow)
+
+## Replace Magenta with Orange (Current Task)
+- [ ] Find all magenta colors in chatbot component
+- [ ] Find all magenta colors in notification components
+- [ ] Replace magenta with orange (#FF6B35)
+- [ ] Verify no magenta colors remain in the UI
+
+## Change Arrow Color to Orange (Current Task)
+- [x] Change bidirectional arrows (⇄) in featured cities from blue to orange (#FF6B35)
+- [ ] Change featured cities button borders from blue to orange (#FF6B35)
+
+## URGENT: Mobile Chatbot Fixes (Current Task)
+- [ ] Reduce chatbot icon size by 50% on mobile (96px → 48px)
+- [ ] Fix chatbot overflow - make it full-screen on mobile (inset-0, w-screen, h-screen)
+- [ ] Change magenta header to orange (#FF6B35)
+- [ ] Change magenta send button to orange (#FF6B35)
+- [ ] Position chatbot icon above yellow CTA panel (bottom: 5rem)
+- [ ] Set z-index to z-50 (highest)
+- [x] Change airline company layout - put name BELOW logo instead of beside it (flex-col)
+- [x] Fix orange CTA button overflow on mobile (max-w-full + whitespace-normal)
+- [x] Make yellow bottom CTA panel thinner (reduce padding and font size)
+- [x] Move notifications higher on mobile to avoid overlapping yellow panel (bottom: 16 on mobile)
+- [x] Increase notification display time (5s → 8s) and interval (15s → 25s)
+- [ ] Remove chatbot expansion button on mobile (< 768px) - keep only on desktop/tablet
+- [x] Make yellow CTA panel appear only after scrolling 50% of page and stay fixed (changed from 60% to 50%)
+- [x] Make notifications thinner (p-4→p-3, thumbnail 16px→12px, text-sm→text-xs)
+- [x] Move CTA button "TAM CHCI >" below content (full-width button at bottom)
+- [x] Move chatbot icon more to the right (right-4→right-2 on mobile, right-6→right-4 on desktop)
+- [x] Yellow bottom CTA banner stays visible permanently after first appearance (after 50% scroll)
+- [x] Remove maximize button (↗️) from mobile chatbot header completely

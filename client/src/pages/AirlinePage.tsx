@@ -1,310 +1,425 @@
-import { useEffect, useState } from "react";
-import { useRoute } from "wouter";
+import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Phone, ChevronRight, Plane } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Phone, ChevronRight, Plane, ArrowLeft } from "lucide-react";
+import ChatbotWidget from "@/components/ChatbotWidget";
 
-interface AirlineInfo {
+// Airline data with descriptions and official URLs
+const airlineData: Record<string, {
   name: string;
   logo: string;
   description: string;
+  founded: string;
+  hub: string;
   website: string;
-}
-
-const airlinesData: Record<string, AirlineInfo> = {
-  ryanair: {
-    name: "Ryanair",
-    logo: "/logo-ryanair.webp",
-    description: "Ryanair je největší nízkonákladová letecká společnost v Evropě, která nabízí levné letenky do více než 200 destinací.",
-    website: "https://www.ryanair.com",
-  },
-  wizzair: {
-    name: "Wizz Air",
-    logo: "/logo-wizzair.webp",
-    description: "Wizz Air je maďarská nízkonákladová letecká společnost s rozsáhlou sítí letů po celé Evropě a vybraných destinacích mimo ni.",
-    website: "https://www.wizzair.com",
-  },
+  iataCode: string;
+}> = {
   "austrian-airlines": {
     name: "Austrian Airlines",
-    logo: "/logo-austrian.webp",
-    description: "Austrian Airlines je vlajková letecká společnost Rakouska, která nabízí kvalitní služby a spojení do celého světa přes Vídeň.",
-    website: "https://www.austrian.com",
+    logo: "/airlines/austrian.png",
+    description: "Austrian Airlines je vlajkový dopravce Rakouska se sídlem ve Vídni. Společnost byla založena v roce 1957 a od roku 2009 je součástí skupiny Lufthansa Group. Austrian Airlines nabízí lety do více než 130 destinací po celém světě a je známá svou vynikající palubní službou a kvalitním cateringem.",
+    founded: "1957",
+    hub: "Vídeň (VIE)",
+    website: "https://www.austrian.com/",
+    iataCode: "OS"
   },
-  emirates: {
+  "emirates": {
     name: "Emirates",
-    logo: "/logo-emirates.webp",
-    description: "Emirates je prémiová letecká společnost se sídlem v Dubaji, známá svým luxusním servisem a moderní flotilou letadel.",
-    website: "https://www.emirates.com",
+    logo: "/airlines/emirates.png",
+    description: "Emirates je největší letecká společnost na Blízkém východě se sídlem v Dubaji. Založena v roce 1985, dnes provozuje jednu z největších flotil letadel Boeing 777 a Airbus A380 na světě. Emirates je známá luxusním servisem, moderními letadly a rozsáhlou sítí destinací.",
+    founded: "1985",
+    hub: "Dubaj (DXB)",
+    website: "https://www.emirates.com/",
+    iataCode: "EK"
   },
   "qatar-airways": {
     name: "Qatar Airways",
-    logo: "/logo-qatar.webp",
-    description: "Qatar Airways je oceňovaná letecká společnost z Kataru, která pravidelně získává ocenění za kvalitu služeb a komfort.",
-    website: "https://www.qatarairways.com",
+    logo: "/airlines/qatar.jpg",
+    description: "Qatar Airways je státní letecká společnost Kataru se sídlem v Dauhá. Patří mezi nejlépe hodnocené aerolinky světa a je členem aliance oneworld. Společnost je známá svou prémiovou třídou Qsuite a vynikajícím servisem na palubě.",
+    founded: "1993",
+    hub: "Dauhá (DOH)",
+    website: "https://www.qatarairways.com/",
+    iataCode: "QR"
+  },
+  "ryanair": {
+    name: "Ryanair",
+    logo: "/airlines/ryanair.png",
+    description: "Ryanair je irská nízkonákladová letecká společnost, která nabízí levné letenky po celé Evropě. Společnost byla založena v roce 1985 a od té doby se stala jednou z největších nízkonákladových leteckých společností na světě. Ryanair se snaží poskytnout svým zákazníkům co nejlevnější ceny a zároveň jim poskytnout kvalitní služby.",
+    founded: "1985",
+    hub: "Dublin (DUB)",
+    website: "https://www.ryanair.com/",
+    iataCode: "FR"
   },
   "air-france": {
     name: "Air France",
-    logo: "/logo-airfrance.webp",
-    description: "Air France je francouzská vlajková letecká společnost, která nabízí spojení do celého světa s důrazem na francouzský styl a eleganci.",
-    website: "https://www.airfrance.com",
+    logo: "/airlines/airfrance.jpg",
+    description: "Air France je francouzská vlajková letecká společnost se sídlem v Paříži. Je zakládajícím členem aliance SkyTeam a společně s KLM tvoří skupinu Air France-KLM. Společnost nabízí lety do více než 200 destinací a je známá svou elegancí a francouzským šarmem.",
+    founded: "1933",
+    hub: "Paříž (CDG)",
+    website: "https://www.airfrance.com/",
+    iataCode: "AF"
   },
-  lufthansa: {
+  "lufthansa": {
     name: "Lufthansa",
-    logo: "/logo-lufthansa.webp",
-    description: "Lufthansa je největší německá letecká společnost a jeden z předních evropských dopravců s rozsáhlou globální sítí.",
-    website: "https://www.lufthansa.com",
+    logo: "/airlines/lufthansa.png",
+    description: "Lufthansa je německá vlajková letecká společnost a jedna z největších aerolinek v Evropě. Založena v roce 1953, dnes provozuje rozsáhlou síť destinací po celém světě. Je zakládajícím členem aliance Star Alliance a je známá svou spolehlivostí a německou precizností.",
+    founded: "1953",
+    hub: "Frankfurt (FRA), Mnichov (MUC)",
+    website: "https://www.lufthansa.com/",
+    iataCode: "LH"
   },
-  icelandair: {
+  "icelandair": {
     name: "Icelandair",
-    logo: "/logo-icelandair.webp",
-    description: "Icelandair je islandská letecká společnost, která nabízí spojení mezi Evropou a Severní Amerikou s možností stopoveru na Islandu.",
-    website: "https://www.icelandair.com",
+    logo: "/airlines/icelandair.png",
+    description: "Icelandair je islandská letecká společnost se sídlem v Reykjavíku. Specializuje se na lety mezi Evropou a Severní Amerikou s přestupem na Islandu. Nabízí unikátní možnost stopover v Islandu bez příplatku, což umožňuje cestujícím prozkoumat tuto fascinující zemi.",
+    founded: "1937",
+    hub: "Reykjavík (KEF)",
+    website: "https://www.icelandair.com/",
+    iataCode: "FI"
   },
   "turkish-airlines": {
     name: "Turkish Airlines",
-    logo: "/logo-turkish.webp",
-    description: "Turkish Airlines je turecká vlajková letecká společnost s jednou z největších sítí destinací na světě přes Istanbul.",
-    website: "https://www.turkishairlines.com",
+    logo: "/airlines/turkish.png",
+    description: "Turkish Airlines je turecká vlajková letecká společnost se sídlem v Istanbulu. Létá do více destinací než jakákoli jiná aerolinka na světě. Je členem aliance Star Alliance a je známá svým vynikajícím cateringem a pohostinností.",
+    founded: "1933",
+    hub: "Istanbul (IST)",
+    website: "https://www.turkishairlines.com/",
+    iataCode: "TK"
   },
-  klm: {
+  "klm": {
     name: "KLM",
-    logo: "/logo-klm.webp",
-    description: "KLM Royal Dutch Airlines je nizozemská letecká společnost s dlouhou tradicí a kvalitními službami přes Amsterdam.",
-    website: "https://www.klm.com",
+    logo: "/airlines/klm.jpeg",
+    description: "KLM Royal Dutch Airlines je nejstarší letecká společnost na světě, která stále operuje pod svým původním názvem. Založena v roce 1919, je vlajkovým dopravcem Nizozemska. Je členem aliance SkyTeam a společně s Air France tvoří skupinu Air France-KLM.",
+    founded: "1919",
+    hub: "Amsterdam (AMS)",
+    website: "https://www.klm.com/",
+    iataCode: "KL"
   },
   "british-airways": {
     name: "British Airways",
-    logo: "/logo-british.webp",
-    description: "British Airways je britská vlajková letecká společnost, která nabízí prémiové služby a spojení do celého světa přes Londýn.",
-    website: "https://www.britishairways.com",
+    logo: "/airlines/british.png",
+    description: "British Airways je vlajková letecká společnost Spojeného království se sídlem v Londýně. Je jednou z největších aerolinek v Evropě a zakládajícím členem aliance oneworld. Společnost je známá svou dlouhou historií a tradicí britské elegance.",
+    founded: "1974",
+    hub: "Londýn Heathrow (LHR)",
+    website: "https://www.britishairways.com/",
+    iataCode: "BA"
   },
-  lot: {
+  "wizz-air": {
+    name: "Wizz Air",
+    logo: "/airlines/wizz.png",
+    description: "Wizz Air je maďarská nízkonákladová letecká společnost se sídlem v Budapešti. Založena v roce 2003, dnes patří mezi největší nízkonákladové dopravce ve střední a východní Evropě. Nabízí levné letenky do mnoha evropských destinací.",
+    founded: "2003",
+    hub: "Budapešť (BUD)",
+    website: "https://wizzair.com/",
+    iataCode: "W6"
+  },
+  "lot": {
     name: "LOT Polish Airlines",
-    logo: "/logo-lot.webp",
-    description: "LOT Polish Airlines je polská vlajková letecká společnost s moderní flotilou a kvalitními službami přes Varšavu.",
-    website: "https://www.lot.com",
-  },
+    logo: "/airlines/lot.jpg",
+    description: "LOT Polish Airlines je polská vlajková letecká společnost se sídlem ve Varšavě. Je jednou z nejstarších aerolinek na světě, založena v roce 1929. Je členem aliance Star Alliance a nabízí lety do mnoha destinací v Evropě, Asii a Severní Americe.",
+    founded: "1929",
+    hub: "Varšava (WAW)",
+    website: "https://www.lot.com/",
+    iataCode: "LO"
+  }
 };
 
 export default function AirlinePage() {
-  const [, params] = useRoute("/letecke-spolecnosti/:airline");
-  const airlineSlug = params?.airline || "";
-  const airline = airlinesData[airlineSlug];
+  const { slug } = useParams<{ slug: string }>();
+  const airline = slug ? airlineData[slug] : null;
 
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Fetch flights for this airline
-  const { data: flights, isLoading } = trpc.flights.search.useQuery({
-    airline: airline?.name,
+  // Fetch flights from Pelikán feed
+  const { data: flightsData, isLoading: flightsLoading } = trpc.pelikan.getFlights.useQuery({
+    limit: 50
   });
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
+  // Record affiliate click
+  const trackClickMutation = trpc.affiliate.trackClick.useMutation();
+
+  const trackAffiliateClick = (destination: string, destinationSlug: string, source: string, url: string) => {
+    trackClickMutation.mutate({
+      destination,
+      destinationSlug,
+      source,
+      affiliateUrl: url
+    });
   };
 
   if (!airline) {
     return (
       <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Letecká společnost nenalezena</h1>
-          <p className="text-muted-foreground mb-6">Omlouváme se, ale tuto leteckou společnost nemáme v nabídce.</p>
-          <Button asChild>
-            <a href="/">Zpět na hlavní stránku</a>
-          </Button>
+          <h1 className="text-2xl font-bold mb-4">Letecká společnost nenalezena</h1>
+          <Link href="/">
+            <Button>Zpět na hlavní stránku</Button>
+          </Link>
         </div>
       </div>
     );
   }
 
+  // Filter flights by airline name (case-insensitive partial match)
+  const airlineFlights = flightsData?.filter((flight) => {
+    const flightAirline = flight.airline?.toLowerCase() || "";
+    const searchName = airline.name.toLowerCase();
+    // Match by airline name or IATA code
+    return flightAirline.includes(searchName) || 
+           flightAirline.includes(airline.iataCode.toLowerCase()) ||
+           searchName.includes(flightAirline);
+  }) || [];
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("cs-CZ", {
+      style: "currency",
+      currency: "CZK",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      {/* Sticky Navigation */}
-      <header
-        className={cn(
-          "sticky top-0 z-50 transition-all duration-300",
-          isScrolled ? "bg-white shadow-md" : "bg-white"
-        )}
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <a href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
-                <Plane className="w-6 h-6 text-gray-900" />
-              </div>
-              <div>
-                <div className="font-bold text-gray-900 text-sm">AKČNÍ-</div>
-                <div className="font-bold text-gray-900 text-sm -mt-1">LETENKY.com</div>
-              </div>
-              <span className="text-blue-600 text-sm ml-2">Nejlevnější Lety</span>
-            </a>
+      {/* Header */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="container py-3">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-2">
+              <img
+                src="/logo-akcni-letenky.png"
+                alt="Akční Letenky"
+                className="h-10 object-contain"
+              />
+              <span className="text-[#FFD700] font-bold text-lg hidden md:inline">
+                Nejlevnější Lety
+              </span>
+            </Link>
 
             <nav className="hidden md:flex items-center gap-6">
-              <a href="/" className="text-sm hover:text-primary transition-colors">
-                🏠 Domů
-              </a>
-              <a href="#" className="text-sm hover:text-primary transition-colors">
-                💸 LEVNÉ LETENKY
-              </a>
-              <a href="#" className="text-sm hover:text-primary transition-colors">
-                ⭐ DOVOLENÁ
-              </a>
-              <a href="#" className="text-sm hover:text-primary transition-colors">
-                ✈️ AEROLINKY
-              </a>
+              <Link href="/levne-letenky" className="text-gray-700 hover:text-[#E91E63] flex items-center gap-1">
+                <span>✈️</span> LEVNÉ LETENKY
+              </Link>
+              <Link href="/dovolene" className="text-gray-700 hover:text-[#E91E63] flex items-center gap-1">
+                <span>⭐</span> DOVOLENÉ
+              </Link>
+              <Link href="/blog" className="text-gray-700 hover:text-[#E91E63] flex items-center gap-1">
+                <span>📰</span> BLOG
+              </Link>
             </nav>
 
-            <div className="flex items-center gap-2 text-orange-500">
+            <a
+              href="tel:+420223340510"
+              className="flex items-center gap-2 text-[#E91E63] font-bold"
+            >
               <Phone className="w-4 h-4" />
-              <span className="font-semibold text-sm">223 340 510</span>
-            </div>
+              <span className="hidden sm:inline">223 340 510</span>
+            </a>
           </div>
         </div>
       </header>
 
-      {/* Airline Header */}
-      <section className="bg-white py-12 border-b">
-        <div className="container max-w-6xl">
+      {/* Breadcrumbs */}
+      <div className="bg-white border-b">
+        <div className="container py-3">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
+            <Link href="/" className="hover:text-[#E91E63]">Domů</Link>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-gray-900 font-medium">{airline.name} Letenky</span>
+          </nav>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="container py-8">
+        {/* Airline Header */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
           <div className="flex items-center gap-6 mb-6">
             <img
               src={airline.logo}
               alt={`${airline.name} logo`}
-              className="w-24 h-24 object-contain"
+              className="w-32 h-32 object-contain"
             />
             <div>
-              <h1 className="text-4xl font-bold mb-2">Letenky {airline.name}</h1>
-              <p className="text-lg text-muted-foreground">{airline.description}</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {airline.name} Letenky
+              </h1>
+              <p className="text-gray-600">
+                Nejlevnější letenky společnosti {airline.name}
+              </p>
             </div>
           </div>
-          <Button asChild variant="outline">
-            <a href={airline.website} target="_blank" rel="noopener noreferrer">
-              Navštívit web {airline.name}
-            </a>
-          </Button>
         </div>
-      </section>
 
-      {/* Flight Listings */}
-      <section className="py-12">
-        <div className="container max-w-6xl">
-          <h2 className="text-3xl font-bold mb-8 text-center">
-            Akční letenky {airline.name}
+        {/* Flight Offers Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <Plane className="w-6 h-6 text-[#E91E63]" />
+            Aktuální nabídky {airline.name}
           </h2>
 
-          {isLoading ? (
+          {flightsLoading ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">Načítám letenky...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E91E63] mx-auto mb-4"></div>
+              <p className="text-gray-600">Načítám nabídky...</p>
             </div>
-          ) : flights && flights.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {flights.map((flight) => (
+          ) : airlineFlights.length > 0 ? (
+            <div className="space-y-4">
+              {airlineFlights.slice(0, 10).map((flight, index) => (
                 <a
-                  key={flight.id}
-                  href={`#flight-${flight.id}`}
-                  className="bg-white rounded-lg shadow-sm border border-border p-6 hover:shadow-md transition-all group"
+                  key={index}
+                  href={flight.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex items-center gap-4 p-4 group"
+                  onClick={() => trackAffiliateClick(
+                    flight.destination || "Unknown",
+                    flight.destination?.toLowerCase().replace(/\s+/g, "-") || "unknown",
+                    "airline-page",
+                    flight.link
+                  )}
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-bold text-lg group-hover:text-blue-600 transition-colors">
-                      {flight.fromCity} → {flight.toCity}
-                    </h3>
-                    {flight.discountPercent && flight.discountPercent > 0 && (
-                      <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        -{flight.discountPercent}%
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Letecká společnost:</span>
-                      <span className="font-semibold">{flight.airline}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Délka letu:</span>
-                      <span className="font-semibold">{flight.duration}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Zastávky:</span>
-                      <span className="font-semibold">{flight.stops === 0 ? "Přímý let" : `${flight.stops} zastávka`}</span>
+                  {/* Destination Image */}
+                  <div className="relative w-28 h-20 flex-shrink-0 overflow-hidden rounded-lg">
+                    <img
+                      src={flight.imageUrl || "/destinations/default.jpg"}
+                      alt={flight.destination || "Destinace"}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    {/* Airplane overlay on hover */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <Plane className="w-8 h-8 text-white" />
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <div>
-                      {flight.originalPrice && (
-                        <p className="text-xs text-muted-foreground line-through">
-                          {formatPrice(flight.originalPrice)}
-                        </p>
+                  {/* Flight Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-gray-900">{flight.departure || "Praha"}</span>
+                      <span className="text-gray-400">→</span>
+                      <span className="font-bold text-gray-900">{flight.destination}</span>
+                      {flight.discount && (
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                          {flight.discount}
+                        </span>
                       )}
-                      <p className="text-2xl font-bold text-primary">
-                        {formatPrice(flight.price)}
-                      </p>
                     </div>
-                    <Button size="sm" className="bg-[#E91E63] hover:bg-[#C2185B]">
-                      Zobrazit
-                    </Button>
+                    <p className="text-sm text-gray-500">
+                      {flight.country || ""}
+                    </p>
                   </div>
+
+                  {/* Price */}
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs text-gray-500">od</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {formatPrice(flight.price)}
+                    </p>
+                  </div>
+
+                  {/* CTA Button */}
+                  <Button
+                    className="bg-[#E91E63] hover:bg-[#C2185B] text-white text-sm px-4 py-2 flex-shrink-0"
+                  >
+                    Pokračovat k rezervaci
+                  </Button>
                 </a>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-white rounded-lg">
-              <p className="text-muted-foreground mb-4">
-                Momentálně nemáme k dispozici žádné akční letenky od {airline.name}.
+            <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+              <Plane className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                Momentálně nemáme nabídky od {airline.name}
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Zkuste se podívat na naše další nabídky levných letenek
               </p>
-              <Button asChild>
-                <a href="/">Prohlédnout všechny nabídky</a>
-              </Button>
+              <Link href="/levne-letenky">
+                <Button className="bg-[#E91E63] hover:bg-[#C2185B]">
+                  Zobrazit všechny letenky
+                </Button>
+              </Link>
             </div>
           )}
-        </div>
-      </section>
 
-      {/* Why Choose This Airline */}
-      <section className="py-12 bg-white">
-        <div className="container max-w-4xl">
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            Proč letět s {airline.name}?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Plane className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="font-bold mb-2">Moderní flotila</h3>
-              <p className="text-sm text-muted-foreground">
-                Nejnovější letadla s vysokým komfortem a bezpečností
-              </p>
+          {airlineFlights.length > 0 && (
+            <div className="text-center mt-6">
+              <Link href="/levne-letenky">
+                <Button variant="outline" className="text-[#E91E63] border-[#E91E63] hover:bg-[#E91E63] hover:text-white">
+                  Zobrazit další akční letenky
+                </Button>
+              </Link>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ChevronRight className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="font-bold mb-2">Široká síť destinací</h3>
-              <p className="text-sm text-muted-foreground">
-                Létejte do stovek destinací po celém světě
-              </p>
+          )}
+        </section>
+
+        {/* About Airline Section */}
+        <section className="bg-white rounded-xl shadow-md p-8">
+          <h2 className="text-2xl font-bold mb-6">O společnosti {airline.name}</h2>
+          
+          <p className="text-gray-700 leading-relaxed mb-6">
+            {airline.description}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="bg-[#F5F7FA] rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">Založeno</p>
+              <p className="font-bold text-gray-900">{airline.founded}</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Phone className="w-8 h-8 text-orange-600" />
-              </div>
-              <h3 className="font-bold mb-2">Kvalitní služby</h3>
-              <p className="text-sm text-muted-foreground">
-                Profesionální posádka a vynikající zákaznický servis
-              </p>
+            <div className="bg-[#F5F7FA] rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">Hlavní hub</p>
+              <p className="font-bold text-gray-900">{airline.hub}</p>
+            </div>
+            <div className="bg-[#F5F7FA] rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">IATA kód</p>
+              <p className="font-bold text-gray-900">{airline.iataCode}</p>
             </div>
           </div>
+
+          <a
+            href={airline.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-[#E91E63] hover:underline font-medium"
+          >
+            Navštívit oficiální stránky {airline.name}
+            <ChevronRight className="w-4 h-4" />
+          </a>
+        </section>
+
+        {/* Back Link */}
+        <div className="mt-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#E91E63]">
+            <ArrowLeft className="w-4 h-4" />
+            Zpět na hlavní stránku
+          </Link>
         </div>
-      </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-[#FF9800] py-12 mt-12">
+        <div className="container text-center text-white">
+          <p className="font-bold text-lg mb-2">Akční Letenky</p>
+          <p className="text-sm opacity-90">
+            © {new Date().getFullYear()} Všechna práva vyhrazena
+          </p>
+        </div>
+      </footer>
+
+      {/* Chatbot */}
+      <ChatbotWidget />
+
+      {/* Schema.org JSON-LD */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Airline",
+          "name": airline.name,
+          "iataCode": airline.iataCode,
+          "url": airline.website,
+          "logo": `https://www.akcni-letenky.com${airline.logo}`,
+          "foundingDate": airline.founded
+        })}
+      </script>
     </div>
   );
 }
