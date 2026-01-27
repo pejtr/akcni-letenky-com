@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, slug, country FROM destinations LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT id, name, slug, country FROM destinations LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Londýn",
+      "slug": "londyn",
+      "country": "Velká Británie"
+    },
+    {
+      "id": "2",
+      "name": "Paříž",
+      "slug": "pariz",
+      "country": "Francie"
+    },
+    {
+      "id": "3",
+      "name": "Barcelona",
+      "slug": "barcelona",
+      "country": "Španělsko"
+    },
+    {
+      "id": "4",
+      "name": "Řím",
+      "slug": "rim",
+      "country": "Itálie"
+    },
+    {
+      "id": "5",
+      "name": "New York",
+      "slug": "new-york",
+      "country": "USA"
+    },
+    {
+      "id": "6",
+      "name": "Dubaj",
+      "slug": "dubaj",
+      "country": "Spojené arabské emiráty"
+    },
+    {
+      "id": "7",
+      "name": "Thajsko",
+      "slug": "thajsko",
+      "country": "Thajsko"
+    },
+    {
+      "id": "8",
+      "name": "Bali",
+      "slug": "bali",
+      "country": "Indonésie"
+    },
+    {
+      "id": "9",
+      "name": "Island",
+      "slug": "island",
+      "country": "Island"
+    },
+    {
+      "id": "10",
+      "name": "Santorini",
+      "slug": "santorini",
+      "country": "Řecko"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tslug\tcountry\n1\tLondýn\tlondyn\tVelká Británie\n2\tPaříž\tpariz\tFrancie\n3\tBarcelona\tbarcelona\tŠpanělsko\n4\tŘím\trim\tItálie\n5\tNew York\tnew-york\tUSA\n6\tDubaj\tdubaj\tSpojené arabské emiráty\n7\tThajsko\tthajsko\tThajsko\n8\tBali\tbali\tIndonésie\n9\tIsland\tisland\tIsland\n10\tSantorini\tsantorini\tŘecko\n",
+  "stderr": "",
+  "execution_time_ms": 152
+}

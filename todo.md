@@ -434,3 +434,30 @@
 - [x] Add expand/fullscreen button to chatbot header
 - [x] Implement expanded view (700px x 85vh) with larger chat area
 - [ ] Test chatbot on desktop and mobile
+
+## Kiwi.com Affiliate API Integration
+- [ ] Research Kiwi.com Tequila API documentation
+- [ ] Create server-side API route for flight search
+- [ ] Connect search form to Kiwi.com API
+- [ ] Display real flight results with prices
+- [ ] Add affiliate links to Kiwi.com booking
+
+## Destination Landing Pages (SEO)
+- [ ] Create /letenky-do-parize landing page
+- [ ] Create /letenky-do-londyna landing page
+- [ ] Add Schema.org structured data for destinations
+- [ ] Implement dynamic flight offers for each destination
+- [ ] Add internal linking from homepage
+
+## FAQ Dynamic Loading
+- [ ] Add "Zobrazit více" button to FAQ section
+- [ ] Create extended FAQ data (additional 6+ questions)
+- [ ] Implement smooth expand animation
+- [ ] Track FAQ engagement for analytics
+
+## Redesign Destination Sections (Match Original)
+- [x] Featured destinations: 4 cards with image, title, description, orange price button
+- [x] "Zpáteční levné letenky" grid: 4x4 layout with small images, city, price, country
+- [x] Airline logos section: horizontal rows with logo + name
+- [x] All destination cards clickable with Kiwi.com affiliate links
+- [x] Fix non-working click handlers - now all cards link to Kiwi.com

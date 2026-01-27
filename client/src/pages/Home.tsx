@@ -5,9 +5,84 @@ import { cn } from "@/lib/utils";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SocialProofWidget from "@/components/SocialProofWidget";
 
+// City to Kiwi.com slug mapping
+const cityToSlug: Record<string, string> = {
+  "barcelona": "barcelona-spain",
+  "londýn": "london-united-kingdom",
+  "london": "london-united-kingdom",
+  "paříž": "paris-france",
+  "paris": "paris-france",
+  "řím": "rome-italy",
+  "rome": "rome-italy",
+  "new york": "new-york-city-new-york-united-states",
+  "amsterdam": "amsterdam-netherlands",
+  "berlín": "berlin-germany",
+  "berlin": "berlin-germany",
+  "vídeň": "vienna-austria",
+  "vienna": "vienna-austria",
+  "madrid": "madrid-spain",
+  "lisabon": "lisbon-portugal",
+  "lisbon": "lisbon-portugal",
+  "dubaj": "dubai-united-arab-emirates",
+  "dubai": "dubai-united-arab-emirates",
+  "bangkok": "bangkok-thailand",
+  "tokio": "tokyo-japan",
+  "tokyo": "tokyo-japan",
+  "mallorka": "palma-mallorca-spain",
+  "mallorca": "palma-mallorca-spain",
+  "tenerife": "tenerife-spain",
+  "kréta": "heraklion-greece",
+  "crete": "heraklion-greece",
+  "rhodos": "rhodes-greece",
+  "rhodes": "rhodes-greece",
+  "turecko": "antalya-turkey",
+  "antalya": "antalya-turkey",
+  "egypt": "hurghada-egypt",
+  "hurghada": "hurghada-egypt",
+  "milán": "milan-italy",
+  "milan": "milan-italy",
+  "benátky": "venice-italy",
+  "venice": "venice-italy",
+  "praha": "prague-czech-republic",
+  "prague": "prague-czech-republic",
+};
+
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
+  
+  // Search form state
+  const [destination, setDestination] = useState("");
+  const [departureDate, setDepartureDate] = useState("");
+  const [passengers, setPassengers] = useState("1");
+  
+  // Handle search - redirect to Kiwi.com with affiliate link
+  const handleSearch = () => {
+    const destLower = destination.toLowerCase().trim();
+    const destSlug = cityToSlug[destLower] || destLower.replace(/\s+/g, "-");
+    
+    // Parse date from dd.mm.yyyy to yyyy-mm-dd
+    let formattedDate = "";
+    if (departureDate) {
+      const parts = departureDate.split(".");
+      if (parts.length === 3) {
+        formattedDate = `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
+      }
+    }
+    
+    // Build Kiwi.com search URL
+    const origin = "prague-czech-republic"; // Default origin is Prague
+    let kiwiUrl = `https://www.kiwi.com/cs/search/results/${origin}/${destSlug}`;
+    
+    if (formattedDate) {
+      kiwiUrl += `/${formattedDate}`;
+    }
+    
+    kiwiUrl += `?adults=${passengers}`;
+    
+    // Open in new tab
+    window.open(kiwiUrl, "_blank");
+  };
   
   // Handle scroll for sticky navigation and bottom banner
   useEffect(() => {
@@ -221,6 +296,8 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Napiš. Barcelona"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50"
                 />
               </div>
@@ -229,12 +306,18 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="dd.mm.rrrr"
+                  value={departureDate}
+                  onChange={(e) => setDepartureDate(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50"
                 />
               </div>
               <div className="relative text-left">
                 <label className="block text-xs text-muted-foreground mb-1">kolik osob?</label>
-                <select className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 appearance-none">
+                <select 
+                  value={passengers}
+                  onChange={(e) => setPassengers(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 appearance-none"
+                >
                   <option value="1">1 osoba</option>
                   <option value="2">2 osoby</option>
                   <option value="3">3 osoby</option>
@@ -243,7 +326,10 @@ export default function Home() {
                 </select>
               </div>
               <div className="flex items-end">
-                <Button className="w-full bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-bold py-3 rounded-md text-sm">
+                <Button 
+                  onClick={handleSearch}
+                  className="w-full bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-bold py-3 rounded-md text-sm"
+                >
                   VYHLEDAT DOVOLENOU
                 </Button>
               </div>
@@ -294,33 +380,37 @@ export default function Home() {
         <h2 id="featured-cities" className="sr-only">Nejlevnější letenky do evropských měst</h2>
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredCities.map((city, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div
-                  className="h-48 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${city.image})` }}
-                  role="img"
-                  aria-label={`Fotografie ${city.to}`}
-                />
-                <div className="p-5">
-                  <h3 className="font-bold text-lg text-blue-700 mb-2 text-center">
-                    {city.from} ⇄ {city.to}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
-                    {city.description}
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="w-full border-2 border-[#FF8C00] text-[#FF8C00] hover:bg-[#FF8C00] hover:text-white font-bold rounded-lg"
-                  >
-                    od {formatPrice(city.price)}
-                  </Button>
-                </div>
-              </div>
-            ))}
+            {featuredCities.map((city, index) => {
+              const destSlug = cityToSlug[city.to.toLowerCase()] || city.to.toLowerCase().replace(/\s+/g, "-");
+              const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
+              return (
+                <a
+                  key={index}
+                  href={kiwiUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow block"
+                >
+                  <div
+                    className="h-48 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${city.image})` }}
+                    role="img"
+                    aria-label={`Fotografie ${city.to}`}
+                  />
+                  <div className="p-5">
+                    <h3 className="font-bold text-lg text-blue-700 mb-2 text-center">
+                      {city.from} ⇄ {city.to}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
+                      {city.description}
+                    </p>
+                    <div className="w-full border-2 border-[#FF8C00] text-[#FF8C00] hover:bg-[#FF8C00] hover:text-white font-bold rounded-lg py-2 text-center transition-colors">
+                      od {formatPrice(city.price)}
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -338,32 +428,38 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-            {popularDestinations.map((dest, index) => (
-              <a
-                key={index}
-                href={`#${dest.city}`}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all group p-4"
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src={dest.image}
-                    alt={`${dest.city}, ${dest.country}`}
-                    className="w-20 h-20 object-cover rounded-md flex-shrink-0"
-                    loading="lazy"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-lg mb-1 group-hover:underline">
-                      {dest.city}
-                    </h3>
-                    <p className="text-sm text-gray-500">od {formatPrice(dest.price)}</p>
+            {popularDestinations.map((dest, index) => {
+              const destSlug = cityToSlug[dest.city.toLowerCase()] || dest.city.toLowerCase().replace(/\s+/g, "-");
+              const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
+              return (
+                <a
+                  key={index}
+                  href={kiwiUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all group p-4"
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={dest.image}
+                      alt={`${dest.city}, ${dest.country}`}
+                      className="w-20 h-20 object-cover rounded-md flex-shrink-0"
+                      loading="lazy"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-lg mb-1 group-hover:underline">
+                        {dest.city}
+                      </h3>
+                      <p className="text-sm text-gray-500">od {formatPrice(dest.price)}</p>
+                    </div>
+                    <ChevronRight className="w-6 h-6 text-gray-400 flex-shrink-0" />
                   </div>
-                  <ChevronRight className="w-6 h-6 text-gray-400 flex-shrink-0" />
-                </div>
-                <div className="mt-3 text-center">
-                  <p className="text-sm font-bold text-black">{dest.country}</p>
-                </div>
-              </a>
-            ))}
+                  <div className="mt-3 text-center">
+                    <p className="text-sm font-bold text-black">{dest.country}</p>
+                  </div>
+                </a>
+              );
+            })}
           </div>
 
           <p className="text-xs text-muted-foreground text-center mt-8 max-w-4xl mx-auto">
