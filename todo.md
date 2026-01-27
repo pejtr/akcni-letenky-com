@@ -617,3 +617,8 @@
 - [x] Yellow bottom CTA banner stays visible permanently after first appearance (after 50% scroll)
 - [x] Remove maximize button (↗️) from mobile chatbot header completely
 - [x] Fix notification close button tooltip from "Travel Expert" to "Zavřít notifikaci"
+- [x] Add navigation link to airline pages (back to top/home)
+- [x] Ensure all offer links have affiliate parameter ?a_aid=levne-letenky
+- [x] Move "Aktuální nabídky" section AFTER article content on airline pages
+- [x] Fix mobile display of offer cards (proper alignment, text wrapping, button sizing)
+- [x] Increase z-index of notification to be above chatbot (prevent tooltip overlap)

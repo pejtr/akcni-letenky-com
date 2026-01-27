@@ -80,7 +80,7 @@ export default function SocialProofWidget() {
   return (
     <div
       className={cn(
-        "fixed bottom-16 md:bottom-6 left-4 md:left-6 z-40 bg-card border border-border rounded-xl shadow-2xl max-w-sm animate-in slide-in-from-left-5 fade-in duration-500",
+        "fixed bottom-16 md:bottom-6 left-4 md:left-6 z-60 bg-card border border-border rounded-xl shadow-2xl max-w-sm animate-in slide-in-from-left-5 fade-in duration-500",
         !isVisible && "animate-out slide-out-to-left-5 fade-out"
       )}
     >

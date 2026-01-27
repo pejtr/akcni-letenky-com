@@ -249,7 +249,41 @@ export default function AirlinePage() {
           </div>
         </div>
 
-        {/* Flight Offers Section */}
+        {/* About Airline Section - MOVED BEFORE OFFERS */}
+        <section className="bg-white rounded-xl shadow-md p-8 mb-12">
+          <h2 className="text-2xl font-bold mb-6">O společnosti {airline.name}</h2>
+          
+          <p className="text-gray-700 leading-relaxed mb-6">
+            {airline.description}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="bg-[#F5F7FA] rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">Založeno</p>
+              <p className="font-bold text-gray-900">{airline.founded}</p>
+            </div>
+            <div className="bg-[#F5F7FA] rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">Hlavní hub</p>
+              <p className="font-bold text-gray-900">{airline.hub}</p>
+            </div>
+            <div className="bg-[#F5F7FA] rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">IATA kód</p>
+              <p className="font-bold text-gray-900">{airline.iataCode}</p>
+            </div>
+          </div>
+
+          <a
+            href={airline.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-[#E91E63] hover:underline font-medium"
+          >
+            Navštívit oficiální stránky {airline.name}
+            <ChevronRight className="w-4 h-4" />
+          </a>
+        </section>
+
+        {/* Flight Offers Section - MOVED AFTER ARTICLE */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <Plane className="w-6 h-6 text-[#E91E63]" />
@@ -266,10 +300,10 @@ export default function AirlinePage() {
               {airlineFlights.slice(0, 10).map((flight, index) => (
                 <a
                   key={index}
-                  href={flight.link}
+                  href={`${flight.link}${flight.link.includes('?') ? '&' : '?'}a_aid=levne-letenky`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex items-center gap-4 p-4 group"
+                  className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 p-3 md:p-4 group"
                   onClick={() => trackAffiliateClick(
                     flight.destination || "Unknown",
                     flight.destination?.toLowerCase().replace(/\s+/g, "-") || "unknown",
@@ -278,7 +312,7 @@ export default function AirlinePage() {
                   )}
                 >
                   {/* Destination Image */}
-                  <div className="relative w-28 h-20 flex-shrink-0 overflow-hidden rounded-lg">
+                  <div className="relative w-full md:w-28 h-32 md:h-20 flex-shrink-0 overflow-hidden rounded-lg">
                     <img
                       src={flight.imageUrl || "/destinations/default.jpg"}
                       alt={flight.destination || "Destinace"}
@@ -290,36 +324,39 @@ export default function AirlinePage() {
                     </div>
                   </div>
 
-                  {/* Flight Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-gray-900">{flight.departure || "Praha"}</span>
-                      <span className="text-gray-400">→</span>
-                      <span className="font-bold text-gray-900">{flight.destination}</span>
-                      {flight.discount && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                          {flight.discount}
-                        </span>
-                      )}
+                  {/* Content wrapper for mobile/desktop layout */}
+                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 flex-1">
+                    {/* Flight Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <span className="font-bold text-gray-900 text-sm md:text-base">{flight.departure || "Praha"}</span>
+                        <span className="text-gray-400">→</span>
+                        <span className="font-bold text-gray-900 text-sm md:text-base">{flight.destination}</span>
+                        {flight.discount && (
+                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                            {flight.discount}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs md:text-sm text-gray-500">
+                        {flight.country || ""}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-500">
-                      {flight.country || ""}
-                    </p>
-                  </div>
 
-                  {/* Price */}
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-xs text-gray-500">od</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {formatPrice(flight.price)}
-                    </p>
+                    {/* Price */}
+                    <div className="text-left md:text-right flex-shrink-0">
+                      <p className="text-xs text-gray-500">od</p>
+                      <p className="text-xl md:text-2xl font-bold text-gray-900">
+                        {formatPrice(flight.price)}
+                      </p>
+                    </div>
                   </div>
 
                   {/* CTA Button */}
                   <Button
-                    className="bg-[#E91E63] hover:bg-[#C2185B] text-white text-sm px-4 py-2 flex-shrink-0"
+                    className="bg-[#E91E63] hover:bg-[#C2185B] text-white text-xs md:text-sm px-3 md:px-4 py-2 flex-shrink-0 w-full md:w-auto"
                   >
-                    Pokračovat k rezervaci
+                    Pokračovat
                   </Button>
                 </a>
               ))}
@@ -352,39 +389,7 @@ export default function AirlinePage() {
           )}
         </section>
 
-        {/* About Airline Section */}
-        <section className="bg-white rounded-xl shadow-md p-8">
-          <h2 className="text-2xl font-bold mb-6">O společnosti {airline.name}</h2>
-          
-          <p className="text-gray-700 leading-relaxed mb-6">
-            {airline.description}
-          </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="bg-[#F5F7FA] rounded-lg p-4">
-              <p className="text-sm text-gray-500 mb-1">Založeno</p>
-              <p className="font-bold text-gray-900">{airline.founded}</p>
-            </div>
-            <div className="bg-[#F5F7FA] rounded-lg p-4">
-              <p className="text-sm text-gray-500 mb-1">Hlavní hub</p>
-              <p className="font-bold text-gray-900">{airline.hub}</p>
-            </div>
-            <div className="bg-[#F5F7FA] rounded-lg p-4">
-              <p className="text-sm text-gray-500 mb-1">IATA kód</p>
-              <p className="font-bold text-gray-900">{airline.iataCode}</p>
-            </div>
-          </div>
-
-          <a
-            href={airline.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-[#E91E63] hover:underline font-medium"
-          >
-            Navštívit oficiální stránky {airline.name}
-            <ChevronRight className="w-4 h-4" />
-          </a>
-        </section>
 
         {/* Back Link */}
         <div className="mt-8">
