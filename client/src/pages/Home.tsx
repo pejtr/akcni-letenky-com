@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SocialProofWidget from "@/components/SocialProofWidget";
+import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -267,10 +268,7 @@ export default function Home() {
               💸 LEVNÉ LETENKY
             </Link>
             <Link href="/dovolene" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
-              ⭐ DOVOLENÉ
-            </Link>
-            <Link href="/blog" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
-              📝 BLOG
+              ⭐ DOVOLENÁ
             </Link>
             <a href="#airlines" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
               ✈️ AEROLINKY
@@ -456,6 +454,22 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Nejprodávanější letenky tento týden */}
+      <section aria-labelledby="top-this-week" className="py-12 bg-white">
+        <div className="container">
+          {/* Section Title */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-gradient-to-r from-[#FF5722] to-[#E91E63] py-3 px-6 rounded-lg shadow-lg">
+              <h2 id="top-this-week" className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                🔥 Nejprodávanější letenky tento týden
+              </h2>
+            </div>
+          </div>
+
+          <TopFlightsThisWeek />
+        </div>
+      </section>
+
       {/* Zpáteční levné letenky Grid */}
       <section aria-labelledby="return-flights" className="py-12 bg-[#F5F7FA]">
         <div className="container">
@@ -631,12 +645,69 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Yellow Banner */}
-            <div className="bg-[#FFD700] rounded-lg px-6 py-3 mb-8 flex items-center justify-center gap-4 flex-wrap">
-              <span className="text-sm font-semibold text-[#003087]">⭐ Business class</span>
-              <span className="text-sm font-semibold text-[#003087]">✈️ Přímé lety</span>
-              <span className="text-sm font-semibold text-[#003087]">💰 Časté dotazy</span>
+            {/* Quick Links Banner */}
+            <div className="bg-[#FFD700] rounded-lg px-6 py-3 mb-8">
+              <div className="flex items-center justify-center gap-3 flex-wrap text-xs md:text-sm">
+                <a href="#akce-tydne" className="font-semibold text-[#003087] hover:underline">➡️ Akční nabídka týdne</a>
+                <span className="text-[#003087]">|</span>
+                <a href="#business-class" className="font-semibold text-[#003087] hover:underline">⭐ Business class</a>
+                <span className="text-[#003087]">|</span>
+                <a href="#prime-lety" className="font-semibold text-[#003087] hover:underline">✈️ Přímé lety</a>
+                <span className="text-[#003087]">|</span>
+                <a href="#faq" className="font-semibold text-[#003087] hover:underline">💰 Časté dotazy</a>
+              </div>
             </div>
+
+            {/* Footer Categories Grid */}
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {/* Column 1 - Akční nabídky */}
+              <div>
+                <h3 className="text-base font-bold mb-3 text-[#003087]">🌴 Akční nabídky</h3>
+                <ul className="space-y-2">
+                  <li><a href="#letenky-1500" className="text-xs text-blue-600 hover:underline">Letenky do 1 500 Kč</a></li>
+                  <li><a href="#dovolena-sleva" className="text-xs text-blue-600 hover:underline">Dovolená se slevou až 80 %</a></li>
+                  <li><a href="#eurovikendy" className="text-xs text-blue-600 hover:underline">Eurovíkendy</a></li>
+                  <li><a href="#business-class" className="text-xs text-blue-600 hover:underline">Business class</a></li>
+                  <li><a href="#top-akce" className="text-xs text-blue-600 hover:underline">🚀TOP akce</a></li>
+                  <li><a href="#mauricius" className="text-xs text-blue-600 hover:underline">Mauricius</a></li>
+                  <li><a href="#kratke-vylety" className="text-xs text-blue-600 hover:underline">Krátké výlety</a></li>
+                  <li><a href="#maledivy" className="text-xs text-blue-600 hover:underline">Maledivy</a></li>
+                </ul>
+              </div>
+
+              {/* Column 2 - Dovolené */}
+              <div>
+                <h3 className="text-base font-bold mb-3 text-[#003087]">⭐ Dovolené</h3>
+                <ul className="space-y-2">
+                  <li><a href="#premium-dovolena" className="text-xs text-blue-600 hover:underline">⭐Premium dovolená</a></li>
+                  <li><a href="#dubaj" className="text-xs text-blue-600 hover:underline">Dovolená v Dubaji</a></li>
+                  <li><a href="#poznavaci" className="text-xs text-blue-600 hover:underline">Poznávací zájezdy</a></li>
+                  <li><a href="#kanary" className="text-xs text-blue-600 hover:underline">Kanárské ostrovy</a></li>
+                  <li><a href="#last-minute" className="text-xs text-blue-600 hover:underline">Last minute</a></li>
+                  <li><a href="#nejlepsi-dovolene" className="text-xs text-blue-600 hover:underline">Nejlepší dovolené</a></li>
+                  <li><a href="#wellness" className="text-xs text-blue-600 hover:underline">Wellness</a></li>
+                  <li><a href="#exoticka" className="text-xs text-blue-600 hover:underline">Exotická dovolená</a></li>
+                </ul>
+              </div>
+
+              {/* Column 3 - Hotely & Místa */}
+              <div>
+                <h3 className="text-base font-bold mb-3 text-[#003087]">🏛️ Hotely & Místa</h3>
+                <ul className="space-y-2">
+                  <li><a href="#rim" className="text-xs text-blue-600 hover:underline">Pobyty v Římě</a></li>
+                  <li><a href="#cesko" className="text-xs text-blue-600 hover:underline">Hotely v Česku</a></li>
+                  <li><a href="#benatky" className="text-xs text-blue-600 hover:underline">Pobyt v Benátkách</a></li>
+                  <li><a href="#usa" className="text-xs text-blue-600 hover:underline">Dovolená v USA</a></li>
+                  <li><a href="#slovensko" className="text-xs text-blue-600 hover:underline">Hotely na Slovensku</a></li>
+                  <li><a href="#madeira" className="text-xs text-blue-600 hover:underline">Ostrov Madeira</a></li>
+                  <li><a href="#vlastni-doprava" className="text-xs text-blue-600 hover:underline">S vlastní dopravou</a></li>
+                  <li><a href="#malta" className="text-xs text-blue-600 hover:underline">Ostrov Malta</a></li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Separator */}
+            <div className="border-t border-gray-200 my-6"></div>
 
             {/* Two Columns */}
             <div className="grid md:grid-cols-2 gap-8 mb-8">

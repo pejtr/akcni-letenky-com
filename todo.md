@@ -624,3 +624,10 @@
 - [x] Increase z-index of notification to be above chatbot (prevent tooltip overlap)
 - [x] Update SEO title to "Levné Letenky z Prahy od 590 Kč | Sleva až -80% | Akční Letenky 2026"
 - [x] Add "Zpáteční letenka je již zahrnuta v ceně" in small text below "Ušetřete do 50% na letu"
+- [x] Create tRPC endpoint for top destinations by affiliate clicks this week
+- [x] Build "Nejprodávanější letenky tento týden" UI section
+- [x] Display click count as "X lidí si prohlédlo"
+- [x] Add 🔥 icon for hot deals
+- [x] Add section to homepage after featured cities
+- [x] Ensure responsive design for mobile and desktop
+- [x] Add complete navigation links matching original www.akcni-letenky.com website

@@ -238,6 +238,13 @@ export const appRouter = router({
       return await getAffiliateClickStats();
     }),
 
+    // Get top destinations this week (public - for homepage)
+    getTopThisWeek: publicProcedure
+      .input(z.object({ limit: z.number().default(6) }))
+      .query(async ({ input }) => {
+        return await getTopDestinationsByClicks(input.limit);
+      }),
+
     // Get top destinations by clicks (admin only)
     getTopDestinations: protectedProcedure
       .input(z.object({ limit: z.number().default(10) }))
