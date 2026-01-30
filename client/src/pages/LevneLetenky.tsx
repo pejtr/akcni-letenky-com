@@ -36,9 +36,9 @@ export default function LevneLetenky() {
     ? Array.from(new Set(flights.map((f) => f.country))).filter(Boolean).sort()
     : [];
 
-  // Get unique departures for filter
+  // Get unique departures for filter (only flights have departure)
   const departures = flights
-    ? Array.from(new Set(flights.map((f) => f.departure))).filter(Boolean).sort()
+    ? Array.from(new Set(flights.map((f) => 'departure' in f ? f.departure : null).filter((d): d is string => d !== null))).sort()
     : [];
 
   // Generate simulated rating between 4.2 and 5.0
@@ -222,10 +222,12 @@ export default function LevneLetenky() {
                         </p>
 
                         <div className="flex flex-wrap gap-3 mb-4">
-                          <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                            <Plane className="w-4 h-4" />
-                            Odlet: {flight.departure}
-                          </span>
+                          {'departure' in flight && flight.departure && (
+                            <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                              <Plane className="w-4 h-4" />
+                              Odlet: {flight.departure}
+                            </span>
+                          )}
                           <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                             <MapPin className="w-4 h-4" />
                             {flight.destination}

@@ -34,12 +34,11 @@ import {
 import { generateDailyArticles } from "./articleGenerator";
 import { adminAnalyticsRouter } from "./adminAnalytics";
 import {
-  fetchFlights,
-  fetchVacations,
-  getCacheStatus,
   type FlightOffer,
   type VacationOffer,
+  getCacheStatus,
 } from "./pelikanFeed";
+import { pelikanCache } from "./pelikanCache";
 
 export const appRouter = router({
   system: systemRouter,
@@ -356,7 +355,7 @@ export const appRouter = router({
         }).optional()
       )
       .query(async ({ input }) => {
-        let flights = await fetchFlights();
+        let flights = await pelikanCache.getFlights();
         
         // Filter by country
         if (input?.country) {
@@ -365,10 +364,10 @@ export const appRouter = router({
           );
         }
         
-        // Filter by departure
+        // Filter by departure (only flights have departure field)
         if (input?.departure) {
           flights = flights.filter(f => 
-            f.departure.toLowerCase().includes(input.departure!.toLowerCase())
+            'departure' in f && f.departure.toLowerCase().includes(input.departure!.toLowerCase())
           );
         }
         
@@ -393,7 +392,7 @@ export const appRouter = router({
         }).optional()
       )
       .query(async ({ input }) => {
-        let vacations = await fetchVacations();
+        let vacations = await pelikanCache.getVacations();
         
         // Filter by country
         if (input?.country) {
@@ -426,10 +425,7 @@ export const appRouter = router({
       if (ctx.user.role !== "admin") {
         throw new Error("Unauthorized");
       }
-      await Promise.all([
-        fetchFlights(true),
-        fetchVacations(true),
-      ]);
+      await pelikanCache.refreshCache();
       return { success: true, status: getCacheStatus() };
     }),
 
@@ -443,8 +439,8 @@ export const appRouter = router({
       )
       .query(async ({ input }) => {
         const [flights, vacations] = await Promise.all([
-          fetchFlights(),
-          fetchVacations(),
+          pelikanCache.getFlights(),
+          pelikanCache.getVacations(),
         ]);
 
         // Sort both by price if requested

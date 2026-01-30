@@ -638,3 +638,7 @@
 - [x] Fix "Nejprodávanější letenky tento týden" section - add destination images
 - [x] Fix first card in top flights section (broken display)
 - [x] Make "Zpáteční levné letenky" heading more prominent and larger
+- [x] Fix script error on homepage (likely Kiwi widget) - resolved after restart
+- [x] Implement server-side cache for Pelikan offers (flights + vacations)
+- [x] Add 24-hour refresh cycle at midnight for Pelikan cache
+- [x] Add fallback to live API if cache fails

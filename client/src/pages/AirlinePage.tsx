@@ -160,7 +160,7 @@ export default function AirlinePage() {
 
   // Filter flights by airline name (case-insensitive partial match)
   const airlineFlights = flightsData?.filter((flight) => {
-    const flightAirline = flight.airline?.toLowerCase() || "";
+    const flightAirline = ('airline' in flight && flight.airline?.toLowerCase()) || "";
     const searchName = airline.name.toLowerCase();
     // Match by airline name or IATA code
     return flightAirline.includes(searchName) || 
@@ -329,7 +329,7 @@ export default function AirlinePage() {
                     {/* Flight Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="font-bold text-gray-900 text-sm md:text-base">{flight.departure || "Praha"}</span>
+                        <span className="font-bold text-gray-900 text-sm md:text-base">{('departure' in flight && flight.departure) || "Praha"}</span>
                         <span className="text-gray-400">→</span>
                         <span className="font-bold text-gray-900 text-sm md:text-base">{flight.destination}</span>
                         {flight.discount && (

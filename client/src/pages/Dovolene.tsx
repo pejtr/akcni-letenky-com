@@ -198,7 +198,7 @@ export default function Dovolene() {
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2 text-sm text-gray-500">
                             <MapPin className="w-4 h-4 text-green-500" />
-                            <span>{vacation.country} • {vacation.location}</span>
+                            <span>{vacation.country}{'location' in vacation && vacation.location ? ` • ${vacation.location}` : ''}</span>
                           </div>
                           {renderStars(rating)}
                         </div>
@@ -212,10 +212,12 @@ export default function Dovolene() {
                         </p>
 
                         <div className="flex flex-wrap gap-3 mb-4">
-                          <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                            <Clock className="w-4 h-4" />
-                            {vacation.duration}
-                          </span>
+                          {'duration' in vacation && vacation.duration && (
+                            <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                              <Clock className="w-4 h-4" />
+                              {vacation.duration}
+                            </span>
+                          )}
                           <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                             <MapPin className="w-4 h-4" />
                             {vacation.destination}
