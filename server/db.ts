@@ -415,9 +415,10 @@ export async function getTopDestinationsByClicks(limit: number = 10) {
   const db = await getDb();
   if (!db) return [];
 
-  const { affiliateClicks } = await import("../drizzle/schema");
+  const { affiliateClicks, flights } = await import("../drizzle/schema");
 
-  const result = await db
+  // Get top destinations by clicks
+  const topDestinations = await db
     .select({
       destination: affiliateClicks.destination,
       destinationSlug: affiliateClicks.destinationSlug,
@@ -427,6 +428,29 @@ export async function getTopDestinationsByClicks(limit: number = 10) {
     .groupBy(affiliateClicks.destination, affiliateClicks.destinationSlug)
     .orderBy(desc(sql`count(*)`))
     .limit(limit);
+
+  // For each destination, find the cheapest flight
+  const result = await Promise.all(
+    topDestinations.map(async (dest) => {
+      const cheapestFlight = await db
+        .select({
+          price: flights.price,
+          originalPrice: flights.originalPrice,
+          discountPercent: flights.discountPercent,
+        })
+        .from(flights)
+        .where(sql`LOWER(${flights.toCity}) = LOWER(${dest.destination})`)
+        .orderBy(flights.price)
+        .limit(1);
+
+      return {
+        ...dest,
+        price: cheapestFlight[0]?.price || null,
+        originalPrice: cheapestFlight[0]?.originalPrice || null,
+        discountPercent: cheapestFlight[0]?.discountPercent || 0,
+      };
+    })
+  );
 
   return result;
 }

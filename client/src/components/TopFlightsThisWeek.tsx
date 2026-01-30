@@ -1,6 +1,37 @@
 import { trpc } from "@/lib/trpc";
 import { Plane, TrendingUp, Users } from "lucide-react";
 
+// Destination to image mapping
+const destinationImages: Record<string, string> = {
+  "london": "/london.jpg",
+  "londýn": "/london.jpg",
+  "paris": "/paris.jpg",
+  "paříž": "/paris.jpg",
+  "new york": "/newyork.jpg",
+  "barcelona": "/barcelona.jpg",
+  "rome": "/rome.jpg",
+  "řím": "/rome.jpg",
+  "dubai": "/dubai.jpg",
+  "dubaj": "/dubai.jpg",
+  "bangkok": "/bangkok.jpg",
+  "tokyo": "/tokyo.jpg",
+  "tokio": "/tokyo.jpg",
+  "amsterdam": "/amsterdam.jpg",
+  "berlin": "/berlin.jpg",
+  "berlín": "/berlin.jpg",
+  "vienna": "/vienna.jpg",
+  "vídeň": "/vienna.jpg",
+  "madrid": "/madrid.jpg",
+  "lisbon": "/lisbon.jpg",
+  "lisabon": "/lisbon.jpg",
+};
+
+// Get image for destination (fallback to generic travel image)
+const getDestinationImage = (destination: string): string => {
+  const key = destination.toLowerCase().trim();
+  return destinationImages[key] || "/hero-coastal.jpg";
+};
+
 export default function TopFlightsThisWeek() {
   const { data: topDestinations, isLoading } = trpc.affiliate.getTopThisWeek.useQuery({ limit: 6 });
   const trackClickMutation = trpc.affiliate.trackClick.useMutation();
@@ -55,8 +86,18 @@ export default function TopFlightsThisWeek() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackAffiliateClick(dest.destination, dest.destinationSlug, kiwiUrl)}
-            className="group relative bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 p-6 border-2 border-transparent hover:border-[#E91E63] overflow-hidden"
+            className="group relative rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-[#E91E63] overflow-hidden min-h-[280px]"
           >
+            {/* Background Image with Overlay */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+              style={{ backgroundImage: `url('${getDestinationImage(dest.destination || "")}')` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+            </div>
+
+            {/* Content Container */}
+            <div className="relative z-10 p-6 h-full flex flex-col justify-end">
             {/* Hot Badge for Top 3 */}
             {isTopThree && (
               <div className="absolute top-3 right-3 bg-gradient-to-r from-[#FF5722] to-[#E91E63] text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
@@ -69,39 +110,57 @@ export default function TopFlightsThisWeek() {
               #{index + 1}
             </div>
 
-            {/* Content */}
-            <div className="mt-12">
-              {/* Destination */}
-              <div className="flex items-center gap-2 mb-3">
-                <Plane className="w-5 h-5 text-[#E91E63] group-hover:rotate-45 transition-transform duration-300" />
-                <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#E91E63] transition-colors">
-                  {dest.destination}
-                </h3>
-              </div>
+              {/* Content */}
+              <div className="mt-12">
+                {/* Destination */}
+                <div className="flex items-center gap-2 mb-3">
+                  <Plane className="w-5 h-5 text-white group-hover:rotate-45 transition-transform duration-300" />
+                  <h3 className="text-xl font-bold text-white group-hover:text-[#FFD700] transition-colors">
+                    {dest.destination || "Neznámá destinace"}
+                  </h3>
+                </div>
 
-              {/* Stats */}
-              <div className="space-y-2 mb-4">
-                {/* Click Count */}
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Users className="w-4 h-4 text-blue-600" />
-                  <span>
-                    <strong className="text-blue-600">{formatClicks(dest.clicks)}</strong> lidí si prohlédlo
+                {/* Price Section */}
+                {dest.price && (
+                  <div className="mb-3">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-[#FFD700]">{dest.price.toLocaleString()} Kč</span>
+                      {dest.originalPrice && dest.originalPrice > dest.price && (
+                        <span className="text-sm text-gray-300 line-through">{dest.originalPrice.toLocaleString()} Kč</span>
+                      )}
+                    </div>
+                    {dest.discountPercent > 0 && (
+                      <span className="inline-block mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">
+                        -{dest.discountPercent}% sleva
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Stats */}
+                <div className="space-y-2 mb-4">
+                  {/* Click Count */}
+                  <div className="flex items-center gap-2 text-sm text-gray-200">
+                    <Users className="w-4 h-4 text-blue-400" />
+                    <span>
+                      <strong className="text-blue-400">{formatClicks(dest.clicks)}</strong> lidí si prohlédlo
+                    </span>
+                  </div>
+
+                  {/* Trending Indicator */}
+                  <div className="flex items-center gap-2 text-sm text-green-400">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="font-medium">Populární tento týden</span>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div className="flex items-center justify-between pt-3 border-t border-gray-400">
+                  <span className="text-sm font-semibold text-white">Praha → {dest.destination || "Destinace"}</span>
+                  <span className="text-xs text-gray-300 group-hover:text-[#FFD700] transition-colors">
+                    Zobrazit lety →
                   </span>
                 </div>
-
-                {/* Trending Indicator */}
-                <div className="flex items-center gap-2 text-sm text-green-600">
-                  <TrendingUp className="w-4 h-4" />
-                  <span className="font-medium">Populární tento týden</span>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                <span className="text-sm font-semibold text-[#003087]">Praha → {dest.destination}</span>
-                <span className="text-xs text-gray-500 group-hover:text-[#E91E63] transition-colors">
-                  Zobrazit lety →
-                </span>
               </div>
             </div>
 

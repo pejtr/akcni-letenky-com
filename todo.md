@@ -631,3 +631,10 @@
 - [x] Add section to homepage after featured cities
 - [x] Ensure responsive design for mobile and desktop
 - [x] Add complete navigation links matching original www.akcni-letenky.com website
+- [x] Fix missing destination name in first card of top flights section
+- [x] Add prices to "Nejprodávanější letenky tento týden" cards by joining with flights/Pelikan data
+- [x] Import Pelikan feed data (flights + holidays) into database
+- [x] Add Kiwi widget to homepage with affiliate ID akcnletenkyakcniletenky
+- [x] Fix "Nejprodávanější letenky tento týden" section - add destination images
+- [x] Fix first card in top flights section (broken display)
+- [x] Make "Zpáteční levné letenky" heading more prominent and larger

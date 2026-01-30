@@ -380,6 +380,13 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Kiwi.com Search Widget */}
+      <section className="py-8 bg-white">
+        <div className="container">
+          <div id="widget-holder" className="max-w-4xl mx-auto"></div>
+        </div>
+      </section>
+
       {/* Category Links */}
       <div className="bg-[#f5f5f5] py-6 border-b border-border">
         <div className="container">
@@ -474,10 +481,10 @@ export default function Home() {
       <section aria-labelledby="return-flights" className="py-12 bg-[#F5F7FA]">
         <div className="container">
           {/* Yellow Banner Title */}
-          <div className="flex justify-center mb-8">
-            <div className="bg-[#FFD700] py-3 px-6 rounded-lg">
-              <h2 id="return-flights" className="text-xl font-bold text-black">
-                Zpáteční levné letenky
+          <div className="flex justify-center mb-12">
+            <div className="bg-gradient-to-r from-[#FFD700] to-[#FFC107] py-4 px-8 rounded-2xl shadow-lg">
+              <h2 id="return-flights" className="text-3xl md:text-4xl font-black text-[#003087] text-center">
+                ✈️ Zpáteční levné letenky
               </h2>
             </div>
           </div>

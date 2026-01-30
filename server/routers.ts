@@ -432,6 +432,49 @@ export const appRouter = router({
       ]);
       return { success: true, status: getCacheStatus() };
     }),
+
+    // Get interleaved offers (flights + vacations mixed)
+    getInterleavedOffers: publicProcedure
+      .input(
+        z.object({
+          limit: z.number().default(20),
+          sortBy: z.enum(["price_asc", "price_desc", "default"]).default("default"),
+        }).optional()
+      )
+      .query(async ({ input }) => {
+        const [flights, vacations] = await Promise.all([
+          fetchFlights(),
+          fetchVacations(),
+        ]);
+
+        // Sort both by price if requested
+        let sortedFlights = [...flights];
+        let sortedVacations = [...vacations];
+        
+        if (input?.sortBy === "price_asc") {
+          sortedFlights.sort((a, b) => a.salePrice - b.salePrice);
+          sortedVacations.sort((a, b) => a.salePrice - b.salePrice);
+        } else if (input?.sortBy === "price_desc") {
+          sortedFlights.sort((a, b) => b.salePrice - a.salePrice);
+          sortedVacations.sort((a, b) => b.salePrice - a.salePrice);
+        }
+
+        // Interleave offers (alternating between flights and vacations)
+        const interleaved: (FlightOffer | VacationOffer)[] = [];
+        const maxLength = Math.max(sortedFlights.length, sortedVacations.length);
+        
+        for (let i = 0; i < maxLength; i++) {
+          if (i < sortedFlights.length) {
+            interleaved.push(sortedFlights[i]);
+          }
+          if (i < sortedVacations.length) {
+            interleaved.push(sortedVacations[i]);
+          }
+        }
+
+        // Limit results
+        return interleaved.slice(0, input?.limit || 20);
+      }),
   }),
 });
 
