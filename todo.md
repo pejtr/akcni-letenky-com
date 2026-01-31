@@ -717,3 +717,19 @@
 ### Destination Name Fixes
 - [x] Change "Maroko" to "Marakéš" in destination grid
 - [x] Change "Srí Lanka" to "Colombo" in destination grid
+
+## Chatbot Improvements (Current Task)
+
+- [ ] Update welcome message to match new travel expert persona
+- [ ] Add quick replies for most common user questions (prices, booking, destinations)
+- [ ] Change chatbot colors to match website design (yellow/orange theme)
+- [ ] Update chatbot header style
+- [ ] Test chatbot functionality
+
+## Pelikán Affiliate Link Fix (Critical Bug)
+
+- [ ] Change "Zobrazit na Pelikán.cz" buttons to link directly to search results, not offer detail pages
+- [ ] Update Dovolená page links to use Pelikán search URL with destination parameter
+- [ ] Ensure links work reliably without "Nabídka není dostupná" errors
+
+- [x] Split Dovolene page into two columns: foreign (left) vs domestic (right: Česko, Slovensko, Rakousko, Maďarsko, Polsko)

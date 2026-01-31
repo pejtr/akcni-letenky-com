@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Calendar, Users } from "lucide-react";
+import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+
+// Domestic countries list
+const DOMESTIC_COUNTRIES = ["Česká republika", "Slovensko", "Rakousko", "Maďarsko", "Polsko"];
 
 export default function Dovolene() {
   const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc">("default");
@@ -28,6 +31,16 @@ export default function Dovolene() {
       affiliateUrl: vacation.link,
     });
   };
+
+  // Split vacations into foreign and domestic
+  const { foreignVacations, domesticVacations } = useMemo(() => {
+    if (!vacations) return { foreignVacations: [], domesticVacations: [] };
+    
+    const foreign = vacations.filter(v => !DOMESTIC_COUNTRIES.includes(v.country));
+    const domestic = vacations.filter(v => DOMESTIC_COUNTRIES.includes(v.country));
+    
+    return { foreignVacations: foreign, domesticVacations: domestic };
+  }, [vacations]);
 
   // Get unique countries for filter
   const countries = vacations
@@ -53,6 +66,150 @@ export default function Dovolene() {
         ))}
         {hasHalfStar && <span className="text-yellow-500">★</span>}
         <span className="font-medium ml-1">{rating}</span>
+      </div>
+    );
+  };
+
+  // Vacation card component
+  const VacationCard = ({ vacation, compact = false }: { vacation: any; compact?: boolean }) => {
+    const rating = getSimulatedRating(vacation.id);
+    
+    return (
+      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100">
+        {compact ? (
+          // Compact card for two-column layout
+          <div className="flex flex-col">
+            <div className="relative h-40">
+              <img
+                src={vacation.imageUrl}
+                alt={vacation.destination}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    "https://cdn.pelikan.sk/files/marketing/ga-feed-img/universal.jpg";
+                }}
+              />
+              {vacation.discount && (
+                <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
+                  {vacation.discount}
+                </span>
+              )}
+              <button className="absolute top-2 left-2 bg-white/90 p-1.5 rounded-full hover:bg-white transition-colors">
+                <Heart className="w-4 h-4 text-gray-400 hover:text-red-500" />
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-500 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {vacation.country}
+                </span>
+                {renderStars(rating)}
+              </div>
+              <h3 className="font-bold text-gray-900 mb-1 line-clamp-1">
+                {vacation.title}
+              </h3>
+              <p className="text-gray-600 text-xs mb-3 line-clamp-2">
+                {vacation.description}
+              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xl font-bold text-[#FF6B00]">
+                    {vacation.salePrice.toLocaleString("cs-CZ")} Kč
+                  </span>
+                  <span className="text-gray-500 text-xs ml-1">/ os.</span>
+                </div>
+                <a
+                  href={vacation.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => handleOfferClick(vacation)}
+                  className="inline-flex items-center gap-1 bg-[#FF6B00] hover:bg-[#E65C00] text-white font-semibold px-3 py-2 rounded-lg transition-colors text-sm"
+                >
+                  Zobrazit
+                  <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          </div>
+        ) : (
+          // Full card for single column
+          <div className="flex flex-col md:flex-row">
+            <div className="relative md:w-72 h-48 md:h-auto flex-shrink-0">
+              <img
+                src={vacation.imageUrl}
+                alt={vacation.destination}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    "https://cdn.pelikan.sk/files/marketing/ga-feed-img/universal.jpg";
+                }}
+              />
+              {vacation.discount && (
+                <span className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-bold">
+                  {vacation.discount}
+                </span>
+              )}
+              <button className="absolute top-3 left-3 bg-white/90 p-2 rounded-full hover:bg-white transition-colors">
+                <Heart className="w-5 h-5 text-gray-400 hover:text-red-500" />
+              </button>
+              <div className="absolute bottom-3 left-3 bg-black/60 text-white px-2 py-1 rounded text-sm flex items-center gap-1">
+                <Palmtree className="w-4 h-4" />
+                Dovolená
+              </div>
+            </div>
+            <div className="flex-1 p-5">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <MapPin className="w-4 h-4 text-green-500" />
+                  <span>{vacation.country}{'location' in vacation && vacation.location ? ` • ${vacation.location}` : ''}</span>
+                </div>
+                {renderStars(rating)}
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                {vacation.title}
+              </h3>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                {vacation.description}
+              </p>
+              <div className="flex flex-wrap gap-3 mb-4">
+                {'duration' in vacation && vacation.duration && (
+                  <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                    <Clock className="w-4 h-4" />
+                    {vacation.duration}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                  <MapPin className="w-4 h-4" />
+                  {vacation.destination}
+                </span>
+                <span className="inline-flex items-center gap-1 text-sm text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                  ✓ Ubytování v ceně
+                </span>
+              </div>
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div>
+                  <span className="text-3xl font-bold text-[#FF6B00]">
+                    {vacation.salePrice.toLocaleString("cs-CZ")} Kč
+                  </span>
+                  <span className="text-gray-500 text-sm ml-2">za osobu</span>
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    href={vacation.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => handleOfferClick(vacation)}
+                    className="inline-flex items-center gap-2 bg-[#FF6B00] hover:bg-[#E65C00] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  >
+                    Zobrazit na Pelikán.cz
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -149,119 +306,81 @@ export default function Dovolene() {
         </div>
       </section>
 
-      {/* Offers Grid */}
+      {/* Two-Column Layout */}
       <section className="py-8">
         <div className="container">
           {isLoading ? (
-            <div className="grid gap-4">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-48 rounded-xl" />
-              ))}
-            </div>
-          ) : vacations && vacations.length > 0 ? (
-            <div className="grid gap-4">
-              {vacations.map((vacation) => {
-                const rating = getSimulatedRating(vacation.id);
-                return (
-                  <div
-                    key={vacation.id}
-                    className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100"
-                  >
-                    <div className="flex flex-col md:flex-row">
-                      {/* Image */}
-                      <div className="relative md:w-72 h-48 md:h-auto flex-shrink-0">
-                        <img
-                          src={vacation.imageUrl}
-                          alt={vacation.destination}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src =
-                              "https://cdn.pelikan.sk/files/marketing/ga-feed-img/universal.jpg";
-                          }}
-                        />
-                        {vacation.discount && (
-                          <span className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-bold">
-                            {vacation.discount}
-                          </span>
-                        )}
-                        <button className="absolute top-3 left-3 bg-white/90 p-2 rounded-full hover:bg-white transition-colors">
-                          <Heart className="w-5 h-5 text-gray-400 hover:text-red-500" />
-                        </button>
-                        <div className="absolute bottom-3 left-3 bg-black/60 text-white px-2 py-1 rounded text-sm flex items-center gap-1">
-                          <Palmtree className="w-4 h-4" />
-                          Dovolená
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 p-5">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <MapPin className="w-4 h-4 text-green-500" />
-                            <span>{vacation.country}{'location' in vacation && vacation.location ? ` • ${vacation.location}` : ''}</span>
-                          </div>
-                          {renderStars(rating)}
-                        </div>
-
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                          {vacation.title}
-                        </h3>
-
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                          {vacation.description}
-                        </p>
-
-                        <div className="flex flex-wrap gap-3 mb-4">
-                          {'duration' in vacation && vacation.duration && (
-                            <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                              <Clock className="w-4 h-4" />
-                              {vacation.duration}
-                            </span>
-                          )}
-                          <span className="inline-flex items-center gap-1 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                            <MapPin className="w-4 h-4" />
-                            {vacation.destination}
-                          </span>
-                          <span className="inline-flex items-center gap-1 text-sm text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                            ✓ Ubytování v ceně
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-4 border-t">
-                          <div>
-                            <span className="text-3xl font-bold text-[#FF6B00]">
-                              {vacation.salePrice.toLocaleString("cs-CZ")} Kč
-                            </span>
-                            <span className="text-gray-500 text-sm ml-2">za osobu</span>
-                          </div>
-                          <div className="flex gap-2">
-                            <a
-                              href={vacation.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => handleOfferClick(vacation)}
-                              className="inline-flex items-center gap-2 bg-[#FF6B00] hover:bg-[#E65C00] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-                            >
-                              Zobrazit na Pelikán.cz
-                              <ArrowRight className="w-4 h-4" />
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-64 rounded-xl" />
+                ))}
+              </div>
+              <div className="space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-64 rounded-xl" />
+                ))}
+              </div>
             </div>
           ) : (
-            <div className="text-center py-12">
-              <Palmtree className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                Žádné dovolené nenalezeny
-              </h3>
-              <p className="text-gray-500">
-                Zkuste změnit filtry nebo se vraťte později.
-              </p>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Left Column - Foreign Destinations */}
+              <div>
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b-2 border-[#FF6B00]">
+                  <div className="bg-[#FF6B00] p-2 rounded-lg">
+                    <Plane className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Zahraniční dovolené</h2>
+                    <p className="text-gray-500 text-sm">Exotika, moře, slunce</p>
+                  </div>
+                  <span className="ml-auto bg-[#FF6B00] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    {foreignVacations.length} nabídek
+                  </span>
+                </div>
+                
+                {foreignVacations.length > 0 ? (
+                  <div className="space-y-4">
+                    {foreignVacations.slice(0, 30).map((vacation) => (
+                      <VacationCard key={vacation.id} vacation={vacation} compact />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 rounded-xl">
+                    <Plane className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">Žádné zahraniční dovolené</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column - Domestic Destinations */}
+              <div>
+                <div className="flex items-center gap-3 mb-6 pb-3 border-b-2 border-[#4CAF50]">
+                  <div className="bg-[#4CAF50] p-2 rounded-lg">
+                    <Mountain className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Domácí dovolené</h2>
+                    <p className="text-gray-500 text-sm">Česko, Slovensko, Rakousko, Maďarsko</p>
+                  </div>
+                  <span className="ml-auto bg-[#4CAF50] text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    {domesticVacations.length} nabídek
+                  </span>
+                </div>
+                
+                {domesticVacations.length > 0 ? (
+                  <div className="space-y-4">
+                    {domesticVacations.slice(0, 30).map((vacation) => (
+                      <VacationCard key={vacation.id} vacation={vacation} compact />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 rounded-xl">
+                    <Mountain className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">Žádné domácí dovolené</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

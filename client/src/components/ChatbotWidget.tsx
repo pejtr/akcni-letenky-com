@@ -15,17 +15,17 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([
     {
       role: "assistant",
-      content: "Ahoj! 👋 Jsem tvoje průvodkyně světem zájezdů. Kam se chystáš? Moře, hory, nebo městská dobrodružství? 🌴🏔️🏙️",
+      content: "Ahoj! 👋 Jsem Petra, tvoje osobní cestovní expertka s 10 lety zkušeností. Pomůžu ti najít tu nejlepší dovolenou za skvělou cenu! ✈️\n\nKam tě to táhne? Máme akce od 590 Kč!",
     },
   ]);
   const [hasMemory, setHasMemory] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(false);
   const [persona, setPersona] = useState<{ name: string; displayName: string; avatar: string } | null>(null);
   const [quickReplies, setQuickReplies] = useState<string[]>([
+    "💰 Letenky do 1500 Kč",
+    "🔥 Last minute akce",
     "🏖️ Kam k moři?",
-    "✈️ Nejlevnější letenky",
-    "🌴 Last minute dovolená",
-    "🏔️ Hory a lyžování"
+    "❓ Jak rezervovat?"
   ]);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [emailCaptured, setEmailCaptured] = useState(false);
@@ -198,9 +198,11 @@ export default function ChatbotWidget() {
       setQuickReplies(["💰 Do 5000 Kč", "🔥 Last minute", "📅 Flexibilní termín", "👨‍👩‍👧‍👦 Rodinná dovolená"]);
     } else if (lowerMsg.includes("facebook") || lowerMsg.includes("skupin")) {
       setQuickReplies(["📧 Odebírat novinky", "🔔 Nastavit upozornění", "✈️ Zpět k nabídkám", "💬 Další dotaz"]);
+    } else if (lowerMsg.includes("rezerv") || lowerMsg.includes("jak") || lowerMsg.includes("funguje")) {
+      setQuickReplies(["💳 Jak zaplatit?", "📧 Potvrzovací email", "❌ Storno podmínky", "✈️ Zpět k nabídkám"]);
     } else {
-      // Default suggestions
-      setQuickReplies(["🏖️ Kam k moři?", "✈️ Nejlevnější letenky", "🌴 Last minute", "❓ Mám dotaz"]);
+      // Default suggestions - most common questions
+      setQuickReplies(["💰 Letenky do 1500 Kč", "🔥 Last minute akce", "🏖️ Kam k moři?", "❓ Jak rezervovat?"]);
     }
   };
 
@@ -230,11 +232,11 @@ export default function ChatbotWidget() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 bg-[#FF6B35] rounded-full border-1 md:border-2 border-white animate-pulse" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 bg-[#FFD700] rounded-full border-1 md:border-2 border-white animate-pulse" />
           </div>
           <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="bg-card text-card-foreground px-4 py-2 rounded-lg shadow-lg whitespace-nowrap">
-              <p className="font-semibold">Travel Expert</p>
+              <p className="font-semibold">Petra - Cestovní Expert</p>
               <p className="text-sm text-muted-foreground">Online</p>
             </div>
           </div>
@@ -252,7 +254,7 @@ export default function ChatbotWidget() {
             getWindowSize()
           )}
         >
-          <div className="flex items-center justify-between p-4 border-b border-border bg-primary text-primary-foreground rounded-t-2xl">
+          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-gray-900 rounded-t-2xl">
             <div className="flex items-center gap-3">
               <div className={cn(
                 "rounded-full overflow-hidden border-2 border-white",
@@ -265,7 +267,7 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                 />
               </div>
               <div>
-                <p className={cn("font-semibold", isExpanded ? "text-xl" : "text-lg")}>{persona?.displayName || "Travel Expert"}</p>
+                <p className={cn("font-semibold", isExpanded ? "text-xl" : "text-lg")}>{persona?.displayName || "Petra"}</p>
                 <div className="flex items-center gap-2">
                   <p className={cn("opacity-90", isExpanded ? "text-sm" : "text-xs")}>Online</p>
                   {hasMemory && (
