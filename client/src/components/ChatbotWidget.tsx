@@ -20,6 +20,7 @@ export default function ChatbotWidget() {
   ]);
   const [hasMemory, setHasMemory] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(false);
+  const [persona, setPersona] = useState<{ name: string; displayName: string; avatar: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const sendMessageMutation = trpc.chatbot.sendMessage.useMutation();
@@ -49,6 +50,11 @@ export default function ChatbotWidget() {
       }
       if (result.returningUser !== undefined) {
         setIsReturningUser(result.returningUser);
+      }
+      
+      // Update persona from A/B test
+      if (result.persona) {
+        setPersona(result.persona);
       }
 
       setMessages((prev) => [
@@ -199,13 +205,13 @@ export default function ChatbotWidget() {
 isExpanded ? "w-14 h-14" : "w-12 h-12"
               )}>
                 <img
-                  src="/travel-expert.jpg"
-                  alt="Travel Expert"
+                  src={persona?.avatar || "/travel-expert.jpg"}
+                  alt={persona?.displayName || "Travel Expert"}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <p className={cn("font-semibold", isExpanded ? "text-xl" : "text-lg")}>Travel Expert</p>
+                <p className={cn("font-semibold", isExpanded ? "text-xl" : "text-lg")}>{persona?.displayName || "Travel Expert"}</p>
                 <div className="flex items-center gap-2">
                   <p className={cn("opacity-90", isExpanded ? "text-sm" : "text-xs")}>Online</p>
                   {hasMemory && (

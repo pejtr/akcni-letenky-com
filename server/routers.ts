@@ -31,6 +31,13 @@ import {
   trackChatbotConversion,
   trackCommunityJoin,
 } from "./chatbot";
+import {
+  getABTestStatus,
+  calculateABTestResults,
+  autoOptimizeTrafficWeights,
+  trackPersonaConversion,
+  initializePersonas,
+} from "./chatbotABTest";
 import { generateDailyArticles } from "./articleGenerator";
 import { adminAnalyticsRouter } from "./adminAnalytics";
 import {
@@ -470,6 +477,41 @@ export const appRouter = router({
 
         // Limit results
         return interleaved.slice(0, input?.limit || 20);
+      }),
+  }),
+
+  // A/B Test endpoints for chatbot personas
+  abTest: router({
+    // Get current A/B test status
+    getStatus: protectedProcedure.query(async () => {
+      return await getABTestStatus();
+    }),
+
+    // Get detailed A/B test results
+    getResults: protectedProcedure.query(async () => {
+      return await calculateABTestResults();
+    }),
+
+    // Manually trigger traffic optimization
+    optimize: protectedProcedure.mutation(async () => {
+      return await autoOptimizeTrafficWeights();
+    }),
+
+    // Initialize personas (admin only)
+    initializePersonas: protectedProcedure.mutation(async () => {
+      await initializePersonas();
+      return { success: true, message: "Personas initialized" };
+    }),
+
+    // Track conversion for A/B test
+    trackConversion: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        conversionValue: z.number().default(0),
+      }))
+      .mutation(async ({ input }) => {
+        await trackPersonaConversion(input.sessionId, input.conversionValue);
+        return { success: true };
       }),
   }),
 });

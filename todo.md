@@ -642,3 +642,9 @@
 - [x] Implement server-side cache for Pelikan offers (flights + vacations)
 - [x] Add 24-hour refresh cycle at midnight for Pelikan cache
 - [x] Add fallback to live API if cache fails
+- [x] Create database schema for chatbot A/B test tracking (persona assignments, conversations, conversions)
+- [ ] Implement 3 chatbot personas (Phoebe-energetic, Piper-royal, Prue-deliberate style)
+- [ ] Add random persona assignment for new users
+- [ ] Track affiliate conversions by persona
+- [ ] Auto-analyze after 100+ conversations and increase traffic for best persona
+- [ ] Add admin dashboard for A/B test results

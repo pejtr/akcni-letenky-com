@@ -15,9 +15,16 @@ import {
   buildEnhancedContext,
   generateConversationSummary 
 } from "./chatbotRAG";
+import { 
+  getOrAssignPersona, 
+  trackPersonaMessage, 
+  trackPersonaConversion,
+  autoOptimizeTrafficWeights,
+  type PersonaConfig 
+} from "./chatbotABTest";
 
-// System prompt with Hormozi sales principles
-const CHATBOT_SYSTEM_PROMPT = `Jsi expertní cestovní poradce pro Akční-Letenky.com s výjimečnými prodejními schopnostmi.
+// Base system prompt with Hormozi sales principles
+const BASE_SYSTEM_PROMPT = `Jsi expertní cestovní poradce pro Akční-Letenky.com s výjimečnými prodejními schopnostmi.
 
 TVOJE OSOBNOST:
 - Přátelský, nadšený a nápomocný
@@ -102,6 +109,13 @@ PROAKTIVNÍ ODKAZY:
 - Když zmíníš destinaci, nabídni odkaz na článek: "Mrkni na náš průvodce po [destinace] 📚"
 - Když zmíníš letenku, nabídni přímý odkaz na rezervaci
 - Propojuj obsah webu pro lepší engagement`;
+
+/**
+ * Build full system prompt with persona-specific additions
+ */
+function buildSystemPrompt(persona: PersonaConfig): string {
+  return BASE_SYSTEM_PROMPT + "\n\n" + persona.systemPromptAddition;
+}
 
 export interface ChatbotContext {
   sessionId: string;
@@ -212,9 +226,18 @@ export async function processChatbotMessage(
   // Build enhanced context with RAG and memory
   const contextInfo = buildEnhancedContext(ragContext);
 
-  // Generate AI response
+  // ============================================
+  // A/B TEST: Get or assign persona for this session
+  // ============================================
+  const persona = await getOrAssignPersona(sessionId, conversation.userId ?? undefined);
+  const systemPrompt = buildSystemPrompt(persona);
+  
+  // Track message for A/B test metrics
+  await trackPersonaMessage(sessionId);
+
+  // Generate AI response with persona-specific prompt
   const llmMessages = [
-    { role: "system" as const, content: CHATBOT_SYSTEM_PROMPT + "\n\n" + contextInfo },
+    { role: "system" as const, content: systemPrompt + "\n\n" + contextInfo },
     ...messages.map((m: typeof messages[0]) => ({ role: m.role as "user" | "assistant", content: m.content })),
   ];
 
@@ -255,11 +278,22 @@ export async function processChatbotMessage(
   const hasMemory = ragContext.userMemory !== null;
   const returningUser = (ragContext.userMemory?.totalConversations || 0) > 1;
 
+  // Auto-optimize A/B test weights every 100 conversations
+  const totalMessages = conversation.messageCount || 0;
+  if (totalMessages > 0 && totalMessages % 100 === 0) {
+    await autoOptimizeTrafficWeights();
+  }
+
   return {
     message: assistantMessage,
     conversationId: conversation.id,
     hasMemory,
     returningUser,
+    persona: {
+      name: persona.name,
+      displayName: persona.displayName,
+      avatar: persona.avatar,
+    },
   };
 }
 

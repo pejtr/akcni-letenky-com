@@ -439,3 +439,4 @@ export const personaMetrics = mysqlTable("persona_metrics", {
 
 export type PersonaMetrics = typeof personaMetrics.$inferSelect;
 export type InsertPersonaMetrics = typeof personaMetrics.$inferInsert;
+
