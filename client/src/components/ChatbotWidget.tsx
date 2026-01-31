@@ -225,7 +225,7 @@ export default function ChatbotWidget() {
           <div className="relative">
             <div className="w-12 h-12 md:w-24 md:h-24 rounded-full overflow-hidden border-2 md:border-4 border-white shadow-xl hover:scale-110 transition-transform">
               <img
-                src="/travel-expert.jpg"
+                src="/travel-expert-avatar.png"
                 alt="Travel Expert"
                 className="w-full h-full object-cover"
               />
@@ -259,7 +259,7 @@ export default function ChatbotWidget() {
 isExpanded ? "w-14 h-14" : "w-12 h-12"
               )}>
                 <img
-                  src={persona?.avatar || "/travel-expert.jpg"}
+                  src={persona?.avatar || "/travel-expert-avatar.png"}
                   alt={persona?.displayName || "Travel Expert"}
                   className="w-full h-full object-cover"
                 />
