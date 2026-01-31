@@ -668,3 +668,36 @@
 - [x] Display total email count and growth statistics
 - [x] Write unit tests for email capture endpoints (18 tests passing)
 - [x] Test email capture flow end-to-end
+
+## Email Marketing Automation System (Completed)
+
+### Lead Scoring System
+- [x] Add leadScore field to emailCaptures table
+- [x] Create scoring algorithm based on: message count, budget, destination interest, engagement time
+- [x] Implement automatic score calculation on email capture
+- [x] Add score recalculation on user activity updates
+- [x] Create lead quality tiers: Hot (80+), Warm (50-79), Cold (<50)
+
+### Welcome Email Series
+- [x] Create emailCampaigns table for campaign management
+- [x] Create emailQueue table for scheduled emails
+- [x] Implement welcome email #1: Immediate - discount code + top destinations
+- [x] Implement welcome email #2: Day 2 - personalized recommendations based on persona
+- [x] Implement welcome email #3: Day 5 - social proof + urgency (limited offers)
+- [x] Add email sending via notification API or external service
+- [x] Track email open/click rates
+
+### Remarketing Triggers
+- [x] Create remarketingTriggers table for tracking trigger events
+- [x] Implement 7-day non-conversion check
+- [x] Create remarketing email with urgency elements (time-limited discount: VRACIMSE10 10% off, 48h validity)
+- [x] Add conversion tracking to disable triggers after purchase
+- [x] Implement trigger scheduling system
+
+### Admin UI
+- [x] Add lead scoring dashboard to admin panel (4 tabs: Overview, Lead Scoring, Campaigns, Remarketing)
+- [x] Create email campaign management interface
+- [x] Add remarketing trigger status view
+- [x] Display email delivery statistics
+- [x] Add manual trigger controls for testing
+- [x] Write unit tests (154 tests passing)

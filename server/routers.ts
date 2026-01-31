@@ -412,6 +412,82 @@ export const appRouter = router({
       const captures = await getAllEmailCaptures();
       return exportEmailsToMailchimp(captures);
     }),
+
+    // Get lead scoring statistics
+    getLeadScoreStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { getLeadScoreStats } = await import("./leadScoring");
+      return await getLeadScoreStats();
+    }),
+
+    // Recalculate all lead scores
+    recalculateLeadScores: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { recalculateAllLeadScores } = await import("./leadScoring");
+      return await recalculateAllLeadScores();
+    }),
+
+    // Get email marketing statistics
+    getMarketingStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { getEmailMarketingStats } = await import("./emailMarketing");
+      return await getEmailMarketingStats();
+    }),
+
+    // Process email queue (manual trigger)
+    processQueue: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { processEmailQueue } = await import("./emailMarketing");
+      return await processEmailQueue();
+    }),
+
+    // Get remarketing statistics
+    getRemarketingStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { getRemarketingStats } = await import("./remarketingTriggers");
+      return await getRemarketingStats();
+    }),
+
+    // Process remarketing triggers (manual trigger)
+    processRemarketingTriggers: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { processRemarketingTriggers } = await import("./remarketingTriggers");
+      return await processRemarketingTriggers();
+    }),
+
+    // Create manual remarketing trigger for testing
+    createManualTrigger: protectedProcedure
+      .input(z.object({ emailCaptureId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        const { createManualTrigger } = await import("./remarketingTriggers");
+        return await createManualTrigger(input.emailCaptureId);
+      }),
+
+    // Mark user as converted
+    markConverted: protectedProcedure
+      .input(z.object({ emailCaptureId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        const { markUserConverted } = await import("./remarketingTriggers");
+        return await markUserConverted(input.emailCaptureId);
+      }),
   }),
 
   // Pelikán feed endpoints

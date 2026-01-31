@@ -1,5 +1,7 @@
 import { getDb } from "./db";
-import { emailCaptures, type EmailCapture } from "../drizzle/schema";
+import { emailCaptures, remarketingTriggers, type EmailCapture } from "../drizzle/schema";
+import { calculateLeadScore } from "./leadScoring";
+import { eq, desc } from "drizzle-orm";
 
 interface CaptureEmailInput {
   email: string;
@@ -23,6 +25,15 @@ export async function captureEmail(input: CaptureEmailInput) {
       throw new Error("Database not available");
     }
 
+    // Calculate initial lead score
+    const leadScoreResult = calculateLeadScore({
+      messageCount: input.messageCount || 0,
+      lastBudgetMentioned: input.lastBudgetMentioned,
+      lastDestinationMentioned: input.lastDestinationMentioned,
+      capturedAt: new Date(),
+      personaName: input.personaName,
+    });
+
     // Insert email capture record
     const result = await db.insert(emailCaptures).values({
       email: input.email,
@@ -40,11 +51,44 @@ export async function captureEmail(input: CaptureEmailInput) {
       segment: determineSegment(input),
       // Auto-tag based on persona and context
       tags: JSON.stringify(generateTags(input)),
+      // Lead scoring
+      leadScore: leadScoreResult.score,
+      leadTier: leadScoreResult.tier,
     });
+
+    // Get the inserted ID for remarketing trigger
+    const [lastInserted] = await db
+      .select()
+      .from(emailCaptures)
+      .where(eq(emailCaptures.email, input.email))
+      .orderBy(desc(emailCaptures.id))
+      .limit(1);
+
+    // Schedule 7-day remarketing trigger if GDPR consent given
+    if (input.gdprConsent && lastInserted) {
+      const triggerDate = new Date();
+      triggerDate.setDate(triggerDate.getDate() + 7);
+
+      await db.insert(remarketingTriggers).values({
+        emailCaptureId: lastInserted.id,
+        triggerType: "7_day_no_conversion",
+        triggerDate,
+        status: "pending",
+        contextData: JSON.stringify({
+          destination: input.lastDestinationMentioned,
+          budget: input.lastBudgetMentioned,
+          persona: input.personaName,
+          leadScore: leadScoreResult.score,
+          leadTier: leadScoreResult.tier,
+        }),
+      });
+    }
 
     return {
       success: true,
       message: "Email captured successfully",
+      leadScore: leadScoreResult.score,
+      leadTier: leadScoreResult.tier,
     };
   } catch (error) {
     console.error("Error capturing email:", error);

@@ -463,11 +463,17 @@ export const emailCaptures = mysqlTable("email_captures", {
   // Marketing metadata
   tags: text("tags"), // JSON array of tags for segmentation
   segment: varchar("segment", { length: 50 }), // 'budget_traveler', 'luxury', 'family', etc.
+  // Lead scoring
+  leadScore: int("leadScore").default(0), // 0-100 score based on engagement
+  leadTier: varchar("leadTier", { length: 20 }).default("cold"), // 'hot', 'warm', 'cold'
   // Engagement tracking
   emailSent: int("emailSent").default(0), // 1 if welcome email sent
   emailOpened: int("emailOpened").default(0), // 1 if opened any email
   emailClicked: int("emailClicked").default(0), // 1 if clicked link in email
   unsubscribed: int("unsubscribed").default(0), // 1 if unsubscribed
+  // Conversion tracking
+  converted: int("converted").default(0), // 1 if made a purchase
+  convertedAt: timestamp("convertedAt"), // When they converted
   // Timestamps
   capturedAt: timestamp("capturedAt").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -476,4 +482,100 @@ export const emailCaptures = mysqlTable("email_captures", {
 
 export type EmailCapture = typeof emailCaptures.$inferSelect;
 export type InsertEmailCapture = typeof emailCaptures.$inferInsert;
+
+/**
+ * Email campaigns - defines email sequences and templates
+ */
+export const emailCampaigns = mysqlTable("email_campaigns", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // 'welcome_series', 'remarketing', 'promotional'
+  // Email content
+  subject: varchar("subject", { length: 200 }).notNull(),
+  preheader: varchar("preheader", { length: 200 }), // Preview text
+  htmlContent: text("htmlContent").notNull(),
+  textContent: text("textContent"), // Plain text fallback
+  // Personalization
+  personaVariant: varchar("personaVariant", { length: 50 }), // null = all, or specific persona
+  segmentTarget: varchar("segmentTarget", { length: 50 }), // null = all, or specific segment
+  // Sequence settings
+  sequenceOrder: int("sequenceOrder").default(1), // Order in welcome series
+  delayDays: int("delayDays").default(0), // Days after trigger to send
+  // Status
+  isActive: int("isActive").default(1),
+  // Stats
+  totalSent: int("totalSent").default(0),
+  totalOpened: int("totalOpened").default(0),
+  totalClicked: int("totalClicked").default(0),
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailCampaign = typeof emailCampaigns.$inferSelect;
+export type InsertEmailCampaign = typeof emailCampaigns.$inferInsert;
+
+/**
+ * Email queue - scheduled emails waiting to be sent
+ */
+export const emailQueue = mysqlTable("email_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  emailCaptureId: int("emailCaptureId").notNull(), // Reference to email capture
+  campaignId: int("campaignId").notNull(), // Which campaign/template
+  // Scheduling
+  scheduledFor: timestamp("scheduledFor").notNull(), // When to send
+  // Status
+  status: varchar("status", { length: 20 }).default("pending"), // 'pending', 'sent', 'failed', 'cancelled'
+  sentAt: timestamp("sentAt"),
+  errorMessage: text("errorMessage"),
+  // Tracking
+  opened: int("opened").default(0),
+  openedAt: timestamp("openedAt"),
+  clicked: int("clicked").default(0),
+  clickedAt: timestamp("clickedAt"),
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailQueueItem = typeof emailQueue.$inferSelect;
+export type InsertEmailQueueItem = typeof emailQueue.$inferInsert;
+
+/**
+ * Remarketing triggers - tracks when to send remarketing emails
+ */
+export const remarketingTriggers = mysqlTable("remarketing_triggers", {
+  id: int("id").autoincrement().primaryKey(),
+  emailCaptureId: int("emailCaptureId").notNull(),
+  // Trigger type
+  triggerType: varchar("triggerType", { length: 50 }).notNull(), // '7_day_no_conversion', 'abandoned_search', etc.
+  // Scheduling
+  triggerDate: timestamp("triggerDate").notNull(), // When to trigger
+  // Status
+  status: varchar("status", { length: 20 }).default("pending"), // 'pending', 'triggered', 'cancelled', 'converted'
+  triggeredAt: timestamp("triggeredAt"),
+  // Context at trigger time
+  contextData: text("contextData"), // JSON with relevant data
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RemarketingTrigger = typeof remarketingTriggers.$inferSelect;
+export type InsertRemarketingTrigger = typeof remarketingTriggers.$inferInsert;
+
+/**
+ * Lead score history - tracks changes in lead scores over time
+ */
+export const leadScoreHistory = mysqlTable("lead_score_history", {
+  id: int("id").autoincrement().primaryKey(),
+  emailCaptureId: int("emailCaptureId").notNull(),
+  previousScore: int("previousScore").default(0),
+  newScore: int("newScore").notNull(),
+  reason: varchar("reason", { length: 200 }), // What caused the change
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type LeadScoreHistoryItem = typeof leadScoreHistory.$inferSelect;
+export type InsertLeadScoreHistoryItem = typeof leadScoreHistory.$inferInsert;
 
