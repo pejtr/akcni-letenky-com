@@ -1,0 +1,30 @@
+{
+  "query": "SELECT destination, destinationSlug, COUNT(*) as clicks FROM affiliate_clicks GROUP BY destination, destinationSlug ORDER BY clicks DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT destination, destinationSlug, COUNT(*) as clicks FROM affiliate_clicks GROUP BY destination, destinationSlug ORDER BY clicks DESC;",
+  "rows": [
+    {
+      "destination": "Vietnam",
+      "destinationSlug": "vietnam",
+      "clicks": "3"
+    },
+    {
+      "destination": "",
+      "destinationSlug": "",
+      "clicks": "2"
+    },
+    {
+      "destination": "Paříž",
+      "destinationSlug": "paris-france",
+      "clicks": "1"
+    },
+    {
+      "destination": "New York",
+      "destinationSlug": "new-york-city-new-york-united-states",
+      "clicks": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "destination\tdestinationSlug\tclicks\nVietnam\tvietnam\t3\n\t\t2\nPaříž\tparis-france\t1\nNew York\tnew-york-city-new-york-united-states\t1\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

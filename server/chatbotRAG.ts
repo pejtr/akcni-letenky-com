@@ -191,9 +191,11 @@ Vrať JSON ve formátu:
       },
     });
 
-    const content = response.choices[0].message.content;
-    if (typeof content === "string") {
-      return JSON.parse(content);
+    if (response?.choices?.[0]?.message?.content) {
+      const content = response.choices[0].message.content;
+      if (typeof content === "string") {
+        return JSON.parse(content);
+      }
     }
   } catch (error) {
     console.error("Error extracting preferences:", error);

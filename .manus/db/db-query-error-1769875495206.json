@@ -1,0 +1,8 @@
+{
+  "query": "SELECT destination, destinationSlug, COUNT(*) as clicks FROM affiliateClicks GROUP BY destination, destinationSlug ORDER BY clicks DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT destination, destinationSlug, COUNT(*) as clicks FROM affiliateClicks GROUP BY destination, destinationSlug ORDER BY clicks DESC LIMIT 10;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table 'gquhzstpdbnw3ec4kqtsec.affiliateClicks' doesn't exist"
+  ]
+}

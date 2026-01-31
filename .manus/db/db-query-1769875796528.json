@@ -1,0 +1,66 @@
+{
+  "query": "SELECT id, toCity, price, originalPrice, discountPercent FROM flights ORDER BY toCity;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT id, toCity, price, originalPrice, discountPercent FROM flights ORDER BY toCity;",
+  "rows": [
+    {
+      "id": "8",
+      "toCity": "Amsterdam",
+      "price": "7800",
+      "originalPrice": "10500",
+      "discountPercent": "26"
+    },
+    {
+      "id": "1",
+      "toCity": "Barcelona",
+      "price": "12090",
+      "originalPrice": "17000",
+      "discountPercent": "30"
+    },
+    {
+      "id": "4",
+      "toCity": "Egypt",
+      "price": "13364",
+      "originalPrice": "19000",
+      "discountPercent": "30"
+    },
+    {
+      "id": "3",
+      "toCity": "Istanbul",
+      "price": "16990",
+      "originalPrice": "24000",
+      "discountPercent": "30"
+    },
+    {
+      "id": "7",
+      "toCity": "Londýn",
+      "price": "8200",
+      "originalPrice": "11000",
+      "discountPercent": "25"
+    },
+    {
+      "id": "2",
+      "toCity": "Malaga",
+      "price": "8990",
+      "originalPrice": "12500",
+      "discountPercent": "28"
+    },
+    {
+      "id": "6",
+      "toCity": "Paříž",
+      "price": "9500",
+      "originalPrice": "13000",
+      "discountPercent": "27"
+    },
+    {
+      "id": "5",
+      "toCity": "Řím",
+      "price": "12090",
+      "originalPrice": "15000",
+      "discountPercent": "20"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttoCity\tprice\toriginalPrice\tdiscountPercent\n8\tAmsterdam\t7800\t10500\t26\n1\tBarcelona\t12090\t17000\t30\n4\tEgypt\t13364\t19000\t30\n3\tIstanbul\t16990\t24000\t30\n7\tLondýn\t8200\t11000\t25\n2\tMalaga\t8990\t12500\t28\n6\tPaříž\t9500\t13000\t27\n5\tŘím\t12090\t15000\t20\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

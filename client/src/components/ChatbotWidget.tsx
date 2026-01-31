@@ -187,13 +187,13 @@ export default function ChatbotWidget() {
     const lowerMsg = lastMessage.toLowerCase();
     
     if (lowerMsg.includes("moře") || lowerMsg.includes("pláž") || lowerMsg.includes("beach")) {
-      setQuickReplies(["🇬🇷 Řecko", "🇪🇸 Španělsko", "🇭🇷 Chorvatsko", "🇹🇷 Turecko"]);
+      setQuickReplies(["🏖️ Řecko", "☀️ Španělsko", "🌊 Chorvatsko", "🏝️ Turecko"]);
     } else if (lowerMsg.includes("hory") || lowerMsg.includes("lyž") || lowerMsg.includes("alpy")) {
-      setQuickReplies(["🇦🇹 Rakousko", "🇮🇹 Itálie - Dolomity", "🇫🇷 Francie - Alpy", "🇨🇭 Švýcarsko"]);
+      setQuickReplies(["⛷️ Rakousko", "🏔️ Itálie - Dolomity", "🎿 Francie - Alpy", "❄️ Švýcarsko"]);
     } else if (lowerMsg.includes("město") || lowerMsg.includes("city") || lowerMsg.includes("eurovíkend")) {
-      setQuickReplies(["🇬🇧 Londýn", "🇫🇷 Paříž", "🇮🇹 Řím", "🇪🇸 Barcelona"]);
+      setQuickReplies(["🏰 Londýn", "🗼 Paříž", "🏛️ Řím", "⛪ Barcelona"]);
     } else if (lowerMsg.includes("exotik") || lowerMsg.includes("daleko") || lowerMsg.includes("asie")) {
-      setQuickReplies(["🇹🇭 Thajsko", "🇻🇳 Vietnam", "🇮🇩 Bali", "🇲🇻 Maledivy"]);
+      setQuickReplies(["🌴 Thajsko", "🍜 Vietnam", "🌺 Bali", "🏝️ Maledivy"]);
     } else if (lowerMsg.includes("levn") || lowerMsg.includes("slev") || lowerMsg.includes("akce")) {
       setQuickReplies(["💰 Do 5000 Kč", "🔥 Last minute", "📅 Flexibilní termín", "👨‍👩‍👧‍👦 Rodinná dovolená"]);
     } else if (lowerMsg.includes("facebook") || lowerMsg.includes("skupin")) {
@@ -220,7 +220,7 @@ export default function ChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 md:bottom-6 right-2 md:right-4 z-50 group animate-pulse"
+          className="fixed bottom-20 md:bottom-6 right-2 md:right-4 z-[70] group animate-pulse"
         >
           <div className="relative">
             <div className="w-12 h-12 md:w-24 md:h-24 rounded-full overflow-hidden border-2 md:border-4 border-white shadow-xl hover:scale-110 transition-transform">
@@ -244,7 +244,7 @@ export default function ChatbotWidget() {
       {isOpen && (
         <div
           className={cn(
-            "fixed z-50 bg-card border border-border shadow-2xl transition-all duration-300",
+            "fixed z-[70] bg-card border border-border shadow-2xl transition-all duration-300",
             "inset-0 md:inset-auto",
             isExpanded
               ? "md:bottom-8 md:right-8 md:rounded-2xl" 

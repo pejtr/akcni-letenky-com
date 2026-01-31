@@ -701,3 +701,19 @@
 - [x] Display email delivery statistics
 - [x] Add manual trigger controls for testing
 - [x] Write unit tests (154 tests passing)
+
+## Bug Fixes and Reactivation Campaign (Current Task)
+
+### Bug Fixes
+- [x] Fix "Neznámá destinace" - changed fallback to Barcelona
+- [ ] Fix script error on homepage
+
+### Reactivation Campaign for Inactive Users
+- [ ] Create reactivation trigger for users inactive 30+ days
+- [ ] Design reactivation email with special offer
+- [ ] Add admin UI for reactivation campaign management
+- [ ] Implement automatic scheduling for reactivation emails
+
+### Destination Name Fixes
+- [x] Change "Maroko" to "Marakéš" in destination grid
+- [x] Change "Srí Lanka" to "Colombo" in destination grid

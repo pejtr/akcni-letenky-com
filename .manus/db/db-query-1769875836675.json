@@ -1,0 +1,70 @@
+{
+  "query": "SELECT toCity, price, originalPrice, discountPercent FROM flights ORDER BY toCity;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT toCity, price, originalPrice, discountPercent FROM flights ORDER BY toCity;",
+  "rows": [
+    {
+      "toCity": "Amsterdam",
+      "price": "7800",
+      "originalPrice": "10500",
+      "discountPercent": "26"
+    },
+    {
+      "toCity": "Barcelona",
+      "price": "946",
+      "originalPrice": "1890",
+      "discountPercent": "50"
+    },
+    {
+      "toCity": "Egypt",
+      "price": "13364",
+      "originalPrice": "19000",
+      "discountPercent": "30"
+    },
+    {
+      "toCity": "Istanbul",
+      "price": "16990",
+      "originalPrice": "24000",
+      "discountPercent": "30"
+    },
+    {
+      "toCity": "Londýn",
+      "price": "8200",
+      "originalPrice": "11000",
+      "discountPercent": "25"
+    },
+    {
+      "toCity": "Malaga",
+      "price": "8990",
+      "originalPrice": "12500",
+      "discountPercent": "28"
+    },
+    {
+      "toCity": "New York",
+      "price": "9490",
+      "originalPrice": "15990",
+      "discountPercent": "41"
+    },
+    {
+      "toCity": "Paříž",
+      "price": "1027",
+      "originalPrice": "2190",
+      "discountPercent": "53"
+    },
+    {
+      "toCity": "Řím",
+      "price": "12090",
+      "originalPrice": "15000",
+      "discountPercent": "20"
+    },
+    {
+      "toCity": "Vietnam",
+      "price": "7990",
+      "originalPrice": "12990",
+      "discountPercent": "38"
+    }
+  ],
+  "messages": [],
+  "stdout": "toCity\tprice\toriginalPrice\tdiscountPercent\nAmsterdam\t7800\t10500\t26\nBarcelona\t946\t1890\t50\nEgypt\t13364\t19000\t30\nIstanbul\t16990\t24000\t30\nLondýn\t8200\t11000\t25\nMalaga\t8990\t12500\t28\nNew York\t9490\t15990\t41\nPaříž\t1027\t2190\t53\nŘím\t12090\t15000\t20\nVietnam\t7990\t12990\t38\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

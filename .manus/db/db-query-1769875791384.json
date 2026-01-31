@@ -1,0 +1,22 @@
+{
+  "query": "SELECT toCity, price, originalPrice, discountPercent FROM flights WHERE toCity IN ('Vietnam', 'New York', 'Barcelona', 'Paříž') ORDER BY toCity, price;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT toCity, price, originalPrice, discountPercent FROM flights WHERE toCity IN ('Vietnam', 'New York', 'Barcelona', 'Paříž') ORDER BY toCity, price;",
+  "rows": [
+    {
+      "toCity": "Barcelona",
+      "price": "12090",
+      "originalPrice": "17000",
+      "discountPercent": "30"
+    },
+    {
+      "toCity": "Paříž",
+      "price": "9500",
+      "originalPrice": "13000",
+      "discountPercent": "27"
+    }
+  ],
+  "messages": [],
+  "stdout": "toCity\tprice\toriginalPrice\tdiscountPercent\nBarcelona\t12090\t17000\t30\nPaříž\t9500\t13000\t27\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

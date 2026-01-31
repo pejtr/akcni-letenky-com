@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE flights SET price = 946, originalPrice = 1890, discountPercent = 50 WHERE toCity = 'Barcelona';\nUPDATE flights SET price = 1027, originalPrice = 2190, discountPercent = 53 WHERE toCity = 'Paříž';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute UPDATE flights SET price = 946, originalPrice = 1890, discountPercent = 50 WHERE toCity = 'Barcelona';\nUPDATE flights SET price = 1027, originalPrice = 2190, discountPercent = 53 WHERE toCity = 'Paříž';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 74
+}

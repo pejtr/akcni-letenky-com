@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO flights (fromCity, toCity, price, originalPrice, discountPercent, airline, departureDate, returnDate, imageUrl, affiliateUrl, isFeatured, source, sourceId, createdAt)\nVALUES \n('Praha', 'Vietnam', 7990, 12990, 38, 'Vietnam Airlines', '2026-03-15', '2026-03-29', '/destinations/vietnam.jpg', 'https://www.kiwi.com/cs/search/results/prague-czech-republic/hanoi-vietnam?a_aid=levne-letenky', 1, 'manual', 'manual-vietnam-1', NOW()),\n('Praha', 'New York', 9490, 15990, 41, 'Delta', '2026-04-10', '2026-04-20', '/destinations/newyork.jpg', 'https://www.kiwi.com/cs/search/results/prague-czech-republic/new-york-city-new-york-united-states?a_aid=levne-letenky', 1, 'manual', 'manual-newyork-1', NOW());",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute INSERT INTO flights (fromCity, toCity, price, originalPrice, discountPercent, airline, departureDate, returnDate, imageUrl, affiliateUrl, isFeatured, source, sourceId, createdAt)\nVALUES \n('Praha', 'Vietnam', 7990, 12990, 38, 'Vietnam Airlines', '2026-03-15', '2026-03-29', '/destinations/vietnam.jpg', 'https://www.kiwi.com/cs/search/results/prague-czech-republic/hanoi-vietnam?a_aid=levne-letenky', 1, 'manual', 'manual-vietnam-1', NOW()),\n('Praha', 'New York', 9490, 15990, 41, 'Delta', '2026-04-10', '2026-04-20', '/destinations/newyork.jpg', 'https://www.kiwi.com/cs/search/results/prague-czech-republic/new-york-city-new-york-united-states?a_aid=levne-letenky', 1, 'manual', 'manual-newyork-1', NOW());",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 64
+}

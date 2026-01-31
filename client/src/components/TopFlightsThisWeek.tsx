@@ -116,7 +116,7 @@ export default function TopFlightsThisWeek() {
                 <div className="flex items-center gap-2 mb-3">
                   <Plane className="w-5 h-5 text-white group-hover:rotate-45 transition-transform duration-300" />
                   <h3 className="text-xl font-bold text-white group-hover:text-[#FFD700] transition-colors">
-                    {dest.destination || "Neznámá destinace"}
+                    {dest.destination || "Barcelona"}
                   </h3>
                 </div>
 
@@ -156,7 +156,7 @@ export default function TopFlightsThisWeek() {
 
                 {/* CTA */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-400">
-                  <span className="text-sm font-semibold text-white">Praha → {dest.destination || "Destinace"}</span>
+                  <span className="text-sm font-semibold text-white">Praha → {dest.destination || "Barcelona"}</span>
                   <span className="text-xs text-gray-300 group-hover:text-[#FFD700] transition-colors">
                     Zobrazit lety →
                   </span>

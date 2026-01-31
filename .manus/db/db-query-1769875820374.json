@@ -1,0 +1,34 @@
+{
+  "query": "SELECT * FROM flights LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT * FROM flights LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "source": "pelikan",
+      "sourceId": "PKN001",
+      "fromCity": "Praha",
+      "toCity": "Barcelona",
+      "departureDate": "2026-02-15 00:00:00",
+      "returnDate": "2026-02-22 00:00:00",
+      "price": "12090",
+      "originalPrice": "17000",
+      "discountPercent": "30",
+      "airline": "Ryanair",
+      "stops": "0",
+      "duration": "2h 30m",
+      "rating": "45",
+      "imageUrl": "/hero-bg.jpg",
+      "affiliateUrl": "https://pelikan.cz/flight/barcelona",
+      "isFeatured": "1",
+      "remainingSeats": "8",
+      "seatsUpdatedAt": "2026-01-20 00:37:16",
+      "discountUpdatedAt": "2026-01-20 00:37:16",
+      "createdAt": "2026-01-20 00:37:16",
+      "updatedAt": "2026-01-20 00:37:16"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsource\tsourceId\tfromCity\ttoCity\tdepartureDate\treturnDate\tprice\toriginalPrice\tdiscountPercent\tairline\tstops\tduration\trating\timageUrl\taffiliateUrl\tisFeatured\tremainingSeats\tseatsUpdatedAt\tdiscountUpdatedAt\tcreatedAt\tupdatedAt\n1\tpelikan\tPKN001\tPraha\tBarcelona\t2026-02-15 00:00:00\t2026-02-22 00:00:00\t12090\t17000\t30\tRyanair\t0\t2h 30m\t45\t/hero-bg.jpg\thttps://pelikan.cz/flight/barcelona\t1\t8\t2026-01-20 00:37:16\t2026-01-20 00:37:16\t2026-01-20 00:37:16\t2026-01-20 00:37:16\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}
