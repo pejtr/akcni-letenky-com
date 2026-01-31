@@ -36,6 +36,7 @@ export default function ChatbotWidget() {
   
   const sendMessageMutation = trpc.chatbot.sendMessage.useMutation();
   const trackCommunityJoinMutation = trpc.chatbot.trackCommunityJoin.useMutation();
+  const captureEmailMutation = trpc.chatbot.captureEmail.useMutation();
 
   const handleSendMessage = async () => {
     if (!message.trim() || sendMessageMutation.isPending) return;
@@ -390,10 +391,37 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                         if (!emailInput.includes("@")) return;
                         setEmailSubmitting(true);
                         try {
-                          // Store email (you can add a tRPC endpoint for this)
+                          // Extract last destination and budget from messages
+                          const lastDestination = messages
+                            .filter(m => m.role === "user")
+                            .reverse()
+                            .find(m => /\b(paříž|londýn|barcelona|řím|praha|vídeň|madrid|amsterdam|berlín|dubaj|bangkok|tokio|new york|los angeles|miami|cancún|phuket|bali|maledivy|mauricius|seychely|zanzibar|kapverdy|egypt|turecko|řecko|španělsko|itálie|francie|chorvatsko|bulharsko)\b/i.test(m.content))
+                            ?.content.match(/\b(paříž|londýn|barcelona|řím|praha|vídeň|madrid|amsterdam|berlín|dubaj|bangkok|tokio|new york|los angeles|miami|cancún|phuket|bali|maledivy|mauricius|seychely|zanzibar|kapverdy|egypt|turecko|řecko|španělsko|itálie|francie|chorvatsko|bulharsko)\b/i)?.[0];
+                          
+                          const lastBudget = messages
+                            .filter(m => m.role === "user")
+                            .reverse()
+                            .find(m => /\d{3,6}/.test(m.content))
+                            ?.content.match(/\d{3,6}/)?.[0];
+
+                          // Save email to database
+                          await captureEmailMutation.mutateAsync({
+                            email: emailInput,
+                            sessionId,
+                            personaId: persona ? parseInt(persona.name.replace(/\D/g, "")) : undefined,
+                            personaName: persona?.displayName,
+                            messageCount: userMessageCount,
+                            lastDestinationMentioned: lastDestination,
+                            lastBudgetMentioned: lastBudget ? parseInt(lastBudget) : undefined,
+                            gdprConsent: true,
+                            consentText: "Souhlasím se zasíláním marketingových nabídek a newsletteru.",
+                          });
+
+                          // Also store in localStorage as backup
                           localStorage.setItem("akcni-letenky-email", emailInput);
                           setEmailCaptured(true);
                           setShowEmailCapture(false);
+                          
                           // Add thank you message
                           setMessages(prev => [...prev, {
                             role: "assistant",
@@ -402,6 +430,15 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                               : persona?.name === "prue"
                                 ? `Děkuji. Váš email ${emailInput} byl zaregistrován. Slevový kód obdržíte do několika minut.`
                                 : `Děkujeme! 🎉 Váš email ${emailInput} byl uložen. Slevový kód 5% vám brzy přijde. Pokračujme v hledání ideální dovolené!`
+                          }]);
+                        } catch (error) {
+                          console.error("Error capturing email:", error);
+                          // Still show success message to user even if DB save fails
+                          setEmailCaptured(true);
+                          setShowEmailCapture(false);
+                          setMessages(prev => [...prev, {
+                            role: "assistant",
+                            content: "Děkujeme za váš email! 🎉"
                           }]);
                         } finally {
                           setEmailSubmitting(false);

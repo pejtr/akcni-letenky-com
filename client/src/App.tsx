@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import LevneLetenky from "./pages/LevneLetenky";
 import Dovolene from "./pages/Dovolene";
 import ABTestDashboard from "./pages/ABTestDashboard";
+import AdminEmails from "./pages/AdminEmails";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/levne-letenky" component={LevneLetenky} />
       <Route path="/dovolene" component={Dovolene} />
       <Route path="/admin/ab-test" component={ABTestDashboard} />
+      <Route path="/admin/emails" component={AdminEmails} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

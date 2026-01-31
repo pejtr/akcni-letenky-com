@@ -344,10 +344,75 @@ export const appRouter = router({
         );
         return result;
       }),
+
+    // Capture email from chatbot
+    captureEmail: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+          sessionId: z.string(),
+          personaId: z.number().optional(),
+          personaName: z.string().optional(),
+          messageCount: z.number().default(0),
+          lastDestinationMentioned: z.string().optional(),
+          lastBudgetMentioned: z.number().optional(),
+          gdprConsent: z.boolean().default(false),
+          consentText: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const { captureEmail } = await import("./emailCapture");
+        const result = await captureEmail(input);
+        return result;
+      }),
   }),
 
   // Admin analytics dashboard
   admin: adminAnalyticsRouter,
+
+  // Email management (admin only)
+  emails: router({ // Get all captured emails
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { getAllEmailCaptures } = await import("./emailCapture");
+      return await getAllEmailCaptures();
+    }),
+
+    // Get email capture statistics
+    getStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { getEmailCaptureStats } = await import("./emailCapture");
+      return await getEmailCaptureStats();
+    }),
+
+    // Export emails to CSV
+    exportCSV: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { getAllEmailCaptures, exportEmailsToCSV } = await import(
+        "./emailCapture"
+      );
+      const captures = await getAllEmailCaptures();
+      return exportEmailsToCSV(captures);
+    }),
+
+    // Export emails in Mailchimp format
+    exportMailchimp: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      const { getAllEmailCaptures, exportEmailsToMailchimp } = await import(
+        "./emailCapture"
+      );
+      const captures = await getAllEmailCaptures();
+      return exportEmailsToMailchimp(captures);
+    }),
+  }),
 
   // Pelikán feed endpoints
   pelikan: router({

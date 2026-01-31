@@ -440,3 +440,40 @@ export const personaMetrics = mysqlTable("persona_metrics", {
 export type PersonaMetrics = typeof personaMetrics.$inferSelect;
 export type InsertPersonaMetrics = typeof personaMetrics.$inferInsert;
 
+/**
+ * Email captures - stores emails collected from chatbot for remarketing
+ */
+export const emailCaptures = mysqlTable("email_captures", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull(),
+  // Chatbot context
+  sessionId: varchar("sessionId", { length: 64 }).notNull(), // Which chat session
+  personaId: int("personaId"), // Which persona was assigned
+  personaName: varchar("personaName", { length: 50 }), // Persona name for quick filtering
+  // Source tracking
+  source: varchar("source", { length: 50 }).default("chatbot"), // 'chatbot', 'popup', 'form'
+  captureMethod: varchar("captureMethod", { length: 50 }).default("email_popup"), // 'email_popup', 'inline_form', etc.
+  // User context at time of capture
+  messageCount: int("messageCount").default(0), // How many messages before capture
+  lastDestinationMentioned: varchar("lastDestinationMentioned", { length: 100 }),
+  lastBudgetMentioned: int("lastBudgetMentioned"),
+  // GDPR compliance
+  gdprConsent: int("gdprConsent").default(0).notNull(), // 1 = consented to marketing
+  consentText: text("consentText"), // The exact consent text shown
+  // Marketing metadata
+  tags: text("tags"), // JSON array of tags for segmentation
+  segment: varchar("segment", { length: 50 }), // 'budget_traveler', 'luxury', 'family', etc.
+  // Engagement tracking
+  emailSent: int("emailSent").default(0), // 1 if welcome email sent
+  emailOpened: int("emailOpened").default(0), // 1 if opened any email
+  emailClicked: int("emailClicked").default(0), // 1 if clicked link in email
+  unsubscribed: int("unsubscribed").default(0), // 1 if unsubscribed
+  // Timestamps
+  capturedAt: timestamp("capturedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailCapture = typeof emailCaptures.$inferSelect;
+export type InsertEmailCapture = typeof emailCaptures.$inferInsert;
+

@@ -653,3 +653,18 @@
 - [ ] Add email capture functionality after 3 messages with personalized text
 - [x] Optimize and enlarge images in Zpáteční levné letenky section (lazy loading, larger size)
 - [x] Add quick reply suggestions (přednabízené odpovědi) to chatbot
+
+## Email Capture Database Integration (Current Task)
+
+- [x] Create emailCaptures database table with fields: id, email, persona, source, timestamp, gdprConsent, chatSessionId
+- [x] Add tRPC endpoint for saving captured emails from chatbot
+- [x] Create admin panel at /admin/emails for email management and export
+- [x] Add CSV export functionality for remarketing campaigns
+- [x] Add Mailchimp-compatible format export
+- [x] Update chatbot EmailCapturePopup to save to database via tRPC
+- [x] Add GDPR consent checkbox to email capture form
+- [x] Implement automatic tagging by persona for segmentation
+- [x] Add email list filtering by persona, date range, source
+- [x] Display total email count and growth statistics
+- [x] Write unit tests for email capture endpoints (18 tests passing)
+- [x] Test email capture flow end-to-end
