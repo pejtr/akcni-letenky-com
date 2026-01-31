@@ -21,7 +21,18 @@ export default function ChatbotWidget() {
   const [hasMemory, setHasMemory] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(false);
   const [persona, setPersona] = useState<{ name: string; displayName: string; avatar: string } | null>(null);
+  const [quickReplies, setQuickReplies] = useState<string[]>([
+    "🏖️ Kam k moři?",
+    "✈️ Nejlevnější letenky",
+    "🌴 Last minute dovolená",
+    "🏔️ Hory a lyžování"
+  ]);
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [emailCaptured, setEmailCaptured] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const userMessageCount = messages.filter(m => m.role === "user").length;
   
   const sendMessageMutation = trpc.chatbot.sendMessage.useMutation();
   const trackCommunityJoinMutation = trpc.chatbot.trackCommunityJoin.useMutation();
@@ -55,6 +66,15 @@ export default function ChatbotWidget() {
       // Update persona from A/B test
       if (result.persona) {
         setPersona(result.persona);
+      }
+      
+      // Update quick replies based on context
+      updateQuickReplies(result.message);
+      
+      // Show email capture after 3 user messages (if not already captured)
+      const newUserMessageCount = messages.filter(m => m.role === "user").length + 1;
+      if (newUserMessageCount >= 3 && !emailCaptured && !showEmailCapture) {
+        setTimeout(() => setShowEmailCapture(true), 1500);
       }
 
       setMessages((prev) => [
@@ -157,8 +177,41 @@ export default function ChatbotWidget() {
   };
 
   const getMessagesHeight = () => {
-    if (isExpanded) return "h-[calc(800px-160px)] md:h-[calc(85vh-160px)]";
-    return "h-[calc(650px-160px)]";
+    if (isExpanded) return "h-[calc(800px-220px)] md:h-[calc(85vh-220px)]";
+    return "h-[calc(650px-220px)]";
+  };
+
+  // Update quick replies based on conversation context
+  const updateQuickReplies = (lastMessage: string) => {
+    const lowerMsg = lastMessage.toLowerCase();
+    
+    if (lowerMsg.includes("moře") || lowerMsg.includes("pláž") || lowerMsg.includes("beach")) {
+      setQuickReplies(["🇬🇷 Řecko", "🇪🇸 Španělsko", "🇭🇷 Chorvatsko", "🇹🇷 Turecko"]);
+    } else if (lowerMsg.includes("hory") || lowerMsg.includes("lyž") || lowerMsg.includes("alpy")) {
+      setQuickReplies(["🇦🇹 Rakousko", "🇮🇹 Itálie - Dolomity", "🇫🇷 Francie - Alpy", "🇨🇭 Švýcarsko"]);
+    } else if (lowerMsg.includes("město") || lowerMsg.includes("city") || lowerMsg.includes("eurovíkend")) {
+      setQuickReplies(["🇬🇧 Londýn", "🇫🇷 Paříž", "🇮🇹 Řím", "🇪🇸 Barcelona"]);
+    } else if (lowerMsg.includes("exotik") || lowerMsg.includes("daleko") || lowerMsg.includes("asie")) {
+      setQuickReplies(["🇹🇭 Thajsko", "🇻🇳 Vietnam", "🇮🇩 Bali", "🇲🇻 Maledivy"]);
+    } else if (lowerMsg.includes("levn") || lowerMsg.includes("slev") || lowerMsg.includes("akce")) {
+      setQuickReplies(["💰 Do 5000 Kč", "🔥 Last minute", "📅 Flexibilní termín", "👨‍👩‍👧‍👦 Rodinná dovolená"]);
+    } else if (lowerMsg.includes("facebook") || lowerMsg.includes("skupin")) {
+      setQuickReplies(["📧 Odebírat novinky", "🔔 Nastavit upozornění", "✈️ Zpět k nabídkám", "💬 Další dotaz"]);
+    } else {
+      // Default suggestions
+      setQuickReplies(["🏖️ Kam k moři?", "✈️ Nejlevnější letenky", "🌴 Last minute", "❓ Mám dotaz"]);
+    }
+  };
+
+  const handleQuickReply = (reply: string) => {
+    setMessage(reply);
+    // Auto-send after short delay for better UX
+    setTimeout(() => {
+      const input = document.querySelector('input[placeholder="Napište zprávu..."]') as HTMLInputElement;
+      if (input) {
+        input.focus();
+      }
+    }, 100);
   };
 
   return (
@@ -291,6 +344,96 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                   </div>
                 )}
                 <div ref={messagesEndRef} />
+              </div>
+
+              {/* Email Capture Popup */}
+              {showEmailCapture && !emailCaptured && (
+                <div className={cn(
+                  "mx-4 mb-2 p-4 rounded-xl border-2 border-orange-400 bg-gradient-to-r from-orange-50 to-yellow-50 shadow-lg animate-in slide-in-from-bottom-2",
+                  isExpanded ? "mx-5" : "mx-4"
+                )}>
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">🎁</span>
+                      <p className={cn("font-bold text-orange-800", isExpanded ? "text-lg" : "text-base")}>
+                        {persona?.name === "phoebe" 
+                          ? "Heeej! Mám pro tebe super nabídku! 🔥" 
+                          : persona?.name === "prue"
+                            ? "Exkluzivní nabídka pro vás"
+                            : "Speciální nabídka pro vás!"}
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => setShowEmailCapture(false)}
+                      className="text-gray-400 hover:text-gray-600 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <p className={cn("text-orange-700 mb-3", isExpanded ? "text-base" : "text-sm")}>
+                    {persona?.name === "phoebe"
+                      ? "Zadej email a dostaneš 5% slevu na první rezervaci! 💰✈️"
+                      : persona?.name === "prue"
+                        ? "Získejte 5% slevu na vaši první rezervaci a exkluzivní nabídky."
+                        : "Získejte 5% slevu na první rezervaci a nejlepší nabídky přímo do emailu."}
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      type="email"
+                      placeholder="vas@email.cz"
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      className={cn("flex-1 border-orange-300 focus:border-orange-500", isExpanded ? "text-base" : "text-sm")}
+                    />
+                    <Button
+                      onClick={async () => {
+                        if (!emailInput.includes("@")) return;
+                        setEmailSubmitting(true);
+                        try {
+                          // Store email (you can add a tRPC endpoint for this)
+                          localStorage.setItem("akcni-letenky-email", emailInput);
+                          setEmailCaptured(true);
+                          setShowEmailCapture(false);
+                          // Add thank you message
+                          setMessages(prev => [...prev, {
+                            role: "assistant",
+                            content: persona?.name === "phoebe"
+                              ? `Super! 🎉 Tvůj email ${emailInput} je uložený! Slevu 5% dostaneš na email. A teď - kam letíme?! ✈️🔥`
+                              : persona?.name === "prue"
+                                ? `Děkuji. Váš email ${emailInput} byl zaregistrován. Slevový kód obdržíte do několika minut.`
+                                : `Děkujeme! 🎉 Váš email ${emailInput} byl uložen. Slevový kód 5% vám brzy přijde. Pokračujme v hledání ideální dovolené!`
+                          }]);
+                        } finally {
+                          setEmailSubmitting(false);
+                        }
+                      }}
+                      disabled={emailSubmitting || !emailInput.includes("@")}
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                      size={isExpanded ? "default" : "sm"}
+                    >
+                      {emailSubmitting ? "..." : "🎁 Získat slevu"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Reply Suggestions */}
+              <div className={cn("px-4 py-2 border-t border-border bg-muted/30", isExpanded ? "px-5" : "px-4")}>
+                <div className="flex flex-wrap gap-2">
+                  {quickReplies.map((reply, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleQuickReply(reply)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full border border-primary/30 bg-background hover:bg-primary hover:text-primary-foreground transition-colors",
+                        isExpanded ? "text-sm" : "text-xs",
+                        "whitespace-nowrap"
+                      )}
+                    >
+                      {reply}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className={cn("border-t border-border", isExpanded ? "p-5" : "p-4")}>

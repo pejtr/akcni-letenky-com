@@ -648,3 +648,8 @@
 - [ ] Track affiliate conversions by persona
 - [ ] Auto-analyze after 100+ conversations and increase traffic for best persona
 - [ ] Add admin dashboard for A/B test results
+- [ ] Generate avatars for Phoebe, Piper, and Prue personas
+- [x] Create admin dashboard for A/B test results in real-time
+- [ ] Add email capture functionality after 3 messages with personalized text
+- [x] Optimize and enlarge images in Zpáteční levné letenky section (lazy loading, larger size)
+- [x] Add quick reply suggestions (přednabízené odpovědi) to chatbot

@@ -503,13 +503,15 @@ export default function Home() {
                   onClick={() => trackAffiliateClick(dest.city, destSlug, "grid", kiwiUrl)}
                 >
                   <div className="flex items-center gap-4 p-4">
-                    {/* Thumbnail with hover airplane overlay */}
-                    <div className="relative w-36 h-36 flex-shrink-0 overflow-hidden rounded-lg">
+                    {/* Thumbnail with hover airplane overlay - optimized larger size */}
+                    <div className="relative w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
                       <img
                         src={dest.image}
                         alt={`${dest.city}, ${dest.country}`}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         loading="lazy"
+                        decoding="async"
+                        fetchPriority={index < 4 ? "high" : "low"}
                       />
                       {/* Airplane overlay on hover */}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

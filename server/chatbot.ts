@@ -353,12 +353,12 @@ async function extractLeadInfo(conversationId: number, userMessage: string, assi
   }
 
   // Update lead quality based on engagement
-  const messageCount = conversation.messageCount || 0;
+  const engagementCount = conversation.messageCount || 0;
   let leadQuality: "hot" | "warm" | "cold" = "cold";
   
-  if (messageCount > 5 && conversation.email) {
+  if (engagementCount > 5 && conversation.email) {
     leadQuality = "hot";
-  } else if (messageCount > 3 || conversation.destination) {
+  } else if (engagementCount > 3 || conversation.destination) {
     leadQuality = "warm";
   }
 
