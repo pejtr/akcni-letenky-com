@@ -30,8 +30,8 @@ describe("Chatbot A/B Test Personas", () => {
       expect(PERSONA_PIPER.formalityLevel).toBe("neutral");
     });
 
-    it("should have Alice with friendly tone and no emoji", () => {
-      expect(PERSONA_PRUE.name).toBe("alice");
+    it("should have Tereza with friendly tone and no emoji", () => {
+      expect(PERSONA_PRUE.name).toBe("tereza");
       expect(PERSONA_PRUE.tone).toBe("friendly");
       expect(PERSONA_PRUE.useEmoji).toBe(false);
       expect(PERSONA_PRUE.formalityLevel).toBe("formal");
@@ -61,7 +61,7 @@ describe("Chatbot A/B Test Personas", () => {
       expect(emojiCount).toBeGreaterThanOrEqual(3);
     });
 
-    it("Alice greeting should not contain emojis", () => {
+    it("Tereza greeting should not contain emojis", () => {
       const emojiCount = (PERSONA_PRUE.greetingMessage.match(/[\u{1F300}-\u{1F9FF}]/gu) || []).length;
       expect(emojiCount).toBe(0);
     });
@@ -76,7 +76,7 @@ describe("Chatbot A/B Test Personas", () => {
       expect(PERSONA_PIPER.systemPromptAddition.toLowerCase()).toContain("profesionál");
     });
 
-    it("Alice system prompt should mention sophisticated personality", () => {
+    it("Tereza system prompt should mention sophisticated personality", () => {
       expect(PERSONA_PRUE.systemPromptAddition.toLowerCase()).toContain("sofistikovan");
     });
   });
@@ -90,7 +90,7 @@ describe("Chatbot A/B Test Personas", () => {
       expect(PERSONA_PIPER.targetAudience.toLowerCase()).toContain("střední");
     });
 
-    it("Alice should target luxury segment", () => {
+    it("Tereza should target luxury segment", () => {
       expect(PERSONA_PRUE.targetAudience.toLowerCase()).toContain("luxus");
     });
   });

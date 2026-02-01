@@ -192,11 +192,11 @@ describe("Remarketing Triggers System", () => {
       const subjects = {
         default: "🎁 Speciální nabídka jen pro vás - 10% sleva!",
         petra: "Hej! 👋 Mám pro tebe překvápko - extra sleva 10%!",
-        alice: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
+        tereza: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
       };
 
       expect(subjects.petra).toContain("Hej!");
-      expect(subjects.alice).toContain("Exkluzivní");
+      expect(subjects.tereza).toContain("Exkluzivní");
       expect(subjects.default).toContain("Speciální");
     });
 

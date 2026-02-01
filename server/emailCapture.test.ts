@@ -256,7 +256,7 @@ describe("Email Capture System", () => {
         email: testEmail,
         sessionId: "metadata-session",
         personaId: 3,
-        personaName: "Alice",
+        personaName: "Tereza",
         messageCount: 10,
         lastDestinationMentioned: "Paříž",
         lastBudgetMentioned: 12000,
@@ -272,7 +272,7 @@ describe("Email Capture System", () => {
         const capture = captures.find((c) => c.email === testEmail);
 
         expect(capture).toBeDefined();
-        expect(capture?.personaName).toBe("Alice");
+        expect(capture?.personaName).toBe("Tereza");
         expect(capture?.messageCount).toBe(10);
         expect(capture?.lastDestinationMentioned).toBe("Paříž");
         expect(capture?.lastBudgetMentioned).toBe(12000);

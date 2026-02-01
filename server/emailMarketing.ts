@@ -30,12 +30,12 @@ const WELCOME_SERIES_TEMPLATES = {
     subject: {
       default: "🎉 Váš slevový kód 5% je připraven!",
       petra: "🔥 Tvoje sleva 5% je tady! Let's go!",
-      alice: "Váš exkluzivní slevový kód 5% - platí 30 dní",
+      tereza: "Váš exkluzivní slevový kód 5% - platí 30 dní",
     },
     preheader: {
       default: "Využijte slevu na vaši první rezervaci a objevte nejlepší nabídky.",
       petra: "Kam letíme? Mám pro tebe super tipy! ✈️",
-      alice: "Profesionální cestovní služby s garantovanou kvalitou.",
+      tereza: "Profesionální cestovní služby s garantovanou kvalitou.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -59,13 +59,13 @@ const WELCOME_SERIES_TEMPLATES = {
     <tr>
       <td style="padding: 40px 30px;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">
-          ${data.persona === "petra" ? "Ahoj! 👋" : data.persona === "alice" ? "Vážený zákazníku," : "Dobrý den!"}
+          ${data.persona === "petra" ? "Ahoj! 👋" : data.persona === "tereza" ? "Vážený zákazníku," : "Dobrý den!"}
         </h2>
         
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
           ${data.persona === "petra" 
             ? "Děkuju, že jsi se přidal/a k naší komunitě cestovatelů! 🌍 Mám pro tebe super dárek - tvůj osobní slevový kód na první rezervaci!"
-            : data.persona === "alice"
+            : data.persona === "tereza"
               ? "Děkujeme za Vaši registraci. Jako poděkování Vám zasíláme exkluzivní slevový kód na Vaši první rezervaci."
               : "Děkujeme za registraci! Připravili jsme pro vás speciální slevový kód na vaši první rezervaci."}
         </p>
@@ -144,12 +144,12 @@ const WELCOME_SERIES_TEMPLATES = {
     subject: {
       default: "✨ Vybrali jsme pro vás nejlepší nabídky",
       petra: "Hej! 👋 Mám pro tebe super tipy kam vyrazit!",
-      alice: "Personalizované doporučení na základě vašich preferencí",
+      tereza: "Personalizované doporučení na základě vašich preferencí",
     },
     preheader: {
       default: "Na základě vašich preferencí jsme vybrali ideální destinace.",
       petra: "Podívej se, co jsem pro tebe našla! 🔥",
-      alice: "Exkluzivní nabídky odpovídající vašim požadavkům.",
+      tereza: "Exkluzivní nabídky odpovídající vašim požadavkům.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -221,12 +221,12 @@ const WELCOME_SERIES_TEMPLATES = {
     subject: {
       default: "⏰ Poslední šance! Vaše sleva brzy vyprší",
       petra: "🚨 Pozor! Tvoje sleva brzy zmizí!",
-      alice: "Upozornění: Platnost vašeho slevového kódu končí",
+      tereza: "Upozornění: Platnost vašeho slevového kódu končí",
     },
     preheader: {
       default: "Využijte slevu 5% než vyprší. Tisíce cestovatelů už rezervovalo!",
       petra: "Nečekej! Ostatní už balí kufry! 🧳",
-      alice: "Zbývá omezený počet míst za zvýhodněné ceny.",
+      tereza: "Zbývá omezený počet míst za zvýhodněné ceny.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -305,12 +305,12 @@ const WELCOME_SERIES_TEMPLATES = {
     subject: {
       default: "🎁 Speciální nabídka jen pro vás - 10% sleva!",
       petra: "Hej! 👋 Mám pro tebe překvápko - extra sleva 10%!",
-      alice: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
+      tereza: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
     },
     preheader: {
       default: "Chybíte nám! Připravili jsme pro vás speciální slevu.",
       petra: "Scházíš mi! Mrkni na super nabídku co mám jen pro tebe 🎁",
-      alice: "Limitovaná nabídka pro vybrané zákazníky.",
+      tereza: "Limitovaná nabídka pro vybrané zákazníky.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -536,7 +536,7 @@ export async function processEmailQueue(): Promise<{
           ];
         const persona = capture.personaName?.toLowerCase() as
           | "petra"
-          | "alice"
+          | "tereza"
           | undefined;
 
         const subject =

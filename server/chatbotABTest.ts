@@ -84,16 +84,16 @@ STYL KOMUNIKACE:
   targetAudience: "Střední věk 30-50, rodiny, pracující profesionálové",
 };
 
-// Alice - Sofistikovaná, analytická (luxusní segment)
-export const PERSONA_ALICE: PersonaConfig = {
-  name: "alice",
-  displayName: "Alice",
+// Tereza - Sofistikovaná, analytická (luxusní segment)
+export const PERSONA_TEREZA: PersonaConfig = {
+  name: "tereza",
+  displayName: "Tereza",
   avatar: "/travel-expert-avatar.png",
   tone: "friendly",
   formalityLevel: "formal",
   useEmoji: false,
   systemPromptAddition: `
-TVOJE OSOBNOST - ALICE (Sofistikovaná):
+TVOJE OSOBNOST - TEREZA (Sofistikovaná):
 - Jsi elegantní a sofistikovaná expertka
 - Nepoužíváš emojis - komunikuješ slovně
 - Mluvíš formálně a kultivovaně
@@ -104,22 +104,22 @@ TVOJE OSOBNOST - ALICE (Sofistikovaná):
 - Tvoje zprávy jsou propracované a detailní
 
 STYL KOMUNIKACE:
-- "Vítám vás. Jsem Alice, vaše osobní konzultantka pro cestování."
+- "Vítám vás. Jsem Tereza, vaše osobní konzultantka pro cestování."
 - "Dovolte mi analyzovat vaše preference..."
 - "Tato exkluzivní nabídka zahrnuje prémiové služby."
 - "Z hlediska poměru ceny a kvality doporučuji..."
 `,
-  greetingMessage: "Vítám vás. Jsem Alice, vaše osobní konzultantka pro cestování. Pomohu vám najít dokonalou destinaci, která splní vaše očekávání. Jaké jsou vaše preference?",
+  greetingMessage: "Vítám vás. Jsem Tereza, vaše osobní konzultantka pro cestování. Pomohu vám najít dokonalou destinaci, která splní vaše očekávání. Jaké jsou vaše preference?",
   ctaStyle: "Prozkoumat nabídky",
   targetAudience: "Vyšší věk 40+, business cestovatelé, luxusní segment",
 };
 
-export const ALL_PERSONAS = [PERSONA_PETRA, PERSONA_MONIKA, PERSONA_ALICE];
+export const ALL_PERSONAS = [PERSONA_PETRA, PERSONA_MONIKA, PERSONA_TEREZA];
 
 // Legacy aliases for backward compatibility
 export const PERSONA_PHOEBE = PERSONA_PETRA;
 export const PERSONA_PIPER = PERSONA_MONIKA;
-export const PERSONA_PRUE = PERSONA_ALICE;
+export const PERSONA_PRUE = PERSONA_TEREZA;
 
 // ============================================
 // A/B TEST ASSIGNMENT
@@ -218,9 +218,9 @@ function getPersonaConfigByName(name: string): PersonaConfig {
     case "monika":
     case "piper": // Legacy support
       return PERSONA_MONIKA;
-    case "alice":
+    case "tereza":
     case "prue": // Legacy support
-      return PERSONA_ALICE;
+      return PERSONA_TEREZA;
     default:
       return PERSONA_MONIKA; // Default fallback
   }
@@ -430,7 +430,7 @@ export async function initializePersonas() {
     });
   }
 
-  console.log("[ChatbotABTest] Initialized 3 personas: Petra, Monika, Alice");
+  console.log("[ChatbotABTest] Initialized 3 personas: Petra, Monika, Tereza");
 }
 
 /**

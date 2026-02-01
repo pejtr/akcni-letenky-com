@@ -224,10 +224,10 @@ describe('ChatbotWidget localStorage Persistence', () => {
 
     it('should preserve all persona properties', () => {
       const persona = {
-        name: 'alice',
-        displayName: 'Alice',
-        avatar: '/avatars/alice.png',
-        greetingMessage: 'Dobrý den, jsem Alice.',
+        name: 'tereza',
+        displayName: 'Tereza',
+        avatar: '/avatars/tereza.png',
+        greetingMessage: 'Dobrý den, jsem Tereza.',
       };
 
       const conversationData = {
@@ -248,7 +248,7 @@ describe('ChatbotWidget localStorage Persistence', () => {
       const data = JSON.parse(stored!);
 
       expect(data.persona).toEqual(persona);
-      expect(data.persona.greetingMessage).toBe('Dobrý den, jsem Alice.');
+      expect(data.persona.greetingMessage).toBe('Dobrý den, jsem Tereza.');
     });
   });
 });

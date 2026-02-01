@@ -30,12 +30,12 @@ const REMARKETING_TEMPLATE = {
   subject: {
     default: "🎁 Speciální nabídka jen pro vás - 10% sleva!",
     petra: "Hej! 👋 Mám pro tebe překvápko - extra sleva 10%!",
-    alice: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
+    tereza: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
   },
   preheader: {
     default: "Chybíte nám! Připravili jsme pro vás speciální slevu.",
     petra: "Scházíš mi! Mrkni na super nabídku co mám jen pro tebe 🎁",
-    alice: "Limitovaná nabídka pro vybrané zákazníky.",
+    tereza: "Limitovaná nabídka pro vybrané zákazníky.",
   },
 };
 
@@ -175,7 +175,7 @@ function generateRemarketingEmailHtml(data: {
   persona?: string | null;
   destination?: string | null;
 }): string {
-  const persona = data.persona?.toLowerCase() as "petra" | "alice" | undefined;
+  const persona = data.persona?.toLowerCase() as "petra" | "tereza" | undefined;
 
   return `
 <!DOCTYPE html>

@@ -775,3 +775,24 @@
 - [x] Add "Clear conversation" button
 - [x] Handle localStorage quota exceeded errors
 - [x] Test persistence across page reloads and browser restarts
+
+
+## Copy Personas from Shared Project
+
+### Persona Definitions Update
+- [ ] Access shared project at https://manus.im/share/c4EsDWGrjsskP2UORfE57w
+- [ ] Extract persona definitions (names, personalities, greetings, avatars)
+- [ ] Update chatbotABTest.ts with new persona definitions
+- [ ] Copy avatar images if different
+- [ ] Update any references in email marketing templates
+- [ ] Test chatbot with new personas
+
+
+## Change Persona Names to Czech
+
+### Alice → Tereza
+- [x] Update chatbotABTest.ts - change alice to tereza
+- [x] Update email marketing templates (alice → tereza)
+- [x] Update remarketing triggers (alice → tereza)
+- [x] Update tests (alice → tereza)
+- [x] Keep Petra and Monika as they are (already Czech)
