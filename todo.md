@@ -733,3 +733,32 @@
 - [ ] Ensure links work reliably without "Nabídka není dostupná" errors
 
 - [x] Split Dovolene page into two columns: foreign (left) vs domestic (right: Česko, Slovensko, Rakousko, Maďarsko, Polsko)
+
+## Pelikán-style Category Tiles Integration (Current Task)
+
+- [ ] Fix script error on homepage
+- [ ] Create "Tipy na dovolenou" section with category tiles
+- [ ] Add categories: First Minute, Levná exotika, Ischia, Dubaj, Thajsko, Mauricius, Malta, Krátké výlety
+- [ ] Design attractive tiles with images and prices
+- [ ] Add affiliate links to Pelikán.cz search pages
+- [ ] Ensure mobile responsive design
+
+
+## Chatbot Persona & Color Updates
+
+### Persona Name Changes (Phoebe/Piper/Prue → Petra/Monika/Alice)
+- [x] Update persona definitions in chatbotABTest.ts (Petra/Monika/Alice)
+- [x] Update persona names in ChatbotWidget.tsx
+- [x] Update persona references in email marketing templates
+- [x] Update persona references in remarketing triggers
+- [x] Update unit tests with new persona names
+- [x] Ensure 24h localStorage persistence for persona assignment
+
+### Color Updates (Magenta → Orange-Red Gradient)
+- [x] Update ChatbotWidget header/button colors to orange-red gradient
+- [x] Update notification widget colors to orange-red gradient
+- [x] Fix chatbot greeting - should only show once at start, not repeat
+
+### Greeting Fix
+- [x] Fix chatbot so it doesn't repeat greeting after each message
+- [x] Greeting should only appear once when chat opens

@@ -12,15 +12,12 @@ export default function ChatbotWidget() {
   const [message, setMessage] = useState("");
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [conversationId, setConversationId] = useState<number | null>(null);
+  const [greetingShown, setGreetingShown] = useState(false);
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([
-    {
-      role: "assistant",
-      content: "Ahoj! 👋 Jsem Petra, tvoje osobní cestovní expertka s 10 lety zkušeností. Pomůžu ti najít tu nejlepší dovolenou za skvělou cenu! ✈️\n\nKam tě to táhne? Máme akce od 590 Kč!",
-    },
   ]);
   const [hasMemory, setHasMemory] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(false);
-  const [persona, setPersona] = useState<{ name: string; displayName: string; avatar: string } | null>(null);
+  const [persona, setPersona] = useState<{ name: string; displayName: string; avatar: string; greetingMessage?: string } | null>(null);
   const [quickReplies, setQuickReplies] = useState<string[]>([
     "💰 Letenky do 1500 Kč",
     "🔥 Last minute akce",
@@ -64,9 +61,17 @@ export default function ChatbotWidget() {
         setIsReturningUser(result.returningUser);
       }
       
-      // Update persona from A/B test
+      // Update persona from A/B test and show greeting only once
       if (result.persona) {
         setPersona(result.persona);
+        
+        // Show greeting message only once when persona is first assigned
+        if (!greetingShown && messages.length === 0) {
+          setGreetingShown(true);
+          // Show greeting as first message
+          const greeting = result.persona.greetingMessage || "Ahoj! 👋 Jsem tu, abych ti pomohl najít tu nejlepší dovolenou!";
+          setMessages([{ role: "assistant", content: greeting }]);
+        }
       }
       
       // Update quick replies based on context
@@ -254,7 +259,7 @@ export default function ChatbotWidget() {
             getWindowSize()
           )}
         >
-          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-gray-900 rounded-t-2xl">
+          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white rounded-t-2xl">
             <div className="flex items-center gap-3">
               <div className={cn(
                 "rounded-full overflow-hidden border-2 border-white",
@@ -359,9 +364,9 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                     <div className="flex items-center gap-2">
                       <span className="text-2xl">🎁</span>
                       <p className={cn("font-bold text-orange-800", isExpanded ? "text-lg" : "text-base")}>
-                        {persona?.name === "phoebe" 
+                        {persona?.name === "petra" 
                           ? "Heeej! Mám pro tebe super nabídku! 🔥" 
-                          : persona?.name === "prue"
+                          : persona?.name === "alice"
                             ? "Exkluzivní nabídka pro vás"
                             : "Speciální nabídka pro vás!"}
                       </p>
@@ -374,9 +379,9 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                     </button>
                   </div>
                   <p className={cn("text-orange-700 mb-3", isExpanded ? "text-base" : "text-sm")}>
-                    {persona?.name === "phoebe"
+                    {persona?.name === "petra"
                       ? "Zadej email a dostaneš 5% slevu na první rezervaci! 💰✈️"
-                      : persona?.name === "prue"
+                      : persona?.name === "alice"
                         ? "Získejte 5% slevu na vaši první rezervaci a exkluzivní nabídky."
                         : "Získejte 5% slevu na první rezervaci a nejlepší nabídky přímo do emailu."}
                   </p>
@@ -427,9 +432,9 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                           // Add thank you message
                           setMessages(prev => [...prev, {
                             role: "assistant",
-                            content: persona?.name === "phoebe"
+                            content: persona?.name === "petra"
                               ? `Super! 🎉 Tvůj email ${emailInput} je uložený! Slevu 5% dostaneš na email. A teď - kam letíme?! ✈️🔥`
-                              : persona?.name === "prue"
+                              : persona?.name === "alice"
                                 ? `Děkuji. Váš email ${emailInput} byl zaregistrován. Slevový kód obdržíte do několika minut.`
                                 : `Děkujeme! 🎉 Váš email ${emailInput} byl uložen. Slevový kód 5% vám brzy přijde. Pokračujme v hledání ideální dovolené!`
                           }]);

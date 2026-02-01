@@ -31,7 +31,7 @@ describe("Email Marketing System", () => {
     });
 
     it("should have personalized subjects for each persona", () => {
-      const personas = ["default", "phoebe", "prue"];
+      const personas = ["default", "petra", "alice"];
       
       personas.forEach((persona) => {
         expect(persona).toBeTruthy();
@@ -119,21 +119,21 @@ describe("Email Marketing System", () => {
   });
 
   describe("Personalization", () => {
-    it("should use Phoebe style for phoebe persona", () => {
-      const persona = "phoebe";
-      const greeting = persona === "phoebe" ? "Ahoj! 👋" : "Dobrý den,";
+    it("should use Petra style for petra persona", () => {
+      const persona = "petra";
+      const greeting = persona === "petra" ? "Ahoj! 👋" : "Dobrý den,";
       expect(greeting).toBe("Ahoj! 👋");
     });
 
-    it("should use Prue style for prue persona", () => {
-      const persona = "prue";
-      const greeting = persona === "prue" ? "Vážený zákazníku," : "Dobrý den,";
+    it("should use Alice style for alice persona", () => {
+      const persona = "alice";
+      const greeting = persona === "alice" ? "Vážený zákazníku," : "Dobrý den,";
       expect(greeting).toBe("Vážený zákazníku,");
     });
 
     it("should use default style for unknown persona", () => {
       const persona = "unknown";
-      const greeting = persona === "phoebe" ? "Ahoj! 👋" : persona === "prue" ? "Vážený zákazníku," : "Dobrý den,";
+      const greeting = persona === "petra" ? "Ahoj! 👋" : persona === "alice" ? "Vážený zákazníku," : "Dobrý den,";
       expect(greeting).toBe("Dobrý den,");
     });
 

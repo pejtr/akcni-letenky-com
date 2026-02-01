@@ -103,7 +103,7 @@ export default function SocialProofWidget() {
       <div className="p-3">
         <div className="flex items-center gap-3 mb-2">
           {/* Circular thumbnail */}
-          <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary animate-pulse">
+          <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-orange-500 animate-pulse">
             <img
               src={currentNotification.imageUrl}
               alt={currentNotification.destination}
@@ -139,7 +139,7 @@ export default function SocialProofWidget() {
 
         {/* CTA Button - Below content */}
         <button
-          className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-bold hover:bg-primary/90 transition-colors"
+          className="w-full bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white px-3 py-1.5 rounded-full text-xs font-bold hover:opacity-90 transition-opacity"
           onClick={() => {
             // TODO: Navigate to offer
             console.log("Navigate to offer");

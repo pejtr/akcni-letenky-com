@@ -293,6 +293,7 @@ export async function processChatbotMessage(
       name: persona.name,
       displayName: persona.displayName,
       avatar: persona.avatar,
+      greetingMessage: persona.greetingMessage,
     },
   };
 }

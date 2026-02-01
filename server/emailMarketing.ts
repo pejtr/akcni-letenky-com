@@ -29,13 +29,13 @@ const WELCOME_SERIES_TEMPLATES = {
     delayDays: 0,
     subject: {
       default: "🎉 Váš slevový kód 5% je připraven!",
-      phoebe: "🔥 Tvoje sleva 5% je tady! Let's go!",
-      prue: "Váš exkluzivní slevový kód 5% - platí 30 dní",
+      petra: "🔥 Tvoje sleva 5% je tady! Let's go!",
+      alice: "Váš exkluzivní slevový kód 5% - platí 30 dní",
     },
     preheader: {
       default: "Využijte slevu na vaši první rezervaci a objevte nejlepší nabídky.",
-      phoebe: "Kam letíme? Mám pro tebe super tipy! ✈️",
-      prue: "Profesionální cestovní služby s garantovanou kvalitou.",
+      petra: "Kam letíme? Mám pro tebe super tipy! ✈️",
+      alice: "Profesionální cestovní služby s garantovanou kvalitou.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -59,13 +59,13 @@ const WELCOME_SERIES_TEMPLATES = {
     <tr>
       <td style="padding: 40px 30px;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px;">
-          ${data.persona === "phoebe" ? "Ahoj! 👋" : data.persona === "prue" ? "Vážený zákazníku," : "Dobrý den!"}
+          ${data.persona === "petra" ? "Ahoj! 👋" : data.persona === "alice" ? "Vážený zákazníku," : "Dobrý den!"}
         </h2>
         
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-          ${data.persona === "phoebe" 
+          ${data.persona === "petra" 
             ? "Děkuju, že jsi se přidal/a k naší komunitě cestovatelů! 🌍 Mám pro tebe super dárek - tvůj osobní slevový kód na první rezervaci!"
-            : data.persona === "prue"
+            : data.persona === "alice"
               ? "Děkujeme za Vaši registraci. Jako poděkování Vám zasíláme exkluzivní slevový kód na Vaši první rezervaci."
               : "Děkujeme za registraci! Připravili jsme pro vás speciální slevový kód na vaši první rezervaci."}
         </p>
@@ -79,7 +79,7 @@ const WELCOME_SERIES_TEMPLATES = {
         
         ${data.destination ? `
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 20px 0;">
-          ${data.persona === "phoebe"
+          ${data.persona === "petra"
             ? `Viděla jsem, že tě zajímá <strong>${data.destination}</strong>! Super volba! 🔥 Mrkni na aktuální nabídky:`
             : `Zaznamenali jsme Váš zájem o destinaci <strong>${data.destination}</strong>. Připravili jsme pro Vás aktuální nabídky:`}
         </p>
@@ -88,13 +88,13 @@ const WELCOME_SERIES_TEMPLATES = {
         <!-- CTA Button -->
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://akcni-letenky.manus.space/levne-letenky" style="display: inline-block; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-size: 18px; font-weight: bold;">
-            ${data.persona === "phoebe" ? "🔥 Prohlédnout nabídky" : "Zobrazit aktuální nabídky"}
+            ${data.persona === "petra" ? "🔥 Prohlédnout nabídky" : "Zobrazit aktuální nabídky"}
           </a>
         </div>
         
         <!-- Top Destinations -->
         <h3 style="color: #1f2937; font-size: 18px; margin: 30px 0 15px 0;">
-          ${data.persona === "phoebe" ? "🌴 Nejžhavější destinace:" : "Doporučené destinace:"}
+          ${data.persona === "petra" ? "🌴 Nejžhavější destinace:" : "Doporučené destinace:"}
         </h3>
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
@@ -143,13 +143,13 @@ const WELCOME_SERIES_TEMPLATES = {
     delayDays: 2,
     subject: {
       default: "✨ Vybrali jsme pro vás nejlepší nabídky",
-      phoebe: "Hej! 👋 Mám pro tebe super tipy kam vyrazit!",
-      prue: "Personalizované doporučení na základě vašich preferencí",
+      petra: "Hej! 👋 Mám pro tebe super tipy kam vyrazit!",
+      alice: "Personalizované doporučení na základě vašich preferencí",
     },
     preheader: {
       default: "Na základě vašich preferencí jsme vybrali ideální destinace.",
-      phoebe: "Podívej se, co jsem pro tebe našla! 🔥",
-      prue: "Exkluzivní nabídky odpovídající vašim požadavkům.",
+      petra: "Podívej se, co jsem pro tebe našla! 🔥",
+      alice: "Exkluzivní nabídky odpovídající vašim požadavkům.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -168,11 +168,11 @@ const WELCOME_SERIES_TEMPLATES = {
     <tr>
       <td style="padding: 40px 30px;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0;">
-          ${data.persona === "phoebe" ? "Hej! 👋" : "Dobrý den,"}
+          ${data.persona === "petra" ? "Hej! 👋" : "Dobrý den,"}
         </h2>
         
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-          ${data.persona === "phoebe"
+          ${data.persona === "petra"
             ? `Jak se máš? 😊 Přemýšlela jsem o tobě a vybrala jsem pár super nabídek${data.segment === "budget_traveler" ? " za super ceny" : data.segment === "luxury_traveler" ? " na luxusní dovolené" : ""}!`
             : `Na základě vašich preferencí${data.destination ? ` a zájmu o ${data.destination}` : ""} jsme pro vás připravili personalizovaná doporučení.`}
         </p>
@@ -220,13 +220,13 @@ const WELCOME_SERIES_TEMPLATES = {
     delayDays: 5,
     subject: {
       default: "⏰ Poslední šance! Vaše sleva brzy vyprší",
-      phoebe: "🚨 Pozor! Tvoje sleva brzy zmizí!",
-      prue: "Upozornění: Platnost vašeho slevového kódu končí",
+      petra: "🚨 Pozor! Tvoje sleva brzy zmizí!",
+      alice: "Upozornění: Platnost vašeho slevového kódu končí",
     },
     preheader: {
       default: "Využijte slevu 5% než vyprší. Tisíce cestovatelů už rezervovalo!",
-      phoebe: "Nečekej! Ostatní už balí kufry! 🧳",
-      prue: "Zbývá omezený počet míst za zvýhodněné ceny.",
+      petra: "Nečekej! Ostatní už balí kufry! 🧳",
+      alice: "Zbývá omezený počet míst za zvýhodněné ceny.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -245,11 +245,11 @@ const WELCOME_SERIES_TEMPLATES = {
     <tr>
       <td style="padding: 40px 30px;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0;">
-          ${data.persona === "phoebe" ? "Hej, nespěchej, ale..." : "Vážený zákazníku,"}
+          ${data.persona === "petra" ? "Hej, nespěchej, ale..." : "Vážený zákazníku,"}
         </h2>
         
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-          ${data.persona === "phoebe"
+          ${data.persona === "petra"
             ? "Tvůj slevový kód AKCNI5 brzy vyprší! 😱 Nechci, abys přišel/a o super slevu!"
             : "Rádi bychom Vás upozornili, že platnost Vašeho slevového kódu AKCNI5 brzy končí."}
         </p>
@@ -264,7 +264,7 @@ const WELCOME_SERIES_TEMPLATES = {
         <!-- Social Proof -->
         <div style="background: #f0fdf4; border-radius: 12px; padding: 20px; margin: 25px 0;">
           <h3 style="color: #166534; margin: 0 0 15px 0; font-size: 16px;">
-            ${data.persona === "phoebe" ? "🔥 Co dělají ostatní:" : "Statistiky z posledních 7 dní:"}
+            ${data.persona === "petra" ? "🔥 Co dělají ostatní:" : "Statistiky z posledních 7 dní:"}
           </h3>
           <ul style="color: #15803d; margin: 0; padding-left: 20px; line-height: 1.8;">
             <li><strong>2,847</strong> cestovatelů rezervovalo letenky</li>
@@ -275,7 +275,7 @@ const WELCOME_SERIES_TEMPLATES = {
         
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://akcni-letenky.manus.space/levne-letenky" style="display: inline-block; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff; text-decoration: none; padding: 18px 50px; border-radius: 8px; font-size: 20px; font-weight: bold;">
-            ${data.persona === "phoebe" ? "🔥 Využít slevu teď!" : "Využít slevu"}
+            ${data.persona === "petra" ? "🔥 Využít slevu teď!" : "Využít slevu"}
           </a>
         </div>
         
@@ -304,13 +304,13 @@ const WELCOME_SERIES_TEMPLATES = {
     delayDays: 7,
     subject: {
       default: "🎁 Speciální nabídka jen pro vás - 10% sleva!",
-      phoebe: "Hej! 👋 Mám pro tebe překvápko - extra sleva 10%!",
-      prue: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
+      petra: "Hej! 👋 Mám pro tebe překvápko - extra sleva 10%!",
+      alice: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
     },
     preheader: {
       default: "Chybíte nám! Připravili jsme pro vás speciální slevu.",
-      phoebe: "Scházíš mi! Mrkni na super nabídku co mám jen pro tebe 🎁",
-      prue: "Limitovaná nabídka pro vybrané zákazníky.",
+      petra: "Scházíš mi! Mrkni na super nabídku co mám jen pro tebe 🎁",
+      alice: "Limitovaná nabídka pro vybrané zákazníky.",
     },
     htmlContent: (data: EmailTemplateData) => `
 <!DOCTYPE html>
@@ -329,11 +329,11 @@ const WELCOME_SERIES_TEMPLATES = {
     <tr>
       <td style="padding: 40px 30px;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0;">
-          ${data.persona === "phoebe" ? "Hej! Dlouho jsme se neviděli! 👋" : "Dobrý den,"}
+          ${data.persona === "petra" ? "Hej! Dlouho jsme se neviděli! 👋" : "Dobrý den,"}
         </h2>
         
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-          ${data.persona === "phoebe"
+          ${data.persona === "petra"
             ? "Všimla jsem si, že jsi ještě nerezervoval/a svou dovolenou. Mám pro tebe speciální překvápko - extra slevu 10%! 🎉"
             : "Zaznamenali jsme, že jste dosud nedokončili svou rezervaci. Připravili jsme pro Vás exkluzivní nabídku."}
         </p>
@@ -350,7 +350,7 @@ const WELCOME_SERIES_TEMPLATES = {
         
         ${data.destination ? `
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-          ${data.persona === "phoebe"
+          ${data.persona === "petra"
             ? `Pamatuju si, že tě zajímala <strong>${data.destination}</strong>! Mrkni na aktuální ceny - jsou super! 🔥`
             : `Připomínáme Váš zájem o destinaci <strong>${data.destination}</strong>. Aktuální nabídky jsou stále k dispozici.`}
         </p>
@@ -358,7 +358,7 @@ const WELCOME_SERIES_TEMPLATES = {
         
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://akcni-letenky.manus.space/levne-letenky" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff; text-decoration: none; padding: 18px 50px; border-radius: 8px; font-size: 20px; font-weight: bold;">
-            ${data.persona === "phoebe" ? "🎁 Využít slevu 10%!" : "Využít nabídku"}
+            ${data.persona === "petra" ? "🎁 Využít slevu 10%!" : "Využít nabídku"}
           </a>
         </div>
         
@@ -535,8 +535,8 @@ export async function processEmailQueue(): Promise<{
             templateKey as keyof typeof WELCOME_SERIES_TEMPLATES
           ];
         const persona = capture.personaName?.toLowerCase() as
-          | "phoebe"
-          | "prue"
+          | "petra"
+          | "alice"
           | undefined;
 
         const subject =

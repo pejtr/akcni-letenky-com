@@ -29,7 +29,7 @@ describe("Email Capture System", () => {
         email: "persona-test@example.com",
         sessionId: "test-session-2",
         personaId: 1,
-        personaName: "Phoebe",
+        personaName: "Petra",
         messageCount: 5,
         gdprConsent: true,
       });
@@ -42,7 +42,7 @@ describe("Email Capture System", () => {
         email: "context-test@example.com",
         sessionId: "test-session-3",
         personaId: 2,
-        personaName: "Piper",
+        personaName: "Monika",
         messageCount: 7,
         lastDestinationMentioned: "Barcelona",
         lastBudgetMentioned: 15000,
@@ -130,7 +130,7 @@ describe("Email Capture System", () => {
 
       expect(stats.byPersona).toBeDefined();
       expect(typeof stats.byPersona).toBe("object");
-      // Should have at least "Phoebe" and "Piper" from previous tests
+      // Should have at least "Petra" and "Monika" from previous tests
       expect(Object.keys(stats.byPersona).length).toBeGreaterThan(0);
     });
 
@@ -256,7 +256,7 @@ describe("Email Capture System", () => {
         email: testEmail,
         sessionId: "metadata-session",
         personaId: 3,
-        personaName: "Prue",
+        personaName: "Alice",
         messageCount: 10,
         lastDestinationMentioned: "Paříž",
         lastBudgetMentioned: 12000,
@@ -272,7 +272,7 @@ describe("Email Capture System", () => {
         const capture = captures.find((c) => c.email === testEmail);
 
         expect(capture).toBeDefined();
-        expect(capture?.personaName).toBe("Prue");
+        expect(capture?.personaName).toBe("Alice");
         expect(capture?.messageCount).toBe(10);
         expect(capture?.lastDestinationMentioned).toBe("Paříž");
         expect(capture?.lastBudgetMentioned).toBe(12000);

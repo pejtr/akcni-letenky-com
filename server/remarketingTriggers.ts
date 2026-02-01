@@ -29,13 +29,13 @@ const REMARKETING_TEMPLATE = {
   type: "remarketing",
   subject: {
     default: "🎁 Speciální nabídka jen pro vás - 10% sleva!",
-    phoebe: "Hej! 👋 Mám pro tebe překvápko - extra sleva 10%!",
-    prue: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
+    petra: "Hej! 👋 Mám pro tebe překvápko - extra sleva 10%!",
+    alice: "Exkluzivní nabídka: 10% sleva na vaši rezervaci",
   },
   preheader: {
     default: "Chybíte nám! Připravili jsme pro vás speciální slevu.",
-    phoebe: "Scházíš mi! Mrkni na super nabídku co mám jen pro tebe 🎁",
-    prue: "Limitovaná nabídka pro vybrané zákazníky.",
+    petra: "Scházíš mi! Mrkni na super nabídku co mám jen pro tebe 🎁",
+    alice: "Limitovaná nabídka pro vybrané zákazníky.",
   },
 };
 
@@ -175,7 +175,7 @@ function generateRemarketingEmailHtml(data: {
   persona?: string | null;
   destination?: string | null;
 }): string {
-  const persona = data.persona?.toLowerCase() as "phoebe" | "prue" | undefined;
+  const persona = data.persona?.toLowerCase() as "petra" | "alice" | undefined;
 
   return `
 <!DOCTYPE html>
@@ -194,11 +194,11 @@ function generateRemarketingEmailHtml(data: {
     <tr>
       <td style="padding: 40px 30px;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0;">
-          ${persona === "phoebe" ? "Hej! Dlouho jsme se neviděli! 👋" : "Dobrý den,"}
+          ${persona === "petra" ? "Hej! Dlouho jsme se neviděli! 👋" : "Dobrý den,"}
         </h2>
         
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-          ${persona === "phoebe"
+          ${persona === "petra"
             ? "Všimla jsem si, že jsi ještě nerezervoval/a svou dovolenou. Mám pro tebe speciální překvápko - extra slevu 10%! 🎉"
             : "Zaznamenali jsme, že jste dosud nedokončili svou rezervaci. Připravili jsme pro Vás exkluzivní nabídku."}
         </p>
@@ -215,7 +215,7 @@ function generateRemarketingEmailHtml(data: {
         
         ${data.destination ? `
         <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
-          ${persona === "phoebe"
+          ${persona === "petra"
             ? `Pamatuju si, že tě zajímala <strong>${data.destination}</strong>! Mrkni na aktuální ceny - jsou super! 🔥`
             : `Připomínáme Váš zájem o destinaci <strong>${data.destination}</strong>. Aktuální nabídky jsou stále k dispozici.`}
         </p>
@@ -223,7 +223,7 @@ function generateRemarketingEmailHtml(data: {
         
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://akcni-letenky.manus.space/levne-letenky" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff; text-decoration: none; padding: 18px 50px; border-radius: 8px; font-size: 20px; font-weight: bold;">
-            ${persona === "phoebe" ? "🎁 Využít slevu 10%!" : "Využít nabídku"}
+            ${persona === "petra" ? "🎁 Využít slevu 10%!" : "Využít nabídku"}
           </a>
         </div>
         
