@@ -935,3 +935,70 @@
 - [x] Collect logo URLs for major airlines (Emirates, Ryanair, Wizz Air, etc.)
 - [x] Store logos in public folder or use CDN
 - [x] Update database schema if needed
+
+
+## Complete A/B Testing System
+
+### tRPC Procedures
+- [x] Add abTest.trackAssignment procedure
+- [x] Add abTest.trackEvent procedure
+- [x] Add abTest.getResults procedure
+- [x] Add abTest.getEventBreakdown procedure
+- [ ] Test all procedures with Postman/client
+
+### Hero Section Variants
+- [x] Create HeroVariantA component (original design)
+- [x] Create HeroVariantB component (new high-converting design)
+- [x] Implement variant switcher in Home.tsx using useABTest hook
+- [x] Add tracking for CTA clicks in both variants
+- [x] Add tracking for form interactions
+
+### Analytics Dashboard
+- [ ] Create /admin/hero-ab-test page (separate from chatbot A/B test)
+- [ ] Display conversion rates for variants A and B
+- [ ] Show statistical significance (p-value, z-score)
+- [ ] Display event breakdown (CTA clicks, scroll depth, etc.)
+- [ ] Add real-time updates
+- [ ] Add date range filter
+
+## Urgency Timers for Featured City Cards
+
+### Timer Implementation
+- [x] Add countdown timer component
+- [x] Calculate random expiry time (6-24 hours from now)
+- [x] Store expiry time in localStorage per offer
+- [x] Display "Nabídka platí ještě X hodin Y minut"
+- [x] Add red/orange styling for urgency
+- [x] Reset timer when it expires
+
+### Visual Design
+- [x] Add clock icon next to timer
+- [x] Use urgent colors (red/orange) when < 3 hours left
+- [x] Add pulsing animation for extra urgency
+- [x] Ensure mobile responsiveness
+
+## Exit-Intent Popup
+
+### Popup Trigger
+- [x] Detect mouse leaving viewport (desktop)
+- [x] Detect back button press (mobile)
+- [x] Show popup only once per session
+- [x] Add delay (minimum 10 seconds on page)
+
+### Popup Content
+- [x] Headline: "Počkejte! Máme pro vás speciální nabídku"
+- [x] Show 3-5 best deals with discounts
+- [x] Add WhatsApp community CTA (https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml)
+- [x] Add email capture form
+- [x] Display discount code for first booking
+
+### Personalization
+- [ ] Personalize based on viewed destinations
+- [ ] Show relevant offers based on browsing history
+- [ ] Track popup conversion rate
+
+### Design
+- [x] Overlay with semi-transparent background
+- [x] Prominent close button (X)
+- [x] Mobile-responsive layout
+- [x] Add urgency elements (timer, limited spots)

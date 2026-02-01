@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useABTest } from "@/lib/abTest";
-import HeroVariantA from "@/components/HeroVariantA";
-import HeroVariantB from "@/components/HeroVariantB";
-import UrgencyTimer from "@/components/UrgencyTimer";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { Phone, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
@@ -58,8 +53,6 @@ const cityToSlug: Record<string, string> = {
 };
 
 export default function Home() {
-  // A/B Test for hero section
-  const heroVariant = useABTest("hero_redesign");
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
   
@@ -224,20 +217,8 @@ export default function Home() {
     { name: "LOT", logo: "/airlines/lot.jpg", slug: "lot" },
   ];
 
-  const handleSearchVariantA = (destination: string, passengers: number) => {
-    // Navigate to search results
-    window.location.href = `https://www.kiwi.com/deep?from=PRG&to=${destination}&passengers=${passengers}&affilid=levneletenky`;
-  };
-
-  const handleSearchVariantB = (from: string, destination: string, duration: string, passengers: number) => {
-    // Navigate to search results
-    window.location.href = `https://www.kiwi.com/deep?from=${from}&to=${destination}&passengers=${passengers}&affilid=levneletenky`;
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Exit Intent Popup */}
-      <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
+    <div className="min-h-screen bg-[#F5F7FA]">
       {/* Breadcrumbs with Schema.org */}
       <script type="application/ld+json">
         {JSON.stringify({
@@ -304,15 +285,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* A/B Test: Hero Section */}
-      {heroVariant === 'A' ? (
-        <HeroVariantA onSearch={handleSearchVariantA} />
-      ) : (
-        <HeroVariantB onSearch={handleSearchVariantB} />
-      )}
-
-      {/* Original Hero Section (backup - can be removed after testing) */}
-      {false && (
+      {/* Hero Section with Background Image */}
       <section className="relative mt-16 min-h-[500px] md:min-h-[600px] flex items-center justify-center">
         {/* Background Image */}
         <div 
@@ -420,7 +393,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      )}
 
       {/* Kiwi.com Search Widget */}
       <section className="py-8 bg-white">
@@ -493,10 +465,6 @@ export default function Home() {
                       <div className="text-gray-400 line-through text-sm">
                         od {formatPrice(Math.round(city.price * 1.4))}
                       </div>
-                    </div>
-                    {/* Urgency Timer */}
-                    <div className="flex justify-center">
-                      <UrgencyTimer offerId={`city_${city.to.toLowerCase()}`} className="text-xs" />
                     </div>
                   </div>
                 </a>

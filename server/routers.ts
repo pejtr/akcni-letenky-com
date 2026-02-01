@@ -38,6 +38,12 @@ import {
   trackPersonaConversion,
   initializePersonas,
 } from "./chatbotABTest";
+import {
+  recordAssignment,
+  recordEvent,
+  getTestResults,
+  getEventBreakdown,
+} from "./abTest";
 import { generateDailyArticles } from "./articleGenerator";
 import { adminAnalyticsRouter } from "./adminAnalytics";
 import {
@@ -653,6 +659,61 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await trackPersonaConversion(input.sessionId, input.conversionValue);
         return { success: true };
+      }),
+
+    // Hero A/B Test - Track assignment
+    trackAssignment: publicProcedure
+      .input(z.object({
+        testName: z.string(),
+        variant: z.enum(['A', 'B']),
+        sessionId: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await recordAssignment(
+          input.testName,
+          input.variant,
+          input.sessionId,
+          ctx.user?.id
+        );
+        return { success: true };
+      }),
+
+    // Hero A/B Test - Track event
+    trackEvent: publicProcedure
+      .input(z.object({
+        testName: z.string(),
+        variant: z.enum(['A', 'B']),
+        sessionId: z.string(),
+        eventType: z.string(),
+        eventData: z.string().nullable().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await recordEvent(
+          input.testName,
+          input.variant,
+          input.sessionId,
+          input.eventType,
+          input.eventData || null
+        );
+        return { success: true };
+      }),
+
+    // Hero A/B Test - Get results
+    getTestResults: protectedProcedure
+      .input(z.object({
+        testName: z.string(),
+      }))
+      .query(async ({ input }) => {
+        return await getTestResults(input.testName);
+      }),
+
+    // Hero A/B Test - Get event breakdown
+    getEventBreakdown: protectedProcedure
+      .input(z.object({
+        testName: z.string(),
+      }))
+      .query(async ({ input }) => {
+        return await getEventBreakdown(input.testName);
       }),
   }),
 });
