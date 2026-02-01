@@ -6,6 +6,7 @@
  * trust badges, blue info banner
  */
 
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Flame, Zap, CheckCircle } from "lucide-react";
@@ -166,5 +167,3 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
     </>
   );
 }
-
-import * as React from "react";

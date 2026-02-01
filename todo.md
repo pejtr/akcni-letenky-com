@@ -1094,3 +1094,16 @@
 - [ ] Add Omio to navigation menu (future enhancement)
 - [ ] Track Omio conversions in admin analytics (future enhancement)
 - [ ] Write vitest tests for Omio tracking (future enhancement)
+
+## Mobile Navigation & Bug Fixes
+- [x] Create responsive hamburger menu component for mobile
+- [x] Add mobile navigation with all menu items (Nejlevnější Lety, Levné Letenky, Dovolená, Aerolinky, Rychlá Rezervace)
+- [x] Implement slide-in animation for mobile menu
+- [x] Add close button (X) to mobile menu
+- [x] Integrate hamburger menu into navigation header (show on mobile, hide on desktop)
+- [x] Fix HeroVariantB.tsx React import order
+- [x] Restart dev server to clear cached errors
+- [ ] Add persistent bottom navigation bar for mobile (per user preference)
+- [ ] Make navigation sticky on scroll (already implemented, verify)
+- [ ] Optimize image loading speed for mobile (lazy loading)
+- [ ] Test hamburger menu on mobile devices
