@@ -832,3 +832,47 @@
 ### Affiliate Links
 - [ ] Update all destination links to use proper Pelikan affiliate structure
 - [ ] Test all links redirect correctly
+
+
+## Hero Section Redesign for Maximum ROI
+
+### Header Redesign
+- [x] Change header background to yellow (#FFD700)
+- [x] Update logo styling for yellow background
+- [x] Redesign navigation menu for better visibility on yellow
+- [x] Add search icon to header
+- [x] Ensure phone number is prominent
+
+### Enhanced Search Form
+- [x] Change "Kam se chystáte?" to dropdown "Odkud?" with Prague as default
+- [x] Keep "Kam?" field as text input
+- [x] Add "Délka pobytu" dropdown (1 týden, 2 týdny, etc.)
+- [x] Keep "Kolik osob?" dropdown
+- [x] Change CTA button text to "VYHLEDAT LETENKY"
+- [x] Style button with orange gradient
+
+### Trust Badges
+- [x] Add "Sle až 60%" badge with icon
+- [x] Add "Nejlepší ceny" badge with star icon
+- [x] Add "Certifikováno" badge with checkmark icon
+- [x] Position badges below search form
+- [x] Style badges with white background and rounded corners
+
+### Blue Info Banner
+- [x] Add blue banner below hero section
+- [x] Add text "Úšetřete pod 1000 Kč | Eurovíkendy | Nejlevnější letenky od 500 Kč"
+- [x] Make banner clickable with proper links
+
+### Featured City Cards Redesign
+- [x] Enlarge featured city cards
+- [x] Add dual pricing display (original price + discounted price)
+- [x] Add orange gradient CTA buttons with "od X Kč | od Y Kč" format
+- [x] Ensure cards show airline/company name below city
+- [x] Add hover effects for better interactivity
+
+### Testing
+- [x] Test all changes on desktop
+- [x] Test responsive design on mobile
+- [x] Verify all CTAs are clickable
+- [x] Check color contrast for accessibility
+- [ ] Run performance tests

@@ -57,8 +57,10 @@ export default function Home() {
   const [showBottomBanner, setShowBottomBanner] = useState(false);
   
   // Search form state
+  const [origin, setOrigin] = useState("prague");
   const [destination, setDestination] = useState("");
   const [departureDate, setDepartureDate] = useState("");
+  const [duration, setDuration] = useState("1week");
   const [passengers, setPassengers] = useState("1");
   
   // Affiliate click tracking
@@ -235,7 +237,7 @@ export default function Home() {
       {/* Sticky Navigation Header */}
       <header role="banner"
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-sm",
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-gradient-to-r from-[#FFD700] to-[#FFC107] shadow-md",
           isScrolled ? "py-2" : "py-3"
         )}
       >
@@ -247,31 +249,38 @@ export default function Home() {
               alt="Akční Letenky" 
               className="h-12 w-auto"
             />
-            <span className="hidden md:inline text-sm text-blue-600 ml-2">
+            <span className="hidden md:inline text-sm text-[#003087] font-bold ml-2">
               Nejlevnější Lety
             </span>
           </a>
 
           {/* Navigation */}
           <nav role="navigation" aria-label="Main navigation" className="hidden md:flex items-center gap-6">
-            <Link href="/levne-letenky" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            <Link href="/levne-letenky" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
               💸 LEVNÉ LETENKY
             </Link>
-            <Link href="/dovolene" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            <Link href="/dovolene" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
               ⭐ DOVOLENÁ
             </Link>
-            <a href="#airlines" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            <a href="#airlines" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
               ✈️ AEROLINKY
             </a>
-            <a href="#search" className="text-sm text-foreground hover:text-blue-600 transition-colors font-medium flex items-center gap-1">
+            <a href="#search" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
               🚀 RYCHLÁ REZERVACE
             </a>
           </nav>
 
-          {/* Phone */}
-          <div className="flex items-center gap-2 text-[#E91E63]">
-            <Phone className="w-4 h-4" />
-            <span className="font-semibold">223 340 510</span>
+          {/* Phone & Search Icon */}
+          <div className="flex items-center gap-4">
+            <button className="text-[#003087] hover:text-[#001f5c] transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <div className="flex items-center gap-2 text-[#E91E63]">
+              <Phone className="w-4 h-4" />
+              <span className="font-bold">223 340 510</span>
+            </div>
           </div>
         </div>
       </header>
@@ -299,72 +308,87 @@ export default function Home() {
           {/* Subtitle */}
           <div className="mb-8">
             <p className="text-xl md:text-2xl font-bold text-white mb-1" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-              Ušetřete do 50% na letu
-            </p>
-            <p className="text-xs md:text-sm text-white/90" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
-              Zpáteční letenka je již zahrnuta v ceně
+              Ušetřete až 60% na letkách po celém světě!
             </p>
           </div>
           
           {/* Search Form Card */}
-          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div className="relative text-left">
-                <label className="block text-xs text-muted-foreground mb-1">kam se chystáte?</label>
+                <label className="block text-xs text-muted-foreground mb-1 font-medium">Kam se chystáte?</label>
+                <select 
+                  value={origin}
+                  onChange={(e) => setOrigin(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 appearance-none font-medium"
+                >
+                  <option value="prague">Odkud?</option>
+                  <option value="prague">Praha</option>
+                  <option value="brno">Brno</option>
+                  <option value="ostrava">Ostrava</option>
+                </select>
+              </div>
+              <div className="relative text-left">
+                <label className="block text-xs text-muted-foreground mb-1 font-medium">Destinace</label>
                 <input
                   type="text"
-                  placeholder="Napiš. Barcelona"
+                  placeholder="Kam?"
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 font-medium"
                 />
               </div>
               <div className="relative text-left">
-                <label className="block text-xs text-muted-foreground mb-1">kdy?</label>
-                <input
-                  type="text"
-                  placeholder="dd.mm.rrrr"
-                  value={departureDate}
-                  onChange={(e) => setDepartureDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50"
-                />
+                <label className="block text-xs text-muted-foreground mb-1 font-medium">Délka pobytu</label>
+                <select 
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 appearance-none font-medium"
+                >
+                  <option value="1week">1 týden</option>
+                  <option value="2weeks">2 týdny</option>
+                  <option value="3weeks">3 týdny</option>
+                  <option value="1month">1 měsíc</option>
+                </select>
               </div>
               <div className="relative text-left">
-                <label className="block text-xs text-muted-foreground mb-1">kolik osob?</label>
+                <label className="block text-xs text-muted-foreground mb-1 font-medium">Počet osob</label>
                 <select 
                   value={passengers}
                   onChange={(e) => setPassengers(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 appearance-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 appearance-none font-medium"
                 >
-                  <option value="1">1 osoba</option>
-                  <option value="2">2 osoby</option>
-                  <option value="3">3 osoby</option>
-                  <option value="4">4 osoby</option>
-                  <option value="5">5+ osob</option>
+                  <option value="1">1 dospělý</option>
+                  <option value="2">2 dospělí</option>
+                  <option value="3">3 dospělí</option>
+                  <option value="4">4 dospělí</option>
+                  <option value="5">5+ dospělých</option>
                 </select>
               </div>
               <div className="flex items-end">
                 <Button 
                   onClick={handleSearch}
-                  className="w-full bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-bold py-3 rounded-md text-sm"
+                  className="w-full bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] hover:from-[#E55A2B] hover:to-[#E67A30] text-white font-bold py-3 rounded-md text-sm shadow-lg"
                 >
-                  VYHLEDAT DOVOLENOU
+                  VYHLEDAT LETENKY
                 </Button>
               </div>
             </div>
           </div>
           
           {/* Trust Badges */}
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <div className="bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
-              <span className="text-[#FF6B35] font-bold text-lg">500+</span>
-              <span className="text-xs text-gray-600">Recenzí</span>
+          <div className="flex items-center justify-center gap-6 mt-6 flex-wrap">
+            <div className="bg-white rounded-full px-5 py-3 shadow-lg flex items-center gap-2">
+              <span className="text-2xl">🔥</span>
+              <span className="text-sm font-bold text-gray-800">Sle až 60 %</span>
             </div>
-            <div className="bg-white rounded-full p-3 shadow-lg">
-              <span className="text-2xl">⭐</span>
+            <div className="bg-white rounded-full px-5 py-3 shadow-lg flex items-center gap-2">
+              <span className="text-2xl">⚡</span>
+              <span className="text-sm font-bold text-gray-800">Nejlepší ceny</span>
             </div>
-            <div className="bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2">
-              <span className="text-blue-600 font-bold">Certifikace</span>
+            <div className="bg-white rounded-full px-5 py-3 shadow-lg flex items-center gap-2">
+              <span className="text-2xl">✅</span>
+              <span className="text-sm font-bold text-gray-800">Certifikováno</span>
             </div>
           </div>
         </div>
@@ -377,24 +401,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Category Links */}
-      <div className="bg-[#f5f5f5] py-6 border-b border-border">
+      {/* Blue Info Banner */}
+      <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md">
         <div className="container">
-          <div className="flex flex-wrap items-center justify-center gap-8 text-base md:text-lg">
-            <a href="#dovolena" className="text-blue-600 hover:underline font-medium">
-              Dovolená se slevou až 80 %
+          <div className="flex flex-wrap items-center justify-center gap-6 text-white text-sm md:text-base font-medium">
+            <a href="#dovolena" className="hover:underline flex items-center gap-1">
+              ⚡ Ušetřete pod 1000 Kč
             </a>
-            <span className="text-muted-foreground">|</span>
-            <a href="#eurovikendy" className="text-blue-600 hover:underline font-medium">
-              Eurovíkendy
+            <span className="text-white/60">|</span>
+            <a href="#eurovikendy" className="hover:underline flex items-center gap-1">
+              🇪🇺 Eurovíkendy
             </a>
-            <span className="text-muted-foreground">|</span>
-            <a href="#hotely" className="text-blue-600 hover:underline font-medium">
-              Hotely
-            </a>
-            <span className="text-muted-foreground">|</span>
-            <a href="#nejlevnejsi" className="text-blue-600 hover:underline font-medium">
-              Nejlevnější letenky od 590 Kč
+            <span className="text-white/60">|</span>
+            <a href="#nejlevnejsi" className="hover:underline flex items-center gap-1">
+              💰 Nejlevnější letenky od 500 Kč
             </a>
           </div>
         </div>
@@ -432,16 +452,19 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-lg mb-2 text-center">
-                      <span className="text-blue-700">{city.from}</span>{" "}
-                      <span className="text-[#FF6B35]">⇄</span>{" "}
-                      <span className="text-blue-700">{city.to}</span>
+                    <h3 className="font-bold text-xl mb-2 text-center">
+                      Letenky z <span className="text-[#003087]">{city.to}</span>
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
                       {city.description}
                     </p>
-                    <div className="w-full border-2 border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white font-bold rounded-lg py-2 text-center transition-colors">
-                      od {formatPrice(city.price)}
+                    <div className="flex items-center justify-center gap-3 mb-3">
+                      <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] text-white font-bold rounded-lg px-4 py-2 text-center shadow-md">
+                        od {formatPrice(city.price)}
+                      </div>
+                      <div className="text-gray-400 line-through text-sm">
+                        od {formatPrice(Math.round(city.price * 1.4))}
+                      </div>
                     </div>
                   </div>
                 </a>
