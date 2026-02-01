@@ -10,6 +10,8 @@ import { X, MessageCircle, Plane, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useViewedDestinations } from "@/hooks/useViewedDestinations";
+import { generateOmioLink, trackOmioClick } from "@/lib/omioAffiliate";
+import { Train } from "lucide-react";
 
 interface ExitIntentPopupProps {
   whatsappLink?: string;
@@ -171,6 +173,31 @@ export default function ExitIntentPopup({
                   </div>
                 </a>
               ))}
+            </div>
+
+            {/* Omio Alternative - Trains & Buses */}
+            <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-6 mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Train className="w-8 h-8 text-blue-600" />
+                <div>
+                  <h4 className="font-bold text-lg">Raději vlakem nebo autobusem?</h4>
+                  <p className="text-sm text-gray-600">
+                    Pohodlné cestování po Evropě s Omio - často levnější než letadlo
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  trackOmioClick("exit-intent", "all", "exit_popup");
+                  window.open(generateOmioLink(), "_blank", "noopener,noreferrer");
+                }}
+                className="w-full"
+              >
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg py-6">
+                  <Train className="w-5 h-5 mr-2" />
+                  Vyhledat vlaky & autobusy
+                </Button>
+              </button>
             </div>
 
             {/* WhatsApp CTA */}

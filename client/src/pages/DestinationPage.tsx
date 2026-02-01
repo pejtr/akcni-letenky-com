@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useViewedDestinations } from "@/hooks/useViewedDestinations";
 import { useEffect } from "react";
+import { generateOmioRouteLink, trackOmioClick } from "@/lib/omioAffiliate";
+import { Train, Bus } from "lucide-react";
 
 export default function DestinationPage() {
   const params = useParams<{ slug: string }>();
@@ -253,6 +255,53 @@ export default function DestinationPage() {
                         <Button className="w-full bg-pink-600 hover:bg-pink-700">Vyhledat letenky</Button>
                       </div>
                     </CardContent>
+                  </Card>
+
+                  {/* Omio Alternative Transport */}
+                  <Card className="mb-6 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-500">
+                    <CardHeader>
+                      <div className="flex items-center gap-2">
+                        <Train className="w-5 h-5 text-blue-600" />
+                        <CardTitle className="text-blue-900">Vlakem nebo autobusem?</CardTitle>
+                      </div>
+                      <CardDescription className="text-blue-700">
+                        Pohodlné cestování do {destination.name} s Omio
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-sm text-blue-800">
+                          <Train className="w-4 h-4" />
+                          <span>Ekologické cestování</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-blue-800">
+                          <Bus className="w-4 h-4" />
+                          <span>Často levnější než letadlo</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-blue-800">
+                          <Star className="w-4 h-4" />
+                          <span>Bez čekání na letišti</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <button
+                        onClick={() => {
+                          trackOmioClick(destination.name, "all", "destination_page_sidebar");
+                          window.open(
+                            generateOmioRouteLink("Prague", destination.name),
+                            "_blank",
+                            "noopener,noreferrer"
+                          );
+                        }}
+                        className="w-full"
+                      >
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                          <Train className="w-4 h-4 mr-2" />
+                          Vyhledat spojení
+                        </Button>
+                      </button>
+                    </CardFooter>
                   </Card>
 
                   {/* Related Articles */}

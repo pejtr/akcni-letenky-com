@@ -12,6 +12,7 @@ import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SocialProofWidget from "@/components/SocialProofWidget";
 import SocialProofNotification from "@/components/SocialProofNotification";
+import OmioSection from "@/components/OmioSection";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
@@ -625,6 +626,9 @@ export default function Home() {
           </p>
         </div>
       </article>
+
+      {/* Omio Section - Trains, Buses, Ferries */}
+      <OmioSection />
 
       {/* Airline Logos Section */}
       <section aria-labelledby="airlines" className="py-12 bg-[#F5F7FA]">

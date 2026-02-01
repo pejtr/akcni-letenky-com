@@ -1077,3 +1077,20 @@
 - [x] Position notifications bottom-left with z-index 60
 - [x] Add manual close button to notifications
 - [x] Integrate SocialProofNotification into Home page
+
+## Omio (Travelpayouts) Affiliate Integration
+- [x] Create Omio affiliate link helper function with marker=155221&trs=89558&p=2078
+- [x] Add Omio tracking to affiliate clicks database (localStorage)
+- [x] Create "Vlaky & Autobusy" section on homepage
+- [x] Add Omio search widget for trains, buses, ferries
+- [x] Integrate Omio offers into destination pages
+- [x] Add Omio options to exit-intent popup (multimodal travel)
+- [x] Create Omio CTA buttons with 6% commission highlight
+- [x] Popular routes grid (Praha-Vídeň, Praha-Mnichov, Praha-Berlín, etc.)
+- [x] Benefits section (ekologické, bez čekání, centrum do centra)
+- [x] Destination page sidebar with Omio alternative transport card
+- [x] Exit-intent popup with Omio train/bus option
+- [x] Test all Omio affiliate links
+- [ ] Add Omio to navigation menu (future enhancement)
+- [ ] Track Omio conversions in admin analytics (future enhancement)
+- [ ] Write vitest tests for Omio tracking (future enhancement)
