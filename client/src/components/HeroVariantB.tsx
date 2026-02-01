@@ -28,30 +28,28 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
 
   return (
     <>
-      {/* Hero Section with Yellow Gradient */}
+      {/* Hero Section - Clean Design */}
       <section 
-        className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 py-20"
+        className="relative py-32"
         style={{
           backgroundImage: 'url("/hero-bg.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/40 via-yellow-500/30 to-orange-500/40"></div>
+        {/* Subtle Overlay for readability */}
+        <div className="absolute inset-0 bg-black/30"></div>
 
         {/* Content */}
         <div className="container relative z-10">
           <div className="max-w-5xl mx-auto">
-            {/* Headline with Yellow Badge */}
+            {/* Headline - Simple and Clean */}
             <div className="text-center mb-8">
-              <div className="inline-block bg-yellow-300 text-gray-900 px-8 py-4 rounded-2xl shadow-2xl mb-6">
-                <h1 className="text-3xl md:text-4xl font-black">
-                  NEJLEVNĚJŠÍ AKČNÍ LETENKY
-                </h1>
-              </div>
-              <p className="text-2xl font-bold text-white drop-shadow-lg">
-                Ušetřete až 60% na letkách po celém světě!
+              <h1 className="text-4xl md:text-5xl font-black text-white drop-shadow-2xl mb-4">
+                Nejlevnější letenky po celém světě
+              </h1>
+              <p className="text-xl md:text-2xl text-white/90 drop-shadow-lg">
+                Najděte si tu nejlepší nabídku pro vaši dovolenou
               </p>
             </div>
 

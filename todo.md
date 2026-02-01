@@ -1019,3 +1019,61 @@
 - [ ] Fix broken image thumbnails in Top destinace section
 - [ ] Ensure all destination images load properly
 - [ ] Add fallback images if URLs are broken
+
+
+## Remove Yellow Banner from Hero + Implement All Recommendations
+
+### Remove Yellow Banner
+- [ ] Remove "NEJLEVNĚJŠÍ AKČNÍ LETENKY" yellow banner from HeroVariantB
+- [ ] Keep only background image with search form
+- [ ] Ensure hero looks clean without yellow overlay
+
+### Hero A/B Test Analytics Dashboard
+- [ ] Create /admin/hero-ab-test page
+- [ ] Display conversion rates for variants A and B
+- [ ] Show statistical significance (p-value, z-score, confidence interval)
+- [ ] Add real-time charts for conversion trends
+- [ ] Display event breakdown (CTA clicks, form submissions, scroll depth)
+- [ ] Add date range filter
+- [ ] Show sample size and test duration
+- [ ] Add "Winner" badge when statistical significance reached
+
+### Personalized Exit-Intent Popup
+- [ ] Track viewed destinations in localStorage
+- [ ] Filter exit-intent offers based on viewed destinations
+- [ ] Show relevant offers (same country/region as viewed)
+- [ ] Add "Based on your browsing" text
+- [ ] Track popup conversion rate by destination
+- [ ] Test personalization logic
+
+### Social Proof Notifications Widget
+- [ ] Create "právě rezervováno" notification component
+- [ ] Add circular thumbnail of destination
+- [ ] Display format: "Petr z Prahy právě rezervoval letenku do Barcelony za 746 Kč"
+- [ ] Add pulsating animation
+- [ ] Position bottom-left (opposite of chatbot)
+- [ ] Show random realistic bookings every 15-30 seconds
+- [ ] Add "TAM CHCI TAKY >" CTA button
+- [ ] Make notification clickable to destination page
+- [ ] Track clicks on social proof notifications
+- [ ] Test notification timing and frequency
+
+## Conversion Optimization Features (Phase 3)
+- [x] Remove yellow banner from HeroVariantB (keep clean design with background image)
+- [x] Create hero A/B test analytics dashboard at /admin/hero-ab-test
+- [x] Implement real-time conversion rate tracking for variants A vs B
+- [x] Add statistical significance calculation (Z-test) to dashboard
+- [x] Display event breakdown (assignments, views, clicks, conversions)
+- [x] Add personalization to exit-intent popup based on viewed destinations
+- [x] Create useViewedDestinations hook for tracking browsing history
+- [x] Implement localStorage persistence for viewed destinations (7-day expiry)
+- [x] Add personalized offers in exit-intent popup based on browsing history
+- [x] Add personalized messaging based on user's viewed destinations
+- [x] Track destination views on DestinationPage component
+- [x] Implement social proof notification widget
+- [x] Add real-time "právě rezervováno" messages with Czech names and cities
+- [x] Display notifications with 15-25 second intervals
+- [x] Add progress bar animation to notifications (8-second duration)
+- [x] Position notifications bottom-left with z-index 60
+- [x] Add manual close button to notifications
+- [x] Integrate SocialProofNotification into Home page

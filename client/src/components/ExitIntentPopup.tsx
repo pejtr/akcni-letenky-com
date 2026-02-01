@@ -9,6 +9,7 @@ import * as React from "react";
 import { X, MessageCircle, Plane, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useViewedDestinations } from "@/hooks/useViewedDestinations";
 
 interface ExitIntentPopupProps {
   whatsappLink?: string;
@@ -20,6 +21,11 @@ export default function ExitIntentPopup({
   const [isVisible, setIsVisible] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [hasShown, setHasShown] = React.useState(false);
+  
+  // Get personalized offers based on browsing history
+  const { getPersonalizedOffers, getPersonalizedMessage } = useViewedDestinations();
+  const personalizedOffers = getPersonalizedOffers();
+  const personalizedMessage = getPersonalizedMessage();
 
   React.useEffect(() => {
     // Check if already shown in this session
@@ -85,12 +91,7 @@ export default function ExitIntentPopup({
     return null;
   }
 
-  // Best deals (mock data - should come from props or API)
-  const bestDeals = [
-    { destination: "Paříž", price: 1027, originalPrice: 1500, discount: "-32%", image: "/destinations/paris.jpg" },
-    { destination: "Barcelona", price: 746, originalPrice: 1100, discount: "-32%", image: "/destinations/barcelona.jpg" },
-    { destination: "Londýn", price: 733, originalPrice: 1000, discount: "-27%", image: "/destinations/london.jpg" },
-  ];
+
 
   return (
     <>
@@ -121,7 +122,7 @@ export default function ExitIntentPopup({
               Počkejte! Máme pro vás speciální nabídku
             </h2>
             <p className="text-lg">
-              Získejte exkluzivní slevu až 60% na vybrané destinace
+              {personalizedMessage}
             </p>
           </div>
 
@@ -133,10 +134,10 @@ export default function ExitIntentPopup({
               <span>Nabídka platí pouze dalších 15 minut!</span>
             </div>
 
-            {/* Best Deals */}
+            {/* Personalized Deals */}
             <h3 className="text-xl font-bold mb-4">Nejlepší nabídky pro vás:</h3>
             <div className="space-y-3 mb-6">
-              {bestDeals.map((deal, index) => (
+              {personalizedOffers.map((deal, index) => (
                 <a
                   key={index}
                   href={`https://www.kiwi.com/deep?from=PRG&to=${deal.destination}&affilid=levneletenky`}

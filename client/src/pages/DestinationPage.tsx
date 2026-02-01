@@ -5,12 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { useViewedDestinations } from "@/hooks/useViewedDestinations";
+import { useEffect } from "react";
 
 export default function DestinationPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug || "";
 
   const { data: destination, isLoading, error } = trpc.destinations.bySlug.useQuery({ slug });
+  const { trackDestinationView } = useViewedDestinations();
+  
+  // Track destination view for personalization
+  useEffect(() => {
+    if (destination) {
+      trackDestinationView(slug, destination.name, undefined);
+    }
+  }, [destination, slug, trackDestinationView]);
   const { data: articles } = trpc.articles.list.useQuery({ limit: 3 });
   const { data: flights } = trpc.flights.list.useQuery();
 
