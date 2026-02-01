@@ -237,6 +237,37 @@ export type ChatbotConversion = typeof chatbotConversions.$inferSelect;
 export type InsertChatbotConversion = typeof chatbotConversions.$inferInsert;
 
 /**
+ * A/B Test Assignments - tracks which variant each user/session sees
+ */
+export const abTestAssignments = mysqlTable("ab_test_assignments", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull().unique(), // Unique session identifier
+  userId: int("userId"), // Optional - if user is logged in
+  testName: varchar("testName", { length: 100 }).notNull(), // e.g., 'hero_redesign'
+  variant: varchar("variant", { length: 50 }).notNull(), // 'A' or 'B'
+  assignedAt: timestamp("assignedAt").defaultNow().notNull(),
+});
+
+export type AbTestAssignment = typeof abTestAssignments.$inferSelect;
+export type InsertAbTestAssignment = typeof abTestAssignments.$inferInsert;
+
+/**
+ * A/B Test Events - tracks user interactions for conversion analysis
+ */
+export const abTestEvents = mysqlTable("ab_test_events", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  testName: varchar("testName", { length: 100 }).notNull(),
+  variant: varchar("variant", { length: 50 }).notNull(),
+  eventType: varchar("eventType", { length: 100 }).notNull(), // 'cta_click', 'scroll_25', 'scroll_50', 'scroll_75', 'scroll_100', 'form_interaction', 'badge_view', 'bounce'
+  eventData: text("eventData"), // JSON string with additional event data
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+});
+
+export type AbTestEvent = typeof abTestEvents.$inferSelect;
+export type InsertAbTestEvent = typeof abTestEvents.$inferInsert;
+
+/**
  * Chatbot analytics table - daily aggregated metrics
  */
 export const chatbotAnalytics = mysqlTable("chatbot_analytics", {

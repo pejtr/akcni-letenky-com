@@ -876,3 +876,62 @@
 - [x] Verify all CTAs are clickable
 - [x] Check color contrast for accessibility
 - [ ] Run performance tests
+
+
+## A/B Testing for Hero Section
+
+### Database Schema
+- [ ] Create abTestAssignments table (userId, sessionId, variant, assignedAt)
+- [ ] Create abTestEvents table (sessionId, variant, eventType, eventData, timestamp)
+- [ ] Add indexes for efficient querying
+
+### A/B Test Logic
+- [ ] Implement random 50/50 variant assignment (A: original, B: new design)
+- [ ] Store assignment in localStorage for consistency
+- [ ] Create server-side assignment tracking
+- [ ] Implement cookie-based fallback for localStorage
+
+### Hero Section Variants
+- [ ] Preserve original hero design as Variant A
+- [ ] Keep new high-converting design as Variant B
+- [ ] Create variant switcher component
+- [ ] Ensure both variants have identical functionality
+
+### Tracking Metrics
+- [ ] Track CTA button clicks (VYHLEDAT LETENKY)
+- [ ] Track scroll depth (25%, 50%, 75%, 100%)
+- [ ] Track time on page
+- [ ] Track bounce rate
+- [ ] Track form field interactions
+- [ ] Track trust badge visibility
+
+### Analytics Dashboard
+- [ ] Create admin dashboard page for A/B test results
+- [ ] Display variant performance comparison
+- [ ] Show conversion rate for each variant
+- [ ] Display statistical significance
+- [ ] Add date range filter
+- [ ] Export results to CSV
+
+### Testing
+- [ ] Test variant assignment works correctly
+- [ ] Test localStorage persistence
+- [ ] Test event tracking fires correctly
+- [ ] Verify dashboard displays accurate data
+- [ ] Test on multiple devices and browsers
+
+
+## Add Airline Logos to Flight Offers
+
+### Airline Detail Page
+- [x] Find airline detail page component
+- [x] Add airline logo display to each flight offer card
+- [x] Position logo next to airline name or in header
+- [x] Ensure logos are properly sized and responsive
+- [x] Add fallback for missing logos
+
+### Airline Logo Data
+- [x] Add logoUrl field to airline/flight data
+- [x] Collect logo URLs for major airlines (Emirates, Ryanair, Wizz Air, etc.)
+- [x] Store logos in public folder or use CDN
+- [x] Update database schema if needed

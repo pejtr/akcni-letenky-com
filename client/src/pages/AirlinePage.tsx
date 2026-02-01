@@ -338,9 +338,17 @@ export default function AirlinePage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs md:text-sm text-gray-500">
-                        {flight.country || ""}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        {/* Airline Logo */}
+                        <img
+                          src={airline.logo}
+                          alt={airline.name}
+                          className="w-8 h-8 object-contain"
+                        />
+                        <p className="text-xs md:text-sm text-gray-500">
+                          {flight.country || airline.name}
+                        </p>
+                      </div>
                     </div>
 
                     {/* Price */}
