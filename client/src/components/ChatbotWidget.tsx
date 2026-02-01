@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Send, Minimize2, Maximize2, ExternalLink, Expand, Shrink } from "lucide-react";
+import { X, Send, Minimize2, Maximize2, ExternalLink, Expand, Shrink, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 
@@ -10,7 +10,22 @@ export default function ChatbotWidget() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [message, setMessage] = useState("");
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [sessionId] = useState(() => {
+    // Try to restore session from localStorage
+    const stored = localStorage.getItem('akcni-letenky-chat-session');
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        // Check if session is less than 24 hours old
+        if (data.timestamp && Date.now() - data.timestamp < 24 * 60 * 60 * 1000) {
+          return data.sessionId;
+        }
+      } catch (e) {
+        console.error('Error restoring session:', e);
+      }
+    }
+    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  });
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [greetingShown, setGreetingShown] = useState(false);
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([
@@ -29,11 +44,34 @@ export default function ChatbotWidget() {
   const [emailInput, setEmailInput] = useState("");
   const [emailSubmitting, setEmailSubmitting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const userMessageCount = messages.filter(m => m.role === "user").length;
   
   const sendMessageMutation = trpc.chatbot.sendMessage.useMutation();
   const trackCommunityJoinMutation = trpc.chatbot.trackCommunityJoin.useMutation();
   const captureEmailMutation = trpc.chatbot.captureEmail.useMutation();
+
+  const handleClearConversation = () => {
+    if (confirm('Opravdu chcete smazat celou historii konverzace?')) {
+      // Clear all state
+      setMessages([]);
+      setPersona(null);
+      setConversationId(null);
+      setHasMemory(false);
+      setIsReturningUser(false);
+      setEmailCaptured(false);
+      setGreetingShown(false);
+      setShowEmailCapture(false);
+      
+      // Clear localStorage
+      localStorage.removeItem('akcni-letenky-chat-conversation');
+      localStorage.removeItem('akcni-letenky-chat-session');
+      localStorage.removeItem('akcni-letenky-email');
+      
+      // Close chat
+      setIsOpen(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!message.trim() || sendMessageMutation.isPending) return;
@@ -98,6 +136,80 @@ export default function ChatbotWidget() {
       ]);
     }
   };
+
+  // Load conversation from localStorage on mount
+  useEffect(() => {
+    if (isInitialized) return;
+    
+    try {
+      const storedConversation = localStorage.getItem('akcni-letenky-chat-conversation');
+      if (storedConversation) {
+        const data = JSON.parse(storedConversation);
+        // Check if data is less than 24 hours old
+        if (data.timestamp && Date.now() - data.timestamp < 24 * 60 * 60 * 1000) {
+          if (data.messages && data.messages.length > 0) {
+            setMessages(data.messages);
+          }
+          if (data.persona) {
+            setPersona(data.persona);
+          }
+          if (data.conversationId) {
+            setConversationId(data.conversationId);
+          }
+          if (data.hasMemory !== undefined) {
+            setHasMemory(data.hasMemory);
+          }
+          if (data.isReturningUser !== undefined) {
+            setIsReturningUser(data.isReturningUser);
+          }
+          if (data.emailCaptured !== undefined) {
+            setEmailCaptured(data.emailCaptured);
+          }
+          if (data.greetingShown !== undefined) {
+            setGreetingShown(data.greetingShown);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error loading conversation from localStorage:', e);
+    }
+    
+    setIsInitialized(true);
+  }, []);
+
+  // Save conversation to localStorage whenever it changes
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    try {
+      const conversationData = {
+        timestamp: Date.now(),
+        sessionId,
+        messages,
+        persona,
+        conversationId,
+        hasMemory,
+        isReturningUser,
+        emailCaptured,
+        greetingShown,
+      };
+      localStorage.setItem('akcni-letenky-chat-conversation', JSON.stringify(conversationData));
+      
+      // Also save session info separately
+      const sessionData = {
+        timestamp: Date.now(),
+        sessionId,
+      };
+      localStorage.setItem('akcni-letenky-chat-session', JSON.stringify(sessionData));
+    } catch (e) {
+      console.error('Error saving conversation to localStorage:', e);
+      // Handle quota exceeded error
+      if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+        console.warn('localStorage quota exceeded, clearing old data');
+        localStorage.removeItem('akcni-letenky-chat-conversation');
+      }
+    }
+  }, [messages, persona, conversationId, hasMemory, isReturningUser, emailCaptured, greetingShown, sessionId, isInitialized]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -287,6 +399,15 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {messages.length > 0 && (
+                <button
+                  onClick={handleClearConversation}
+                  className="hover:bg-primary-foreground/20 p-2 rounded"
+                  title="Smazat historii konverzace"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="hidden md:block hover:bg-primary-foreground/20 p-2 rounded"
