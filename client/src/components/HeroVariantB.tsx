@@ -38,7 +38,7 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
         }}
       >
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/90 via-yellow-500/90 to-orange-500/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/40 via-yellow-500/30 to-orange-500/40"></div>
 
         {/* Content */}
         <div className="container relative z-10">
@@ -165,25 +165,6 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
           </div>
         </div>
       </section>
-
-      {/* Blue Info Banner */}
-      <div className="bg-blue-600 text-white py-4">
-        <div className="container">
-          <div className="flex flex-wrap justify-center items-center gap-6 text-center">
-            <a href="#" className="hover:underline font-medium">
-              Ušetřete pod 1000 Kč
-            </a>
-            <span className="hidden md:inline">|</span>
-            <a href="#" className="hover:underline font-medium">
-              Eurovíkendy
-            </a>
-            <span className="hidden md:inline">|</span>
-            <a href="#" className="hover:underline font-medium">
-              Nejlevnější letenky od 500 Kč
-            </a>
-          </div>
-        </div>
-      </div>
     </>
   );
 }

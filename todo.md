@@ -1002,3 +1002,20 @@
 - [x] Prominent close button (X)
 - [x] Mobile-responsive layout
 - [x] Add urgency elements (timer, limited spots)
+
+
+## Fix Hero and Destination Images
+
+### Hero Section Variant B
+- [ ] Add background image to HeroVariantB (currently just yellow)
+- [ ] Ensure background image is visible and properly styled
+
+### Duplicate Blue Banner
+- [ ] Remove duplicate blue info banner (appears twice)
+- [ ] Keep only one blue banner below hero
+
+### Broken Destination Thumbnails
+- [ ] Fix broken image thumbnails in Státy section
+- [ ] Fix broken image thumbnails in Top destinace section
+- [ ] Ensure all destination images load properly
+- [ ] Add fallback images if URLs are broken
