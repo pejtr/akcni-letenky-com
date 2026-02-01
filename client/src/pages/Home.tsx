@@ -7,6 +7,8 @@ import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import SocialProofWidget from "@/components/SocialProofWidget";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -129,25 +131,13 @@ export default function Home() {
     return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
   };
 
-  // Popular destinations data with correct images
-  const popularDestinations = [
-    { city: "Londýn", price: 733, country: "Anglie", image: "/destinations/london.jpg" },
-    { city: "New York", price: 7490, country: "USA", image: "/destinations/newyork.jpg" },
-    { city: "Afrika", price: 7990, country: "Afrika", image: "/destinations/africa.jpg" },
-    { city: "Marakéš", price: 1426, country: "Maroko", image: "/destinations/morocco.jpg" },
-    { city: "Paříž", price: 1027, country: "Francie", image: "/destinations/paris.jpg" },
-    { city: "Hanoj", price: 7990, country: "Vietnam", image: "/destinations/vietnam.jpg" },
-    { city: "Bali", price: 12790, country: "Indonésie", image: "/destinations/bali.jpg" },
-    { city: "Colombo", price: 13990, country: "Srí Lanka", image: "/destinations/srilanka.jpg" },
-    { city: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/destinations/dubai.jpg" },
-    { city: "Bangkok", price: 12390, country: "Thajsko", image: "/destinations/thailand.jpg" },
-    { city: "Santorini", price: 1791, country: "Řecko", image: "/destinations/santorini.jpg" },
-    { city: "Jordánsko", price: 1114, country: "Ammán", image: "/destinations/jordan.jpg" },
-    { city: "Řím", price: 712, country: "Itálie", image: "/destinations/rome.jpg" },
-    { city: "Island", price: 1460, country: "Island", image: "/destinations/iceland.jpg" },
-    { city: "Miami", price: 9490, country: "USA", image: "/destinations/miami.jpg" },
-    { city: "Barcelona", price: 746, country: "Španělsko", image: "/destinations/barcelona.jpg" },
-  ];
+  // Use imported destination data
+  const popularDestinations = returnFlights.map(dest => ({
+    city: dest.name,
+    price: dest.price,
+    country: dest.country,
+    image: dest.image
+  }));
 
   // Featured European cities with correct images
   const featuredCities = [
@@ -490,9 +480,8 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularDestinations.map((dest, index) => {
-              const destSlug = cityToSlug[dest.city.toLowerCase()] || dest.city.toLowerCase().replace(/\s+/g, "-");
-              const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
+            {returnFlights.map((dest, index) => {
+              const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${dest.slug}`;
               return (
                 <a
                   key={index}
@@ -500,14 +489,14 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden"
-                  onClick={() => trackAffiliateClick(dest.city, destSlug, "grid", kiwiUrl)}
+                  onClick={() => trackAffiliateClick(dest.name, dest.slug, "grid", kiwiUrl)}
                 >
                   <div className="flex items-center gap-4 p-4">
                     {/* Thumbnail with hover airplane overlay - optimized larger size */}
                     <div className="relative w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
                       <img
                         src={dest.image}
-                        alt={`${dest.city}, ${dest.country}`}
+                        alt={`${dest.name}, ${dest.country}`}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         loading="lazy"
                         decoding="async"
@@ -522,7 +511,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors">
-                        {dest.city}
+                        {dest.name}
                       </h3>
                       <p className="text-sm text-gray-500">od {formatPrice(dest.price)}</p>
                     </div>
@@ -539,6 +528,142 @@ export default function Home() {
           <p className="text-xs text-muted-foreground text-center mt-8 max-w-4xl mx-auto">
             * Uvedené ceny jsou obvykle za zpáteční lety včetně poplatků. Další služby (zavazadla apod.) mohou být zpoplatněny u dopravce/agentury.
           </p>
+        </div>
+      </section>
+
+      {/* Tabbed Sections: Státy, Města, Letecké společnosti, Top destinace */}
+      <section className="py-12 bg-white">
+        <div className="container">
+          <Tabs defaultValue="states" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 max-w-3xl mx-auto mb-8">
+              <TabsTrigger value="states">Státy</TabsTrigger>
+              <TabsTrigger value="cities">Města</TabsTrigger>
+              <TabsTrigger value="airlines">Letecké společnosti</TabsTrigger>
+              <TabsTrigger value="top">Top destinace</TabsTrigger>
+            </TabsList>
+
+            {/* Státy Tab */}
+            <TabsContent value="states" className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {countries.map((country, index) => {
+                  const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${country.slug}`;
+                  return (
+                    <a
+                      key={index}
+                      href={kiwiUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
+                      onClick={() => trackAffiliateClick(country.name, country.slug, "states-tab", kiwiUrl)}
+                    >
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={country.image}
+                          alt={country.name}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                          <h3 className="font-bold text-lg">{country.name}</h3>
+                          <p className="text-sm text-white/90">{country.description}</p>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </TabsContent>
+
+            {/* Města Tab */}
+            <TabsContent value="cities" className="mt-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {cities.map((city, index) => {
+                  const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${city.slug}`;
+                  return (
+                    <a
+                      key={index}
+                      href={kiwiUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden border border-gray-100 p-3"
+                      onClick={() => trackAffiliateClick(city.name, city.slug, "cities-tab", kiwiUrl)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={city.image}
+                          alt={city.name}
+                          className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+                          loading="lazy"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                            {city.name}
+                          </h3>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </TabsContent>
+
+            {/* Letecké společnosti Tab */}
+            <TabsContent value="airlines" className="mt-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+                {airlines.map((airline, index) => (
+                  <Link
+                    key={index}
+                    href={`/letecka-spolecnost/${airline.slug}`}
+                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all p-5 flex flex-col items-center gap-3 group"
+                  >
+                    <img
+                      src={airline.logo}
+                      alt={`${airline.name} logo`}
+                      className="w-20 h-20 md:w-24 md:h-24 object-contain flex-shrink-0"
+                      loading="lazy"
+                    />
+                    <span className="text-sm md:text-base font-medium text-blue-600 group-hover:underline text-center">
+                      {airline.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Top destinace Tab */}
+            <TabsContent value="top" className="mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {topDestinations.map((dest, index) => {
+                  const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${dest.slug}`;
+                  return (
+                    <a
+                      key={index}
+                      href={kiwiUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
+                      onClick={() => trackAffiliateClick(dest.title, dest.slug, "top-tab", kiwiUrl)}
+                    >
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={dest.image}
+                          alt={dest.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                          <h3 className="font-bold text-lg">{dest.title}</h3>
+                          {dest.subtitle && <p className="text-sm text-white/90">{dest.subtitle}</p>}
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 

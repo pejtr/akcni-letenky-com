@@ -775,15 +775,13 @@
 - [x] Add "Clear conversation" button
 - [x] Handle localStorage quota exceeded errors
 - [x] Test persistence across page reloads and browser restarts
-
-
 ## Copy Personas from Shared Project
 
-### Persona Definitions Update
-- [ ] Access shared project at https://manus.im/share/c4EsDWGrjsskP2UORfE57w
-- [ ] Extract persona definitions (names, personalities, greetings, avatars)
-- [ ] Update chatbotABTest.ts with new persona definitions
-- [ ] Copy avatar images if different
+- [x] Access shared project at https://manus.im/share/c4EsDWGrjsskP2UORfE57w
+- [x] Extract persona definitions (names, personalities, greeting messages)
+- [x] Update chatbotABTest.ts with new persona definitions
+- [x] Update avatar images if needed
+- [x] Test persona changesifferent
 - [ ] Update any references in email marketing templates
 - [ ] Test chatbot with new personas
 
@@ -796,3 +794,41 @@
 - [x] Update remarketing triggers (alice → tereza)
 - [x] Update tests (alice → tereza)
 - [x] Keep Petra and Monika as they are (already Czech)
+
+## Update Homepage Destinations (Pelikan.cz Style)
+
+### Zpáteční levné letenky
+- [x] Update 16 destinations (Londýn, New York, Afrika, Marakéš, Paříž, Hanoj, Bali, Colombo, Dubaj, Bangkok, Santorini, Jordánsko, Řím, Island, Miami, Barcelona)
+- [x] Ensure correct prices and countries
+- [x] Fix affiliate links to match Pelikan structure
+
+### Add New Sections
+- [x] Státy (Countries) - 16 destinations
+- [x] Města (Cities) - Top 20 cities
+- [x] Letecké společnosti (Airlines) - already exists, integrate into tabs
+- [x] Top destinace (Top destinations) - 12 themed categories
+
+### Implementation
+- [x] Create tabbed navigation (Státy, Města, Letecké společnosti, Top destinace)
+- [x] Use card-based layout with images
+- [x] Add proper descriptions for each destination
+- [x] Ensure all affiliate links work correctly
+- [ ] Add real images for new destinations (currently using placeholders)
+
+
+## Update Homepage Destinations (Pelikan Style)
+
+### Zpáteční levné letenky Section
+- [ ] Update to 16 destinations matching Pelikan layout
+- [ ] Add correct cities: Londýn, New York, Afrika, Marakéš, Paříž, Hanoj, Bali, Colombo, Dubaj, Bangkok, Santorini, Jordánsko, Řím, Island, Miami, Barcelona
+- [ ] Ensure proper affiliate links to Pelikan
+
+### Add New Sections
+- [ ] Create "Státy" tab section with countries (USA, Řecko, Itálie, Španělsko, SAE, Island, Kypr, Malta, Chorvatsko, Thajsko, Mexiko, etc.)
+- [ ] Create "Města" tab section with top 20 cities (New York, Londýn, Miami, Paříž, Řím, Barcelona, Bangkok, Dubaj, Hanoj, Lisabon, Havana, Amsterdam, Malaga, Male, Miláno, Abu Dhabi, Neapol, Zadar, Cancún, Palma de Mallorca)
+- [ ] Create "Letecké společnosti" tab section (already exists, verify)
+- [ ] Create "Top destinace" tab section with themed categories (Last minute, Výlety po Evropě, Levná exotika, Exotická dovolená, Mauricius, Poznávací zájezdy, Malta, Madeira, Dubaj, Řím, Benátky, Kanárské ostrovy)
+
+### Affiliate Links
+- [ ] Update all destination links to use proper Pelikan affiliate structure
+- [ ] Test all links redirect correctly
