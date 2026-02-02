@@ -1107,3 +1107,12 @@
 - [ ] Make navigation sticky on scroll (already implemented, verify)
 - [ ] Optimize image loading speed for mobile (lazy loading)
 - [ ] Test hamburger menu on mobile devices
+
+## Nested Anchor Tag Fixes
+- [x] Find all nested <a> tags inside Link components
+- [x] Remove duplicate <a> tags - Link already renders <a> internally
+- [x] Fix blog article links in DestinationPage.tsx (2 instances)
+- [x] Fix "Všechny články" button link in DestinationPage.tsx
+- [x] Verify all Link components use correct structure (no nested <a>)
+- [x] Airline logo cards and destination cards already correct (no nested anchors)
+- [x] Test all fixed links work correctly

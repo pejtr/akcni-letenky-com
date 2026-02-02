@@ -313,26 +313,22 @@ export default function DestinationPage() {
                       <CardContent>
                         <div className="space-y-4">
                           {articles.slice(0, 3).map((article) => (
-                            <Link key={article.id} href={`/blog/${article.slug}`}>
-                              <a className="block hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                                <h4 className="font-medium text-sm line-clamp-2 mb-1">{article.title}</h4>
-                                <p className="text-xs text-gray-500">
-                                  {article.publishedAt
-                                    ? new Date(article.publishedAt).toLocaleDateString("cs-CZ")
-                                    : ""}
-                                </p>
-                              </a>
+                            <Link key={article.id} href={`/blog/${article.slug}`} className="block hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                              <h4 className="font-medium text-sm line-clamp-2 mb-1">{article.title}</h4>
+                              <p className="text-xs text-gray-500">
+                                {article.publishedAt
+                                  ? new Date(article.publishedAt).toLocaleDateString("cs-CZ")
+                                  : ""}
+                              </p>
                             </Link>
                           ))}
                         </div>
                       </CardContent>
                       <CardFooter>
                         <Link href="/blog">
-                          <a>
-                            <Button variant="outline" size="sm" className="w-full">
-                              Všechny články
-                            </Button>
-                          </a>
+                          <Button variant="outline" size="sm" className="w-full">
+                            Všechny články
+                          </Button>
                         </Link>
                       </CardFooter>
                     </Card>
