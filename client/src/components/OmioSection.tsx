@@ -7,7 +7,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Train, Bus, Ship, ArrowRight, Clock, Zap } from "lucide-react";
-import { generateOmioRouteLink, trackOmioClick, POPULAR_OMIO_ROUTES } from "@/lib/omioAffiliate";
+import { generateOmioRouteLink, generateOmioReferralLink, getOmioReferralCode, trackOmioClick, POPULAR_OMIO_ROUTES } from "@/lib/omioAffiliate";
 
 export default function OmioSection() {
   const handleOmioClick = async (route: typeof POPULAR_OMIO_ROUTES[0]) => {
@@ -115,10 +115,10 @@ export default function OmioSection() {
             Rezervujte online a cestujte pohodlně.
           </p>
           <a
-            href={`https://tp.media/r?marker=155221&trs=89558&p=2078&u=${encodeURIComponent("https://omio.com")}&campaign_id=91`}
+            href={generateOmioReferralLink()}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackOmioClick("všechny destinace", "all", "homepage_cta")}
+            onClick={() => trackOmioClick("šechny destinace", "all", "homepage_cta")}
           >
             <Button 
               size="lg"
@@ -130,7 +130,7 @@ export default function OmioSection() {
             </Button>
           </a>
           <p className="text-xs text-blue-200 mt-4">
-            ✓ Více než 100 000 tras  ✓ 12 jazyků  ✓ Nízké rezervační poplatky
+            ✓ Více než 100 000 tras  ✓ 12 jazyků  ✓ Noví uživatelé získají 10€ bonus (kód: {getOmioReferralCode()})
           </p>
         </div>
 

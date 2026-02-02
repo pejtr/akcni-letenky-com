@@ -18,6 +18,8 @@ import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
+import { useWishlist } from "@/hooks/useWishlist";
+import { Heart, Award } from "lucide-react";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -64,6 +66,7 @@ const cityToSlug: Record<string, string> = {
 export default function Home() {
   // A/B Test for hero section
   const heroVariant = useABTest("hero_redesign");
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
   
@@ -302,10 +305,10 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <div className="flex items-center gap-2 text-[#E91E63]">
-              <Phone className="w-4 h-4" />
-              <span className="font-bold">223 340 510</span>
-            </div>
+            <a href="tel:+420223340510" className="flex items-center gap-1.5 text-[#E91E63] hover:text-[#C2185B] transition-colors whitespace-nowrap">
+              <Phone className="w-4 h-4 flex-shrink-0" />
+              <span className="font-semibold text-sm">223 340 510</span>
+            </a>
           </div>
         </div>
       </header>
@@ -335,7 +338,7 @@ export default function Home() {
             </a>
             <span className="text-white/60">|</span>
             <a href="#eurovikendy" className="hover:underline flex items-center gap-1">
-              🇪🇺 Eurovíkendy
+              <span className="font-semibold">EU</span> Eurovíkendy
             </a>
             <span className="text-white/60">|</span>
             <a href="#nejlevnejsi" className="hover:underline flex items-center gap-1">
@@ -378,7 +381,7 @@ export default function Home() {
                   </div>
                   <div className="p-5">
                     <h3 className="font-bold text-xl mb-2 text-center">
-                      Letenky z <span className="text-[#003087]">{city.to}</span>
+                      Letenky do <span className="text-[#003087]">{city.to}</span>
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
                       {city.description}
@@ -435,56 +438,59 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {returnFlights.map((dest, index) => {
               const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${dest.slug}`;
+              const discountPercent = Math.round(26 + (index * 3) % 12);
               return (
                 <a
                   key={index}
                   href={kiwiUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden"
+                  className="relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden flex flex-col"
                   onClick={() => trackAffiliateClick(dest.name, dest.slug, "grid", kiwiUrl)}
                 >
                   {/* Discount Badge */}
-                  <div className="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                    -{Math.round(26 + (index * 3) % 12)}%
+                  <div className="absolute top-2 right-2 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    -{discountPercent}%
                   </div>
                   
-                  <div className="flex items-center gap-4 p-4">
-                    {/* Thumbnail with hover CTA overlay - optimized larger size */}
-                    <div className="relative w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                      <img
-                        src={dest.image}
-                        alt={`${dest.name}, ${dest.country}`}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        loading="lazy"
-                        decoding="async"
-                        fetchPriority={index < 4 ? "high" : "low"}
-                      />
-                      {/* CTA overlay on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-orange-600/90 to-orange-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <span className="text-white font-bold text-sm px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm border border-white/30">
-                          Zobrazit nabídku →
-                        </span>
-                      </div>
+                  {/* Image */}
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={dest.image}
+                      alt={`${dest.name}, ${dest.country}`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority={index < 4 ? "high" : "low"}
+                    />
+                    {/* CTA overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-orange-600/90 to-orange-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <span className="text-white font-bold text-sm px-3 py-2 bg-white/20 rounded-full backdrop-blur-sm border border-white/30">
+                        Zobrazit nabídku →
+                      </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors">
-                        {dest.name}
-                      </h3>
-                      <p className="text-xl font-bold text-orange-600">od {formatPrice(dest.price)}</p>
-                      <p className="text-xs text-gray-400 line-through">od {formatPrice(Math.round(dest.price * 1.35))}</p>
-                      {/* Live Viewer Counter */}
-                      <div className="mt-2">
-                        <LiveViewerCounter destinationId={`return_${dest.slug}`} minViewers={12} maxViewers={38} />
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 flex-shrink-0 transition-colors" />
                   </div>
-                  <div className="px-4 pb-4 text-center border-t border-gray-100 pt-3">
-                    <p className="text-sm font-semibold text-gray-600 group-hover:underline">{dest.country}</p>
+                  
+                  {/* Content */}
+                  <div className="p-3 md:p-4 flex-1 flex flex-col">
+                    <h3 className="font-bold text-base md:text-lg text-gray-800 group-hover:text-blue-600 transition-colors truncate">
+                      {dest.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 mb-2">{dest.country}</p>
+                    
+                    {/* Price */}
+                    <div className="flex items-baseline gap-2 mb-2">
+                      <span className="text-lg md:text-xl font-bold text-orange-600">od {formatPrice(dest.price)}</span>
+                      <span className="text-xs text-gray-400 line-through">od {formatPrice(Math.round(dest.price * 1.35))}</span>
+                    </div>
+                    
+                    {/* Live Viewer Counter */}
+                    <div className="mt-auto">
+                      <LiveViewerCounter destinationId={`return_${dest.slug}`} />
+                    </div>
                   </div>
                 </a>
               );

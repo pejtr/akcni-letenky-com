@@ -10,7 +10,7 @@ import { X, MessageCircle, Plane, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useViewedDestinations } from "@/hooks/useViewedDestinations";
-import { generateOmioLink, trackOmioClick } from "@/lib/omioAffiliate";
+import { generateOmioReferralLink, trackOmioClick } from "@/lib/omioAffiliate";
 import { Train } from "lucide-react";
 
 interface ExitIntentPopupProps {
@@ -189,7 +189,7 @@ export default function ExitIntentPopup({
               <button
                 onClick={() => {
                   trackOmioClick("exit-intent", "all", "exit_popup");
-                  window.open(generateOmioLink(), "_blank", "noopener,noreferrer");
+                  window.open(generateOmioReferralLink(), "_blank", "noopener,noreferrer");
                 }}
                 className="w-full"
               >

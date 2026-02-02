@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useViewedDestinations } from "@/hooks/useViewedDestinations";
 import { useEffect } from "react";
-import { generateOmioRouteLink, trackOmioClick } from "@/lib/omioAffiliate";
+import { generateOmioReferralLink, trackOmioClick } from "@/lib/omioAffiliate";
 import { Train, Bus } from "lucide-react";
 
 export default function DestinationPage() {
@@ -289,7 +289,7 @@ export default function DestinationPage() {
                         onClick={() => {
                           trackOmioClick(destination.name, "all", "destination_page_sidebar");
                           window.open(
-                            generateOmioRouteLink("Prague", destination.name),
+                            generateOmioReferralLink(),
                             "_blank",
                             "noopener,noreferrer"
                           );

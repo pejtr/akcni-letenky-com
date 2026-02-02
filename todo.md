@@ -707,6 +707,12 @@
 ### Bug Fixes
 - [x] Fix "Neznámá destinace" - changed fallback to Barcelona
 - [ ] Fix script error on homepage
+- [x] Regenerate Malta thumbnail image (currently doesn't match destination)
+- [x] Regenerate Croatia thumbnail image (currently doesn't match destination)
+- [x] Regenerate Cyprus thumbnail image (currently shows Moscow instead of Cyprus)
+- [x] Regenerate Zanzibar thumbnail image (currently shows person at cliff edge instead of tropical beaches)
+- [x] Integrate Omio referral link (https://go-refer.omio.com/TlcvMj) with 10€ bonus for new users
+- [x] Fix SocialProofNotification JSX closing tag error (resolved after server restart)
 
 ### Reactivation Campaign for Inactive Users
 - [ ] Create reactivation trigger for users inactive 30+ days
@@ -1172,3 +1178,27 @@
 - [x] Implement hover effect with "Zobrazit nabídku →" CTA button
 - [x] Orange gradient overlay on image hover with backdrop blur
 - [x] All three features integrated in single card update
+
+## Layout & UI Fixes + New Features
+- [ ] Fix returnFlights card layout (overlapping text/prices issue)
+- [ ] Regenerate EU icon for Eurovíkendy in info bar (proper EU flag emoji or icon)
+- [ ] Add wishlist heart icon to destination cards (localStorage persistence)
+- [ ] Add "Nejprodávanější" gold badge to top 3 destinations
+- [ ] Ensure consistent card heights and proper text wrapping
+- [ ] Change chatbot name from "Petra" to "Cestovní Asistent" or "Travel Asistent" (more professional, no personal name)
+- [ ] Fix social proof notification links to point to specific destination pages instead of generic Kiwi.com
+- [ ] Change featured cities headings from "Letenky z Londýna" to "Letenky do Londýna" (flights TO destinations, not FROM)
+
+## Remaining UI Improvements
+- [ ] Change featured cities headings from "Letenky z Londýna" to "Letenky do Londýna"
+- [ ] Update LiveViewerCounter to show realistic time-based counts (lower after midnight)
+- [ ] Add time-of-day logic: 6-10am (3-8), 10am-4pm (8-15), 4-8pm (12-18), 8pm-12am (6-12), 12-6am (2-5)
+- [ ] Add wishlist heart icon to featured cities cards
+- [ ] Add "Nejprodávanější" badge to top 3 featured cities
+- [x] Fix SocialProofNotification JSX closing tag error (resolved after server restart)
+- [ ] Fix phone number in header - make it smaller font and display on single line (223 340 510)
+- [ ] Fix chatbot tooltip showing when mouse is not hovering over the icon
+- [ ] Regenerate Malta thumbnail image (currently shows lab/science image instead of Malta destination)
+- [ ] Regenerate Croatia thumbnail image (currently empty/broken image)
+- [ ] Upload new thumbnails and update paths in Home.tsx
+- [ ] Regenerate Cyprus thumbnail image (currently shows Moscow instead of Cyprus destination)

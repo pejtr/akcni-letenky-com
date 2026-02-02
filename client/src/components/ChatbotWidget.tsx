@@ -351,9 +351,9 @@ export default function ChatbotWidget() {
             </div>
             <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 bg-[#FFD700] rounded-full border-1 md:border-2 border-white animate-pulse" />
           </div>
-          <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
             <div className="bg-card text-card-foreground px-4 py-2 rounded-lg shadow-lg whitespace-nowrap">
-              <p className="font-semibold">Petra - Cestovní Expert</p>
+              <p className="font-semibold">Cestovní Asistent</p>
               <p className="text-sm text-muted-foreground">Online</p>
             </div>
           </div>
@@ -384,7 +384,7 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
                 />
               </div>
               <div>
-                <p className={cn("font-semibold", isExpanded ? "text-xl" : "text-lg")}>{persona?.displayName || "Petra"}</p>
+                <p className={cn("font-semibold", isExpanded ? "text-xl" : "text-lg")}>{persona?.displayName || "Cestovní Asistent"}</p>
                 <div className="flex items-center gap-2">
                   <p className={cn("opacity-90", isExpanded ? "text-sm" : "text-xs")}>Online</p>
                   {hasMemory && (

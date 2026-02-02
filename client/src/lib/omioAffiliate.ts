@@ -4,7 +4,15 @@
  * Generates affiliate tracking links for Omio train, bus, and ferry bookings
  * Commission: 6% of booking amount
  * Cookie lifetime: 30 days
+ * 
+ * Referral Program: New users get 10€ bonus when signing up via referral link
+ * Referral link: https://go-refer.omio.com/TlcvMj
+ * Referral code: petrm3l4d5h0x
  */
+
+// Omio referral link for new users (10€ bonus)
+const OMIO_REFERRAL_URL = "https://go-refer.omio.com/TlcvMj";
+const OMIO_REFERRAL_CODE = "petrm3l4d5h0x";
 
 // Omio affiliate parameters from Travelpayouts
 const OMIO_BASE_URL = "https://tp.media/r";
@@ -22,7 +30,23 @@ export interface OmioSearchParams {
 }
 
 /**
+ * Generate Omio referral link for new users (10€ bonus)
+ * Use this for first-time user acquisition campaigns
+ */
+export function generateOmioReferralLink(): string {
+  return OMIO_REFERRAL_URL;
+}
+
+/**
+ * Get Omio referral code for manual entry
+ */
+export function getOmioReferralCode(): string {
+  return OMIO_REFERRAL_CODE;
+}
+
+/**
  * Generate Omio affiliate link with tracking parameters
+ * For existing users or direct search links
  */
 export function generateOmioLink(params?: OmioSearchParams): string {
   // Base Omio URL with affiliate parameters
