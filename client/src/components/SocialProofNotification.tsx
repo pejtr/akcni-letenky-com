@@ -3,10 +3,21 @@
  * 
  * Displays real-time notifications like "Petr z Prahy právě rezervoval letenku..."
  * to increase trust and urgency
+ * 
+ * Includes A/B testing for position (left/right) and frequency
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Plane, X } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import {
+  getAssignedVariant,
+  trackImpression,
+  trackClick as trackABClick,
+  getPositionClasses,
+  getAnimationClasses,
+  type SocialProofVariant,
+} from "@/lib/socialProofABTest";
 
 interface Notification {
   id: number;
@@ -57,6 +68,24 @@ const ACTIONS = [
 export default function SocialProofNotification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [nextId, setNextId] = useState(1);
+  const trackClickMutation = trpc.affiliate.trackClick.useMutation();
+  
+  // Get A/B test variant (memoized to prevent re-assignment)
+  const variant = useMemo<SocialProofVariant>(() => getAssignedVariant(), []);
+
+  // Track click on notification
+  const handleNotificationClick = (notification: Notification, kiwiUrl: string) => {
+    // Track in database
+    trackClickMutation.mutate({
+      destination: notification.destination,
+      destinationSlug: notification.destinationSlug,
+      source: "social-proof",
+      affiliatePartner: "kiwi",
+      affiliateUrl: kiwiUrl,
+    });
+    // Track for A/B test
+    trackABClick(variant.id);
+  };
 
   // Generate random notification
   const generateNotification = (): Notification => {
@@ -81,33 +110,38 @@ export default function SocialProofNotification() {
     const notification = generateNotification();
     setNotifications(prev => [...prev, notification]);
     setNextId(prev => prev + 1);
+    
+    // Track impression for A/B test
+    trackImpression(variant.id);
 
-    // Auto-remove after 8 seconds
+    // Auto-remove after display duration from variant
     setTimeout(() => {
       setNotifications(prev => prev.filter(n => n.id !== notification.id));
-    }, 8000);
+    }, variant.displayDuration);
   };
 
-  // Start showing notifications
+  // Start showing notifications based on variant timing
   useEffect(() => {
-    // Show first notification after 5 seconds
+    // Show first notification after initial delay from variant
     const initialTimeout = setTimeout(() => {
       showNotification();
-    }, 5000);
+    }, variant.initialDelay);
 
-    // Then show new notification every 15-25 seconds
+    // Then show new notification at random interval from variant
     const interval = setInterval(() => {
       showNotification();
-    }, 15000 + Math.random() * 10000); // Random between 15-25 seconds
+    }, variant.minInterval + Math.random() * (variant.maxInterval - variant.minInterval));
 
     return () => {
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [variant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Manual close
-  const handleClose = (id: number) => {
+  const handleClose = (id: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
@@ -115,64 +149,68 @@ export default function SocialProofNotification() {
     return null;
   }
 
+  const positionClasses = getPositionClasses(variant);
+  const animationClasses = getAnimationClasses(variant);
+
   return (
-    <div className="fixed bottom-6 left-6 z-[60] space-y-3 max-w-sm">
+    <div className={positionClasses}>
       {notifications.map((notification, index) => {
         const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${notification.destinationSlug}?a_aid=levne-letenky`;
         
         return (
-        <a
-          key={notification.id}
-          href={kiwiUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block bg-white border-2 border-orange-500 rounded-lg shadow-2xl p-4 animate-in slide-in-from-left duration-500 hover:border-orange-600 hover:shadow-3xl transition-all cursor-pointer"
-          style={{
-            animationDelay: `${index * 100}ms`,
-          }}
-        >
-          <div className="flex items-start gap-3">
-            {/* Icon */}
-            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
-              <Plane className="w-5 h-5 text-white" />
+          <a
+            key={notification.id}
+            href={kiwiUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => handleNotificationClick(notification, kiwiUrl)}
+            className={`block bg-white border-2 border-orange-500 rounded-lg shadow-2xl p-4 ${animationClasses} hover:border-orange-600 hover:shadow-3xl transition-all cursor-pointer`}
+            style={{
+              animationDelay: `${index * 100}ms`,
+            }}
+          >
+            <div className="flex items-start gap-3">
+              {/* Icon */}
+              <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                <Plane className="w-5 h-5 text-white" />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-900 leading-relaxed">
+                  <span className="font-bold">{notification.name}</span>
+                  {" z "}
+                  <span className="font-semibold">{notification.city}</span>
+                  {" "}
+                  {notification.action}
+                  {" "}
+                  <span className="font-bold text-orange-600">{notification.destination}</span>
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Před {Math.floor((Date.now() - notification.timestamp.getTime()) / 1000)} sekundami
+                </p>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={(e) => handleClose(notification.id, e)}
+                className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Zavřít"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-900 leading-relaxed">
-                <span className="font-bold">{notification.name}</span>
-                {" z "}
-                <span className="font-semibold">{notification.city}</span>
-                {" "}
-                {notification.action}
-                {" "}
-                <span className="font-bold text-orange-600">{notification.destination}</span>
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Před {Math.floor((Date.now() - notification.timestamp.getTime()) / 1000)} sekundami
-              </p>
+            {/* Progress Bar */}
+            <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-orange-500 to-red-500 animate-progress"
+                style={{
+                  animation: `progress ${variant.displayDuration}ms linear forwards`,
+                }}
+              />
             </div>
-
-            {/* Close Button */}
-            <button
-              onClick={() => handleClose(notification.id)}
-              className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Zavřít"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-orange-500 to-red-500 animate-progress"
-              style={{
-                animation: "progress 8s linear forwards",
-              }}
-            />
-          </div>
-        </a>
+          </a>
         );
       })}
 

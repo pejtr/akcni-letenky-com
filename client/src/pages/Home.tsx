@@ -15,6 +15,7 @@ import SocialProofNotification from "@/components/SocialProofNotification";
 import OmioSection from "@/components/OmioSection";
 import MobileMenu from "@/components/MobileMenu";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
+import LiveViewerCounter from "@/components/LiveViewerCounter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
 
@@ -389,6 +390,10 @@ export default function Home() {
                       <div className="text-gray-400 line-through text-base">
                         od {formatPrice(Math.round(city.price * 1.4))}
                       </div>
+                    </div>
+                    {/* Live Viewer Counter */}
+                    <div className="flex justify-center mb-2">
+                      <LiveViewerCounter destinationId={`city_${city.to.toLowerCase()}`} />
                     </div>
                     {/* Urgency Timer */}
                     <div className="flex justify-center">

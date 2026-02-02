@@ -1132,3 +1132,30 @@
 - [x] Increased padding (px-5 py-3) for better visual prominence
 - [x] Increased strikethrough price from text-sm to text-base
 - [x] Prices now more readable on mobile devices
+
+## Social Proof Tracking & Optimization Features
+
+### 1. tRPC Endpoint for Social Proof Click Tracking
+- [x] Create tRPC procedure for tracking social proof notification clicks
+- [x] Store clicks in affiliate_clicks table with source="social-proof"
+- [x] Track destination, timestamp, and user session info via existing trackClick mutation
+- [x] Added handleNotificationClick to SocialProofNotification component
+
+### 2. A/B Test for Notification Position and Frequency
+- [x] Create notification A/B test variants (4 variants: A, B, C, D)
+- [x] Variant A: Left position, standard frequency (15-25s)
+- [x] Variant B: Right position, standard frequency (15-25s)
+- [x] Variant C: Left position, higher frequency (10-20s)
+- [x] Variant D: Right position, higher frequency (10-20s)
+- [x] Store variant assignment in localStorage
+- [x] Track impressions and clicks per variant
+- [x] Created socialProofABTest.ts with getAssignedVariant, trackImpression, trackClick, getVariantStats
+- [ ] Create admin dashboard for A/B test results (future enhancement)
+
+### 3. Live Viewer Counter on Destination Cards
+- [x] Add simulated "X lidí právě prohlíží" counter to destination cards
+- [x] Generate realistic numbers (15-45 viewers) with seeded random for consistency
+- [x] Add pulsing red dot indicator for live status (animate-ping)
+- [x] Implement subtle number changes every 30-60 seconds
+- [x] Created LiveViewerCounter component with Eye icon
+- [x] Integrated into featured cities cards on homepage
