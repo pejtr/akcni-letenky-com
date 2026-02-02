@@ -1159,3 +1159,9 @@
 - [x] Implement subtle number changes every 30-60 seconds
 - [x] Created LiveViewerCounter component with Eye icon
 - [x] Integrated into featured cities cards on homepage
+
+## Zpáteční levné letenky Price Display Fix
+- [x] Increase price font size in returnFlights section (Londýn, New York, Afrika, Marakéš)
+- [x] Changed from text-sm text-gray-500 to text-xl font-bold text-orange-600
+- [x] Added strikethrough original price (35% higher) for urgency
+- [x] Make prices more prominent and eye-catching like featured cities section

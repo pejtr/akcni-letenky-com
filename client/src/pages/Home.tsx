@@ -469,7 +469,8 @@ export default function Home() {
                       <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors">
                         {dest.name}
                       </h3>
-                      <p className="text-sm text-gray-500">od {formatPrice(dest.price)}</p>
+                      <p className="text-xl font-bold text-orange-600">od {formatPrice(dest.price)}</p>
+                      <p className="text-xs text-gray-400 line-through">od {formatPrice(Math.round(dest.price * 1.35))}</p>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 flex-shrink-0 transition-colors" />
                   </div>
