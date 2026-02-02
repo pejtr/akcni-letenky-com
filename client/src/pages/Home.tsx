@@ -357,53 +357,73 @@ export default function Home() {
               const destSlug = cityToSlug[city.to.toLowerCase()] || city.to.toLowerCase().replace(/\s+/g, "-");
               const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
               return (
-                <a
-                  key={index}
-                  href={kiwiUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
-                  onClick={() => trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl)}
-                >
-                  <div className="relative h-48 overflow-hidden">
-                    <div
-                      className="h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
-                      style={{ backgroundImage: `url(${city.image})` }}
-                      role="img"
-                      aria-label={`Fotografie ${city.to}`}
+                <div key={index} className="relative">
+                  <a
+                    href={kiwiUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
+                    onClick={() => trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl)}
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <div
+                        className="h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+                        style={{ backgroundImage: `url(${city.image})` }}
+                        role="img"
+                        aria-label={`Fotografie ${city.to}`}
+                      />
+                      {/* Airplane overlay on hover */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <svg className="w-16 h-16 text-white" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold text-xl mb-2 text-center">
+                        Letenky do <span className="text-[#003087]">{city.to}</span>
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
+                        {city.description}
+                      </p>
+                      <div className="flex items-center justify-center gap-3 mb-3">
+                        <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] text-white font-bold rounded-lg px-5 py-3 text-center shadow-md text-2xl">
+                          od {formatPrice(city.price)}
+                        </div>
+                        <div className="text-gray-400 line-through text-base">
+                          od {formatPrice(Math.round(city.price * 1.4))}
+                        </div>
+                      </div>
+                      {/* Live Viewer Counter */}
+                      <div className="flex justify-center mb-2">
+                        <LiveViewerCounter destinationId={`city_${city.to.toLowerCase()}`} />
+                      </div>
+                      {/* Urgency Timer */}
+                      <div className="flex justify-center">
+                        <UrgencyTimer offerId={`city_${city.to.toLowerCase()}`} className="text-xs" />
+                      </div>
+                    </div>
+                  </a>
+                  {/* Wishlist Heart Icon */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleWishlist(`city_${city.to.toLowerCase()}`);
+                    }}
+                    className="absolute top-3 right-3 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all duration-200 hover:scale-110"
+                    aria-label={isInWishlist(`city_${city.to.toLowerCase()}`) ? `Odebrat ${city.to} ze seznamu přání` : `Přidat ${city.to} do seznamu přání`}
+                  >
+                    <Heart
+                      className={cn(
+                        "w-5 h-5 transition-colors",
+                        isInWishlist(`city_${city.to.toLowerCase()}`)
+                          ? "fill-red-500 text-red-500"
+                          : "text-gray-600 hover:text-red-500"
+                      )}
                     />
-                    {/* Airplane overlay on hover */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <svg className="w-16 h-16 text-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-xl mb-2 text-center">
-                      Letenky do <span className="text-[#003087]">{city.to}</span>
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4 text-center min-h-[40px]">
-                      {city.description}
-                    </p>
-                    <div className="flex items-center justify-center gap-3 mb-3">
-                      <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] text-white font-bold rounded-lg px-5 py-3 text-center shadow-md text-2xl">
-                        od {formatPrice(city.price)}
-                      </div>
-                      <div className="text-gray-400 line-through text-base">
-                        od {formatPrice(Math.round(city.price * 1.4))}
-                      </div>
-                    </div>
-                    {/* Live Viewer Counter */}
-                    <div className="flex justify-center mb-2">
-                      <LiveViewerCounter destinationId={`city_${city.to.toLowerCase()}`} />
-                    </div>
-                    {/* Urgency Timer */}
-                    <div className="flex justify-center">
-                      <UrgencyTimer offerId={`city_${city.to.toLowerCase()}`} className="text-xs" />
-                    </div>
-                  </div>
-                </a>
+                  </button>
+                </div>
               );
             })}
           </div>

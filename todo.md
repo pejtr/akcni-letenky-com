@@ -1202,3 +1202,9 @@
 - [ ] Regenerate Croatia thumbnail image (currently empty/broken image)
 - [ ] Upload new thumbnails and update paths in Home.tsx
 - [ ] Regenerate Cyprus thumbnail image (currently shows Moscow instead of Cyprus destination)
+
+### New Feature: Wishlist Heart Icon on Featured Cities
+- [x] Add wishlist heart icon to featured cities cards (Londýn, Paříž, Řím, Barcelona)
+- [x] Implement save to wishlist functionality with toggle on/off
+- [x] Show filled heart for saved items, outline heart for unsaved items
+- [ ] Display wishlist count badge in header navigation
