@@ -444,11 +444,16 @@ export default function Home() {
                   href={kiwiUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden"
+                  className="relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden"
                   onClick={() => trackAffiliateClick(dest.name, dest.slug, "grid", kiwiUrl)}
                 >
+                  {/* Discount Badge */}
+                  <div className="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    -{Math.round(26 + (index * 3) % 12)}%
+                  </div>
+                  
                   <div className="flex items-center gap-4 p-4">
-                    {/* Thumbnail with hover airplane overlay - optimized larger size */}
+                    {/* Thumbnail with hover CTA overlay - optimized larger size */}
                     <div className="relative w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
                       <img
                         src={dest.image}
@@ -458,11 +463,11 @@ export default function Home() {
                         decoding="async"
                         fetchPriority={index < 4 ? "high" : "low"}
                       />
-                      {/* Airplane overlay on hover */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <svg className="w-14 h-14 text-white" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-                        </svg>
+                      {/* CTA overlay on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-orange-600/90 to-orange-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <span className="text-white font-bold text-sm px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm border border-white/30">
+                          Zobrazit nabídku →
+                        </span>
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -471,6 +476,10 @@ export default function Home() {
                       </h3>
                       <p className="text-xl font-bold text-orange-600">od {formatPrice(dest.price)}</p>
                       <p className="text-xs text-gray-400 line-through">od {formatPrice(Math.round(dest.price * 1.35))}</p>
+                      {/* Live Viewer Counter */}
+                      <div className="mt-2">
+                        <LiveViewerCounter destinationId={`return_${dest.slug}`} minViewers={12} maxViewers={38} />
+                      </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 flex-shrink-0 transition-colors" />
                   </div>

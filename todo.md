@@ -1165,3 +1165,10 @@
 - [x] Changed from text-sm text-gray-500 to text-xl font-bold text-orange-600
 - [x] Added strikethrough original price (35% higher) for urgency
 - [x] Make prices more prominent and eye-catching like featured cities section
+
+## Zpáteční levné letenky Card Enhancements
+- [x] Add LiveViewerCounter to returnFlights cards for social proof
+- [x] Add discount badge (percentage) in corner of each card (-26% to -35%)
+- [x] Implement hover effect with "Zobrazit nabídku →" CTA button
+- [x] Orange gradient overlay on image hover with backdrop blur
+- [x] All three features integrated in single card update
