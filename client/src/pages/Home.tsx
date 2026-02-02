@@ -383,10 +383,10 @@ export default function Home() {
                       {city.description}
                     </p>
                     <div className="flex items-center justify-center gap-3 mb-3">
-                      <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] text-white font-bold rounded-lg px-4 py-2 text-center shadow-md">
+                      <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] text-white font-bold rounded-lg px-5 py-3 text-center shadow-md text-2xl">
                         od {formatPrice(city.price)}
                       </div>
-                      <div className="text-gray-400 line-through text-sm">
+                      <div className="text-gray-400 line-through text-base">
                         od {formatPrice(Math.round(city.price * 1.4))}
                       </div>
                     </div>

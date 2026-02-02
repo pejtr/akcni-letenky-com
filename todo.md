@@ -1116,3 +1116,19 @@
 - [x] Verify all Link components use correct structure (no nested <a>)
 - [x] Airline logo cards and destination cards already correct (no nested anchors)
 - [x] Test all fixed links work correctly
+
+## Remaining Nested Anchor Fix & Clickable Notifications
+- [x] Find remaining nested <a> tag in MobileMenu.tsx causing React error
+- [x] Fix nested anchor in MobileMenu navigation items
+- [x] Make social proof notifications clickable
+- [x] Link notifications to specific flight offers (Kiwi.com affiliate links)
+- [x] Add hover effect to notification cards (border-orange-600, shadow-3xl)
+- [x] Add destination slugs to notification data structure
+- [x] Test notification clicks open Kiwi.com with affiliate parameters
+
+## Price Display Improvements
+- [x] Increase price font size in featured cities cards (Londýn, Paříž, Řím, Barcelona)
+- [x] Changed from default to text-2xl for main price
+- [x] Increased padding (px-5 py-3) for better visual prominence
+- [x] Increased strikethrough price from text-sm to text-base
+- [x] Prices now more readable on mobile devices

@@ -13,6 +13,7 @@ interface Notification {
   name: string;
   city: string;
   destination: string;
+  destinationSlug: string;
   action: string;
   timestamp: Date;
 }
@@ -29,8 +30,21 @@ const CITIES = [
 ];
 
 const DESTINATIONS = [
-  "Paříž", "Barcelona", "Londýn", "Řím", "Amsterdam", "Madrid", "Berlín", 
-  "Vídeň", "Budapešť", "Dublin", "Lisabon", "Atény", "Istanbul", "Dubaj", "New York"
+  { name: "Paříž", slug: "paris-france" },
+  { name: "Barcelona", slug: "barcelona-spain" },
+  { name: "Londýn", slug: "london-united-kingdom" },
+  { name: "Řím", slug: "rome-italy" },
+  { name: "Amsterdam", slug: "amsterdam-netherlands" },
+  { name: "Madrid", slug: "madrid-spain" },
+  { name: "Berlín", slug: "berlin-germany" },
+  { name: "Vídeň", slug: "vienna-austria" },
+  { name: "Budapešť", slug: "budapest-hungary" },
+  { name: "Dublin", slug: "dublin-ireland" },
+  { name: "Lisabon", slug: "lisbon-portugal" },
+  { name: "Atény", slug: "athens-greece" },
+  { name: "Istanbul", slug: "istanbul-turkey" },
+  { name: "Dubaj", slug: "dubai-united-arab-emirates" },
+  { name: "New York", slug: "new-york-new-york-united-states" }
 ];
 
 const ACTIONS = [
@@ -48,14 +62,15 @@ export default function SocialProofNotification() {
   const generateNotification = (): Notification => {
     const name = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
     const city = CITIES[Math.floor(Math.random() * CITIES.length)];
-    const destination = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
+    const destObj = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
     const action = ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
 
     return {
       id: nextId,
       name,
       city,
-      destination,
+      destination: destObj.name,
+      destinationSlug: destObj.slug,
       action,
       timestamp: new Date(),
     };
@@ -102,10 +117,16 @@ export default function SocialProofNotification() {
 
   return (
     <div className="fixed bottom-6 left-6 z-[60] space-y-3 max-w-sm">
-      {notifications.map((notification, index) => (
-        <div
+      {notifications.map((notification, index) => {
+        const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${notification.destinationSlug}?a_aid=levne-letenky`;
+        
+        return (
+        <a
           key={notification.id}
-          className="bg-white border-2 border-orange-500 rounded-lg shadow-2xl p-4 animate-in slide-in-from-left duration-500"
+          href={kiwiUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block bg-white border-2 border-orange-500 rounded-lg shadow-2xl p-4 animate-in slide-in-from-left duration-500 hover:border-orange-600 hover:shadow-3xl transition-all cursor-pointer"
           style={{
             animationDelay: `${index * 100}ms`,
           }}
@@ -151,8 +172,9 @@ export default function SocialProofNotification() {
               }}
             />
           </div>
-        </div>
-      ))}
+        </a>
+        );
+      })}
 
       <style>{`
         @keyframes progress {

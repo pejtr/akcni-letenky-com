@@ -103,18 +103,17 @@ export default function MobileMenu() {
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.href}>
-                <Link href={item.href}>
-                  <a
-                    onClick={closeMenu}
-                    className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-100 transition-colors group"
-                  >
-                    <span className="text-[#E91E63] group-hover:scale-110 transition-transform">
-                      {item.icon}
-                    </span>
-                    <span className="font-medium text-gray-700 group-hover:text-[#E91E63]">
-                      {item.label}
-                    </span>
-                  </a>
+                <Link
+                  href={item.href}
+                  onClick={closeMenu}
+                  className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-100 transition-colors group"
+                >
+                  <span className="text-[#E91E63] group-hover:scale-110 transition-transform">
+                    {item.icon}
+                  </span>
+                  <span className="font-medium text-gray-700 group-hover:text-[#E91E63]">
+                    {item.label}
+                  </span>
                 </Link>
               </li>
             ))}
