@@ -1266,3 +1266,11 @@
 - [x] Implement sticky newsletter bar with email capture form ("Získejte exkluzivní slevy až -80%")
 - [x] Create /wishlist page with saved destinations and price comparison
 - [x] Test all three features on desktop and mobile
+
+## Advanced Wishlist & Conversion Features (Current)
+- [x] Add filtering and sorting to /wishlist page (price, date added, favorite status)
+- [x] Add date tracking for when destinations were added to wishlist
+- [x] Add favorite/priority marking functionality for wishlist items
+- [x] Create A/B test for newsletter bar with multiple text and color variants
+- [x] Add quick "Add to Wishlist" button on destination detail pages
+- [x] Test all features on desktop and mobile

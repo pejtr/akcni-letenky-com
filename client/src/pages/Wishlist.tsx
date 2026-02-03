@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Heart, Trash2, ExternalLink, TrendingDown, TrendingUp } from "lucide-react";
+import { Heart, Trash2, ExternalLink, TrendingDown, TrendingUp, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlist, WishlistItem } from "@/hooks/useWishlist";
 import { returnFlights, cities, topDestinations } from "@/data/destinations";
 
 // Combine all destinations for lookup (only those with price)
@@ -51,14 +51,15 @@ const cityToSlug: Record<string, string> = {
 };
 
 export default function Wishlist() {
-  const { wishlist, toggleWishlist, clearWishlist } = useWishlist();
-  const [sortBy, setSortBy] = useState<"price" | "name">("price");
+  const { wishlist, toggleWishlist, toggleFavorite, clearWishlist } = useWishlist();
+  const [sortBy, setSortBy] = useState<"price" | "name" | "date" | "favorite">("price");
+  const [filterBy, setFilterBy] = useState<"all" | "favorites">("all");
 
   // Get destination details from wishlist IDs
   const wishlistItems = wishlist
-    .map((id) => {
+    .map((item: WishlistItem) => {
       // Extract destination name from ID (e.g., "city_london" -> "london")
-      const destName = id.replace(/^city_/, "").replace(/_/g, " ");
+      const destName = item.id.replace(/^city_/, "").replace(/_/g, " ");
       
       // Find destination in our data
       const destination = allDestinations.find(
@@ -68,11 +69,13 @@ export default function Wishlist() {
       if (!destination || !('price' in destination)) return null;
 
       return {
-        id,
+        id: item.id,
         name: destination.name,
         country: destination.country,
         price: destination.price,
         image: destination.image,
+        addedAt: item.addedAt,
+        isFavorite: item.isFavorite,
         // Simulate price history (random fluctuation)
         priceHistory: {
           yesterday: Math.round(destination.price * (1 + (Math.random() * 0.2 - 0.1))),
@@ -82,10 +85,24 @@ export default function Wishlist() {
     })
     .filter((item): item is NonNullable<typeof item> => item !== null);
 
+  // Filter wishlist items
+  const filteredItems = wishlistItems.filter(item => {
+    if (filterBy === "favorites") {
+      return item.isFavorite;
+    }
+    return true;
+  });
+
   // Sort wishlist items
-  const sortedItems = [...wishlistItems].sort((a, b) => {
+  const sortedItems = [...filteredItems].sort((a, b) => {
     if (sortBy === "price") {
       return a.price - b.price;
+    }
+    if (sortBy === "date") {
+      return b.addedAt - a.addedAt; // Newest first
+    }
+    if (sortBy === "favorite") {
+      return (b.isFavorite ? 1 : 0) - (a.isFavorite ? 1 : 0); // Favorites first
     }
     return a.name.localeCompare(b.name);
   });
@@ -165,33 +182,50 @@ export default function Wishlist() {
         {wishlistItems.length > 0 && (
           <>
             {/* Controls */}
-            <div className="bg-white rounded-xl shadow-md p-4 mb-6 flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-semibold text-gray-700">
-                  {wishlistItems.length} {wishlistItems.length === 1 ? "destinace" : "destinací"}
-                </span>
-                <div className="h-4 w-px bg-gray-300" />
-                <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600">Řadit podle:</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as "price" | "name")}
-                    className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#E91E63]"
-                  >
-                    <option value="price">Ceny (nejlevnější)</option>
-                    <option value="name">Názvu (A-Z)</option>
-                  </select>
+            <div className="bg-white rounded-xl shadow-md p-4 mb-6 space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
+                  <span className="text-sm font-semibold text-gray-700">
+                    {sortedItems.length} {sortedItems.length === 1 ? "destinace" : "destinací"}
+                    {filterBy === "favorites" && " (oblíbené)"}
+                  </span>
+                  <div className="h-4 w-px bg-gray-300" />
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600">Filtr:</label>
+                    <select
+                      value={filterBy}
+                      onChange={(e) => setFilterBy(e.target.value as "all" | "favorites")}
+                      className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#E91E63]"
+                    >
+                      <option value="all">Všechny destinace</option>
+                      <option value="favorites">⭐ Pouze oblíbené</option>
+                    </select>
+                  </div>
+                  <div className="h-4 w-px bg-gray-300" />
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600">Řadit podle:</label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as "price" | "name" | "date" | "favorite")}
+                      className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#E91E63]"
+                    >
+                      <option value="price">Ceny (nejlevnější)</option>
+                      <option value="name">Názvu (A-Z)</option>
+                      <option value="date">Data přidání (nejnovější)</option>
+                      <option value="favorite">Oblíbenosti</option>
+                    </select>
+                  </div>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearWishlist}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Vymazat vše
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearWishlist}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Vymazat vše
-              </Button>
             </div>
 
             {/* Destination Cards */}
@@ -211,22 +245,43 @@ export default function Wishlist() {
                         className="h-full bg-cover bg-center"
                         style={{ backgroundImage: `url(${item.image})` }}
                       />
-                      {/* Remove from wishlist button */}
-                      <button
-                        onClick={() => toggleWishlist(item.id)}
-                        className="absolute top-3 right-3 bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all duration-200 hover:scale-110"
-                        aria-label={`Odebrat ${item.name} ze seznamu přání`}
-                      >
-                        <Heart className="w-5 h-5 fill-red-500 text-red-500" />
-                      </button>
+                      {/* Action buttons */}
+                      <div className="absolute top-3 right-3 flex gap-2">
+                        {/* Favorite star button */}
+                        <button
+                          onClick={() => toggleFavorite(item.id)}
+                          className="bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all duration-200 hover:scale-110"
+                          aria-label={item.isFavorite ? `Odebrat ${item.name} z oblíbených` : `Přidat ${item.name} do oblíbených`}
+                        >
+                          <Star className={`w-5 h-5 ${item.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`} />
+                        </button>
+                        {/* Remove from wishlist button */}
+                        <button
+                          onClick={() => toggleWishlist(item.id)}
+                          className="bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all duration-200 hover:scale-110"
+                          aria-label={`Odebrat ${item.name} ze seznamu přání`}
+                        >
+                          <Heart className="w-5 h-5 fill-red-500 text-red-500" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Content */}
                     <div className="p-5">
-                      <h3 className="font-bold text-xl mb-1 text-[#003087]">
-                        {item.name}
-                      </h3>
-                      <p className="text-sm text-gray-500 mb-4">{item.country}</p>
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h3 className="font-bold text-xl mb-1 text-[#003087]">
+                            {item.name}
+                          </h3>
+                          <p className="text-sm text-gray-500">{item.country}</p>
+                        </div>
+                        {item.isFavorite && (
+                          <Star className="w-5 h-5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-400 mb-4">
+                        Přidáno: {new Date(item.addedAt).toLocaleDateString('cs-CZ')}
+                      </p>
 
                       {/* Current Price */}
                       <div className="mb-4">

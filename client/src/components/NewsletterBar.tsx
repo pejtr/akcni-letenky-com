@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { X, Mail, Gift } from "lucide-react";
+import { X, Mail, Gift, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
+import { useNewsletterABTest } from "@/hooks/useNewsletterABTest";
 
 export default function NewsletterBar() {
   const [isVisible, setIsVisible] = useState(true);
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
+  
+  const variant = useNewsletterABTest();
   const subscribeEmailMutation = trpc.newsletter.subscribe.useMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,21 +57,24 @@ export default function NewsletterBar() {
     return null;
   }
 
+  // Select icon based on variant
+  const IconComponent = variant.icon === 'gift' ? Gift : variant.icon === 'sparkles' ? Sparkles : Mail;
+
   return (
-    <div className="fixed top-16 left-0 right-0 bg-gradient-to-r from-[#E91E63] to-[#FF6B35] text-white shadow-lg z-[90] animate-in slide-in-from-top">
+    <div className={`fixed top-16 left-0 right-0 bg-gradient-to-r ${variant.bgGradient} text-white shadow-lg z-[90] animate-in slide-in-from-top`}>
       <div className="container py-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Left side - Icon + Text */}
           <div className="flex items-center gap-3 flex-1 min-w-[250px]">
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
-              <Gift className="w-5 h-5 md:w-6 md:h-6" />
+              <IconComponent className="w-5 h-5 md:w-6 md:h-6" />
             </div>
             <div>
               <p className="font-bold text-sm md:text-base">
-                🎁 Získejte exkluzivní slevy až -80%
+                {variant.title}
               </p>
               <p className="text-xs md:text-sm text-white/90">
-                Přihlaste se k odběru a buďte první, kdo se dozví o akčních nabídkách
+                {variant.subtitle}
               </p>
             </div>
           </div>
@@ -95,7 +100,7 @@ export default function NewsletterBar() {
                 disabled={isSubmitting}
                 className="bg-white text-[#E91E63] hover:bg-gray-100 font-bold whitespace-nowrap h-10 px-6"
               >
-                {isSubmitting ? "..." : "Odebírat"}
+                {isSubmitting ? "..." : variant.buttonText}
               </Button>
             </form>
           )}
