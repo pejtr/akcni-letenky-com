@@ -1274,3 +1274,10 @@
 - [x] Create A/B test for newsletter bar with multiple text and color variants
 - [x] Add quick "Add to Wishlist" button on destination detail pages
 - [x] Test all features on desktop and mobile
+
+## Navigation Enhancement (Current)
+- [x] Add "Vlaky & Autobusy" menu item to desktop navigation
+- [x] Add "Vlaky & Autobusy" menu item to mobile navigation (hamburger menu)
+- [x] Add small WhatsApp group link to footer
+- [ ] Create dedicated /vlaky-autobusy landing page with Omio integration
+- [ ] Test navigation on desktop and mobile

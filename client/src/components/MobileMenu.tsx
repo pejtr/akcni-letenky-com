@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import { Link } from "wouter";
-import { Menu, X, Plane, MapPin, Palmtree, Building2, Zap, Phone } from "lucide-react";
+import { Menu, X, Plane, MapPin, Palmtree, Building2, Zap, Phone, Train } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function MobileMenu() {
@@ -48,6 +48,11 @@ export default function MobileMenu() {
       href: "/aerolinky",
       label: "Aerolinky",
       icon: <Building2 className="w-5 h-5" />,
+    },
+    {
+      href: "/vlaky-autobusy",
+      label: "Vlaky & Autobusy",
+      icon: <Train className="w-5 h-5" />,
     },
     {
       href: "/rychla-rezervace",

@@ -297,6 +297,9 @@ export default function Home() {
             <a href="#airlines" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
               ✈️ AEROLINKY
             </a>
+            <Link href="/vlaky-autobusy" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
+              🚆 VLAKY & AUTOBUSY
+            </Link>
             <a href="#search" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
               🚀 RYCHLÁ REZERVACE
             </a>
@@ -922,6 +925,22 @@ export default function Home() {
                       <p className="text-xs text-muted-foreground">Inspirace pro vaše cesty</p>
                     </div>
                   </div>
+                  <a 
+                    href="https://chat.whatsapp.com/KDpuBfwm1Uw2GYc0PJJQXE" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                  >
+                    <div className="w-10 h-10 bg-[#25D366] rounded flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xl">✉️</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm flex items-center gap-1">
+                        WhatsApp Skupina 🔥
+                      </p>
+                      <p className="text-xs text-muted-foreground">Exkluzivní slevy až -70%</p>
+                    </div>
+                  </a>
                 </div>
               </div>
             </div>
