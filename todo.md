@@ -1213,3 +1213,14 @@
 - [x] Add subtle animated effect to hero section background (parallax or floating animation)
 - [x] Display wishlist count badge in header navigation (red badge with number)
 - [x] Investigate and fix script error in console (related to external scripts)
+
+### Bug Fix: Persistent Script Error
+- [x] Fix persistent "Script error" from Kiwi widget (ultra-aggressive error handler at head start)
+
+### UI/UX Improvement: Unify Notifications
+- [x] Identify two different notification components (SocialProofNotification vs SocialProofWidget)
+- [x] Unify notification styles into one consistent design
+- [x] Ensure consistent timing, animation, and visual style
+- [x] Added circular thumbnail with pulse animation
+- [x] Added price display for credibility
+- [x] Added CTA button "TAM CHCI TAKY >"

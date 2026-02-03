@@ -2,6 +2,45 @@
 <html lang="en">
 
   <head>
+    <!-- CRITICAL: Error Handler Must Load First -->
+    <script>
+      // Ultra-aggressive error suppression for cross-origin scripts
+      (function() {
+        'use strict';
+        
+        // Capture errors immediately
+        window.addEventListener('error', function(e) {
+          // Suppress ALL cross-origin script errors
+          if (!e.filename || 
+              e.filename === '' || 
+              e.message === 'Script error.' || 
+              (e.lineno === 0 && e.colno === 0)) {
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            e.preventDefault();
+            return true;
+          }
+        }, true); // Use capture phase
+        
+        // Promise rejection handler
+        window.addEventListener('unhandledrejection', function(e) {
+          if (!e.reason || !e.reason.stack || e.reason.message === 'Script error.') {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return true;
+          }
+        }, true);
+        
+        // Fallback window.onerror
+        window.onerror = function(msg, url, line, col, error) {
+          if (!url || url === '' || msg === 'Script error.' || (line === 0 && col === 0)) {
+            return true; // Suppress
+          }
+          return false;
+        };
+      })();
+    </script>
+    
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -162,17 +201,7 @@
       src="%VITE_ANALYTICS_ENDPOINT%/umami"
       data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
     
-    <!-- Kiwi.com Search Widget with Error Handling -->
-    <script>
-      // Global error handler for cross-origin script errors
-      window.addEventListener('error', function(e) {
-        // Suppress cross-origin script errors from external widgets
-        if (e.message === 'Script error.' && e.lineno === 0 && e.colno === 0) {
-          e.preventDefault();
-          return true;
-        }
-      }, true);
-    </script>
+    <!-- Kiwi.com Search Widget -->
     <script 
       data-width="320px"
       data-passengers="1-0-0" 

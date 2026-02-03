@@ -1,14 +1,19 @@
 /**
- * Social Proof Notification Widget
+ * Unified Social Proof Notification Widget
  * 
  * Displays real-time notifications like "Petr z Prahy právě rezervoval letenku..."
  * to increase trust and urgency
  * 
- * Includes A/B testing for position (left/right) and frequency
+ * Features:
+ * - Circular destination thumbnail with pulse animation
+ * - Price display for added credibility
+ * - A/B testing for position (left/right) and frequency
+ * - Database tracking for affiliate clicks
+ * - CTA button "TAM CHCI TAKY >"
  */
 
 import { useState, useEffect, useMemo } from "react";
-import { Plane, X } from "lucide-react";
+import { X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import {
   getAssignedVariant,
@@ -26,6 +31,8 @@ interface Notification {
   destination: string;
   destinationSlug: string;
   action: string;
+  price: string;
+  imageUrl: string;
   timestamp: Date;
 }
 
@@ -41,28 +48,26 @@ const CITIES = [
 ];
 
 const DESTINATIONS = [
-  { name: "Paříž", slug: "paris-france" },
-  { name: "Barcelona", slug: "barcelona-spain" },
-  { name: "Londýn", slug: "london-united-kingdom" },
-  { name: "Řím", slug: "rome-italy" },
-  { name: "Amsterdam", slug: "amsterdam-netherlands" },
-  { name: "Madrid", slug: "madrid-spain" },
-  { name: "Berlín", slug: "berlin-germany" },
-  { name: "Vídeň", slug: "vienna-austria" },
-  { name: "Budapešť", slug: "budapest-hungary" },
-  { name: "Dublin", slug: "dublin-ireland" },
-  { name: "Lisabon", slug: "lisbon-portugal" },
-  { name: "Atény", slug: "athens-greece" },
-  { name: "Istanbul", slug: "istanbul-turkey" },
-  { name: "Dubaj", slug: "dubai-united-arab-emirates" },
-  { name: "New York", slug: "new-york-new-york-united-states" }
+  { name: "Paříž", slug: "paris-france", image: "/paris.jpg", priceRange: [1200, 1800] },
+  { name: "Barcelona", slug: "barcelona-spain", image: "/barcelona.jpg", priceRange: [1100, 1600] },
+  { name: "Londýn", slug: "london-united-kingdom", image: "/london.jpg", priceRange: [900, 1400] },
+  { name: "Řím", slug: "rome-italy", image: "/rome.jpg", priceRange: [1000, 1500] },
+  { name: "Amsterdam", slug: "amsterdam-netherlands", image: "/amsterdam.jpg", priceRange: [1300, 1900] },
+  { name: "Madrid", slug: "madrid-spain", image: "/madrid.jpg", priceRange: [1200, 1700] },
+  { name: "Berlín", slug: "berlin-germany", image: "/berlin.jpg", priceRange: [800, 1300] },
+  { name: "Vídeň", slug: "vienna-austria", image: "/vienna.jpg", priceRange: [700, 1200] },
+  { name: "Budapešť", slug: "budapest-hungary", image: "/budapest.jpg", priceRange: [600, 1100] },
+  { name: "Dublin", slug: "dublin-ireland", image: "/dublin.jpg", priceRange: [1400, 2000] },
+  { name: "Lisabon", slug: "lisbon-portugal", image: "/lisbon.jpg", priceRange: [1300, 1800] },
+  { name: "Atény", slug: "athens-greece", image: "/athens.jpg", priceRange: [1100, 1600] },
+  { name: "Istanbul", slug: "istanbul-turkey", image: "/istanbul.jpg", priceRange: [1500, 2200] },
+  { name: "Dubaj", slug: "dubai-united-arab-emirates", image: "/dubai.jpg", priceRange: [8000, 12000] },
+  { name: "New York", slug: "new-york-new-york-united-states", image: "/new-york.jpg", priceRange: [9000, 15000] }
 ];
 
 const ACTIONS = [
   "právě rezervoval letenku do",
   "právě koupil letenku do",
-  "si právě prohlíží letenky do",
-  "právě našel skvělou nabídku do"
 ];
 
 export default function SocialProofNotification() {
@@ -93,6 +98,10 @@ export default function SocialProofNotification() {
     const city = CITIES[Math.floor(Math.random() * CITIES.length)];
     const destObj = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
     const action = ACTIONS[Math.floor(Math.random() * ACTIONS.length)];
+    
+    // Generate random price within destination's range
+    const [minPrice, maxPrice] = destObj.priceRange;
+    const price = Math.floor(Math.random() * (maxPrice - minPrice) + minPrice);
 
     return {
       id: nextId,
@@ -101,6 +110,8 @@ export default function SocialProofNotification() {
       destination: destObj.name,
       destinationSlug: destObj.slug,
       action,
+      price: `${price.toLocaleString('cs-CZ')} Kč`,
+      imageUrl: destObj.image,
       timestamp: new Date(),
     };
   };
@@ -164,30 +175,33 @@ export default function SocialProofNotification() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleNotificationClick(notification, kiwiUrl)}
-            className={`block bg-white border-2 border-orange-500 rounded-lg shadow-2xl p-4 ${animationClasses} hover:border-orange-600 hover:shadow-3xl transition-all cursor-pointer`}
+            className={`block bg-white border-2 border-orange-500 rounded-xl shadow-2xl p-4 ${animationClasses} hover:border-orange-600 hover:shadow-3xl transition-all cursor-pointer max-w-sm`}
             style={{
               animationDelay: `${index * 100}ms`,
             }}
           >
             <div className="flex items-start gap-3">
-              {/* Icon */}
-              <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
-                <Plane className="w-5 h-5 text-white" />
+              {/* Circular Thumbnail with Pulse Animation */}
+              <div className="flex-shrink-0 w-12 h-12 rounded-full overflow-hidden border-2 border-orange-500 animate-pulse">
+                <img
+                  src={notification.imageUrl}
+                  alt={notification.destination}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-900 leading-relaxed">
-                  <span className="font-bold">{notification.name}</span>
-                  {" z "}
-                  <span className="font-semibold">{notification.city}</span>
-                  {" "}
-                  {notification.action}
-                  {" "}
+                <p className="text-sm font-semibold text-gray-900">
+                  {notification.name} z {notification.city}
+                </p>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  {notification.action}{" "}
                   <span className="font-bold text-orange-600">{notification.destination}</span>
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Před {Math.floor((Date.now() - notification.timestamp.getTime()) / 1000)} sekundami
+                  za {notification.price}
                 </p>
               </div>
 
@@ -201,8 +215,15 @@ export default function SocialProofNotification() {
               </button>
             </div>
 
+            {/* CTA Button */}
+            <div className="mt-3 pt-3 border-t border-gray-200 flex justify-end">
+              <span className="text-xs font-bold text-orange-600 hover:text-orange-700 transition-colors">
+                TAM CHCI TAKY &gt;
+              </span>
+            </div>
+
             {/* Progress Bar */}
-            <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
+            <div className="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-orange-500 to-red-500 animate-progress"
                 style={{

@@ -10,7 +10,7 @@ import { Phone, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
-import SocialProofWidget from "@/components/SocialProofWidget";
+
 import SocialProofNotification from "@/components/SocialProofNotification";
 import OmioSection from "@/components/OmioSection";
 import MobileMenu from "@/components/MobileMenu";
@@ -936,7 +936,7 @@ export default function Home() {
       <ChatbotWidget />
 
       {/* Social Proof Widget */}
-      <SocialProofWidget />
+
       
       {/* Social Proof Notifications */}
       <SocialProofNotification />
