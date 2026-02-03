@@ -317,11 +317,6 @@ export default function Home() {
               )}
             </button>
             
-            <button className="text-[#003087] hover:text-[#001f5c] transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
             <a 
               href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
               target="_blank" 
@@ -768,9 +763,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sticky Bottom Banner - Shows after 50% scroll */}
-      {showBottomBanner && (
-        <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-30 animate-in slide-in-from-bottom">
+      {/* Sticky Bottom Banner - Always visible */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-[100] animate-in slide-in-from-bottom">
           <div className="container">
             <p className="text-center text-sm md:text-base font-bold text-black">
               Akční nabídka: <span className="text-[#E91E63]">Letenky do 1 500 Kč</span> | 
@@ -780,7 +774,6 @@ export default function Home() {
             </p>
           </div>
         </div>
-      )}
 
       {/* Footer Section */}
       <footer className="bg-[#FF9800] py-16">

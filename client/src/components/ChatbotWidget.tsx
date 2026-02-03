@@ -356,7 +356,7 @@ export default function ChatbotWidget() {
             href="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml"
             target="_blank"
             rel="noopener noreferrer"
-            className="fixed bottom-20 md:bottom-6 right-20 md:right-24 z-[70] group"
+            className="fixed bottom-16 md:bottom-6 right-20 md:right-24 z-[50] group"
           >
             <div className="relative">
               <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#25D366] flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
@@ -381,7 +381,7 @@ export default function ChatbotWidget() {
           {/* Travel Asistent Button */}
           <button
             onClick={handleOpenChat}
-            className="fixed bottom-20 md:bottom-6 right-2 md:right-4 z-[70] group"
+            className="fixed bottom-16 md:bottom-6 right-2 md:right-4 z-[50] group"
           >
           <div className="relative">
             {/* Icon-only button - no face when collapsed */}
@@ -406,7 +406,7 @@ export default function ChatbotWidget() {
       {isOpen && isLoading && (
         <div
           className={cn(
-            "fixed z-[70] bg-card border border-border shadow-2xl transition-all duration-300",
+            "fixed z-[50] bg-card border border-border shadow-2xl transition-all duration-300",
             "inset-0 md:inset-auto",
             "md:bottom-6 md:right-6 md:rounded-2xl",
             "md:w-[380px] md:h-[300px]"
@@ -466,7 +466,7 @@ export default function ChatbotWidget() {
       {isOpen && !isLoading && (
         <div
           className={cn(
-            "fixed z-[70] bg-card border border-border shadow-2xl transition-all duration-300",
+            "fixed z-[50] bg-card border border-border shadow-2xl transition-all duration-300",
             "inset-0 md:inset-auto",
             isExpanded
               ? "md:bottom-8 md:right-8 md:rounded-2xl" 

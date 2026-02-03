@@ -1255,3 +1255,8 @@
 - [x] Enlarge small airline logos to fill more space and be more readable (w-28 h-28 md:w-32 md:h-32)
 - [x] Remove WhatsApp floating button and move to chatbot area (now next to Travel Asistent)
 - [ ] Add WhatsApp icon/CTA to sticky header
+
+## Mobile UI Fixes (Current)
+- [x] Remove search icon from mobile header (keep only wishlist, hamburger menu, CTA button)
+- [x] Ensure yellow bottom panel is visible on mobile (adjust z-index or positioning)
+- [x] Fix chatbot and WhatsApp button positioning to not overlap with bottom panel
