@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Send, Minimize2, Maximize2, ExternalLink, Expand, Shrink, Trash2 } from "lucide-react";
+import { X, Send, Minimize2, Maximize2, ExternalLink, Expand, Shrink, Trash2, Plane } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // NEW: Loading state for "Hledáme asistenta..."
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [message, setMessage] = useState("");
@@ -50,6 +51,17 @@ export default function ChatbotWidget() {
   const sendMessageMutation = trpc.chatbot.sendMessage.useMutation();
   const trackCommunityJoinMutation = trpc.chatbot.trackCommunityJoin.useMutation();
   const captureEmailMutation = trpc.chatbot.captureEmail.useMutation();
+
+  // NEW: Handle opening chat with loading animation
+  const handleOpenChat = () => {
+    setIsOpen(true);
+    setIsLoading(true);
+    
+    // Show loading animation for 3-4 seconds
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3500);
+  };
 
   const handleClearConversation = () => {
     if (confirm('Opravdu chcete smazat celou historii konverzace?')) {
@@ -280,7 +292,7 @@ export default function ChatbotWidget() {
               window.location.href = "/";
             }}
           >
-            ✈️ Zobrazit všechny nabídky
+            🔥 Zobrazit všechny akce
           </Button>
         </div>
       );
@@ -289,43 +301,36 @@ export default function ChatbotWidget() {
     return <p className={cn("whitespace-pre-wrap", textSize)}>{content}</p>;
   };
 
-  const getWindowSize = () => {
-    if (isExpanded) return "w-screen h-screen md:w-[650px] md:h-[85vh] md:rounded-2xl";
-    return "w-screen h-screen md:w-[420px] md:h-[650px] md:rounded-2xl";
-  };
-
-  const getMessagesHeight = () => {
-    if (isExpanded) return "h-[calc(800px-220px)] md:h-[calc(85vh-220px)]";
-    return "h-[calc(650px-220px)]";
-  };
-
-  // Update quick replies based on conversation context
-  const updateQuickReplies = (lastMessage: string) => {
-    const lowerMsg = lastMessage.toLowerCase();
+  const updateQuickReplies = (lastResponse: string) => {
+    const lowerResponse = lastResponse.toLowerCase();
     
-    if (lowerMsg.includes("moře") || lowerMsg.includes("pláž") || lowerMsg.includes("beach")) {
-      setQuickReplies(["🏖️ Řecko", "☀️ Španělsko", "🌊 Chorvatsko", "🏝️ Turecko"]);
-    } else if (lowerMsg.includes("hory") || lowerMsg.includes("lyž") || lowerMsg.includes("alpy")) {
-      setQuickReplies(["⛷️ Rakousko", "🏔️ Itálie - Dolomity", "🎿 Francie - Alpy", "❄️ Švýcarsko"]);
-    } else if (lowerMsg.includes("město") || lowerMsg.includes("city") || lowerMsg.includes("eurovíkend")) {
-      setQuickReplies(["🏰 Londýn", "🗼 Paříž", "🏛️ Řím", "⛪ Barcelona"]);
-    } else if (lowerMsg.includes("exotik") || lowerMsg.includes("daleko") || lowerMsg.includes("asie")) {
-      setQuickReplies(["🌴 Thajsko", "🍜 Vietnam", "🌺 Bali", "🏝️ Maledivy"]);
-    } else if (lowerMsg.includes("levn") || lowerMsg.includes("slev") || lowerMsg.includes("akce")) {
-      setQuickReplies(["💰 Do 5000 Kč", "🔥 Last minute", "📅 Flexibilní termín", "👨‍👩‍👧‍👦 Rodinná dovolená"]);
-    } else if (lowerMsg.includes("facebook") || lowerMsg.includes("skupin")) {
-      setQuickReplies(["📧 Odebírat novinky", "🔔 Nastavit upozornění", "✈️ Zpět k nabídkám", "💬 Další dotaz"]);
-    } else if (lowerMsg.includes("rezerv") || lowerMsg.includes("jak") || lowerMsg.includes("funguje")) {
-      setQuickReplies(["💳 Jak zaplatit?", "📧 Potvrzovací email", "❌ Storno podmínky", "✈️ Zpět k nabídkám"]);
-    } else {
-      // Default suggestions - most common questions
-      setQuickReplies(["💰 Letenky do 1500 Kč", "🔥 Last minute akce", "🏖️ Kam k moři?", "❓ Jak rezervovat?"]);
+    if (lowerResponse.includes("destinac") || lowerResponse.includes("kam")) {
+      setQuickReplies([
+        "🏖️ K moři do 5000 Kč",
+        "🏔️ Hory a příroda",
+        "🌆 Evropská města",
+        "🌴 Exotika"
+      ]);
+    } else if (lowerResponse.includes("rozpočet") || lowerResponse.includes("cen")) {
+      setQuickReplies([
+        "💰 Do 2000 Kč",
+        "💵 2000-5000 Kč",
+        "💎 5000-10000 Kč",
+        "👑 Luxusní dovolená"
+      ]);
+    } else if (lowerResponse.includes("termín") || lowerResponse.includes("kdy")) {
+      setQuickReplies([
+        "📅 Tento víkend",
+        "📆 Příští měsíc",
+        "☀️ Léto 2026",
+        "🎄 Vánoce/Silvestr"
+      ]);
     }
   };
 
   const handleQuickReply = (reply: string) => {
     setMessage(reply);
-    // Auto-send after short delay for better UX
+    // Focus input and trigger send
     setTimeout(() => {
       const input = document.querySelector('input[placeholder="Napište zprávu..."]') as HTMLInputElement;
       if (input) {
@@ -334,33 +339,101 @@ export default function ChatbotWidget() {
     }, 100);
   };
 
+  const getWindowSize = () => {
+    if (isExpanded) {
+      return "md:w-[600px] md:h-[700px]";
+    }
+    return "md:w-[380px] md:h-[550px]";
+  };
+
   return (
     <>
+      {/* COLLAPSED STATE: Icon only (no face) */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 md:bottom-6 right-2 md:right-4 z-[70] group animate-pulse"
+          onClick={handleOpenChat}
+          className="fixed bottom-20 md:bottom-6 right-2 md:right-4 z-[70] group"
         >
           <div className="relative">
-            <div className="w-12 h-12 md:w-24 md:h-24 rounded-full overflow-hidden border-2 md:border-4 border-white shadow-xl hover:scale-110 transition-transform">
-              <img
-                src="/travel-expert-avatar.png"
-                alt="Travel Expert"
-                className="w-full h-full object-cover"
-              />
+            {/* Icon-only button - no face when collapsed */}
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-r from-[#f97316] to-[#ec4899] flex items-center justify-center shadow-xl hover:scale-110 transition-transform animate-pulse">
+              <Plane className="w-7 h-7 md:w-8 md:h-8 text-white" />
             </div>
-            <div className="absolute bottom-0 right-0 w-3 h-3 md:w-6 md:h-6 bg-[#FFD700] rounded-full border-1 md:border-2 border-white animate-pulse" />
+            {/* Online indicator */}
+            <div className="absolute bottom-0 right-0 w-4 h-4 md:w-5 md:h-5 bg-green-500 rounded-full border-2 border-white animate-pulse" />
           </div>
+          {/* Tooltip on hover */}
           <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
             <div className="bg-card text-card-foreground px-4 py-2 rounded-lg shadow-lg whitespace-nowrap">
-              <p className="font-semibold">Cestovní Asistent</p>
-              <p className="text-sm text-muted-foreground">Online</p>
+              <p className="font-semibold text-sm">✈️ Travel Asistent</p>
+              <p className="text-xs text-muted-foreground">Klikni pro pomoc</p>
             </div>
           </div>
         </button>
       )}
 
-      {isOpen && (
+      {/* LOADING STATE: "Hledáme pro vás Travel Asistenta..." */}
+      {isOpen && isLoading && (
+        <div
+          className={cn(
+            "fixed z-[70] bg-card border border-border shadow-2xl transition-all duration-300",
+            "inset-0 md:inset-auto",
+            "md:bottom-6 md:right-6 md:rounded-2xl",
+            "md:w-[380px] md:h-[300px]"
+          )}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white rounded-t-2xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
+                <Plane className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold">Travel Asistent</p>
+                <p className="text-xs opacity-90">Připojování...</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                setIsLoading(false);
+              }}
+              className="hover:bg-white/20 p-2 rounded"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Loading Animation */}
+          <div className="flex flex-col items-center justify-center h-[200px] p-6">
+            {/* Animated plane icon */}
+            <div className="relative mb-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-orange-100 to-pink-100 flex items-center justify-center">
+                <Plane className="w-10 h-10 text-orange-500 animate-bounce" />
+              </div>
+              {/* Pulsing rings */}
+              <div className="absolute inset-0 rounded-full border-4 border-orange-300 animate-ping opacity-30" />
+              <div className="absolute inset-[-8px] rounded-full border-2 border-pink-300 animate-ping opacity-20" style={{ animationDelay: '0.5s' }} />
+            </div>
+            
+            {/* Loading text with animated dots */}
+            <p className="text-lg font-semibold text-foreground mb-2">
+              Hledáme pro vás Travel Asistenta
+            </p>
+            <div className="flex items-center gap-1">
+              <span className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+            <p className="text-sm text-muted-foreground mt-3">
+              Váš osobní cestovní expert je na cestě
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* OPEN STATE: Full chat window with face */}
+      {isOpen && !isLoading && (
         <div
           className={cn(
             "fixed z-[70] bg-card border border-border shadow-2xl transition-all duration-300",
@@ -373,9 +446,10 @@ export default function ChatbotWidget() {
         >
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white rounded-t-2xl">
             <div className="flex items-center gap-3">
+              {/* NOW showing face after loading */}
               <div className={cn(
                 "rounded-full overflow-hidden border-2 border-white",
-isExpanded ? "w-14 h-14" : "w-12 h-12"
+                isExpanded ? "w-14 h-14" : "w-12 h-12"
               )}>
                 <img
                   src={persona?.avatar || "/travel-expert-avatar.png"}
@@ -438,67 +512,107 @@ isExpanded ? "w-14 h-14" : "w-12 h-12"
             </div>
           </div>
 
-          {!isMinimized && (
+          {isMinimized ? (
+            <div className="p-4 text-center text-muted-foreground">
+              <p className="text-sm">Chat minimalizován</p>
+            </div>
+          ) : (
             <>
-              <div className={cn("flex-1 overflow-y-auto p-4 space-y-4", getMessagesHeight())}>
-                {messages.map((msg, i) => (
+              <div className={cn(
+                "overflow-y-auto p-4 space-y-4 bg-muted/30",
+                isExpanded ? "h-[500px]" : "h-[300px]"
+              )}>
+                {messages.length === 0 && (
+                  <div className="text-center py-8">
+                    <div className={cn(
+                      "mx-auto rounded-full overflow-hidden border-4 border-orange-200 mb-4",
+                      isExpanded ? "w-24 h-24" : "w-20 h-20"
+                    )}>
+                      <img
+                        src={persona?.avatar || "/travel-expert-avatar.png"}
+                        alt="Travel Expert"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <p className={cn("font-semibold text-foreground", isExpanded ? "text-xl" : "text-lg")}>
+                      {persona?.displayName || "Ahoj! 👋"}
+                    </p>
+                    <p className={cn("text-muted-foreground mt-2", isExpanded ? "text-base" : "text-sm")}>
+                      {persona?.name === "petra"
+                        ? "Jsem Petra a pomůžu ti najít tu nejlepší dovolenou! ✈️🔥"
+                        : persona?.name === "alice"
+                          ? "Jsem Alice, vaše osobní cestovní expertka. Jak vám mohu pomoci?"
+                          : "Jsem tu, abych vám pomohl najít ideální dovolenou. Zeptejte se mě na cokoliv!"}
+                    </p>
+                  </div>
+                )}
+                
+                {messages.map((msg, index) => (
                   <div
-                    key={i}
+                    key={index}
                     className={cn(
                       "flex",
                       msg.role === "user" ? "justify-end" : "justify-start"
                     )}
                   >
+                    {msg.role === "assistant" && (
+                      <div className={cn(
+                        "rounded-full overflow-hidden mr-2 flex-shrink-0",
+                        isExpanded ? "w-10 h-10" : "w-8 h-8"
+                      )}>
+                        <img
+                          src={persona?.avatar || "/travel-expert-avatar.png"}
+                          alt="Assistant"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
                     <div
                       className={cn(
-                        "max-w-[85%] rounded-2xl",
-                        isExpanded ? "px-5 py-3" : "px-4 py-2",
+                        "max-w-[80%] rounded-2xl px-4 py-3",
                         msg.role === "user"
                           ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-foreground"
+                          : "bg-card border border-border"
                       )}
                     >
-                      {renderMessage(msg.content)}
+                      {msg.role === "assistant" ? renderMessage(msg.content) : (
+                        <p className={cn("whitespace-pre-wrap", isExpanded ? "text-lg" : "text-base")}>{msg.content}</p>
+                      )}
                     </div>
                   </div>
                 ))}
+                
                 {sendMessageMutation.isPending && (
                   <div className="flex justify-start">
                     <div className={cn(
-                      "max-w-[85%] rounded-2xl bg-muted text-foreground",
-                      isExpanded ? "px-5 py-3" : "px-4 py-2"
+                      "rounded-full overflow-hidden mr-2 flex-shrink-0",
+                      isExpanded ? "w-10 h-10" : "w-8 h-8"
                     )}>
-                      <p className={cn(isExpanded ? "text-lg" : "text-base")}>Píše... ✍️</p>
+                      <img
+                        src={persona?.avatar || "/travel-expert-avatar.png"}
+                        alt="Assistant"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="bg-card border border-border rounded-2xl px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
                     </div>
                   </div>
                 )}
+                
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Email Capture Popup */}
+              {/* Email Capture */}
               {showEmailCapture && !emailCaptured && (
-                <div className={cn(
-                  "mx-4 mb-2 p-4 rounded-xl border-2 border-orange-400 bg-gradient-to-r from-orange-50 to-yellow-50 shadow-lg animate-in slide-in-from-bottom-2",
-                  isExpanded ? "mx-5" : "mx-4"
-                )}>
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">🎁</span>
-                      <p className={cn("font-bold text-orange-800", isExpanded ? "text-lg" : "text-base")}>
-                        {persona?.name === "petra" 
-                          ? "Heeej! Mám pro tebe super nabídku! 🔥" 
-                          : persona?.name === "alice"
-                            ? "Exkluzivní nabídka pro vás"
-                            : "Speciální nabídka pro vás!"}
-                      </p>
-                    </div>
-                    <button 
-                      onClick={() => setShowEmailCapture(false)}
-                      className="text-gray-400 hover:text-gray-600 p-1"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
+                <div className={cn("mx-4 mb-2 p-3 bg-orange-50 border border-orange-200 rounded-lg", isExpanded ? "p-4" : "p-3")}>
+                  <p className={cn("font-semibold text-orange-800 mb-1", isExpanded ? "text-base" : "text-sm")}>
+                    🎁 Speciální nabídka!
+                  </p>
                   <p className={cn("text-orange-700 mb-3", isExpanded ? "text-base" : "text-sm")}>
                     {persona?.name === "petra"
                       ? "Zadej email a dostaneš 5% slevu na první rezervaci! 💰✈️"

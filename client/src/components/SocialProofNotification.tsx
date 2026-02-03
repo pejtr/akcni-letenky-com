@@ -47,22 +47,19 @@ const CITIES = [
   "Pardubic", "Zlína", "Karlových Varů", "Jihlavy", "Ústí nad Labem"
 ];
 
+// Only use destinations with existing images in /client/public/
 const DESTINATIONS = [
   { name: "Paříž", slug: "paris-france", image: "/paris.jpg", priceRange: [1200, 1800] },
   { name: "Barcelona", slug: "barcelona-spain", image: "/barcelona.jpg", priceRange: [1100, 1600] },
   { name: "Londýn", slug: "london-united-kingdom", image: "/london.jpg", priceRange: [900, 1400] },
   { name: "Řím", slug: "rome-italy", image: "/rome.jpg", priceRange: [1000, 1500] },
-  { name: "Amsterdam", slug: "amsterdam-netherlands", image: "/amsterdam.jpg", priceRange: [1300, 1900] },
-  { name: "Madrid", slug: "madrid-spain", image: "/madrid.jpg", priceRange: [1200, 1700] },
-  { name: "Berlín", slug: "berlin-germany", image: "/berlin.jpg", priceRange: [800, 1300] },
-  { name: "Vídeň", slug: "vienna-austria", image: "/vienna.jpg", priceRange: [700, 1200] },
-  { name: "Budapešť", slug: "budapest-hungary", image: "/budapest.jpg", priceRange: [600, 1100] },
-  { name: "Dublin", slug: "dublin-ireland", image: "/dublin.jpg", priceRange: [1400, 2000] },
-  { name: "Lisabon", slug: "lisbon-portugal", image: "/lisbon.jpg", priceRange: [1300, 1800] },
-  { name: "Atény", slug: "athens-greece", image: "/athens.jpg", priceRange: [1100, 1600] },
-  { name: "Istanbul", slug: "istanbul-turkey", image: "/istanbul.jpg", priceRange: [1500, 2200] },
   { name: "Dubaj", slug: "dubai-united-arab-emirates", image: "/dubai.jpg", priceRange: [8000, 12000] },
-  { name: "New York", slug: "new-york-new-york-united-states", image: "/new-york.jpg", priceRange: [9000, 15000] }
+  { name: "Bali", slug: "bali-indonesia", image: "/bali.jpg", priceRange: [12000, 18000] },
+  { name: "New York", slug: "new-york-new-york-united-states", image: "/newyork.jpg", priceRange: [9000, 15000] },
+  { name: "Malta", slug: "malta", image: "/malta-flights.jpg", priceRange: [1500, 2500] },
+  { name: "Chorvatsko", slug: "croatia", image: "/croatia-flights.jpg", priceRange: [800, 1500] },
+  { name: "Kypr", slug: "cyprus", image: "/cyprus-flights.jpg", priceRange: [2000, 3500] },
+  { name: "Zanzibar", slug: "zanzibar-tanzania", image: "/zanzibar-flights.jpg", priceRange: [15000, 25000] },
 ];
 
 const ACTIONS = [

@@ -1224,3 +1224,13 @@
 - [x] Added circular thumbnail with pulse animation
 - [x] Added price display for credibility
 - [x] Added CTA button "TAM CHCI TAKY >"
+
+### UX Enhancement: Chatbot Loading Animation
+- [x] Hide chatbot face when collapsed (show only icon - plane/suitcase)
+- [x] Add loading animation "Hledáme pro vás Travel Asistenta..." on open (3-5 seconds)
+- [x] Show face + chat window only after loading animation completes
+- [x] Add pulsing dots animation during loading for anticipation effect
+
+### Bug Fix: Broken Notification Thumbnails
+- [x] Fix broken destination thumbnails in SocialProofNotification (using only existing images)
+- [x] Move notifications to LEFT side to avoid overlap with chatbot on RIGHT

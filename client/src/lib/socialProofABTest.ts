@@ -16,6 +16,7 @@ export interface SocialProofVariant {
   displayDuration: number; // ms how long notification shows
 }
 
+// All variants now use LEFT position to avoid overlap with chatbot on RIGHT
 export const SOCIAL_PROOF_VARIANTS: SocialProofVariant[] = [
   {
     id: 'A',
@@ -28,12 +29,12 @@ export const SOCIAL_PROOF_VARIANTS: SocialProofVariant[] = [
   },
   {
     id: 'B',
-    name: 'Vpravo - Standardní frekvence',
-    position: 'right',
+    name: 'Vlevo - Delší zobrazení',
+    position: 'left',
     initialDelay: 5000,
-    minInterval: 15000,
-    maxInterval: 25000,
-    displayDuration: 8000,
+    minInterval: 20000,
+    maxInterval: 35000,
+    displayDuration: 10000,
   },
   {
     id: 'C',
@@ -46,12 +47,12 @@ export const SOCIAL_PROOF_VARIANTS: SocialProofVariant[] = [
   },
   {
     id: 'D',
-    name: 'Vpravo - Vyšší frekvence',
-    position: 'right',
-    initialDelay: 3000,
-    minInterval: 10000,
-    maxInterval: 20000,
-    displayDuration: 6000,
+    name: 'Vlevo - Nízká frekvence',
+    position: 'left',
+    initialDelay: 8000,
+    minInterval: 25000,
+    maxInterval: 45000,
+    displayDuration: 12000,
   },
 ];
 
