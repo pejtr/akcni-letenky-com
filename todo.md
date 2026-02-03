@@ -1244,3 +1244,14 @@
 - [x] Replace phone number with effective CTA button "Rezervovat nyní"
 - [x] Move notifications higher to not overlap bottom yellow panel (bottom-24)
 - [x] Fix tabs overflow on mobile (flex + horizontal scroll)
+
+### WhatsApp Group Integration (https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml)
+- [x] Add WhatsApp floating button (bottom left, above notifications)
+- [ ] Add WhatsApp CTA in hero section
+- [x] Add WhatsApp banner after featured cities section
+- [ ] Add WhatsApp CTA in exit-intent popup
+- [ ] Add WhatsApp section before footer
+- [ ] Create compelling copy for each placement
+- [x] Enlarge small airline logos to fill more space and be more readable (w-28 h-28 md:w-32 md:h-32)
+- [x] Remove WhatsApp floating button and move to chatbot area (now next to Travel Asistent)
+- [ ] Add WhatsApp icon/CTA to sticky header

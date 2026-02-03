@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 
+import WhatsAppBanner from "@/components/WhatsAppBanner";
+
 import SocialProofNotification from "@/components/SocialProofNotification";
 import OmioSection from "@/components/OmioSection";
 import MobileMenu from "@/components/MobileMenu";
@@ -450,6 +452,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* WhatsApp Community Banner */}
+      <WhatsAppBanner />
+
       {/* Nejprodávanější letenky tento týden */}
       <section aria-labelledby="top-this-week" className="py-12 bg-white">
         <div className="container">
@@ -632,7 +637,7 @@ export default function Home() {
                     <img
                       src={airline.logo}
                       alt={`${airline.name} logo`}
-                      className="w-20 h-20 md:w-24 md:h-24 object-contain flex-shrink-0"
+                      className="w-28 h-28 md:w-32 md:h-32 object-contain flex-shrink-0"
                       loading="lazy"
                     />
                     <span className="text-sm md:text-base font-medium text-blue-600 group-hover:underline text-center">
@@ -711,7 +716,7 @@ export default function Home() {
                 <img
                   src={airline.logo}
                   alt={`${airline.name} logo`}
-                  className="w-20 h-20 md:w-24 md:h-24 object-contain flex-shrink-0"
+                  className="w-28 h-28 md:w-32 md:h-32 object-contain flex-shrink-0"
                   loading="lazy"
                 />
                 <span className="text-sm md:text-base font-medium text-blue-600 group-hover:underline text-center">
@@ -945,6 +950,7 @@ export default function Home() {
       
       {/* Social Proof Notifications */}
       <SocialProofNotification />
+      
     </div>
   );
 }
