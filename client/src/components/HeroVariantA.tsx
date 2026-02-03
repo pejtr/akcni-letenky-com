@@ -25,15 +25,37 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
 
   return (
     <section 
-      className="relative bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20"
+      className="relative bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20 overflow-hidden"
       style={{
         backgroundImage: 'url("/hero-bg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
+      {/* Animated Background Layer */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: 'url("/hero-bg.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          animation: 'float 20s ease-in-out infinite',
+        }}
+      />
+      
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40"></div>
+      
+      <style>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px) scale(1.05);
+          }
+          50% {
+            transform: translateY(-10px) scale(1.08);
+          }
+        }
+      `}</style>
 
       {/* Content */}
       <div className="container relative z-10">

@@ -1207,4 +1207,9 @@
 - [x] Add wishlist heart icon to featured cities cards (Londýn, Paříž, Řím, Barcelona)
 - [x] Implement save to wishlist functionality with toggle on/off
 - [x] Show filled heart for saved items, outline heart for unsaved items
-- [ ] Display wishlist count badge in header navigation
+- [x] Display wishlist count badge in header navigation
+
+### New Features & Improvements
+- [x] Add subtle animated effect to hero section background (parallax or floating animation)
+- [x] Display wishlist count badge in header navigation (red badge with number)
+- [x] Investigate and fix script error in console (related to external scripts)

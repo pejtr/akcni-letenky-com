@@ -162,7 +162,17 @@
       src="%VITE_ANALYTICS_ENDPOINT%/umami"
       data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
     
-    <!-- Kiwi.com Search Widget -->
+    <!-- Kiwi.com Search Widget with Error Handling -->
+    <script>
+      // Global error handler for cross-origin script errors
+      window.addEventListener('error', function(e) {
+        // Suppress cross-origin script errors from external widgets
+        if (e.message === 'Script error.' && e.lineno === 0 && e.colno === 0) {
+          e.preventDefault();
+          return true;
+        }
+      }, true);
+    </script>
     <script 
       data-width="320px"
       data-passengers="1-0-0" 
@@ -173,7 +183,8 @@
       data-cabin="all"
       data-ui="tequila"
       data-transport-type="FL"
-      src="https://widgets.kiwi.com/scripts/widget-search-iframe.js">
+      src="https://widgets.kiwi.com/scripts/widget-search-iframe.js"
+      onerror="console.log('Kiwi widget failed to load')">
     </script>
   </body>
 

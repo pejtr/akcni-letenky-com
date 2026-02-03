@@ -31,15 +31,37 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
     <>
       {/* Hero Section - Clean Design */}
       <section 
-        className="relative py-32"
+        className="relative py-32 overflow-hidden"
         style={{
           backgroundImage: 'url("/hero-bg.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
+        {/* Animated Background Layer */}
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: 'url("/hero-bg.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            animation: 'float 20s ease-in-out infinite',
+          }}
+        />
+        
         {/* Subtle Overlay for readability */}
         <div className="absolute inset-0 bg-black/30"></div>
+        
+        <style>{`
+          @keyframes float {
+            0%, 100% {
+              transform: translateY(0px) scale(1.05);
+            }
+            50% {
+              transform: translateY(-10px) scale(1.08);
+            }
+          }
+        `}</style>
 
         {/* Content */}
         <div className="container relative z-10">
