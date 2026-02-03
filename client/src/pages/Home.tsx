@@ -12,6 +12,7 @@ import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 
 import WhatsAppBanner from "@/components/WhatsAppBanner";
+import NewsletterBar from "@/components/NewsletterBar";
 
 import SocialProofNotification from "@/components/SocialProofNotification";
 import OmioSection from "@/components/OmioSection";
@@ -247,6 +248,9 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       {/* Exit Intent Popup */}
       <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
+      
+      {/* Newsletter Bar */}
+      <NewsletterBar />
       {/* Breadcrumbs with Schema.org */}
       <script type="application/ld+json">
         {JSON.stringify({
@@ -304,18 +308,20 @@ export default function Home() {
             <MobileMenu />
             
             {/* Wishlist Heart Icon with Badge */}
-            <button 
-              className="relative text-[#003087] hover:text-[#E91E63] transition-colors"
-              aria-label="Seznam přání"
-              title="Seznam přání"
-            >
-              <Heart className="w-5 h-5" />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
-                  {wishlistCount}
-                </span>
-              )}
-            </button>
+            <Link href="/wishlist">
+              <a
+                className="relative text-[#003087] hover:text-[#E91E63] transition-colors inline-block"
+                aria-label="Seznam přání"
+                title="Seznam přání"
+              >
+                <Heart className="w-5 h-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+                    {wishlistCount}
+                  </span>
+                )}
+              </a>
+            </Link>
             
             <a 
               href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
@@ -383,6 +389,13 @@ export default function Home() {
                     onClick={() => trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl)}
                   >
                     <div className="relative h-48 overflow-hidden">
+                      {/* Gold "Nejprodávanější" Badge for top 3 */}
+                      {index < 3 && (
+                        <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs">
+                          <Award className="w-4 h-4" />
+                          Nejprodávanější
+                        </div>
+                      )}
                       <div
                         className="h-full bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                         style={{ backgroundImage: `url(${city.image})` }}

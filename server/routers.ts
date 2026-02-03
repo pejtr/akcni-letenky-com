@@ -627,6 +627,23 @@ export const appRouter = router({
       }),
   }),
 
+  // Newsletter subscription
+  newsletter: router({
+    // Subscribe to newsletter
+    subscribe: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const { captureEmail } = await import("./emailCapture");
+        await captureEmail({
+          email: input.email,
+          sessionId: `newsletter_${Date.now()}`,
+          gdprConsent: true,
+          consentText: "Newsletter subscription via sticky bar",
+        });
+        return { success: true };
+      }),
+  }),
+
   // A/B Test endpoints for chatbot personas
   abTest: router({
     // Get current A/B test status

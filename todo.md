@@ -1260,3 +1260,9 @@
 - [x] Remove search icon from mobile header (keep only wishlist, hamburger menu, CTA button)
 - [x] Ensure yellow bottom panel is visible on mobile (adjust z-index or positioning)
 - [x] Fix chatbot and WhatsApp button positioning to not overlap with bottom panel
+
+## Conversion Optimization Features (Current)
+- [x] Add gold "Nejprodávanější" badges to top 3 destinations (Barcelona, Řím, Londýn)
+- [x] Implement sticky newsletter bar with email capture form ("Získejte exkluzivní slevy až -80%")
+- [x] Create /wishlist page with saved destinations and price comparison
+- [x] Test all three features on desktop and mobile
