@@ -1234,3 +1234,13 @@
 ### Bug Fix: Broken Notification Thumbnails
 - [x] Fix broken destination thumbnails in SocialProofNotification (using only existing images)
 - [x] Move notifications to LEFT side to avoid overlap with chatbot on RIGHT
+
+### Performance: Optimize Notification Thumbnails
+- [x] Create small optimized thumbnails (80x80px) for notification images
+- [x] Upload thumbnails to local /thumbs folder
+- [x] Update SocialProofNotification to use optimized thumbnails
+
+### UX Improvement: Header CTA
+- [x] Replace phone number with effective CTA button "Rezervovat nyní"
+- [x] Move notifications higher to not overlap bottom yellow panel (bottom-24)
+- [x] Fix tabs overflow on mobile (flex + horizontal scroll)

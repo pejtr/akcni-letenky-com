@@ -6,7 +6,7 @@ import HeroVariantA from "@/components/HeroVariantA";
 import HeroVariantB from "@/components/HeroVariantB";
 import UrgencyTimer from "@/components/UrgencyTimer";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
-import { Phone, ChevronRight } from "lucide-react";
+import { ChevronRight, Plane } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
@@ -320,9 +320,14 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <a href="tel:+420223340510" className="flex items-center gap-1.5 text-[#E91E63] hover:text-[#C2185B] transition-colors whitespace-nowrap">
-              <Phone className="w-4 h-4 flex-shrink-0" />
-              <span className="font-semibold text-sm">223 340 510</span>
+            <a 
+              href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-4 py-2 rounded-full transition-colors whitespace-nowrap font-semibold text-sm shadow-md hover:shadow-lg"
+            >
+              <Plane className="w-4 h-4 flex-shrink-0" />
+              <span>Rezervovat nyní</span>
             </a>
           </div>
         </div>
@@ -542,7 +547,7 @@ export default function Home() {
       <section className="py-12 bg-white">
         <div className="container">
           <Tabs defaultValue="states" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 max-w-3xl mx-auto mb-8">
+            <TabsList className="flex w-full max-w-3xl mx-auto mb-8 overflow-x-auto gap-1 sm:grid sm:grid-cols-4">
               <TabsTrigger value="states">Státy</TabsTrigger>
               <TabsTrigger value="cities">Města</TabsTrigger>
               <TabsTrigger value="airlines">Letecké společnosti</TabsTrigger>

@@ -123,11 +123,12 @@ export function getVariantStats(): Array<{
 }
 
 // Get position classes based on variant
+// Using bottom-24 to avoid overlap with bottom yellow panel
 export function getPositionClasses(variant: SocialProofVariant): string {
   if (variant.position === 'left') {
-    return 'fixed bottom-6 left-6 z-[60] space-y-3 max-w-sm';
+    return 'fixed bottom-24 left-6 z-[60] space-y-3 max-w-sm';
   }
-  return 'fixed bottom-6 right-6 z-[60] space-y-3 max-w-sm';
+  return 'fixed bottom-24 right-6 z-[60] space-y-3 max-w-sm';
 }
 
 // Get animation classes based on position

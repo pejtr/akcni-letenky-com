@@ -47,19 +47,19 @@ const CITIES = [
   "Pardubic", "Zlína", "Karlových Varů", "Jihlavy", "Ústí nad Labem"
 ];
 
-// Only use destinations with existing images in /client/public/
+// Only use destinations with existing images - using optimized thumbnails for fast loading
 const DESTINATIONS = [
-  { name: "Paříž", slug: "paris-france", image: "/paris.jpg", priceRange: [1200, 1800] },
-  { name: "Barcelona", slug: "barcelona-spain", image: "/barcelona.jpg", priceRange: [1100, 1600] },
-  { name: "Londýn", slug: "london-united-kingdom", image: "/london.jpg", priceRange: [900, 1400] },
-  { name: "Řím", slug: "rome-italy", image: "/rome.jpg", priceRange: [1000, 1500] },
-  { name: "Dubaj", slug: "dubai-united-arab-emirates", image: "/dubai.jpg", priceRange: [8000, 12000] },
-  { name: "Bali", slug: "bali-indonesia", image: "/bali.jpg", priceRange: [12000, 18000] },
-  { name: "New York", slug: "new-york-new-york-united-states", image: "/newyork.jpg", priceRange: [9000, 15000] },
-  { name: "Malta", slug: "malta", image: "/malta-flights.jpg", priceRange: [1500, 2500] },
-  { name: "Chorvatsko", slug: "croatia", image: "/croatia-flights.jpg", priceRange: [800, 1500] },
-  { name: "Kypr", slug: "cyprus", image: "/cyprus-flights.jpg", priceRange: [2000, 3500] },
-  { name: "Zanzibar", slug: "zanzibar-tanzania", image: "/zanzibar-flights.jpg", priceRange: [15000, 25000] },
+  { name: "Paříž", slug: "paris-france", image: "/thumbs/paris.jpg", priceRange: [1200, 1800] },
+  { name: "Barcelona", slug: "barcelona-spain", image: "/thumbs/barcelona.jpg", priceRange: [1100, 1600] },
+  { name: "Londýn", slug: "london-united-kingdom", image: "/thumbs/london.jpg", priceRange: [900, 1400] },
+  { name: "Řím", slug: "rome-italy", image: "/thumbs/rome.jpg", priceRange: [1000, 1500] },
+  { name: "Dubaj", slug: "dubai-united-arab-emirates", image: "/thumbs/dubai.jpg", priceRange: [8000, 12000] },
+  { name: "Bali", slug: "bali-indonesia", image: "/thumbs/bali.jpg", priceRange: [12000, 18000] },
+  { name: "New York", slug: "new-york-new-york-united-states", image: "/thumbs/newyork.jpg", priceRange: [9000, 15000] },
+  { name: "Malta", slug: "malta", image: "/thumbs/malta-flights.jpg", priceRange: [1500, 2500] },
+  { name: "Chorvatsko", slug: "croatia", image: "/thumbs/croatia-flights.jpg", priceRange: [800, 1500] },
+  { name: "Kypr", slug: "cyprus", image: "/thumbs/cyprus-flights.jpg", priceRange: [2000, 3500] },
+  { name: "Zanzibar", slug: "zanzibar-tanzania", image: "/thumbs/zanzibar-flights.jpg", priceRange: [15000, 25000] },
 ];
 
 const ACTIONS = [
