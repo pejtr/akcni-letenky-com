@@ -1279,5 +1279,7 @@
 - [x] Add "Vlaky & Autobusy" menu item to desktop navigation
 - [x] Add "Vlaky & Autobusy" menu item to mobile navigation (hamburger menu)
 - [x] Add small WhatsApp group link to footer
-- [ ] Create dedicated /vlaky-autobusy landing page with Omio integration
-- [ ] Test navigation on desktop and mobile
+- [x] Create /vlaky-autobusy landing page with Omio search widget
+- [x] Add trains vs flights comparison section
+- [x] Add popular Czech routes (Praha-Vídeň, Praha-Berlín, Praha-Mnichov, etc.)
+- [x] Test Omio affiliate tracking and page functionality
