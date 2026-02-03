@@ -17,6 +17,7 @@ import AdminEmails from "./pages/AdminEmails";
 import HeroABTestDashboard from "./pages/HeroABTestDashboard";
 import Wishlist from "./pages/Wishlist";
 import VlakyAutobusy from "./pages/VlakyAutobusy";
+import PriceComparison from "./pages/PriceComparison";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/admin/hero-ab-test" component={HeroABTestDashboard} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
+      <Route path="/porovnani-cen" component={PriceComparison} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

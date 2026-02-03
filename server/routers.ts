@@ -642,6 +642,34 @@ export const appRouter = router({
         });
         return { success: true };
       }),
+
+    // Get newsletter preview (admin only)
+    preview: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Admin access required");
+      }
+      const { getWeeklyNewsletterContent, generateNewsletterHTML } = await import("./emailAutomation");
+      const content = await getWeeklyNewsletterContent();
+      const html = generateNewsletterHTML(content);
+      return { content, html };
+    }),
+
+    // Send newsletter manually (admin only)
+    send: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Admin access required");
+      }
+      const { sendWeeklyNewsletter } = await import("./emailAutomation");
+      const result = await sendWeeklyNewsletter();
+      return result;
+    }),
+
+    // Get subscriber count
+    subscriberCount: publicProcedure.query(async () => {
+      const { getNewsletterSubscribers } = await import("./emailAutomation");
+      const subscribers = await getNewsletterSubscribers();
+      return { count: subscribers.length };
+    }),
   }),
 
   // A/B Test endpoints for chatbot personas

@@ -1283,3 +1283,14 @@
 - [x] Add trains vs flights comparison section
 - [x] Add popular Czech routes (Praha-Vídeň, Praha-Berlín, Praha-Mnichov, etc.)
 - [x] Test Omio affiliate tracking and page functionality
+
+## Content & Automation Features (Current)
+- [x] Create blog section with train travel articles for SEO
+- [x] Write 3-5 SEO-optimized articles (train routes, savings tips, eco travel)
+- [x] Add relevant images to each article
+- [x] Implement email automation for weekly newsletter
+- [x] Create newsletter template with travel tips and deals
+- [x] Add newsletter subscription tracking and analytics
+- [x] Create price comparison page for different transport types
+- [x] Add comparison for popular routes (train vs bus vs flight)
+- [x] Test all features on desktop and mobile
