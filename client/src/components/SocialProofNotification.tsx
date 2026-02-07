@@ -56,10 +56,10 @@ const DESTINATIONS = [
   { name: "Dubaj", slug: "dubai-united-arab-emirates", image: "/thumbs/dubai.jpg", priceRange: [8000, 12000] },
   { name: "Bali", slug: "bali-indonesia", image: "/thumbs/bali.jpg", priceRange: [12000, 18000] },
   { name: "New York", slug: "new-york-new-york-united-states", image: "/thumbs/newyork.jpg", priceRange: [9000, 15000] },
-  { name: "Malta", slug: "malta", image: "/thumbs/malta-flights.jpg", priceRange: [1500, 2500] },
-  { name: "Chorvatsko", slug: "croatia", image: "/thumbs/croatia-flights.jpg", priceRange: [800, 1500] },
-  { name: "Kypr", slug: "cyprus", image: "/thumbs/cyprus-flights.jpg", priceRange: [2000, 3500] },
-  { name: "Zanzibar", slug: "zanzibar-tanzania", image: "/thumbs/zanzibar-flights.jpg", priceRange: [15000, 25000] },
+  { name: "Malta", slug: "malta", image: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/DJjaoQyTXcscHYgH.jpg", priceRange: [1500, 2500] },
+  { name: "Chorvatsko", slug: "croatia", image: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/vDFnKepqgOENDyxi.jpg", priceRange: [800, 1500] },
+  { name: "Kypr", slug: "cyprus", image: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/fahRfrtwCRRnemOO.jpg", priceRange: [2000, 3500] },
+  { name: "Zanzibar", slug: "zanzibar-tanzania", image: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/SvAWJCDHRySUSggs.jpg", priceRange: [15000, 25000] },
 ];
 
 const ACTIONS = [

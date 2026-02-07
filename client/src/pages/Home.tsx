@@ -783,7 +783,7 @@ export default function Home() {
       <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-[100] animate-in slide-in-from-bottom">
           <div className="container">
             <p className="text-center text-sm md:text-base font-bold text-black">
-              Akční nabídka: <span className="text-[#E91E63]">Letenky do 1 500 Kč</span> | 
+              <span className="text-[#E91E63]">Letenky do 1 500 Kč</span> | 
               <span className="text-blue-700"> Dovolená se slevou až 80 %</span> | 
               <span className="text-blue-700"> Eurovíkendy</span> | 
               <span className="text-blue-700"> Business class</span>
@@ -907,24 +907,24 @@ export default function Home() {
                   Přidejte se ke komunitě 60 tis. + členů
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3">
+                  <a href="https://www.facebook.com/groups/akcniletenky" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
                     <div className="w-10 h-10 bg-[#1877F2] rounded flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold">f</span>
                     </div>
                     <div>
                       <p className="font-semibold text-sm">Akční letenky a cestování</p>
-                      <p className="text-xs text-muted-foreground">Tipy a rady od komunity</p>
+                      <p className="text-xs text-muted-foreground">Tipy a rady od komunity.</p>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-3">
+                  </a>
+                  <a href="https://www.facebook.com/groups/tourdesvet" target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
                     <div className="w-10 h-10 bg-[#1877F2] rounded flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold">f</span>
                     </div>
                     <div>
                       <p className="font-semibold text-sm">Tour De Svět - Cestování</p>
-                      <p className="text-xs text-muted-foreground">Inspirace pro vaše cesty</p>
+                      <p className="text-xs text-muted-foreground">Inspirace pro vaše cesty.</p>
                     </div>
-                  </div>
+                  </a>
                   <a 
                     href="https://chat.whatsapp.com/KDpuBfwm1Uw2GYc0PJJQXE" 
                     target="_blank" 
@@ -948,7 +948,7 @@ export default function Home() {
             {/* CTA Button */}
             <div className="text-center">
               <Button size="lg" className="bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold px-8 py-6 text-base md:text-lg rounded-full shadow-lg max-w-full whitespace-normal">
-                ✈️ Zobrazit nejvýhodnější letenky
+                👉 Zobrazit nejvýhodnější letenky
               </Button>
             </div>
 

@@ -1294,3 +1294,24 @@
 - [x] Create price comparison page for different transport types
 - [x] Add comparison for popular routes (train vs bus vs flight)
 - [x] Test all features on desktop and mobile
+
+
+## Final Link Audit & QA Testing (Current Priority)
+- [x] Visit original akcni-letenky.com and document all navigation links
+- [x] Audit all links in header navigation (desktop and mobile)
+- [x] Audit all links in footer
+- [x] Audit all CTA buttons and affiliate links
+- [x] Verify WhatsApp group link is correct
+- [x] Verify social media links match original
+- [x] Fix any incorrect or broken links
+- [x] Test all links work correctly on desktop
+- [x] Test all links work correctly on mobile
+- [x] Perform comprehensive QA testing (functionality, design, responsiveness)
+- [x] Test chatbot functionality
+- [x] Test wishlist functionality
+- [x] Test newsletter signup
+- [x] Test A/B test variants
+- [x] Test blog articles and navigation
+- [x] Test trains & buses page
+- [x] Test price comparison page
+- [ ] Create final checkpoint for delivery
