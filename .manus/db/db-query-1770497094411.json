@@ -1,0 +1,19 @@
+{
+  "query": "SELECT hash FROM __drizzle_migrations ORDER BY created_at DESC LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT hash FROM __drizzle_migrations ORDER BY created_at DESC LIMIT 3;",
+  "rows": [
+    {
+      "hash": "9733f95aee626770b412a61c511e61019484d9901bebc3823edda55b73a66995"
+    },
+    {
+      "hash": "d8f05ebb722a46adfde1edd2839f07920d70117ca3ed54a6decc9163426b15bb"
+    },
+    {
+      "hash": "03b3b2cbad7edb949c1380a431ce6e9706abcf5dafb9b9584691319a1ceacd00"
+    }
+  ],
+  "messages": [],
+  "stdout": "hash\n9733f95aee626770b412a61c511e61019484d9901bebc3823edda55b73a66995\nd8f05ebb722a46adfde1edd2839f07920d70117ca3ed54a6decc9163426b15bb\n03b3b2cbad7edb949c1380a431ce6e9706abcf5dafb9b9584691319a1ceacd00\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

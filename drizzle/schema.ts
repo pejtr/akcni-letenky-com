@@ -676,16 +676,24 @@ export type InsertSocialShare = typeof socialShares.$inferInsert;
 
 /**
  * Browsing history - tracks user browsing for personalization (server-side)
+ * Matches existing DB table with columns: userId, sessionId, destinationSlug, destinationName,
+ * pageType, contentId, timeSpent, scrollDepth, clickedCTA, addedToWishlist, deviceType, viewedAt, createdAt
  */
 export const browsingHistory = mysqlTable("browsing_history", {
   id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
   sessionId: varchar("sessionId", { length: 64 }).notNull(),
-  destination: varchar("destination", { length: 100 }).notNull(),
   destinationSlug: varchar("destinationSlug", { length: 100 }).notNull(),
-  price: int("price"),
-  viewDuration: int("viewDuration"), // Seconds spent on page
-  source: varchar("source", { length: 50 }), // 'homepage', 'search', 'blog', 'direct'
+  destinationName: varchar("destinationName", { length: 100 }).notNull(),
+  pageType: varchar("pageType", { length: 50 }),
+  contentId: varchar("contentId", { length: 100 }),
+  timeSpent: int("timeSpent"),
+  scrollDepth: int("scrollDepth"),
+  clickedCTA: int("clickedCTA").default(0),
+  addedToWishlist: int("addedToWishlist").default(0),
+  deviceType: varchar("deviceType", { length: 20 }),
   viewedAt: timestamp("viewedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export type BrowsingHistoryItem = typeof browsingHistory.$inferSelect;

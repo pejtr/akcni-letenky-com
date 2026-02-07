@@ -1,0 +1,52 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'browsing_history' AND TABLE_SCHEMA = DATABASE() ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'browsing_history' AND TABLE_SCHEMA = DATABASE() ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "userId"
+    },
+    {
+      "COLUMN_NAME": "sessionId"
+    },
+    {
+      "COLUMN_NAME": "destinationSlug"
+    },
+    {
+      "COLUMN_NAME": "destinationName"
+    },
+    {
+      "COLUMN_NAME": "pageType"
+    },
+    {
+      "COLUMN_NAME": "contentId"
+    },
+    {
+      "COLUMN_NAME": "timeSpent"
+    },
+    {
+      "COLUMN_NAME": "scrollDepth"
+    },
+    {
+      "COLUMN_NAME": "clickedCTA"
+    },
+    {
+      "COLUMN_NAME": "addedToWishlist"
+    },
+    {
+      "COLUMN_NAME": "deviceType"
+    },
+    {
+      "COLUMN_NAME": "viewedAt"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nuserId\nsessionId\ndestinationSlug\ndestinationName\npageType\ncontentId\ntimeSpent\nscrollDepth\nclickedCTA\naddedToWishlist\ndeviceType\nviewedAt\ncreatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 65
+}

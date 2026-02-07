@@ -1,0 +1,66 @@
+{
+  "query": "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'browsing_history' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'browsing_history' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "userId",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "sessionId",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "destinationSlug",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "destinationName",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "pageType",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "contentId",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "timeSpent",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "scrollDepth",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "clickedCTA",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "addedToWishlist",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "deviceType",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "viewedAt",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "createdAt",
+      "DATA_TYPE": "timestamp"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\tDATA_TYPE\nid\tint\nuserId\tint\nsessionId\tvarchar\ndestinationSlug\tvarchar\ndestinationName\tvarchar\npageType\tvarchar\ncontentId\tint\ntimeSpent\tint\nscrollDepth\tint\nclickedCTA\tint\naddedToWishlist\tint\ndeviceType\tvarchar\nviewedAt\ttimestamp\ncreatedAt\ttimestamp\n",
+  "stderr": "",
+  "execution_time_ms": 64
+}

@@ -130,18 +130,14 @@ export default function Wishlist() {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container py-4">
           <div className="flex items-center justify-between">
-            <Link href="/">
-              <a className="flex items-center gap-2 text-[#003087] hover:text-[#E91E63] transition-colors">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-                </svg>
-                <span className="font-bold text-xl">AKČNÍ-LETENKY.com</span>
-              </a>
+            <Link href="/" className="flex items-center gap-2 text-[#003087] hover:text-[#E91E63] transition-colors">
+              <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+              </svg>
+              <span className="font-bold text-xl">AKČNÍ-LETENKY.com</span>
             </Link>
             <Button asChild variant="outline">
-              <Link href="/">
-                <a>← Zpět na hlavní stránku</a>
-              </Link>
+              <Link href="/">← Zpět na hlavní stránku</Link>
             </Button>
           </div>
         </div>
@@ -171,9 +167,7 @@ export default function Wishlist() {
               Začněte přidávat destinace kliknutím na ❤️ ikonu u nabídek
             </p>
             <Button asChild size="lg">
-              <Link href="/">
-                <a>Prohlédnout nabídky</a>
-              </Link>
+              <Link href="/">Prohlédnout nabídky</Link>
             </Button>
           </div>
         )}

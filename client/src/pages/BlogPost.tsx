@@ -19,12 +19,10 @@ export default function BlogPost() {
           <h1 className="text-4xl font-bold text-gray-800 mb-4">Článek nenalezen</h1>
           <p className="text-gray-600 mb-8">Omlouváme se, ale tento článek neexistuje nebo byl odstraněn.</p>
           <Link href="/blog">
-            <a>
-              <Button>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Zpět na blog
-              </Button>
-            </a>
+            <Button>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Zpět na blog
+            </Button>
           </Link>
         </div>
       </div>
@@ -37,18 +35,12 @@ export default function BlogPost() {
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/">
-              <a className="flex items-center gap-2">
-                <img src="/logo.png" alt="Akční Letenky" className="h-10" />
-              </a>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="Akční Letenky" className="h-10" />
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/">
-                <a className="text-gray-700 hover:text-pink-600 transition-colors">Domů</a>
-              </Link>
-              <Link href="/blog">
-                <a className="text-gray-700 hover:text-pink-600 transition-colors">Blog</a>
-              </Link>
+              <Link href="/" className="text-gray-700 hover:text-pink-600 transition-colors">Domů</Link>
+              <Link href="/blog" className="text-gray-700 hover:text-pink-600 transition-colors">Blog</Link>
               <a href="tel:+420123456789" className="text-gray-700 hover:text-pink-600 transition-colors">
                 📞 +420 123 456 789
               </a>
@@ -62,12 +54,10 @@ export default function BlogPost() {
         <div className="container max-w-4xl">
           {/* Back Button */}
           <Link href="/blog">
-            <a>
-              <Button variant="ghost" className="mb-6">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Zpět na blog
-              </Button>
-            </a>
+            <Button variant="ghost" className="mb-6">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Zpět na blog
+            </Button>
           </Link>
 
           {isLoading ? (
@@ -148,11 +138,9 @@ export default function BlogPost() {
                   Prohlédněte si naše aktuální nabídky a ušetřete až 70% na letenkách do celého světa!
                 </p>
                 <Link href="/">
-                  <a>
-                    <Button size="lg" variant="secondary">
-                      Zobrazit akční letenky
-                    </Button>
-                  </a>
+                  <Button size="lg" variant="secondary">
+                    Zobrazit akční letenky
+                  </Button>
                 </Link>
               </div>
             </>
@@ -184,11 +172,9 @@ export default function BlogPost() {
                     <CardContent>
                       <p className="text-gray-600 text-sm line-clamp-2">{relatedArticle.excerpt}</p>
                       <Link href={`/blog/${relatedArticle.slug}`}>
-                        <a>
-                          <Button variant="link" className="mt-4 p-0">
-                            Číst více →
-                          </Button>
-                        </a>
+                        <Button variant="link" className="mt-4 p-0">
+                          Číst více →
+                        </Button>
                       </Link>
                     </CardContent>
                   </Card>

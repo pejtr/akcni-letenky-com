@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "c91f3b52-07cd-4522-884f-8ebb267c2fcc",
+  "id": "d698d778-64bc-470f-bb8e-a00bc26b9e9b",
   "prevId": "cbf01b41-2cd9-4e28-a9ca-9ba34e963590",
   "tables": {
     "ab_test_assignments": {
@@ -433,16 +433,16 @@
           "notNull": true,
           "autoincrement": true
         },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "sessionId": {
           "name": "sessionId",
           "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "destination": {
-          "name": "destination",
-          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -454,29 +454,74 @@
           "notNull": true,
           "autoincrement": false
         },
-        "price": {
-          "name": "price",
-          "type": "int",
+        "destinationName": {
+          "name": "destinationName",
+          "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
-        "viewDuration": {
-          "name": "viewDuration",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "source": {
-          "name": "source",
+        "pageType": {
+          "name": "pageType",
           "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "contentId": {
+          "name": "contentId",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timeSpent": {
+          "name": "timeSpent",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "scrollDepth": {
+          "name": "scrollDepth",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "clickedCTA": {
+          "name": "clickedCTA",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
+        },
+        "addedToWishlist": {
+          "name": "addedToWishlist",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
+        },
+        "deviceType": {
+          "name": "deviceType",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "viewedAt": {
           "name": "viewedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(now())"
+        },
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,

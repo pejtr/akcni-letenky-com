@@ -21,13 +21,16 @@ export async function trackPageView(data: {
   const db = await getDb();
   if (!db) return;
 
-  await db.insert(browsingHistory).values({
-    sessionId: data.sessionId,
-    destination: data.destination,
-    destinationSlug: data.destinationSlug,
-    price: data.price || null,
-    source: data.source || "homepage",
-  });
+  try {
+    await db.insert(browsingHistory).values({
+      sessionId: data.sessionId,
+      destinationSlug: data.destinationSlug,
+      destinationName: data.destination,
+      pageType: data.source || "homepage",
+    });
+  } catch (e) {
+    console.error("[BrowsingHistory] Failed to track page view:", e);
+  }
 }
 
 // ============ Get Browsing History ============
@@ -36,12 +39,17 @@ export async function getSessionHistory(sessionId: string, limit = 20) {
   const db = await getDb();
   if (!db) return [];
 
-  return db
-    .select()
-    .from(browsingHistory)
-    .where(eq(browsingHistory.sessionId, sessionId))
-    .orderBy(desc(browsingHistory.viewedAt))
-    .limit(limit);
+  try {
+    return await db
+      .select()
+      .from(browsingHistory)
+      .where(eq(browsingHistory.sessionId, sessionId))
+      .orderBy(desc(browsingHistory.viewedAt))
+      .limit(limit);
+  } catch (e) {
+    console.error("[BrowsingHistory] Failed to get session history:", e);
+    return [];
+  }
 }
 
 // ============ Personalized Recommendations ============
@@ -129,7 +137,7 @@ export async function getPersonalizedRecommendations(
           destination: info.name,
           destinationSlug: slug,
           score: 50 + Math.floor(Math.random() * 30),
-          reason: `Protože jste se zajímali o ${entry.destination}`,
+          reason: `Protože jste se zajímali o ${entry.destinationName}`,
           estimatedPrice: info.price,
         });
       }
@@ -180,16 +188,21 @@ export async function getPopularDestinations(limit = 10) {
   const db = await getDb();
   if (!db) return [];
 
-  const result = await db
-    .select({
-      destination: browsingHistory.destination,
-      destinationSlug: browsingHistory.destinationSlug,
-      viewCount: sql<number>`COUNT(*)`.as("viewCount"),
-    })
-    .from(browsingHistory)
-    .groupBy(browsingHistory.destination, browsingHistory.destinationSlug)
-    .orderBy(desc(sql`viewCount`))
-    .limit(limit);
+  try {
+    const result = await db
+      .select({
+        destination: browsingHistory.destinationName,
+        destinationSlug: browsingHistory.destinationSlug,
+        viewCount: sql<number>`COUNT(*)`.as("viewCount"),
+      })
+      .from(browsingHistory)
+      .groupBy(browsingHistory.destinationName, browsingHistory.destinationSlug)
+      .orderBy(desc(sql`viewCount`))
+      .limit(limit);
 
-  return result;
+    return result;
+  } catch (e) {
+    console.error("[BrowsingHistory] Failed to get popular destinations:", e);
+    return [];
+  }
 }

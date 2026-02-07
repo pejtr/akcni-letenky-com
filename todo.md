@@ -1388,3 +1388,8 @@
 - [x] Add destination similarity engine for smart recommendations
 - [x] Integrate into homepage after TopFlightsThisWeek section
 - [x] Write vitest tests for personalization logic (10 tests passing)
+
+## Bug Fixes (2026-02-07)
+- [x] Fix browsing_history SQL query error - updated schema to match actual DB columns
+- [x] Fix nested <a> tags in BlogPost.tsx, DestinationPage.tsx, VlakyAutobusy.tsx, Wishlist.tsx, Home.tsx
+- [x] All 200 tests passing (17 test files), no TypeScript errors, no console errors

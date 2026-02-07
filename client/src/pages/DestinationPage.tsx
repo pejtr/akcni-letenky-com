@@ -40,12 +40,10 @@ export default function DestinationPage() {
           <h1 className="text-4xl font-bold text-gray-800 mb-4">Destinace nenalezena</h1>
           <p className="text-gray-600 mb-8">Omlouváme se, ale tato destinace neexistuje.</p>
           <Link href="/">
-            <a>
-              <Button>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Zpět na hlavní stránku
-              </Button>
-            </a>
+            <Button>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Zpět na hlavní stránku
+            </Button>
           </Link>
         </div>
       </div>
@@ -58,18 +56,12 @@ export default function DestinationPage() {
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/">
-              <a className="flex items-center gap-2">
-                <img src="/logo.png" alt="Akční Letenky" className="h-10" />
-              </a>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="Akční Letenky" className="h-10" />
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/">
-                <a className="text-gray-700 hover:text-pink-600 transition-colors">Domů</a>
-              </Link>
-              <Link href="/blog">
-                <a className="text-gray-700 hover:text-pink-600 transition-colors">Blog</a>
-              </Link>
+              <Link href="/" className="text-gray-700 hover:text-pink-600 transition-colors">Domů</Link>
+              <Link href="/blog" className="text-gray-700 hover:text-pink-600 transition-colors">Blog</Link>
               <a href="tel:+420123456789" className="text-gray-700 hover:text-pink-600 transition-colors">
                 📞 +420 123 456 789
               </a>
@@ -82,9 +74,7 @@ export default function DestinationPage() {
       <div className="bg-white border-b border-gray-200">
         <div className="container py-3">
           <nav className="flex items-center gap-2 text-sm text-gray-600">
-            <Link href="/">
-              <a className="hover:text-pink-600">Domů</a>
-            </Link>
+            <Link href="/" className="hover:text-pink-600">Domů</Link>
             <span>/</span>
             <span className="text-gray-900 font-medium">
               {isLoading ? "Načítání..." : `Letenky do ${destination?.name}`}
@@ -357,11 +347,9 @@ export default function DestinationPage() {
                 Prohlédněte si všechny aktuální nabídky letenek a najděte tu nejlepší cenu pro vaši cestu.
               </p>
               <Link href="/">
-                <a>
-                  <Button size="lg" variant="secondary">
-                    Zobrazit všechny nabídky
-                  </Button>
-                </a>
+                <Button size="lg" variant="secondary">
+                  Zobrazit všechny nabídky
+                </Button>
               </Link>
             </div>
           </section>

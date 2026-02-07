@@ -58,21 +58,13 @@ export default function VlakyAutobusy() {
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/">
-              <a className="flex items-center gap-2">
-                <img src="/logo-akcni-letenky.png" alt="Akční Letenky" className="h-10" />
-              </a>
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo-akcni-letenky.png" alt="Akční Letenky" className="h-10" />
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/">
-                <a className="text-gray-700 hover:text-blue-600 transition-colors">Domů</a>
-              </Link>
-              <Link href="/levne-letenky">
-                <a className="text-gray-700 hover:text-blue-600 transition-colors">Levné Letenky</a>
-              </Link>
-              <Link href="/dovolene">
-                <a className="text-gray-700 hover:text-blue-600 transition-colors">Dovolená</a>
-              </Link>
+              <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors">Domů</Link>
+              <Link href="/levne-letenky" className="text-gray-700 hover:text-blue-600 transition-colors">Levné Letenky</Link>
+              <Link href="/dovolene" className="text-gray-700 hover:text-blue-600 transition-colors">Dovolená</Link>
             </nav>
           </div>
         </div>
@@ -341,10 +333,8 @@ export default function VlakyAutobusy() {
             © 2026 AKČNÍ-LETENKY.com | Všechna práva vyhrazena
           </p>
           <div className="mt-4">
-            <Link href="/">
-              <a className="text-blue-400 hover:text-blue-300 transition-colors">
-                ← Zpět na hlavní stránku
-              </a>
+            <Link href="/" className="text-blue-400 hover:text-blue-300 transition-colors">
+              ← Zpět na hlavní stránku
             </Link>
           </div>
         </div>
