@@ -360,15 +360,19 @@ export default function Home() {
         <div className="container">
           <div className="flex flex-wrap items-center justify-center gap-6 text-white text-sm md:text-base font-medium">
             <a href="#dovolena" className="hover:underline flex items-center gap-1">
-              ⚡ Ušetřete pod 1000 Kč
+              Dovolená se slevou až 80 %
             </a>
             <span className="text-white/60">|</span>
             <a href="#eurovikendy" className="hover:underline flex items-center gap-1">
-              <span className="font-semibold">EU</span> Eurovíkendy
+              Eurovíkendy
+            </a>
+            <span className="text-white/60">|</span>
+            <a href="#hotely" className="hover:underline flex items-center gap-1">
+              Hotely
             </a>
             <span className="text-white/60">|</span>
             <a href="#nejlevnejsi" className="hover:underline flex items-center gap-1">
-              💰 Nejlevnější letenky od 500 Kč
+              Nejlevnější letenky od 590 Kč
             </a>
           </div>
         </div>
@@ -783,7 +787,7 @@ export default function Home() {
       <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-[100] animate-in slide-in-from-bottom">
           <div className="container">
             <p className="text-center text-sm md:text-base font-bold text-black">
-              <span className="text-[#E91E63]">Letenky do 1 500 Kč</span> | 
+              <span className="text-[#E91E63]">Akční nabídka:</span> <span className="text-blue-700">Letenky do 1 500 Kč</span> | 
               <span className="text-blue-700"> Dovolená se slevou až 80 %</span> | 
               <span className="text-blue-700"> Eurovíkendy</span> | 
               <span className="text-blue-700"> Business class</span>

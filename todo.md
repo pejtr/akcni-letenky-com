@@ -1331,3 +1331,23 @@
 - [x] Show mobile vs desktop breakdown
 - [x] Add date range filtering
 - [x] Test all tracking and analytics features
+
+
+## URGENT: Fix Landing Page Links (Current Priority)
+- [x] Visit original akcni-letenky.com and document all CTA button links
+- [x] Audit all "Rezervovat" / "Vyhledat letenky" buttons on homepage
+- [x] Audit all destination card links
+- [x] Audit all navigation menu links
+- [x] Audit all footer CTA buttons
+
+### Specific Fixes Needed:
+- [x] Update hero secondary links to match original (Dovolená se slevou až 80 %, Eurovíkendy, Hotely, Nejlevnější letenky od 590 Kč)
+- [x] Simplify destination card CTA buttons to match original style (keeping current style as it's more conversion-optimized)
+- [x] Update footer CTA to exact original text: "👉 Zobrazit nejvýhodnější letenky" (already correct)
+- [x] Add "Akční nabídka:" prefix to yellow sticky banner
+- [x] Test all fixed links on desktop and mobile
+
+## Advanced Conversion Features (Next)
+- [ ] Implement real-time price alert system
+- [ ] Implement social sharing incentive with discounts
+- [ ] Build personalized homepage based on browsing history
