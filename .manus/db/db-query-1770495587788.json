@@ -1,0 +1,13 @@
+{
+  "query": "SHOW TABLES LIKE 'price%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SHOW TABLES LIKE 'price%';",
+  "rows": [
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC (price%)": "price_alerts"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_GquhzstpDbNW3eC4KqTsEC (price%)\nprice_alerts\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

@@ -44,6 +44,28 @@ import {
   getTestResults,
   getEventBreakdown,
 } from "./abTest";
+import {
+  createPriceAlert,
+  getPriceAlertsByEmail,
+  deactivatePriceAlert,
+  deletePriceAlert,
+  getPriceHistoryForDestination,
+  recordPrice,
+  getPriceAlertStats,
+  checkPriceDropsAndNotify,
+} from "./priceAlerts";
+import {
+  createSocialShare,
+  trackShareClick,
+  trackShareConversion,
+  validateDiscountCode,
+  getSocialShareStats,
+} from "./socialSharing";
+import {
+  trackPageView,
+  getPersonalizedRecommendations,
+  getPopularDestinations,
+} from "./browsingHistory";
 import { generateDailyArticles } from "./articleGenerator";
 import { adminAnalyticsRouter } from "./adminAnalytics";
 import {
@@ -814,6 +836,133 @@ export const appRouter = router({
       }))
       .query(async ({ input }) => {
         return await getEventBreakdown(input.testName);
+      }),
+  }),
+
+  // ============ Price Alerts ============
+  priceAlerts: router({
+    create: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        destination: z.string(),
+        destinationSlug: z.string(),
+        currentPrice: z.number(),
+        targetPrice: z.number().optional(),
+        alertThreshold: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await createPriceAlert(input);
+      }),
+
+    getByEmail: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .query(async ({ input }) => {
+        return await getPriceAlertsByEmail(input.email);
+      }),
+
+    deactivate: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return await deactivatePriceAlert(input.id);
+      }),
+
+    delete: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return await deletePriceAlert(input.id);
+      }),
+
+    getPriceHistory: publicProcedure
+      .input(z.object({ destinationSlug: z.string(), limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        return await getPriceHistoryForDestination(input.destinationSlug, input.limit);
+      }),
+
+    recordPrice: publicProcedure
+      .input(z.object({
+        destination: z.string(),
+        destinationSlug: z.string(),
+        price: z.number(),
+        source: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await recordPrice(input);
+        return { success: true };
+      }),
+
+    getStats: protectedProcedure.query(async () => {
+      return await getPriceAlertStats();
+    }),
+
+    checkAndNotify: protectedProcedure.mutation(async () => {
+      return await checkPriceDropsAndNotify();
+    }),
+  }),
+
+  // ============ Social Sharing ============
+  socialSharing: router({
+    createShare: publicProcedure
+      .input(z.object({
+        platform: z.string(),
+        destination: z.string().optional(),
+        destinationSlug: z.string().optional(),
+        pageUrl: z.string().optional(),
+        referrerEmail: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await createSocialShare(input);
+      }),
+
+    trackClick: publicProcedure
+      .input(z.object({ shareCode: z.string() }))
+      .mutation(async ({ input }) => {
+        const share = await trackShareClick(input.shareCode);
+        return { success: !!share };
+      }),
+
+    trackConversion: publicProcedure
+      .input(z.object({ shareCode: z.string() }))
+      .mutation(async ({ input }) => {
+        const share = await trackShareConversion(input.shareCode);
+        return { success: !!share };
+      }),
+
+    validateDiscount: publicProcedure
+      .input(z.object({ code: z.string() }))
+      .query(async ({ input }) => {
+        return await validateDiscountCode(input.code);
+      }),
+
+    getStats: protectedProcedure.query(async () => {
+      return await getSocialShareStats();
+    }),
+  }),
+
+  // ============ Personalization ============
+  personalization: router({
+    trackView: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        destination: z.string(),
+        destinationSlug: z.string(),
+        price: z.number().optional(),
+        source: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await trackPageView(input);
+        return { success: true };
+      }),
+
+    getRecommendations: publicProcedure
+      .input(z.object({ sessionId: z.string(), limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        return await getPersonalizedRecommendations(input.sessionId, input.limit);
+      }),
+
+    getPopularDestinations: publicProcedure
+      .input(z.object({ limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        return await getPopularDestinations(input.limit);
       }),
   }),
 });

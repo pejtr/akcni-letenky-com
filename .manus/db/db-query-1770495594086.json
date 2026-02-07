@@ -1,0 +1,9 @@
+{
+  "query": "SHOW TABLES LIKE 'social%'; SHOW TABLES LIKE 'price_history';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SHOW TABLES LIKE 'social%'; SHOW TABLES LIKE 'price_history';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 58
+}

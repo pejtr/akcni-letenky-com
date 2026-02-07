@@ -19,10 +19,13 @@ import OmioSection from "@/components/OmioSection";
 import MobileMenu from "@/components/MobileMenu";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
+import PersonalizedSection from "@/components/PersonalizedSection";
+import SocialSharePanel from "@/components/SocialSharePanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
 import { useWishlist } from "@/hooks/useWishlist";
-import { Heart, Award } from "lucide-react";
+import { Heart, Award, Bell } from "lucide-react";
+import PriceAlertModal from "@/components/PriceAlertModal";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -72,6 +75,12 @@ export default function Home() {
   const { toggleWishlist, isInWishlist, wishlistCount } = useWishlist();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
+  const [priceAlertModal, setPriceAlertModal] = useState<{
+    isOpen: boolean;
+    destination: string;
+    slug: string;
+    price: number;
+  }>({ isOpen: false, destination: "", slug: "", price: 0 });
   
   // Search form state
   const [origin, setOrigin] = useState("prague");
@@ -359,7 +368,7 @@ export default function Home() {
       <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md">
         <div className="container">
           <div className="flex flex-wrap items-center justify-center gap-6 text-white text-sm md:text-base font-medium">
-            <a href="#dovolena" className="hover:underline flex items-center gap-1">
+            <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
               Dovolená se slevou až 80 %
             </a>
             <span className="text-white/60">|</span>
@@ -460,6 +469,25 @@ export default function Home() {
                       )}
                     />
                   </button>
+                  {/* Price Alert Button */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const destSlug = cityToSlug[city.to.toLowerCase()] || city.to.toLowerCase().replace(/\s+/g, "-");
+                      setPriceAlertModal({
+                        isOpen: true,
+                        destination: city.to,
+                        slug: destSlug,
+                        price: city.price,
+                      });
+                    }}
+                    className="absolute top-14 right-3 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all duration-200 hover:scale-110"
+                    aria-label={`Hlídat cenu letenky do ${city.to}`}
+                    title="Hlídat cenu"
+                  >
+                    <Bell className="w-5 h-5 text-orange-500 hover:text-orange-600" />
+                  </button>
                 </div>
               );
             })}
@@ -485,6 +513,9 @@ export default function Home() {
           <TopFlightsThisWeek />
         </div>
       </section>
+
+      {/* Personalized Recommendations */}
+      <PersonalizedSection />
 
       {/* Zpáteční levné letenky Grid */}
       <section aria-labelledby="return-flights" className="py-12 bg-[#F5F7FA]">
@@ -788,7 +819,7 @@ export default function Home() {
           <div className="container">
             <p className="text-center text-sm md:text-base font-bold text-black">
               <span className="text-[#E91E63]">Akční nabídka:</span> <span className="text-blue-700">Letenky do 1 500 Kč</span> | 
-              <span className="text-blue-700"> Dovolená se slevou až 80 %</span> | 
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline"> Dovolená se slevou až 80 %</a> | 
               <span className="text-blue-700"> Eurovíkendy</span> | 
               <span className="text-blue-700"> Business class</span>
             </p>
@@ -832,7 +863,7 @@ export default function Home() {
                 <h3 className="text-base font-bold mb-3 text-[#003087]">🌴 Akční nabídky</h3>
                 <ul className="space-y-2">
                   <li><a href="#letenky-1500" className="text-xs text-blue-600 hover:underline">Letenky do 1 500 Kč</a></li>
-                  <li><a href="#dovolena-sleva" className="text-xs text-blue-600 hover:underline">Dovolená se slevou až 80 %</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Dovolená se slevou až 80 %</a></li>
                   <li><a href="#eurovikendy" className="text-xs text-blue-600 hover:underline">Eurovíkendy</a></li>
                   <li><a href="#business-class" className="text-xs text-blue-600 hover:underline">Business class</a></li>
                   <li><a href="#top-akce" className="text-xs text-blue-600 hover:underline">🚀TOP akce</a></li>
@@ -979,6 +1010,15 @@ export default function Home() {
       
       {/* Social Proof Notifications */}
       <SocialProofNotification />
+
+      {/* Price Alert Modal */}
+      <PriceAlertModal
+        isOpen={priceAlertModal.isOpen}
+        onClose={() => setPriceAlertModal(prev => ({ ...prev, isOpen: false }))}
+        destination={priceAlertModal.destination}
+        destinationSlug={priceAlertModal.slug}
+        currentPrice={priceAlertModal.price}
+      />
       
     </div>
   );

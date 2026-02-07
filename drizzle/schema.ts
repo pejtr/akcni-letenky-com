@@ -610,3 +610,83 @@ export const leadScoreHistory = mysqlTable("lead_score_history", {
 export type LeadScoreHistoryItem = typeof leadScoreHistory.$inferSelect;
 export type InsertLeadScoreHistoryItem = typeof leadScoreHistory.$inferInsert;
 
+
+/**
+ * Price alerts - users subscribe to get notified when prices drop for specific destinations
+ */
+export const priceAlerts = mysqlTable("price_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull(),
+  destination: varchar("destination", { length: 100 }).notNull(),
+  destinationSlug: varchar("destinationSlug", { length: 100 }).notNull(),
+  currentPrice: int("currentPrice").notNull(), // Price at time of alert creation (CZK)
+  targetPrice: int("targetPrice"), // Optional target price threshold
+  alertThreshold: int("alertThreshold").default(10), // Minimum % drop to trigger alert
+  // Status
+  isActive: int("isActive").default(1), // 1 = active, 0 = paused
+  lastCheckedPrice: int("lastCheckedPrice"),
+  lastNotifiedAt: timestamp("lastNotifiedAt"),
+  notificationCount: int("notificationCount").default(0),
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PriceAlert = typeof priceAlerts.$inferSelect;
+export type InsertPriceAlert = typeof priceAlerts.$inferInsert;
+
+/**
+ * Price history - tracks price changes over time for destinations
+ */
+export const priceHistory = mysqlTable("price_history", {
+  id: int("id").autoincrement().primaryKey(),
+  destination: varchar("destination", { length: 100 }).notNull(),
+  destinationSlug: varchar("destinationSlug", { length: 100 }).notNull(),
+  price: int("price").notNull(), // Price in CZK
+  source: varchar("source", { length: 50 }).default("pelikan"), // 'pelikan', 'kiwi'
+  recordedAt: timestamp("recordedAt").defaultNow().notNull(),
+});
+
+export type PriceHistoryItem = typeof priceHistory.$inferSelect;
+export type InsertPriceHistoryItem = typeof priceHistory.$inferInsert;
+
+/**
+ * Social shares - tracks when users share deals on social media
+ */
+export const socialShares = mysqlTable("social_shares", {
+  id: int("id").autoincrement().primaryKey(),
+  shareCode: varchar("shareCode", { length: 20 }).notNull().unique(), // Unique share tracking code
+  platform: varchar("platform", { length: 30 }).notNull(), // 'facebook', 'twitter', 'whatsapp', 'copy_link'
+  destination: varchar("destination", { length: 100 }),
+  destinationSlug: varchar("destinationSlug", { length: 100 }),
+  pageUrl: text("pageUrl"), // Which page was shared
+  // Referral tracking
+  referrerEmail: varchar("referrerEmail", { length: 320 }), // Who shared
+  referralClicks: int("referralClicks").default(0), // How many people clicked the shared link
+  referralConversions: int("referralConversions").default(0), // How many converted
+  // Discount code
+  discountCode: varchar("discountCode", { length: 20 }), // Generated discount code for sharer
+  discountUsed: int("discountUsed").default(0), // 1 if discount was used
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type SocialShare = typeof socialShares.$inferSelect;
+export type InsertSocialShare = typeof socialShares.$inferInsert;
+
+/**
+ * Browsing history - tracks user browsing for personalization (server-side)
+ */
+export const browsingHistory = mysqlTable("browsing_history", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  destination: varchar("destination", { length: 100 }).notNull(),
+  destinationSlug: varchar("destinationSlug", { length: 100 }).notNull(),
+  price: int("price"),
+  viewDuration: int("viewDuration"), // Seconds spent on page
+  source: varchar("source", { length: 50 }), // 'homepage', 'search', 'blog', 'direct'
+  viewedAt: timestamp("viewedAt").defaultNow().notNull(),
+});
+
+export type BrowsingHistoryItem = typeof browsingHistory.$inferSelect;
+export type InsertBrowsingHistoryItem = typeof browsingHistory.$inferInsert;

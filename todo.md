@@ -1351,3 +1351,40 @@
 - [ ] Implement real-time price alert system
 - [ ] Implement social sharing incentive with discounts
 - [ ] Build personalized homepage based on browsing history
+
+
+## Update Dovolená Link to Pelikan.cz (User Request)
+- [x] Update "Dovolená se slevou až 80%" link to https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox
+- [x] Verify the link works correctly in header nav, hero section, and yellow banner
+- [x] Test on desktop and mobile
+
+## Fix TypeScript Errors (Blocking)
+- [x] Identify all TypeScript compilation errors (none found - clean build)
+- [x] Fix each error systematically (no errors to fix)
+- [x] Verify clean build with no errors
+
+## Real-Time Price Alerts System
+- [x] Create price_alerts table in database schema
+- [x] Create tRPC endpoints for subscribing to price alerts
+- [x] Implement price monitoring logic (check prices and notify on drops)
+- [x] Send notifications when tracked destination prices drop
+- [x] Add user preference settings for alert thresholds (5%, 10%, 20% + target price)
+- [x] Create PriceAlertModal UI component with price chart
+- [x] Add Bell icon button to featured city cards for quick alert setup
+- [x] Write vitest tests for price alerts (13 tests passing)
+
+## Social Sharing Incentive Program
+- [x] Create share buttons with unique tracking codes
+- [x] Generate discount codes for users who share deals
+- [x] Track viral referrals and conversions
+- [x] Create SocialSharePanel UI component (Facebook, Twitter, WhatsApp, Copy Link)
+- [x] Integrate share buttons into personalized recommendation cards
+- [x] Write vitest tests for sharing system (13 tests passing)
+
+## Personalized Homepage
+- [x] Track user browsing history (destinations viewed) - server-side + localStorage
+- [x] Show personalized destination recommendations based on browsing history
+- [x] Implement PersonalizedSection component with dynamic content
+- [x] Add destination similarity engine for smart recommendations
+- [x] Integrate into homepage after TopFlightsThisWeek section
+- [x] Write vitest tests for personalization logic (10 tests passing)

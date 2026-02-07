@@ -1,0 +1,16 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME IN ('price_alerts', 'price_history', 'social_shares', 'browsing_history');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME IN ('price_alerts', 'price_history', 'social_shares', 'browsing_history');",
+  "rows": [
+    {
+      "TABLE_NAME": "browsing_history"
+    },
+    {
+      "TABLE_NAME": "price_alerts"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\nbrowsing_history\nprice_alerts\n",
+  "stderr": "",
+  "execution_time_ms": 69
+}
