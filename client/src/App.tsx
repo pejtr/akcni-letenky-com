@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import MetaPixel from "./components/MetaPixel";
 import Home from "./pages/Home";
 import AirlinePage from "./pages/AirlinePage";
 import Blog from "./pages/Blog";
@@ -18,6 +19,7 @@ import HeroABTestDashboard from "./pages/HeroABTestDashboard";
 import Wishlist from "./pages/Wishlist";
 import VlakyAutobusy from "./pages/VlakyAutobusy";
 import PriceComparison from "./pages/PriceComparison";
+import ABTestAnalyticsDashboard from "./pages/ABTestAnalyticsDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -37,6 +39,7 @@ function Router() {
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
       <Route path="/porovnani-cen" component={PriceComparison} />
+      <Route path="/admin/ab-test-analytics" component={ABTestAnalyticsDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -57,6 +60,7 @@ function App() {
         // switchable
       >
         <TooltipProvider>
+          <MetaPixel />
           <Toaster />
           <Router />
         </TooltipProvider>

@@ -670,6 +670,61 @@ export const appRouter = router({
       const subscribers = await getNewsletterSubscribers();
       return { count: subscribers.length };
     }),
+
+    // Get A/B test stats for newsletter variants
+    getABTestStats: protectedProcedure
+      .input(z.object({ dateRange: z.enum(["7d", "30d", "90d", "all"]) }))
+      .query(async ({ input }) => {
+        // Calculate date cutoff
+        const now = new Date();
+        let cutoffDate: Date | null = null;
+        
+        switch (input.dateRange) {
+          case "7d":
+            cutoffDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case "30d":
+            cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case "90d":
+            cutoffDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            break;
+          case "all":
+            cutoffDate = null;
+            break;
+        }
+
+        // Mock data for now - in production, fetch from database
+        // TODO: Implement actual database queries for newsletter A/B test tracking
+        const variants = ["a", "b", "c"];
+        const stats = variants.map(variant => {
+          // Generate realistic mock data
+          const baseImpressions = Math.floor(Math.random() * 5000) + 1000;
+          const mobileRatio = 0.6 + Math.random() * 0.2; // 60-80% mobile
+          const conversionRate = 0.02 + Math.random() * 0.03; // 2-5% conversion
+          
+          const mobileImpressions = Math.floor(baseImpressions * mobileRatio);
+          const desktopImpressions = baseImpressions - mobileImpressions;
+          
+          const mobileConversions = Math.floor(mobileImpressions * (conversionRate + Math.random() * 0.01));
+          const desktopConversions = Math.floor(desktopImpressions * (conversionRate + Math.random() * 0.01));
+          
+          return {
+            variant,
+            impressions: baseImpressions,
+            conversions: mobileConversions + desktopConversions,
+            conversionRate: ((mobileConversions + desktopConversions) / baseImpressions) * 100,
+            mobileImpressions,
+            mobileConversions,
+            mobileConversionRate: (mobileConversions / mobileImpressions) * 100,
+            desktopImpressions,
+            desktopConversions,
+            desktopConversionRate: (desktopConversions / desktopImpressions) * 100,
+          };
+        });
+
+        return stats;
+      }),
   }),
 
   // A/B Test endpoints for chatbot personas
