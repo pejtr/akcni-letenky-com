@@ -3,6 +3,7 @@
  * 
  * Shows personalized destination recommendations based on browsing history.
  * Uses both localStorage (client-side) and server-side tracking for recommendations.
+ * Integrates A/B test for share button placement (card vs detail).
  */
 
 import { useState, useEffect, useMemo } from "react";
@@ -10,6 +11,7 @@ import { Sparkles, TrendingDown, ArrowRight, Bell, Eye } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import PriceAlertModal from "./PriceAlertModal";
 import SocialSharePanel from "./SocialSharePanel";
+import { useSharePlacementABTest } from "@/hooks/useSharePlacementABTest";
 
 function getSessionId(): string {
   const key = "akcni-letenky-session";
@@ -49,6 +51,9 @@ export default function PersonalizedSection() {
     slug: string;
     price: number;
   }>({ isOpen: false, destination: "", slug: "", price: 0 });
+
+  // A/B test for share button placement
+  const { showOnCard, trackShareClick, trackShareOpen } = useSharePlacementABTest();
 
   const queryInput = useMemo(() => ({ sessionId, limit: 6 }), [sessionId]);
   const { data: recommendations } = trpc.personalization.getRecommendations.useQuery(queryInput);
@@ -94,7 +99,7 @@ export default function PersonalizedSection() {
 
           {/* Recommendation Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recommendations.map((rec, index) => {
+            {recommendations.map((rec) => {
               const image = destinationImages[rec.destinationSlug] ||
                 `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop`;
               
@@ -134,12 +139,17 @@ export default function PersonalizedSection() {
                       <h3 className="text-lg font-bold text-[#003087]">
                         {rec.destination}
                       </h3>
-                      <SocialSharePanel
-                        destination={rec.destination}
-                        destinationSlug={rec.destinationSlug}
-                        price={rec.estimatedPrice}
-                        compact
-                      />
+                      {/* A/B Test: Show share button on card only for variant A */}
+                      {showOnCard && (
+                        <div onClick={() => { trackShareOpen(); trackShareClick("card_inline"); }}>
+                          <SocialSharePanel
+                            destination={rec.destination}
+                            destinationSlug={rec.destinationSlug}
+                            price={rec.estimatedPrice}
+                            compact
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {/* Price */}

@@ -46,7 +46,7 @@ import {
 } from "./abTest";
 import {
   createPriceAlert,
-  getPriceAlertsByEmail,
+  getPriceAlertsByUserId,
   deactivatePriceAlert,
   deletePriceAlert,
   getPriceHistoryForDestination,
@@ -54,6 +54,7 @@ import {
   getPriceAlertStats,
   checkPriceDropsAndNotify,
 } from "./priceAlerts";
+import { runPriceCheck, getLastCheckResult } from "./priceCheckCron";
 import {
   createSocialShare,
   trackShareClick,
@@ -843,21 +844,19 @@ export const appRouter = router({
   priceAlerts: router({
     create: publicProcedure
       .input(z.object({
-        email: z.string().email(),
         destination: z.string(),
         destinationSlug: z.string(),
         currentPrice: z.number(),
         targetPrice: z.number().optional(),
-        alertThreshold: z.number().optional(),
+        priceDropPercent: z.number().optional(),
       }))
       .mutation(async ({ input }) => {
         return await createPriceAlert(input);
       }),
 
-    getByEmail: publicProcedure
-      .input(z.object({ email: z.string().email() }))
-      .query(async ({ input }) => {
-        return await getPriceAlertsByEmail(input.email);
+    getMyAlerts: protectedProcedure
+      .query(async ({ ctx }) => {
+        return await getPriceAlertsByUserId(ctx.user.id);
       }),
 
     deactivate: publicProcedure
@@ -896,6 +895,14 @@ export const appRouter = router({
 
     checkAndNotify: protectedProcedure.mutation(async () => {
       return await checkPriceDropsAndNotify();
+    }),
+
+    runManualCheck: protectedProcedure.mutation(async () => {
+      return await runPriceCheck();
+    }),
+
+    getCronStatus: protectedProcedure.query(async () => {
+      return getLastCheckResult();
     }),
   }),
 
@@ -964,6 +971,57 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await getPopularDestinations(input.limit);
       }),
+  }),
+
+  // ============ A/B Test: Share Button Placement ============
+  abTestSharing: router({
+    recordAssignment: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        variant: z.enum(['card', 'detail']),
+      }))
+      .mutation(async ({ input }) => {
+        const { recordAssignment } = await import("./abTest");
+        await recordAssignment('share_placement', input.variant as 'A' | 'B', input.sessionId);
+        return { success: true };
+      }),
+
+    recordEvent: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        variant: z.enum(['card', 'detail']),
+        eventType: z.string(),
+        eventData: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { recordEvent } = await import("./abTest");
+        await recordEvent('share_placement', input.variant as 'A' | 'B', input.sessionId, input.eventType, input.eventData);
+        return { success: true };
+      }),
+
+    getResults: protectedProcedure.query(async () => {
+      const { getTestResults, getEventBreakdown, calculateSignificance } = await import("./abTest");
+      const results = await getTestResults('share_placement');
+      const events = await getEventBreakdown('share_placement');
+      
+      let significance = null;
+      if (results.variantA.assignments >= 30 && results.variantB.assignments >= 30) {
+        significance = calculateSignificance(
+          results.variantA.conversions,
+          results.variantA.assignments,
+          results.variantB.conversions,
+          results.variantB.assignments
+        );
+      }
+
+      return {
+        variantA: { ...results.variantA, label: 'Na kartě destinace' },
+        variantB: { ...results.variantB, label: 'V detailu destinace' },
+        events,
+        significance,
+        totalSessions: results.variantA.assignments + results.variantB.assignments,
+      };
+    }),
   }),
 });
 

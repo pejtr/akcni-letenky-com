@@ -282,40 +282,37 @@ export default function Home() {
           isScrolled ? "py-2" : "py-3"
         )}
       >
-        <div className="container flex items-center justify-between">
+        <div className="container flex items-center justify-between gap-2">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-1.5 flex-shrink-0">
             <img 
               src="/logo-akcni-letenky.png" 
               alt="Akční Letenky" 
-              className="h-12 w-auto"
+              className="h-10 w-auto"
             />
-            <span className="hidden md:inline text-sm text-[#003087] font-bold ml-2">
-              Nejlevnější Lety
-            </span>
           </a>
 
           {/* Navigation */}
-          <nav role="navigation" aria-label="Main navigation" className="hidden md:flex items-center gap-6">
-            <Link href="/levne-letenky" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
-              💸 LEVNÉ LETENKY
+          <nav role="navigation" aria-label="Main navigation" className="hidden lg:flex items-center gap-1 xl:gap-3 flex-shrink">
+            <Link href="/levne-letenky" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
+              💸 LETENKY
             </Link>
-            <Link href="/dovolene" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
+            <Link href="/dovolene" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
               ⭐ DOVOLENÁ
             </Link>
-            <a href="#airlines" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
+            <a href="#airlines" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
               ✈️ AEROLINKY
             </a>
-            <Link href="/vlaky-autobusy" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
-              🚆 VLAKY & AUTOBUSY
+            <Link href="/vlaky-autobusy" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
+              🚆 VLAKY
             </Link>
-            <a href="#search" className="text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1">
-              🚀 RYCHLÁ REZERVACE
+            <a href="#search" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
+              🚀 REZERVACE
             </a>
           </nav>
 
-          {/* Mobile Menu & Phone & Search Icon */}
-          <div className="flex items-center gap-4">
+          {/* Mobile Menu & Actions */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             {/* Hamburger Menu - Mobile Only */}
             <MobileMenu />
             
@@ -338,10 +335,10 @@ export default function Home() {
               href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-4 py-2 rounded-full transition-colors whitespace-nowrap font-semibold text-sm shadow-md hover:shadow-lg"
+              className="hidden sm:flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm shadow-md hover:shadow-lg"
             >
-              <Plane className="w-4 h-4 flex-shrink-0" />
-              <span>Rezervovat nyní</span>
+              <Plane className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Rezervovat</span>
             </a>
           </div>
         </div>

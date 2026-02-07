@@ -616,18 +616,16 @@ export type InsertLeadScoreHistoryItem = typeof leadScoreHistory.$inferInsert;
  */
 export const priceAlerts = mysqlTable("price_alerts", {
   id: int("id").autoincrement().primaryKey(),
-  email: varchar("email", { length: 320 }).notNull(),
-  destination: varchar("destination", { length: 100 }).notNull(),
+  userId: int("userId"),
   destinationSlug: varchar("destinationSlug", { length: 100 }).notNull(),
-  currentPrice: int("currentPrice").notNull(), // Price at time of alert creation (CZK)
+  destinationName: varchar("destinationName", { length: 100 }).notNull(),
   targetPrice: int("targetPrice"), // Optional target price threshold
-  alertThreshold: int("alertThreshold").default(10), // Minimum % drop to trigger alert
-  // Status
+  currentPrice: int("currentPrice").notNull(), // Price at time of alert creation (CZK)
+  priceDropPercent: int("priceDropPercent").default(10), // Minimum % drop to trigger alert
   isActive: int("isActive").default(1), // 1 = active, 0 = paused
-  lastCheckedPrice: int("lastCheckedPrice"),
-  lastNotifiedAt: timestamp("lastNotifiedAt"),
-  notificationCount: int("notificationCount").default(0),
-  // Timestamps
+  lastCheckedAt: timestamp("lastCheckedAt"),
+  lastAlertSentAt: timestamp("lastAlertSentAt"),
+  alertCount: int("alertCount").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

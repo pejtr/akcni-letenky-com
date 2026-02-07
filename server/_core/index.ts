@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { scheduleDailyArticleGeneration } from "../articleGenerator";
+import { schedulePriceCheckCron } from "../priceCheckCron";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -82,6 +83,9 @@ async function startServer() {
     
     // Initialize daily article generation scheduler
     scheduleDailyArticleGeneration();
+
+    // Initialize price check cron job (every 6 hours)
+    schedulePriceCheckCron();
   });
 }
 

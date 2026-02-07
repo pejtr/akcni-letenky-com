@@ -6,9 +6,11 @@
  */
 
 import { useState, useMemo } from "react";
-import { Bell, BellRing, TrendingDown, X, Check, Loader2, Mail } from "lucide-react";
+import { Bell, BellRing, TrendingDown, X, Check, Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 
 interface PriceAlertModalProps {
@@ -26,9 +28,9 @@ export default function PriceAlertModal({
   destinationSlug,
   currentPrice,
 }: PriceAlertModalProps) {
-  const [email, setEmail] = useState("");
+  const { user } = useAuth();
   const [targetPrice, setTargetPrice] = useState<number | undefined>(undefined);
-  const [alertThreshold, setAlertThreshold] = useState(10);
+  const [priceDropPercent, setPriceDropPercent] = useState(10);
   const [submitted, setSubmitted] = useState(false);
 
   const createAlert = trpc.priceAlerts.create.useMutation({
@@ -50,17 +52,12 @@ export default function PriceAlertModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      toast.error("Zadejte prosím váš email");
-      return;
-    }
     createAlert.mutate({
-      email,
       destination,
       destinationSlug,
       currentPrice,
       targetPrice,
-      alertThreshold,
+      priceDropPercent,
     });
   };
 
@@ -129,16 +126,36 @@ export default function PriceAlertModal({
               Upozornění nastaveno!
             </h3>
             <p className="text-gray-600 mb-4">
-              Budeme vás informovat na <strong>{email}</strong>, jakmile cena
+              Budeme vás informovat, jakmile cena
               letenky do <strong>{destination}</strong> klesne
               {targetPrice
                 ? ` pod ${targetPrice.toLocaleString("cs-CZ")} Kč`
-                : ` o více než ${alertThreshold}%`}
+                : ` o více než ${priceDropPercent}%`}
               .
             </p>
             <Button onClick={onClose} className="bg-[#003087] hover:bg-[#002060]">
               Zavřít
             </Button>
+          </div>
+        ) : !user ? (
+          /* Not logged in state */
+          <div className="p-6 text-center">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <LogIn className="w-8 h-8 text-blue-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Přihlaste se pro hlídání cen
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Pro nastavení upozornění na pokles cen se prosím nejprve přihlaste.
+            </p>
+            <a
+              href={getLoginUrl()}
+              className="inline-flex items-center gap-2 bg-[#003087] hover:bg-[#002060] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              <LogIn className="w-5 h-5" />
+              Přihlásit se
+            </a>
           </div>
         ) : (
           /* Form */
@@ -197,22 +214,6 @@ export default function PriceAlertModal({
 
             {/* Alert Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  <Mail className="w-4 h-4 inline mr-1" />
-                  Váš email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="vas@email.cz"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003087] focus:border-transparent"
-                  required
-                />
-              </div>
-
               {/* Alert Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -224,11 +225,11 @@ export default function PriceAlertModal({
                       key={pct}
                       type="button"
                       onClick={() => {
-                        setAlertThreshold(pct);
+                        setPriceDropPercent(pct);
                         setTargetPrice(undefined);
                       }}
                       className={`py-2 px-3 rounded-lg text-sm font-medium border transition-all ${
-                        alertThreshold === pct && !targetPrice
+                        priceDropPercent === pct && !targetPrice
                           ? "bg-[#003087] text-white border-[#003087]"
                           : "bg-white text-gray-700 border-gray-300 hover:border-[#003087]"
                       }`}

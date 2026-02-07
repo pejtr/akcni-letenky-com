@@ -1,0 +1,62 @@
+{
+  "query": "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'price_alerts' ORDER BY ORDINAL_POSITION",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'price_alerts' ORDER BY ORDINAL_POSITION",
+  "rows": [
+    {
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "userId",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "destinationSlug",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "destinationName",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "targetPrice",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "currentPrice",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "priceDropPercent",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "isActive",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "lastCheckedAt",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "lastAlertSentAt",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "alertCount",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "createdAt",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "updatedAt",
+      "DATA_TYPE": "timestamp"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\tDATA_TYPE\nid\tint\nuserId\tint\ndestinationSlug\tvarchar\ndestinationName\tvarchar\ntargetPrice\tint\ncurrentPrice\tint\npriceDropPercent\tint\nisActive\tint\nlastCheckedAt\ttimestamp\nlastAlertSentAt\ttimestamp\nalertCount\tint\ncreatedAt\ttimestamp\nupdatedAt\ttimestamp\n",
+  "stderr": "",
+  "execution_time_ms": 62
+}

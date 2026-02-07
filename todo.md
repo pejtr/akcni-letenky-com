@@ -1393,3 +1393,34 @@
 - [x] Fix browsing_history SQL query error - updated schema to match actual DB columns
 - [x] Fix nested <a> tags in BlogPost.tsx, DestinationPage.tsx, VlakyAutobusy.tsx, Wishlist.tsx, Home.tsx
 - [x] All 200 tests passing (17 test files), no TypeScript errors, no console errors
+
+## Price Alert Management in Wishlist Page (2026-02-07)
+- [x] Add price alerts tab/section to Wishlist page (Hlídač cen tab)
+- [x] Display active price alerts with destination, threshold, current price
+- [x] Add ability to edit alert thresholds from Wishlist (inline editing)
+- [x] Add ability to delete/disable alerts from Wishlist
+- [x] Show alert statistics (active/total/notifications sent)
+- [x] Add quick-alert bell button to wishlist items
+- [x] Login required for alerts management
+
+## Cron Job for Automatic Price Drop Checking (2026-02-07)
+- [x] Create priceCheckCron module with 6-hour interval
+- [x] Integrate with PelikanCache for real-time price data
+- [x] Record price history for tracked destinations
+- [x] Check active alerts against current prices
+- [x] Send owner notifications when price drops detected
+- [x] Add cron status endpoint for monitoring
+- [x] Tests passing (all 216 tests)
+
+## A/B Test for Social Sharing Button Placement (2026-02-07)
+- [x] Create useSharePlacementABTest hook with variant A (card) vs B (detail page)
+- [x] Implement variant A: share button on PersonalizedSection cards
+- [x] Implement variant B: share button on DestinationPage detail view
+- [x] Track impressions and clicks for each variant via tRPC
+- [x] Add A/B test results endpoint for analysis
+- [x] Store variant assignment in localStorage for consistency
+
+## Visual Bug Fix - Top Navigation Bar (2026-02-07)
+- [x] Fix overlapping navigation items in the top header bar
+- [x] Ensure proper spacing between logo and menu items
+- [x] Fix "Rezervovat" button being cut off on the right

@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { Link, useParams } from "wouter";
-import { MapPin, Calendar, Plane, ArrowLeft, Star, Clock, Info, Heart } from "lucide-react";
+import { MapPin, Calendar, Plane, ArrowLeft, Star, Clock, Info, Heart, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +10,8 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useEffect } from "react";
 import { generateOmioReferralLink, trackOmioClick } from "@/lib/omioAffiliate";
 import { Train, Bus } from "lucide-react";
+import SocialSharePanel from "@/components/SocialSharePanel";
+import { useSharePlacementABTest } from "@/hooks/useSharePlacementABTest";
 
 export default function DestinationPage() {
   const params = useParams<{ slug: string }>();
@@ -18,6 +20,7 @@ export default function DestinationPage() {
   const { data: destination, isLoading, error } = trpc.destinations.bySlug.useQuery({ slug });
   const { trackDestinationView } = useViewedDestinations();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { showOnDetail, trackShareOpen, trackShareClick } = useSharePlacementABTest();
   
   // Track destination view for personalization
   useEffect(() => {
@@ -108,13 +111,26 @@ export default function DestinationPage() {
                   <h1 className="text-4xl md:text-5xl font-bold text-white">
                     Letenky do {destination.name}
                   </h1>
-                  <button
-                    onClick={() => toggleWishlist(`city_${slug}`)}
-                    className="bg-white/90 hover:bg-white rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 flex-shrink-0"
-                    aria-label={isInWishlist(`city_${slug}`) ? `Odebrat ${destination.name} ze seznamu přání` : `Přidat ${destination.name} do seznamu přání`}
-                  >
-                    <Heart className={`w-6 h-6 ${isInWishlist(`city_${slug}`) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
-                  </button>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* A/B Test Variant B: Share button in detail page */}
+                    {showOnDetail && (
+                      <div onClick={() => { trackShareOpen(); trackShareClick("detail_hero"); }}>
+                        <SocialSharePanel
+                          destination={destination.name}
+                          destinationSlug={slug}
+                          price={destination.averagePrice || undefined}
+                          compact
+                        />
+                      </div>
+                    )}
+                    <button
+                      onClick={() => toggleWishlist(`city_${slug}`)}
+                      className="bg-white/90 hover:bg-white rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 flex-shrink-0"
+                      aria-label={isInWishlist(`city_${slug}`) ? `Odebrat ${destination.name} ze seznamu přání` : `Přidat ${destination.name} do seznamu přání`}
+                    >
+                      <Heart className={`w-6 h-6 ${isInWishlist(`city_${slug}`) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+                    </button>
+                  </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-4 text-white/90">
                   <span className="flex items-center gap-2">

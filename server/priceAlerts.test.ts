@@ -13,7 +13,7 @@ vi.mock("./_core/notification", () => ({
 import { getDb } from "./db";
 import {
   createPriceAlert,
-  getPriceAlertsByEmail,
+  getPriceAlertsByUserId,
   deactivatePriceAlert,
   deletePriceAlert,
   getPriceHistoryForDestination,
@@ -48,24 +48,22 @@ describe("Price Alerts Module", () => {
       mockDb.values.mockResolvedValueOnce([{ insertId: 42 }]);
 
       const result = await createPriceAlert({
-        email: "test@example.com",
         destination: "Londýn",
         destinationSlug: "london-united-kingdom",
         currentPrice: 733,
         targetPrice: 600,
-        alertThreshold: 10,
+        priceDropPercent: 10,
       });
 
       expect(result).toEqual({ id: 42, updated: false });
       expect(mockDb.insert).toHaveBeenCalled();
     });
 
-    it("should update existing alert for same email + destination", async () => {
+    it("should update existing alert for same destination", async () => {
       // Mock existing alert
-      mockDb.limit.mockResolvedValueOnce([{ id: 5, email: "test@example.com" }]);
+      mockDb.limit.mockResolvedValueOnce([{ id: 5, userId: 1 }]);
 
       const result = await createPriceAlert({
-        email: "test@example.com",
         destination: "Londýn",
         destinationSlug: "london-united-kingdom",
         currentPrice: 700,
@@ -80,7 +78,6 @@ describe("Price Alerts Module", () => {
 
       await expect(
         createPriceAlert({
-          email: "test@example.com",
           destination: "Londýn",
           destinationSlug: "london-united-kingdom",
           currentPrice: 733,
@@ -89,27 +86,21 @@ describe("Price Alerts Module", () => {
     });
   });
 
-  describe("getPriceAlertsByEmail", () => {
-    it("should return alerts for a given email", async () => {
+  describe("getPriceAlertsByUserId", () => {
+    it("should return alerts for a given userId", async () => {
       const mockAlerts = [
-        { id: 1, email: "test@example.com", destination: "Londýn" },
-        { id: 2, email: "test@example.com", destination: "Paříž" },
+        { id: 1, userId: 1, destinationName: "Londýn" },
+        { id: 2, userId: 1, destinationName: "Paříž" },
       ];
-      mockDb.limit.mockResolvedValueOnce(undefined); // orderBy returns this
       mockDb.orderBy.mockResolvedValueOnce(mockAlerts);
 
-      // Need to handle the chain properly
-      mockDb.from.mockReturnThis();
-      mockDb.where.mockReturnThis();
-      mockDb.orderBy.mockResolvedValueOnce(mockAlerts);
-
-      const result = await getPriceAlertsByEmail("test@example.com");
+      const result = await getPriceAlertsByUserId(1);
       expect(mockDb.select).toHaveBeenCalled();
     });
 
     it("should return empty array when database is not available", async () => {
       (getDb as any).mockResolvedValue(null);
-      const result = await getPriceAlertsByEmail("test@example.com");
+      const result = await getPriceAlertsByUserId(1);
       expect(result).toEqual([]);
     });
   });
@@ -167,18 +158,12 @@ describe("Price Alerts Module", () => {
 
   describe("getPriceAlertStats", () => {
     it("should return stats summary", async () => {
-      mockDb.from.mockResolvedValueOnce([
-        { id: 1, isActive: 1, notificationCount: 3 },
-        { id: 2, isActive: 0, notificationCount: 1 },
-        { id: 3, isActive: 1, notificationCount: 0 },
-      ]);
-
       // Override the chain for this specific call
       mockDb.select.mockReturnValueOnce({
         from: vi.fn().mockResolvedValue([
-          { id: 1, isActive: 1, notificationCount: 3 },
-          { id: 2, isActive: 0, notificationCount: 1 },
-          { id: 3, isActive: 1, notificationCount: 0 },
+          { id: 1, isActive: 1, alertCount: 3 },
+          { id: 2, isActive: 0, alertCount: 1 },
+          { id: 3, isActive: 1, alertCount: 0 },
         ]),
       });
 
