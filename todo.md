@@ -1704,3 +1704,17 @@
 - [x] A/B test for email templates - test different subject lines and CTA texts for remarketing emails
 - [x] Admin dashboard section for wishlist remarketing - stats (pending/sent/remarketed) + manual trigger button
 - [x] Currency conversion in price filter - allow users to see prices in EUR and USD alongside CZK
+
+## New Features Batch 3 (2026-02-08)
+- [x] Real-time currency exchange rate API - fetch live EUR/USD rates instead of static values
+- [x] Tracking pixels in remarketing emails - automated open/click tracking for A/B test measurement
+- [x] Dynamic hero slideshow on homepage - smooth crossfade between destination photos (already existed)
+
+## Bug Fixes (2026-02-08)
+- [x] Fix desktop header: elements overlapping (logo, nav, urgency timer, CTA button too crowded)
+- [x] Fix mobile header: newsletter bar overlapping content, layout broken
+
+## Bug Fixes (2026-02-08)
+- [x] Fix desktop header: elements overlapping (logo, nav, urgency timer, CTA button too crowded)
+- [x] Fix mobile header: newsletter bar overlapping content, layout broken
+- [x] Fix site_settings table missing from database (google_ads_id, fb_pixel_id queries failing)

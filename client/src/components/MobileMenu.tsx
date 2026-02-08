@@ -69,7 +69,7 @@ export default function MobileMenu() {
       {/* Hamburger Button - Only visible on mobile */}
       <button
         onClick={toggleMenu}
-        className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
         aria-label="Toggle menu"
         aria-expanded={isOpen}
       >
@@ -79,7 +79,7 @@ export default function MobileMenu() {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={closeMenu}
           aria-hidden="true"
         />
@@ -87,7 +87,7 @@ export default function MobileMenu() {
 
       {/* Slide-in Menu */}
       <div
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

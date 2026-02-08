@@ -148,6 +148,18 @@ async function sendWishlistRemarketingEmail(
   const fromEmail = process.env.RESEND_FROM_EMAIL || "Akční Letenky <onboarding@resend.dev>";
   const siteUrl = process.env.VITE_APP_URL || "https://akcni-letenky.manus.space";
 
+  // Get the active A/B test ID for tracking pixel
+  let activeTestId: number | null = null;
+  if (abVariant) {
+    try {
+      const { getActiveEmailAbTest: getTest } = await import("./emailAbTest");
+      const test = await getTest();
+      if (test) activeTestId = test.id;
+    } catch (e) {
+      // Tracking is optional
+    }
+  }
+
   const topItems = userData.items.slice(0, 3);
   const firstDest = topItems[0]?.flightCountry || "vaší vysněné destinaci";
 
@@ -161,7 +173,14 @@ async function sendWishlistRemarketingEmail(
 
   const ctaText = abVariant?.ctaText || "Rezervovat";
 
-  const html = buildWishlistEmailHtml(userData.name, topItems, siteUrl, ctaText);
+  const html = buildWishlistEmailHtml(
+    userData.name,
+    topItems,
+    siteUrl,
+    ctaText,
+    activeTestId,
+    abVariant?.variant || null
+  );
 
   await resend.emails.send({
     from: fromEmail,
@@ -175,13 +194,20 @@ function buildWishlistEmailHtml(
   userName: string,
   items: UserWishlistData["items"],
   siteUrl: string,
-  ctaText: string = "Rezervovat"
+  ctaText: string = "Rezervovat",
+  testId: number | null = null,
+  variant: "A" | "B" | null = null
 ): string {
   const itemsHtml = items.map((item) => {
     const title = item.flightTitle || "Zpáteční letenka";
     const price = item.flightPrice ? `${item.flightPrice.toLocaleString("cs-CZ")} Kč` : "skvělá cena";
     const link = item.flightAffiliateUrl || `${siteUrl}/levne-letenky`;
     const image = item.flightImageUrl || "";
+
+    // Wrap links with click tracking redirect if A/B test is active
+    const trackedLink = testId && variant
+      ? `${siteUrl}/api/email/click?tid=${testId}&v=${variant}&url=${encodeURIComponent(link)}`
+      : link;
 
     return `
     <tr><td style="padding:10px 0;border-bottom:1px solid #eee;">
@@ -194,7 +220,7 @@ function buildWishlistEmailHtml(
           <p style="margin:0;color:#E91E63;font-weight:bold;font-size:18px;">od ${price}</p>
         </td>
         <td width="120" style="vertical-align:middle;text-align:center;">
-          <a href="${link}" style="display:inline-block;background:#E91E63;color:#fff;padding:8px 16px;border-radius:20px;text-decoration:none;font-size:13px;font-weight:bold;">
+          <a href="${trackedLink}" style="display:inline-block;background:#E91E63;color:#fff;padding:8px 16px;border-radius:20px;text-decoration:none;font-size:13px;font-weight:bold;">
             ${ctaText}
           </a>
         </td>
@@ -231,7 +257,7 @@ function buildWishlistEmailHtml(
     </table>
     <table width="100%" cellpadding="0" cellspacing="0" style="margin:25px 0;">
     <tr><td style="text-align:center;">
-      <a href="${siteUrl}/levne-letenky?utm_source=remarketing&utm_medium=email&utm_campaign=wishlist_24h" 
+      <a href="${testId && variant ? `${siteUrl}/api/email/click?tid=${testId}&v=${variant}&url=${encodeURIComponent(`${siteUrl}/levne-letenky?utm_source=remarketing&utm_medium=email&utm_campaign=wishlist_24h`)}` : `${siteUrl}/levne-letenky?utm_source=remarketing&utm_medium=email&utm_campaign=wishlist_24h`}" 
          style="display:inline-block;background:#003087;color:#fff;padding:12px 30px;border-radius:25px;text-decoration:none;font-weight:bold;font-size:15px;">
         Zobrazit všechny akční letenky
       </a>
@@ -248,6 +274,7 @@ function buildWishlistEmailHtml(
     </p>
   </td></tr>
 </table>
+${testId && variant ? `<img src="${siteUrl}/api/email/pixel?tid=${testId}&v=${variant}" width="1" height="1" alt="" style="display:none;" />` : ""}
 </td></tr>
 </table>
 </body>

@@ -302,7 +302,7 @@ export default function Home() {
       <header role="banner"
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-gradient-to-r from-[#FFD700] to-[#FFC107] shadow-md",
-          isScrolled ? "py-2" : "py-3"
+          isScrolled ? "py-1.5" : "py-2"
         )}
       >
         <div className="container flex items-center justify-between gap-2">
@@ -311,31 +311,32 @@ export default function Home() {
             <img 
               src="/logo-akcni-letenky.png" 
               alt="Akční Letenky" 
-              className="h-10 md:h-14 lg:h-16 w-auto"
+              className="h-9 md:h-10 lg:h-12 w-auto"
             />
           </a>
 
-          {/* Navigation */}
-          <nav role="navigation" aria-label="Main navigation" className="hidden lg:flex items-center gap-1 xl:gap-3 flex-shrink">
-            <Link href="/levne-letenky" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
+          {/* Navigation - only on xl screens to avoid crowding */}
+          <nav role="navigation" aria-label="Main navigation" className="hidden xl:flex items-center gap-2 flex-shrink">
+            <Link href="/levne-letenky" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
               💸 LETENKY
             </Link>
-            <Link href="/dovolene" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
+            <Link href="/dovolene" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
               ⭐ DOVOLENÁ
             </Link>
-            <a href="#airlines" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
+            <a href="#airlines" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
               ✈️ AEROLINKY
             </a>
-            <Link href="/vlaky-autobusy" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
+            <Link href="/vlaky-autobusy" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
               🚆 VLAKY
             </Link>
-
           </nav>
 
-          {/* Mobile Menu & Actions */}
+          {/* Right Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Hamburger Menu - Mobile Only */}
-            <MobileMenu />
+            {/* Hamburger Menu - shown below xl */}
+            <div className="xl:hidden">
+              <MobileMenu />
+            </div>
             
             {/* Wishlist Heart Icon with Badge */}
             <Link
@@ -352,17 +353,19 @@ export default function Home() {
               )}
             </Link>
             
-            <div className="hidden sm:flex items-center gap-2">
+            {/* Countdown + CTA - hidden on mobile */}
+            <div className="hidden md:flex items-center gap-2">
               <CountdownTimer className="hidden lg:flex" />
               <a 
                 href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm cta-btn-animated"
+                className="flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs cta-btn-animated"
                 onClick={() => trackReservationClick()}
               >
                 <Plane className="w-3.5 h-3.5 flex-shrink-0" />
-                <span>{reservationCta.text}</span>
+                <span className="hidden lg:inline">{reservationCta.text}</span>
+                <span className="lg:hidden">REZERVOVAT</span>
               </a>
             </div>
           </div>

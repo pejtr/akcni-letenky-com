@@ -62,14 +62,14 @@ export default function NewsletterBar() {
 
   return (
     <>
-      {/* Spacer to prevent content overlap - matches the height of the fixed bar */}
-      <div className="h-[56px] md:h-[52px]" />
-      {/* Fixed newsletter bar positioned below the header (top-14 = 56px = header height) */}
-      <div className={`fixed top-14 left-0 right-0 bg-gradient-to-r ${variant.bgGradient} text-white shadow-lg z-40 animate-in slide-in-from-top`}>
+      {/* Spacer to prevent content overlap */}
+      <div className="h-[48px] md:h-[44px]" />
+      {/* Fixed newsletter bar positioned below the header */}
+      <div className={`fixed top-[48px] md:top-[52px] left-0 right-0 bg-gradient-to-r ${variant.bgGradient} text-white shadow-lg z-40 animate-in slide-in-from-top`}>
         <div className="container py-2.5">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             {/* Left side - Icon + Text */}
-            <div className="flex items-center gap-3 flex-1 min-w-[250px]">
+            <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
               <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
                 <IconComponent className="w-5 h-5" />
               </div>
@@ -90,7 +90,7 @@ export default function NewsletterBar() {
                 <span className="font-semibold text-sm">✅ Děkujeme! Brzy vám pošleme první nabídky.</span>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-1 max-w-md">
+              <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto sm:max-w-md">
                 <Input
                   type="email"
                   placeholder="váš@email.cz"

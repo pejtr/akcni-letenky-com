@@ -16,13 +16,19 @@ export default function LevneLetenky() {
   const [priceMax, setPriceMax] = useState<number>(50000);
   const [currency, setCurrency] = useState<"CZK" | "EUR" | "USD">("CZK");
 
-  // Approximate exchange rates (CZK base)
-  const exchangeRates: Record<string, number> = {
+  // Real-time exchange rates from Czech National Bank (CNB)
+  const { data: currencyData } = trpc.currency.getRates.useQuery(undefined, {
+    staleTime: 60 * 60 * 1000, // 1 hour
+    refetchOnWindowFocus: false,
+  });
+
+  // Fallback static rates if API hasn't loaded yet
+  const exchangeRates: Record<string, number> = currencyData?.rates ?? {
     CZK: 1,
-    EUR: 0.040, // 1 CZK ≈ 0.040 EUR (25 CZK/EUR)
-    USD: 0.043, // 1 CZK ≈ 0.043 USD (23 CZK/USD)
+    EUR: 0.040,
+    USD: 0.043,
   };
-  const currencySymbols: Record<string, string> = { CZK: "Kč", EUR: "€", USD: "$" };
+  const currencySymbols: Record<string, string> = currencyData?.symbols ?? { CZK: "Kč", EUR: "€", USD: "$" };
 
   const convertPrice = (priceCzk: number): string => {
     const converted = priceCzk * exchangeRates[currency];
@@ -211,21 +217,28 @@ export default function LevneLetenky() {
             </div>
 
             {/* Currency Selector */}
-            <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md border">
-              <Globe className="w-3.5 h-3.5 text-gray-500" />
-              {(["CZK", "EUR", "USD"] as const).map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCurrency(c)}
-                  className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
-                    currency === c
-                      ? "bg-[#1a5276] text-white"
-                      : "text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md border">
+                <Globe className="w-3.5 h-3.5 text-gray-500" />
+                {(["CZK", "EUR", "USD"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCurrency(c)}
+                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
+                      currency === c
+                        ? "bg-[#1a5276] text-white"
+                        : "text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+              {currency !== "CZK" && currencyData && (
+                <span className="text-[10px] text-gray-400" title={`Zdroj: ${currencyData.source}`}>
+                  CNB kurz
+                </span>
+              )}
             </div>
 
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>

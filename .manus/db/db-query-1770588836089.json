@@ -1,0 +1,124 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() ORDER BY TABLE_NAME;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() ORDER BY TABLE_NAME;",
+  "rows": [
+    {
+      "TABLE_NAME": "__drizzle_migrations"
+    },
+    {
+      "TABLE_NAME": "ab_test_assignments"
+    },
+    {
+      "TABLE_NAME": "ab_test_events"
+    },
+    {
+      "TABLE_NAME": "affiliate_clicks"
+    },
+    {
+      "TABLE_NAME": "article_destinations"
+    },
+    {
+      "TABLE_NAME": "articles"
+    },
+    {
+      "TABLE_NAME": "browsing_history"
+    },
+    {
+      "TABLE_NAME": "chatbot_analytics"
+    },
+    {
+      "TABLE_NAME": "chatbot_conversations"
+    },
+    {
+      "TABLE_NAME": "chatbot_conversions"
+    },
+    {
+      "TABLE_NAME": "chatbot_leads"
+    },
+    {
+      "TABLE_NAME": "chatbot_messages"
+    },
+    {
+      "TABLE_NAME": "chatbot_personas"
+    },
+    {
+      "TABLE_NAME": "chatbot_user_memory"
+    },
+    {
+      "TABLE_NAME": "click_events"
+    },
+    {
+      "TABLE_NAME": "conversion_events"
+    },
+    {
+      "TABLE_NAME": "daily_report_log"
+    },
+    {
+      "TABLE_NAME": "destinations"
+    },
+    {
+      "TABLE_NAME": "discount_codes"
+    },
+    {
+      "TABLE_NAME": "email_campaigns"
+    },
+    {
+      "TABLE_NAME": "email_captures"
+    },
+    {
+      "TABLE_NAME": "email_followups"
+    },
+    {
+      "TABLE_NAME": "email_queue"
+    },
+    {
+      "TABLE_NAME": "flights"
+    },
+    {
+      "TABLE_NAME": "knowledge_base"
+    },
+    {
+      "TABLE_NAME": "lead_score_history"
+    },
+    {
+      "TABLE_NAME": "notification_log"
+    },
+    {
+      "TABLE_NAME": "offer_views"
+    },
+    {
+      "TABLE_NAME": "persona_assignments"
+    },
+    {
+      "TABLE_NAME": "persona_metrics"
+    },
+    {
+      "TABLE_NAME": "price_alerts"
+    },
+    {
+      "TABLE_NAME": "price_history"
+    },
+    {
+      "TABLE_NAME": "push_ab_tests"
+    },
+    {
+      "TABLE_NAME": "push_subscriptions"
+    },
+    {
+      "TABLE_NAME": "remarketing_triggers"
+    },
+    {
+      "TABLE_NAME": "social_shares"
+    },
+    {
+      "TABLE_NAME": "users"
+    },
+    {
+      "TABLE_NAME": "wishlists"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\n__drizzle_migrations\nab_test_assignments\nab_test_events\naffiliate_clicks\narticle_destinations\narticles\nbrowsing_history\nchatbot_analytics\nchatbot_conversations\nchatbot_conversions\nchatbot_leads\nchatbot_messages\nchatbot_personas\nchatbot_user_memory\nclick_events\nconversion_events\ndaily_report_log\ndestinations\ndiscount_codes\nemail_campaigns\nemail_captures\nemail_followups\nemail_queue\nflights\nknowledge_base\nlead_score_history\nnotification_log\noffer_views\npersona_assignments\npersona_metrics\nprice_alerts\nprice_history\npush_ab_tests\npush_subscriptions\nremarketing_triggers\nsocial_shares\nusers\nwishlists\n",
+  "stderr": "",
+  "execution_time_ms": 70
+}

@@ -14,6 +14,7 @@ import { scheduleWeeklyReport } from "../weeklyReport";
 import { scheduleFollowupProcessor } from "../emailFollowup";
 import { scheduleWishlistRemarketing } from "../wishlistRemarketing";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
+import { recordEmailOpened, recordEmailClicked } from "../emailAbTest";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -60,6 +61,51 @@ async function startServer() {
     res.send(generateRobotsTxt());
   });
   
+  // Email tracking pixel (1x1 transparent GIF) - for open tracking in email clients
+  // Usage in email: <img src="https://domain/api/email/pixel?tid=123&v=A" />
+  const TRANSPARENT_GIF = Buffer.from(
+    "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+    "base64"
+  );
+
+  app.get("/api/email/pixel", async (req, res) => {
+    try {
+      const testId = parseInt(req.query.tid as string);
+      const variant = req.query.v as "A" | "B";
+      if (testId && (variant === "A" || variant === "B")) {
+        await recordEmailOpened(testId, variant);
+      }
+    } catch (e) {
+      // Silently fail - tracking should never break the email
+    }
+    res.set({
+      "Content-Type": "image/gif",
+      "Content-Length": String(TRANSPARENT_GIF.length),
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    });
+    res.end(TRANSPARENT_GIF);
+  });
+
+  // Email click redirect - tracks clicks and redirects to destination
+  // Usage in email: <a href="https://domain/api/email/click?tid=123&v=A&url=https://...">
+  app.get("/api/email/click", async (req, res) => {
+    const targetUrl = req.query.url as string;
+    try {
+      const testId = parseInt(req.query.tid as string);
+      const variant = req.query.v as "A" | "B";
+      if (testId && (variant === "A" || variant === "B")) {
+        await recordEmailClicked(testId, variant);
+      }
+    } catch (e) {
+      // Silently fail
+    }
+    // Redirect to the actual destination
+    const safeUrl = targetUrl && targetUrl.startsWith("http") ? targetUrl : "/levne-letenky";
+    res.redirect(302, safeUrl);
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

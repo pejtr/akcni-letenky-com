@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `email_ab_tests` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `testName` varchar(200) NOT NULL,\n  `status` varchar(20) NOT NULL DEFAULT 'active',\n  `variantASubject` text NOT NULL,\n  `variantACtaText` varchar(100) NOT NULL DEFAULT 'Rezervovat',\n  `variantBSubject` text NOT NULL,\n  `variantBCtaText` varchar(100) NOT NULL DEFAULT 'Zobrazit nabídku',\n  `variantASent` int NOT NULL DEFAULT 0,\n  `variantBSent` int NOT NULL DEFAULT 0,\n  `variantAOpened` int NOT NULL DEFAULT 0,\n  `variantBOpened` int NOT NULL DEFAULT 0,\n  `variantAClicked` int NOT NULL DEFAULT 0,\n  `variantBClicked` int NOT NULL DEFAULT 0,\n  `winner` varchar(10),\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `email_ab_tests_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute CREATE TABLE IF NOT EXISTS `email_ab_tests` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `testName` varchar(200) NOT NULL,\n  `status` varchar(20) NOT NULL DEFAULT 'active',\n  `variantASubject` text NOT NULL,\n  `variantACtaText` varchar(100) NOT NULL DEFAULT 'Rezervovat',\n  `variantBSubject` text NOT NULL,\n  `variantBCtaText` varchar(100) NOT NULL DEFAULT 'Zobrazit nabídku',\n  `variantASent` int NOT NULL DEFAULT 0,\n  `variantBSent` int NOT NULL DEFAULT 0,\n  `variantAOpened` int NOT NULL DEFAULT 0,\n  `variantBOpened` int NOT NULL DEFAULT 0,\n  `variantAClicked` int NOT NULL DEFAULT 0,\n  `variantBClicked` int NOT NULL DEFAULT 0,\n  `winner` varchar(10),\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `email_ab_tests_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 218
+}

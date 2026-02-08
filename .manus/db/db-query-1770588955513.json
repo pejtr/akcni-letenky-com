@@ -1,0 +1,16 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ('site_settings', 'email_ab_tests') ORDER BY TABLE_NAME;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ('site_settings', 'email_ab_tests') ORDER BY TABLE_NAME;",
+  "rows": [
+    {
+      "TABLE_NAME": "email_ab_tests"
+    },
+    {
+      "TABLE_NAME": "site_settings"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\nemail_ab_tests\nsite_settings\n",
+  "stderr": "",
+  "execution_time_ms": 86
+}

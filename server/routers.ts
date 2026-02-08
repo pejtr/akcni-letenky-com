@@ -113,6 +113,7 @@ import {
   recordEmailClicked,
 } from "./emailAbTest";
 import { recordConversionEvent, getConversionFunnel, getFunnelSummary } from "./conversionFunnel";
+import { getClientRates } from "./currencyRates";
 import { getSiteSetting, setSiteSetting, getAllSiteSettings } from "./db";
 import {
   type FlightOffer,
@@ -1547,6 +1548,13 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
         await setSiteSetting(input.key, input.value);
         return { success: true };
       }),
+  }),
+
+  // ============ Currency Rates ============
+  currency: router({
+    getRates: publicProcedure.query(async () => {
+      return await getClientRates();
+    }),
   }),
 });
 
