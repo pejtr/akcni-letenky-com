@@ -99,6 +99,7 @@ import {
   type NotificationCategory,
 } from "./pushNotifications";
 import { adminAnalyticsRouter } from "./adminAnalytics";
+import { getHistoricalData } from "./historicalAnalytics";
 import {
   type FlightOffer,
   type VacationOffer,
@@ -482,6 +483,16 @@ export const appRouter = router({
 
   // Admin analytics dashboard
   admin: adminAnalyticsRouter,
+
+  // ============ Historical Analytics (30-day charts) ============
+  historicalAnalytics: router({
+    getData: protectedProcedure
+      .input(z.object({ days: z.number().min(1).max(90).default(30) }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+        return await getHistoricalData(input.days);
+      }),
+  }),
 
   // Email management (admin only)
   emails: router({ // Get all captured emails

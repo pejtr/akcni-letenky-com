@@ -10,7 +10,8 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Flame, Zap, CheckCircle } from "lucide-react";
-import { trackCTAClick, trackFormInteraction } from "@/lib/abTest";
+import { trackFormInteraction } from "@/lib/abTest";
+import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 
 interface HeroVariantBProps {
   onSearch: (from: string, destination: string, duration: string, passengers: number) => void;
@@ -22,8 +23,10 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
   const [duration, setDuration] = React.useState("1 týden");
   const [passengers, setPassengers] = React.useState(1);
 
+  const { ctaVariant: heroCta, trackClick: trackHeroClick } = useCtaAbTest("hero_cta");
+
   const handleSearch = () => {
-    trackCTAClick("hero_redesign", "VYHLEDAT LETENKY");
+    trackHeroClick();
     onSearch(from, destination, duration, passengers);
   };
 
@@ -157,13 +160,17 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
                 </div>
 
                 {/* CTA Button */}
-                <div className="flex items-end">
+                <div className="flex flex-col items-end justify-end">
                   <Button
                     onClick={handleSearch}
-                    className="w-full h-12 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold text-base shadow-lg"
+                    className={`w-full h-12 text-white font-bold text-base shadow-lg ${heroCta.color || 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'}`}
                   >
-                    VYHLEDAT LETENKY
+                    {heroCta.emoji && <span className="mr-1">{heroCta.emoji}</span>}
+                    {heroCta.text.toUpperCase()}
                   </Button>
+                  {heroCta.subtext && (
+                    <p className="text-xs text-center text-green-600 font-semibold mt-1 w-full">{heroCta.subtext}</p>
+                  )}
                 </div>
               </div>
             </div>

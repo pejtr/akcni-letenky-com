@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb } from "lucide-react";
 import { Link } from "wouter";
+import HistoricalCharts from "@/components/HistoricalCharts";
 
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -313,6 +314,11 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+        {/* Historical Charts (30 days) */}
+        <div className="mt-8">
+          <HistoricalCharts />
+        </div>
+
         {/* Admin Navigation */}
         <div className="mt-8">
           <h2 className="text-lg font-bold mb-4">Další sekce</h2>

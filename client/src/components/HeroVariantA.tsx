@@ -8,7 +8,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { trackCTAClick, trackFormInteraction } from "@/lib/abTest";
+import { trackFormInteraction } from "@/lib/abTest";
+import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 
 interface HeroVariantAProps {
   onSearch: (destination: string, passengers: number) => void;
@@ -18,8 +19,10 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
   const [destination, setDestination] = React.useState("");
   const [passengers, setPassengers] = React.useState(1);
 
+  const { ctaVariant: heroCta, trackClick: trackHeroClick } = useCtaAbTest("hero_cta");
+
   const handleSearch = () => {
-    trackCTAClick("hero_redesign", "Vyhledat letenky");
+    trackHeroClick();
     onSearch(destination, passengers);
   };
 
@@ -108,11 +111,14 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
               <div className="flex items-end">
                 <Button
                   onClick={handleSearch}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  className={`w-full text-white ${heroCta.color || 'bg-blue-600 hover:bg-blue-700'}`}
                 >
                   <Search className="w-4 h-4 mr-2" />
-                  Vyhledat letenky
+                  {heroCta.text}
                 </Button>
+                {heroCta.subtext && (
+                  <p className="text-xs text-center text-green-600 font-semibold mt-1">{heroCta.subtext}</p>
+                )}
               </div>
             </div>
           </div>

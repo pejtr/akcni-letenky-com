@@ -26,6 +26,7 @@ import { returnFlights, countries, cities, topDestinations } from "@/data/destin
 import { useWishlist } from "@/hooks/useWishlist";
 import { Heart, Award, Bell } from "lucide-react";
 import PriceAlertModal from "@/components/PriceAlertModal";
+import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -73,6 +74,11 @@ export default function Home() {
   // A/B Test for hero section
   const heroVariant = useABTest("hero_redesign");
   const { toggleWishlist, isInWishlist, wishlistCount } = useWishlist();
+  
+  // CTA A/B Tests
+  const { ctaVariant: featuredCta, trackClick: trackFeaturedClick } = useCtaAbTest("featured_cta");
+  const { ctaVariant: footerCta, trackClick: trackFooterClick } = useCtaAbTest("footer_cta");
+  const { ctaVariant: stickyCta, trackClick: trackStickyClick } = useCtaAbTest("sticky_banner");
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
   const [priceAlertModal, setPriceAlertModal] = useState<{
@@ -554,10 +560,13 @@ export default function Home() {
                       fetchPriority={index < 4 ? "high" : "low"}
                     />
                     {/* CTA overlay on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-orange-600/90 to-orange-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-t from-orange-600/90 to-orange-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1">
                       <span className="text-white font-bold text-sm px-3 py-2 bg-white/20 rounded-full backdrop-blur-sm border border-white/30">
-                        Zobrazit nabídku →
+                        {featuredCta.emoji} {featuredCta.text}
                       </span>
+                      {featuredCta.subtext && (
+                        <span className="text-white/90 text-xs font-medium">{featuredCta.subtext}</span>
+                      )}
                     </div>
                   </div>
                   
@@ -810,15 +819,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sticky Bottom Banner - Always visible */}
+      {/* Sticky Bottom Banner - A/B Tested */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-[100] animate-in slide-in-from-bottom" style={{ pointerEvents: 'auto' }}>
           <div className="container">
             <p className="text-center text-sm md:text-base font-bold text-black">
-              <span className="text-[#E91E63]">Akční nabídka:</span>{" "}
-              <a href="/levne-letenky" className="text-blue-700 hover:underline cursor-pointer">Letenky do 1 500 Kč</a> |{" "}
-              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer">Dovolená se slevou až 80 %</a> |{" "}
-              <a href="/levne-letenky?kategorie=eurovikendy" className="text-blue-700 hover:underline cursor-pointer">Eurovíkendy</a> |{" "}
-              <a href="/levne-letenky?kategorie=business" className="text-blue-700 hover:underline cursor-pointer">Business class</a>
+              <span className="text-[#E91E63]">{stickyCta.emoji}</span>{" "}
+              <a href="/levne-letenky" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>{stickyCta.text}</a> |{" "}
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až 80 %</a> |{" "}
+              <a href="/levne-letenky?kategorie=eurovikendy" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Eurovíkendy</a> |{" "}
+              <a href="/levne-letenky?kategorie=business" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Business class</a>
             </p>
           </div>
         </div>
@@ -979,9 +988,19 @@ export default function Home() {
 
             {/* CTA Button */}
             <div className="text-center">
-              <Button size="lg" className="bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold px-8 py-6 text-base md:text-lg rounded-full shadow-lg max-w-full whitespace-normal">
-                👉 Zobrazit nejvýhodnější letenky
+              <Button 
+                size="lg" 
+                className="bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold px-8 py-6 text-base md:text-lg rounded-full shadow-lg max-w-full whitespace-normal"
+                onClick={() => {
+                  trackFooterClick();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                {footerCta.emoji} {footerCta.text}
               </Button>
+              {footerCta.subtext && (
+                <p className="text-yellow-300 text-sm font-semibold mt-2">{footerCta.subtext}</p>
+              )}
             </div>
 
             {/* Bottom Yellow Banner */}

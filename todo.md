@@ -1550,3 +1550,32 @@
 - [x] Add results/winner display with completed test history
 - [x] Write vitest tests (10 tests passing)
 - [x] All 292 tests passing across 25 test files
+
+## A/B Testing for CTA Texts on Homepage (2026-02-08)
+- [x] Create useCtaAbTest hook with A/B variant assignment (localStorage persistent, 50/50 split)
+- [x] Define CTA text variants for hero, featured cities, and sticky banner
+- [x] Integrate into HeroVariantA, HeroVariantB, featured cities, sticky banner
+- [x] Track CTA clicks with variant info via trackEvent
+- [x] Store last CTA interaction for exit-intent personalization
+- [x] Write vitest tests (7 tests passing)
+
+## Personalized Exit-Intent Popup (2026-02-08)
+- [x] Enhanced ExitIntentPopup with personalization based on browsed destinations
+- [x] Adapt popup messaging based on CTA A/B test variant (hero/featured/sticky_banner)
+- [x] Add real countdown timer (15 min) with animated display
+- [x] Personalize headline/subtitle based on CTA interaction + browsing history
+- [x] Improve email capture with newsletter subscription mutation
+- [x] Track popup interactions (shown/closed/email_captured/offer_clicked)
+- [x] Add discount ribbon on offer cards and exclusive 15% badge
+
+## Admin Historical Charts Dashboard (2026-02-08)
+- [x] Create historicalAnalytics.ts server module (report_log + live DB fallback)
+- [x] Build tRPC endpoint for admin to fetch 7/14/30/60 day data
+- [x] Create HistoricalCharts component with SVG line chart + mini bar charts
+- [x] Add 7 metric charts (affiliate clicks, page views, registrations, subscribers, chatbot, leads, shares)
+- [x] Add combined line chart with metric toggle buttons
+- [x] Build interactive date range selector (7d/14d/30d/60d)
+- [x] Show summary cards (totals, averages, best/worst day)
+- [x] Integrate into AdminDashboard between existing charts and navigation
+- [x] Write vitest tests (11 tests passing)
+- [x] All 310 tests passing across 27 test files
