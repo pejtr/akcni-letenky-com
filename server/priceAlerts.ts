@@ -11,6 +11,7 @@ import { priceAlerts, priceHistory } from "../drizzle/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
 import { sendPriceDropEmail, logNotification } from "./emailService";
+import { sendPriceDropPush } from "./pushNotifications";
 
 // ============ Price Alert CRUD ============
 
@@ -207,7 +208,25 @@ export async function checkPriceDropsAndNotify() {
         content: `Cena letenky do ${alert.destinationName} klesla o ${dropPercent.toFixed(0)}%!\n\nPůvodní cena: ${alert.currentPrice} Kč\nNová cena: ${latestPrice.price} Kč\nÚspora: ${priceDrop} Kč`,
       });
 
-      // 2. Send email notification if enabled and email is set
+      // 2. Send push notification if user has subscriptions
+      if (alert.userId) {
+        try {
+          const pushResult = await sendPriceDropPush(alert.userId, {
+            destinationName: alert.destinationName,
+            destinationSlug: alert.destinationSlug,
+            oldPrice: alert.currentPrice,
+            newPrice: latestPrice.price,
+            dropPercent: Math.round(dropPercent),
+          });
+          if (pushResult.sent > 0) {
+            console.log(`[PriceAlerts] Sent ${pushResult.sent} push notifications for alert ${alert.id}`);
+          }
+        } catch (err) {
+          console.warn(`[PriceAlerts] Push notification failed for alert ${alert.id}:`, err);
+        }
+      }
+
+      // 3. Send email notification if enabled and email is set
       if (alert.emailEnabled && alert.notifyEmail) {
         const emailResult = await sendPriceDropEmail({
           to: alert.notifyEmail,

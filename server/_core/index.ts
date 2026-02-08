@@ -9,6 +9,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { scheduleDailyArticleGeneration } from "../articleGenerator";
 import { schedulePriceCheckCron } from "../priceCheckCron";
+import { scheduleDailyReport } from "../dailyReport";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -86,6 +87,9 @@ async function startServer() {
 
     // Initialize price check cron job (every 6 hours)
     schedulePriceCheckCron();
+
+    // Initialize daily report scheduler (7:00 AM CET)
+    scheduleDailyReport();
   });
 }
 

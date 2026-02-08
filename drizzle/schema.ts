@@ -723,3 +723,36 @@ export const browsingHistory = mysqlTable("browsing_history", {
 
 export type BrowsingHistoryItem = typeof browsingHistory.$inferSelect;
 export type InsertBrowsingHistoryItem = typeof browsingHistory.$inferInsert;
+
+/**
+ * Push subscriptions - stores Web Push API subscriptions for browser notifications
+ */
+export const pushSubscriptions = mysqlTable("push_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  endpoint: text("endpoint").notNull(), // Push service endpoint URL
+  p256dhKey: text("p256dhKey").notNull(), // Public key for encryption
+  authKey: text("authKey").notNull(), // Auth secret for encryption
+  userId: int("userId"), // Optional - if user is logged in
+  sessionId: varchar("sessionId", { length: 64 }), // Session identifier
+  isActive: int("isActive").default(1), // 1 = active, 0 = unsubscribed/expired
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
+
+/**
+ * Daily report log - tracks sent daily reports
+ */
+export const dailyReportLog = mysqlTable("daily_report_log", {
+  id: int("id").autoincrement().primaryKey(),
+  reportDate: varchar("reportDate", { length: 10 }).notNull(), // YYYY-MM-DD
+  emailSent: int("emailSent").default(0),
+  ownerNotified: int("ownerNotified").default(0),
+  metricsJson: text("metricsJson"), // JSON snapshot of metrics
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DailyReportLogEntry = typeof dailyReportLog.$inferSelect;
+export type InsertDailyReportLogEntry = typeof dailyReportLog.$inferInsert;

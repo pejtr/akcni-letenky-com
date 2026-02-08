@@ -80,6 +80,14 @@ import {
   getPopularDestinations,
 } from "./browsingHistory";
 import { generateDailyArticles } from "./articleGenerator";
+import { sendDailyReport, getLastReportResult, collectDailyMetrics } from "./dailyReport";
+import {
+  savePushSubscription,
+  removePushSubscription,
+  isPushConfigured,
+  getPushStats,
+  sendBroadcastPush,
+} from "./pushNotifications";
 import { adminAnalyticsRouter } from "./adminAnalytics";
 import {
   type FlightOffer,
@@ -1062,6 +1070,85 @@ export const appRouter = router({
       .input(z.object({ limit: z.number().optional() }))
       .query(async ({ input }) => {
         return await getPopularDestinations(input.limit);
+      }),
+  }),
+
+  // ============ Daily Reports ============
+  dailyReport: router({
+    // Get last report result (admin)
+    getLastResult: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      return getLastReportResult();
+    }),
+
+    // Trigger manual report (admin)
+    sendNow: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      return await sendDailyReport();
+    }),
+
+    // Preview current metrics without sending (admin)
+    preview: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      return await collectDailyMetrics();
+    }),
+  }),
+
+  // ============ Push Notifications ============
+  pushNotifications: router({
+    // Subscribe to push notifications
+    subscribe: publicProcedure
+      .input(z.object({
+        endpoint: z.string(),
+        keys: z.object({
+          p256dh: z.string(),
+          auth: z.string(),
+        }),
+        sessionId: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await savePushSubscription(
+          { endpoint: input.endpoint, keys: input.keys },
+          ctx.user?.id,
+          input.sessionId
+        );
+      }),
+
+    // Unsubscribe from push notifications
+    unsubscribe: publicProcedure
+      .input(z.object({ endpoint: z.string() }))
+      .mutation(async ({ input }) => {
+        return await removePushSubscription(input.endpoint);
+      }),
+
+    // Check if push is configured
+    getStatus: publicProcedure.query(async () => {
+      return {
+        configured: isPushConfigured(),
+        vapidPublicKey: process.env.VITE_VAPID_PUBLIC_KEY || null,
+      };
+    }),
+
+    // Get push stats (admin)
+    getStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      return await getPushStats();
+    }),
+
+    // Send broadcast push (admin)
+    broadcast: protectedProcedure
+      .input(z.object({
+        title: z.string(),
+        body: z.string(),
+        url: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+        return await sendBroadcastPush({
+          title: input.title,
+          body: input.body,
+          url: input.url,
+        });
       }),
   }),
 

@@ -1,0 +1,106 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "ab_test_assignments"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "ab_test_events"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "affiliate_clicks"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "article_destinations"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "articles"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "browsing_history"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "chatbot_analytics"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "chatbot_conversations"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "chatbot_conversions"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "chatbot_leads"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "chatbot_messages"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "chatbot_personas"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "chatbot_user_memory"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "destinations"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "discount_codes"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "email_campaigns"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "email_captures"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "email_queue"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "flights"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "knowledge_base"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "lead_score_history"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "notification_log"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "offer_views"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "persona_assignments"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "persona_metrics"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "price_alerts"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "price_history"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "remarketing_triggers"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "social_shares"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "users"
+    },
+    {
+      "Tables_in_GquhzstpDbNW3eC4KqTsEC": "wishlists"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_GquhzstpDbNW3eC4KqTsEC\n__drizzle_migrations\nab_test_assignments\nab_test_events\naffiliate_clicks\narticle_destinations\narticles\nbrowsing_history\nchatbot_analytics\nchatbot_conversations\nchatbot_conversions\nchatbot_leads\nchatbot_messages\nchatbot_personas\nchatbot_user_memory\ndestinations\ndiscount_codes\nemail_campaigns\nemail_captures\nemail_queue\nflights\nknowledge_base\nlead_score_history\nnotification_log\noffer_views\npersona_assignments\npersona_metrics\nprice_alerts\nprice_history\nremarketing_triggers\nsocial_shares\nusers\nwishlists\n",
+  "stderr": "",
+  "execution_time_ms": 346
+}

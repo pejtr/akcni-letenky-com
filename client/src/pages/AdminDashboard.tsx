@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw } from "lucide-react";
+import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle } from "lucide-react";
 import { Link } from "wouter";
 
 export default function AdminDashboard() {
@@ -357,7 +358,192 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </div>
+
+        {/* Daily Report & Push Notifications */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          {/* Daily Report Card */}
+          <DailyReportCard />
+          {/* Push Notifications Card */}
+          <PushNotificationsCard />
+        </div>
+
+        {/* RESEND_API_KEY Warning */}
+        <ResendKeyWarning />
       </main>
+    </div>
+  );
+}
+
+// ============ Daily Report Card ============
+
+function DailyReportCard() {
+  const { data: lastResult, refetch } = trpc.dailyReport.getLastResult.useQuery();
+  const sendNow = trpc.dailyReport.sendNow.useMutation({
+    onSuccess: () => refetch(),
+  });
+  const { data: preview } = trpc.dailyReport.preview.useQuery();
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">📊 Denní report</CardTitle>
+        <Send className="w-4 h-4 text-blue-600" />
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground mb-3">
+          Automatický report se odesílá každý den v 7:00 CET.
+        </p>
+
+        {preview && (
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="bg-blue-50 rounded p-2 text-center">
+              <p className="text-lg font-bold text-blue-700">{preview.affiliateClicks}</p>
+              <p className="text-[10px] text-blue-600">Affiliate kliky</p>
+            </div>
+            <div className="bg-green-50 rounded p-2 text-center">
+              <p className="text-lg font-bold text-green-700">{preview.pageViews}</p>
+              <p className="text-[10px] text-green-600">Zobrazení</p>
+            </div>
+            <div className="bg-purple-50 rounded p-2 text-center">
+              <p className="text-lg font-bold text-purple-700">{preview.newRegistrations}</p>
+              <p className="text-[10px] text-purple-600">Registrace</p>
+            </div>
+            <div className="bg-orange-50 rounded p-2 text-center">
+              <p className="text-lg font-bold text-orange-700">{preview.chatbotConversations}</p>
+              <p className="text-[10px] text-orange-600">Chatbot</p>
+            </div>
+          </div>
+        )}
+
+        {lastResult && (
+          <div className={`text-xs p-2 rounded mb-3 ${
+            lastResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+          }`}>
+            Poslední report: {lastResult.metrics.date}
+            {lastResult.emailSent ? ' ✉️ Email odeslán' : ''}
+            {lastResult.ownerNotified ? ' 🔔 Notifikace' : ''}
+          </div>
+        )}
+
+        <Button
+          size="sm"
+          className="w-full"
+          onClick={() => sendNow.mutate()}
+          disabled={sendNow.isPending}
+        >
+          {sendNow.isPending ? (
+            <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+          ) : (
+            <Send className="w-3 h-3 mr-1" />
+          )}
+          Odeslat report nyní
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Push Notifications Card ============
+
+function PushNotificationsCard() {
+  const { data: pushStats } = trpc.pushNotifications.getStats.useQuery();
+  const broadcast = trpc.pushNotifications.broadcast.useMutation();
+  const [broadcastTitle, setBroadcastTitle] = useState('');
+  const [broadcastBody, setBroadcastBody] = useState('');
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">🔔 Push notifikace</CardTitle>
+        <Bell className="w-4 h-4 text-purple-600" />
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="bg-gray-50 rounded p-2 text-center">
+            <p className="text-lg font-bold">{pushStats?.configured ? '✅' : '❌'}</p>
+            <p className="text-[10px] text-muted-foreground">Konfigurováno</p>
+          </div>
+          <div className="bg-gray-50 rounded p-2 text-center">
+            <p className="text-lg font-bold">{pushStats?.activeSubscriptions || 0}</p>
+            <p className="text-[10px] text-muted-foreground">Aktivní</p>
+          </div>
+          <div className="bg-gray-50 rounded p-2 text-center">
+            <p className="text-lg font-bold">{pushStats?.totalSubscriptions || 0}</p>
+            <p className="text-[10px] text-muted-foreground">Celkem</p>
+          </div>
+        </div>
+
+        <div className="space-y-2 mb-3">
+          <input
+            type="text"
+            placeholder="Titulek notifikace"
+            value={broadcastTitle}
+            onChange={(e) => setBroadcastTitle(e.target.value)}
+            className="w-full text-xs border rounded px-2 py-1.5"
+          />
+          <input
+            type="text"
+            placeholder="Text notifikace"
+            value={broadcastBody}
+            onChange={(e) => setBroadcastBody(e.target.value)}
+            className="w-full text-xs border rounded px-2 py-1.5"
+          />
+        </div>
+
+        <Button
+          size="sm"
+          className="w-full"
+          onClick={() => {
+            if (!broadcastTitle || !broadcastBody) return;
+            broadcast.mutate({ title: broadcastTitle, body: broadcastBody });
+            setBroadcastTitle('');
+            setBroadcastBody('');
+          }}
+          disabled={broadcast.isPending || !broadcastTitle || !broadcastBody}
+        >
+          {broadcast.isPending ? (
+            <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+          ) : (
+            <Bell className="w-3 h-3 mr-1" />
+          )}
+          Odeslat broadcast
+        </Button>
+
+        {broadcast.isSuccess && (
+          <p className="text-xs text-green-600 mt-2 text-center">
+            Odesláno: {broadcast.data.sent} úspěšně, {broadcast.data.failed} selhalo
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Resend API Key Warning ============
+
+function ResendKeyWarning() {
+  const { data: emailStatus } = trpc.priceAlerts.getEmailStatus.useQuery();
+
+  // Only show warning if email is not configured
+  if (emailStatus && (emailStatus as any).configured !== false) return null;
+
+  return (
+    <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+      <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+      <div>
+        <h3 className="text-sm font-bold text-amber-800">RESEND_API_KEY není nakonfigurován</h3>
+        <p className="text-xs text-amber-700 mt-1">
+          Emailové notifikace (denní reporty, price alerts, newsletter) nebudou fungovat bez platného Resend API klíče.
+          Nastavte ho v sekci Settings → Secrets v Management UI.
+        </p>
+        <p className="text-xs text-amber-600 mt-1">
+          Získejte klíč na{' '}
+          <a href="https://resend.com" target="_blank" rel="noopener" className="underline font-medium">
+            resend.com
+          </a>{' '}
+          → API Keys (ne SMTP přihlašovací údaje).
+        </p>
+      </div>
     </div>
   );
 }

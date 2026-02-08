@@ -1477,3 +1477,26 @@
 - [x] Add navigation cards in AdminDashboard (Další sekce)
 - [x] Write 17 vitest tests for analytics logic (all passing)
 - [x] All 245 tests passing across 20 test files
+
+
+## Daily Automated Reports (2026-02-08)
+- [x] Create dailyReport.ts module with metrics aggregation (affiliate clicks, chatbot conversations, price alerts, registrations)
+- [x] Build HTML email template for daily report in Czech
+- [x] Create tRPC endpoint for manual report trigger from admin
+- [x] Register cron job to run daily at 7:00 AM CET
+- [x] Add daily report section to AdminDashboard
+- [x] Write vitest tests (9 tests passing)
+
+## Browser Push Notifications (2026-02-08)
+- [x] Create service worker for push notifications
+- [x] Implement push subscription management (subscribe/unsubscribe)
+- [x] Create server-side push sending via web-push library
+- [x] Add push notification opt-in UI in Wishlist price alerts
+- [x] Integrate push sending into priceCheckCron for price drops
+- [x] Write vitest tests (3 tests passing)
+
+## Configure RESEND_API_KEY (2026-02-08)
+- [x] Request RESEND_API_KEY secret via webdev_request_secrets
+- [x] Add RESEND_API_KEY warning banner in AdminDashboard
+- [x] VAPID keys auto-generated and configured
+- [x] All 257 tests passing across 22 test files

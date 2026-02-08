@@ -29,6 +29,7 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { PushNotificationBanner } from "@/components/PushNotificationBanner";
 
 // Combine all destinations for lookup (only those with price)
 const allDestinations = [...returnFlights, ...cities];
@@ -489,6 +490,9 @@ export default function Wishlist() {
               </div>
             ) : (
               <>
+                {/* Push Notification Banner */}
+                <PushNotificationBanner />
+
                 {/* Email Status Banner */}
                 <div className={`rounded-xl p-4 flex items-center gap-3 ${
                   emailEnabledCount > 0
