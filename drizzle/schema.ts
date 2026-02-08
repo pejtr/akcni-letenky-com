@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, bigint, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -76,6 +76,9 @@ export const wishlists = mysqlTable("wishlists", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   flightId: int("flightId").notNull(),
+  destinationId: varchar("destinationId", { length: 255 }), // slug-based destination ID from frontend
+  isFavorite: int("isFavorite").default(0), // 1 = marked as favorite
+  addedAt: bigint("addedAt", { mode: "number" }), // Unix timestamp ms from client
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

@@ -201,6 +201,154 @@ export async function removeFromWishlist(userId: number, flightId: number): Prom
     .where(and(eq(wishlists.userId, userId), eq(wishlists.flightId, flightId)));
 }
 
+// Destination-based Wishlist Queries (for localStorage sync)
+
+export interface WishlistSyncItem {
+  id: string; // destinationId slug
+  addedAt: number; // Unix timestamp ms
+  isFavorite: boolean;
+}
+
+export async function getUserDestinationWishlist(userId: number): Promise<WishlistSyncItem[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select({
+      destinationId: wishlists.destinationId,
+      addedAt: wishlists.addedAt,
+      isFavorite: wishlists.isFavorite,
+    })
+    .from(wishlists)
+    .where(and(
+      eq(wishlists.userId, userId),
+      sql`${wishlists.destinationId} IS NOT NULL`
+    ));
+
+  return result.map(r => ({
+    id: r.destinationId!,
+    addedAt: r.addedAt || Date.now(),
+    isFavorite: r.isFavorite === 1,
+  }));
+}
+
+export async function addDestinationToWishlist(
+  userId: number,
+  destinationId: string,
+  addedAt: number,
+  isFavorite: boolean
+): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  // Check if already exists
+  const existing = await db
+    .select({ id: wishlists.id })
+    .from(wishlists)
+    .where(and(
+      eq(wishlists.userId, userId),
+      eq(wishlists.destinationId, destinationId)
+    ))
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Update existing
+    await db.update(wishlists)
+      .set({ isFavorite: isFavorite ? 1 : 0, addedAt })
+      .where(eq(wishlists.id, existing[0].id));
+  } else {
+    // Insert new
+    await db.insert(wishlists).values({
+      userId,
+      flightId: 0, // legacy field, not used for destination-based wishlist
+      destinationId,
+      addedAt,
+      isFavorite: isFavorite ? 1 : 0,
+    });
+  }
+}
+
+export async function removeDestinationFromWishlist(
+  userId: number,
+  destinationId: string
+): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .delete(wishlists)
+    .where(and(
+      eq(wishlists.userId, userId),
+      eq(wishlists.destinationId, destinationId)
+    ));
+}
+
+export async function syncWishlistFromClient(
+  userId: number,
+  clientItems: WishlistSyncItem[]
+): Promise<WishlistSyncItem[]> {
+  const db = await getDb();
+  if (!db) return clientItems;
+
+  // Get server items
+  const serverItems = await getUserDestinationWishlist(userId);
+
+  // Merge: union of both sets, preferring most recent addedAt
+  const merged = new Map<string, WishlistSyncItem>();
+
+  // Add server items first
+  for (const item of serverItems) {
+    merged.set(item.id, item);
+  }
+
+  // Merge client items (keep newer addedAt, prefer isFavorite=true)
+  for (const item of clientItems) {
+    const existing = merged.get(item.id);
+    if (!existing) {
+      merged.set(item.id, item);
+    } else {
+      // Keep the one with more recent addedAt, prefer isFavorite=true
+      merged.set(item.id, {
+        id: item.id,
+        addedAt: Math.max(existing.addedAt, item.addedAt),
+        isFavorite: existing.isFavorite || item.isFavorite,
+      });
+    }
+  }
+
+  const mergedItems = Array.from(merged.values());
+
+  // Write merged items back to DB
+  for (const item of mergedItems) {
+    await addDestinationToWishlist(userId, item.id, item.addedAt, item.isFavorite);
+  }
+
+  // Remove items from DB that are not in merged set (items removed on client)
+  for (const serverItem of serverItems) {
+    if (!merged.has(serverItem.id)) {
+      await removeDestinationFromWishlist(userId, serverItem.id);
+    }
+  }
+
+  return mergedItems;
+}
+
+export async function updateDestinationFavorite(
+  userId: number,
+  destinationId: string,
+  isFavorite: boolean
+): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.update(wishlists)
+    .set({ isFavorite: isFavorite ? 1 : 0 })
+    .where(and(
+      eq(wishlists.userId, userId),
+      eq(wishlists.destinationId, destinationId)
+    ));
+}
+
 // Offer Views Queries
 
 export async function getOfferViews(flightId: number): Promise<OfferView | undefined> {

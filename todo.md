@@ -1439,3 +1439,27 @@
 - [x] Write vitest tests for emailService (all passing)
 - [x] All 216 tests passing across 18 test files
 - [ ] Configure RESEND_API_KEY secret for production email delivery
+
+## Wishlist Sync - LocalStorage + Database (2026-02-08)
+- [ ] Analyze current useWishlist hook and DB schema
+- [ ] Create server-side wishlist DB helpers (getWishlist, addToWishlist, removeFromWishlist, syncWishlist)
+- [ ] Create tRPC endpoints for wishlist CRUD and sync
+- [ ] Implement merge logic: on login, merge localStorage items with DB items
+- [ ] Update useWishlist hook to use server sync for logged-in users
+- [ ] Add red badge with count on heart icon in header
+- [ ] Handle offline/guest mode gracefully (fallback to localStorage)
+- [ ] Write vitest tests for wishlist sync
+- [ ] Test cross-device sync flow
+
+## Wishlist Sync - LocalStorage to DB (2026-02-08)
+- [x] Extended wishlists DB table with destinationId, isFavorite, addedAt columns
+- [x] Created destination-based DB helpers: getUserDestinationWishlist, addDestinationToWishlist, removeDestinationFromWishlist, syncWishlistFromClient, updateDestinationFavorite
+- [x] Added tRPC endpoints: getDestinations, addDestination, removeDestination, toggleFavorite, sync
+- [x] Rewrote useWishlist hook with server sync for logged-in users
+- [x] Implemented merge logic: union of server+client items, prefer newer addedAt, prefer isFavorite=true
+- [x] Auto-sync on login: merges localStorage with server DB
+- [x] Optimistic updates: instant UI response with background server sync
+- [x] Backward compatible: old string[] localStorage format auto-migrated
+- [x] Guest mode: continues to work with localStorage only
+- [x] 12 vitest tests for sync logic (all passing)
+- [x] All 228 tests passing across 19 test files

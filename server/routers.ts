@@ -11,6 +11,11 @@ import {
   getUserWishlists,
   addToWishlist,
   removeFromWishlist,
+  getUserDestinationWishlist,
+  addDestinationToWishlist,
+  removeDestinationFromWishlist,
+  syncWishlistFromClient,
+  updateDestinationFavorite,
   getOfferViews,
   incrementOfferViews,
   getAllArticles,
@@ -154,13 +159,13 @@ export const appRouter = router({
   }),
 
   wishlist: router({
-    // Get user's wishlist
+    // Get user's wishlist (legacy flight-based)
     list: protectedProcedure.query(async ({ ctx }) => {
       const wishlists = await getUserWishlists(ctx.user.id);
       return wishlists;
     }),
 
-    // Add to wishlist
+    // Add to wishlist (legacy)
     add: protectedProcedure
       .input(z.object({ flightId: z.number() }))
       .mutation(async ({ ctx, input }) => {
@@ -168,12 +173,66 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    // Remove from wishlist
+    // Remove from wishlist (legacy)
     remove: protectedProcedure
       .input(z.object({ flightId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         await removeFromWishlist(ctx.user.id, input.flightId);
         return { success: true };
+      }),
+
+    // --- Destination-based wishlist sync ---
+
+    // Get destination wishlist for logged-in user
+    getDestinations: protectedProcedure.query(async ({ ctx }) => {
+      return await getUserDestinationWishlist(ctx.user.id);
+    }),
+
+    // Add destination to wishlist
+    addDestination: protectedProcedure
+      .input(z.object({
+        destinationId: z.string(),
+        addedAt: z.number(),
+        isFavorite: z.boolean().default(false),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await addDestinationToWishlist(
+          ctx.user.id,
+          input.destinationId,
+          input.addedAt,
+          input.isFavorite
+        );
+        return { success: true };
+      }),
+
+    // Remove destination from wishlist
+    removeDestination: protectedProcedure
+      .input(z.object({ destinationId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        await removeDestinationFromWishlist(ctx.user.id, input.destinationId);
+        return { success: true };
+      }),
+
+    // Toggle favorite status
+    toggleFavorite: protectedProcedure
+      .input(z.object({ destinationId: z.string(), isFavorite: z.boolean() }))
+      .mutation(async ({ ctx, input }) => {
+        await updateDestinationFavorite(ctx.user.id, input.destinationId, input.isFavorite);
+        return { success: true };
+      }),
+
+    // Sync: merge client localStorage with server DB, return merged result
+    sync: protectedProcedure
+      .input(z.object({
+        items: z.array(z.object({
+          id: z.string(),
+          addedAt: z.number(),
+          isFavorite: z.boolean(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const merged = await syncWishlistFromClient(ctx.user.id, input.items);
+        return { items: merged };
       }),
   }),
 
