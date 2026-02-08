@@ -220,3 +220,199 @@ function normalCDF(z: number): number {
   const probability = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
   return z > 0 ? 1 - probability : probability;
 }
+
+/**
+ * Get daily trend data for a specific test over the last N days
+ */
+export async function getDailyTrend(testName: string, days: number = 30) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error('Database not available');
+
+    // Get daily assignments per variant
+    const dailyAssignments = await db
+      .select({
+        date: sql<string>`DATE(${abTestAssignments.assignedAt})`.as('date'),
+        variant: abTestAssignments.variant,
+        count: sql<number>`COUNT(*)`.as('count'),
+      })
+      .from(abTestAssignments)
+      .where(
+        and(
+          eq(abTestAssignments.testName, testName),
+          sql`${abTestAssignments.assignedAt} >= DATE_SUB(NOW(), INTERVAL ${sql.raw(String(days))} DAY)`
+        )
+      )
+      .groupBy(sql`DATE(${abTestAssignments.assignedAt})`, abTestAssignments.variant)
+      .orderBy(sql`DATE(${abTestAssignments.assignedAt})`);
+
+    // Get daily events (clicks) per variant
+    const dailyClicks = await db
+      .select({
+        date: sql<string>`DATE(${abTestEvents.timestamp})`.as('date'),
+        variant: abTestEvents.variant,
+        eventType: abTestEvents.eventType,
+        count: sql<number>`COUNT(*)`.as('count'),
+      })
+      .from(abTestEvents)
+      .where(
+        and(
+          eq(abTestEvents.testName, testName),
+          sql`${abTestEvents.timestamp} >= DATE_SUB(NOW(), INTERVAL ${sql.raw(String(days))} DAY)`
+        )
+      )
+      .groupBy(sql`DATE(${abTestEvents.timestamp})`, abTestEvents.variant, abTestEvents.eventType)
+      .orderBy(sql`DATE(${abTestEvents.timestamp})`);
+
+    return { dailyAssignments, dailyClicks };
+  } catch (error) {
+    console.error('Failed to get daily trend:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get conversion funnel data for a specific test
+ * Tracks: impressions → clicks → shares (completed)
+ */
+export async function getConversionFunnel(testName: string) {
+  try {
+    const db = await getDb();
+    if (!db) throw new Error('Database not available');
+
+    // Get total assignments (impressions) per variant
+    const impressions = await db
+      .select({
+        variant: abTestAssignments.variant,
+        count: sql<number>`COUNT(*)`.as('count'),
+      })
+      .from(abTestAssignments)
+      .where(eq(abTestAssignments.testName, testName))
+      .groupBy(abTestAssignments.variant);
+
+    // Get events by type per variant
+    const eventsByType = await db
+      .select({
+        variant: abTestEvents.variant,
+        eventType: abTestEvents.eventType,
+        count: sql<number>`COUNT(*)`.as('count'),
+        uniqueSessions: sql<number>`COUNT(DISTINCT ${abTestEvents.sessionId})`.as('uniqueSessions'),
+      })
+      .from(abTestEvents)
+      .where(eq(abTestEvents.testName, testName))
+      .groupBy(abTestEvents.variant, abTestEvents.eventType);
+
+    return { impressions, eventsByType };
+  } catch (error) {
+    console.error('Failed to get conversion funnel:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get comprehensive share placement A/B test analytics
+ */
+export async function getSharePlacementAnalytics() {
+  const testName = 'share_placement';
+  const results = await getTestResults(testName);
+  const events = await getEventBreakdown(testName);
+  const funnel = await getConversionFunnel(testName);
+  const trend = await getDailyTrend(testName, 30);
+
+  let significance = null;
+  if (results.variantA.assignments >= 10 && results.variantB.assignments >= 10) {
+    significance = calculateSignificance(
+      results.variantA.conversions,
+      results.variantA.assignments,
+      results.variantB.conversions,
+      results.variantB.assignments
+    );
+  }
+
+  // Build daily trend data structure
+  const dateSet = new Set<string>();
+  trend.dailyAssignments.forEach(d => dateSet.add(d.date));
+  trend.dailyClicks.forEach(d => dateSet.add(d.date));
+  const dates = Array.from(dateSet).sort();
+
+  const dailyData = dates.map(date => {
+    const aAssign = trend.dailyAssignments.find(d => d.date === date && d.variant === 'A');
+    const bAssign = trend.dailyAssignments.find(d => d.date === date && d.variant === 'B');
+    const aClicks = trend.dailyClicks.filter(d => d.date === date && d.variant === 'A');
+    const bClicks = trend.dailyClicks.filter(d => d.date === date && d.variant === 'B');
+
+    return {
+      date,
+      variantA: {
+        impressions: aAssign?.count || 0,
+        clicks: aClicks.reduce((sum, c) => sum + c.count, 0),
+      },
+      variantB: {
+        impressions: bAssign?.count || 0,
+        clicks: bClicks.reduce((sum, c) => sum + c.count, 0),
+      },
+    };
+  });
+
+  // Build funnel data
+  const funnelData = {
+    variantA: {
+      impressions: funnel.impressions.find(i => i.variant === 'A')?.count || 0,
+      clicks: funnel.eventsByType.filter(e => e.variant === 'A' && e.eventType === 'click').reduce((s, e) => s + e.uniqueSessions, 0),
+      shares: funnel.eventsByType.filter(e => e.variant === 'A' && e.eventType === 'share_complete').reduce((s, e) => s + e.uniqueSessions, 0),
+      ctaClicks: funnel.eventsByType.filter(e => e.variant === 'A' && e.eventType === 'cta_click').reduce((s, e) => s + e.uniqueSessions, 0),
+    },
+    variantB: {
+      impressions: funnel.impressions.find(i => i.variant === 'B')?.count || 0,
+      clicks: funnel.eventsByType.filter(e => e.variant === 'B' && e.eventType === 'click').reduce((s, e) => s + e.uniqueSessions, 0),
+      shares: funnel.eventsByType.filter(e => e.variant === 'B' && e.eventType === 'share_complete').reduce((s, e) => s + e.uniqueSessions, 0),
+      ctaClicks: funnel.eventsByType.filter(e => e.variant === 'B' && e.eventType === 'cta_click').reduce((s, e) => s + e.uniqueSessions, 0),
+    },
+  };
+
+  // Determine winner
+  const winner = results.variantA.conversionRate > results.variantB.conversionRate ? 'A' : 
+                 results.variantB.conversionRate > results.variantA.conversionRate ? 'B' : null;
+  const lift = results.variantA.conversionRate > 0 && results.variantB.conversionRate > 0
+    ? ((Math.max(results.variantA.conversionRate, results.variantB.conversionRate) / 
+        Math.min(results.variantA.conversionRate, results.variantB.conversionRate)) - 1) * 100
+    : 0;
+
+  return {
+    variantA: { ...results.variantA, label: 'Na kartě destinace' },
+    variantB: { ...results.variantB, label: 'V detailu destinace' },
+    events,
+    significance,
+    totalSessions: results.variantA.assignments + results.variantB.assignments,
+    dailyData,
+    funnelData,
+    winner,
+    lift: Math.round(lift * 10) / 10,
+    recommendation: getRecommendation(results, significance),
+  };
+}
+
+function getRecommendation(
+  results: { variantA: { assignments: number; conversions: number; conversionRate: number }; variantB: { assignments: number; conversions: number; conversionRate: number } },
+  significance: { isSignificant: boolean; pValue: number; zScore: number } | null
+): string {
+  const total = results.variantA.assignments + results.variantB.assignments;
+  
+  if (total < 50) {
+    return `Nedostatek dat pro rozhodnutí. Aktuálně ${total} sessions, doporučeno minimálně 100 pro spolehlivé výsledky.`;
+  }
+  
+  if (!significance) {
+    return 'Nedostatek dat v jedné z variant pro statistický test. Počkejte na více dat.';
+  }
+  
+  if (!significance.isSignificant) {
+    return `Rozdíl mezi variantami není statisticky významný (p=${significance.pValue.toFixed(3)}). Pokračujte ve sběru dat nebo zvažte větší změnu v designu.`;
+  }
+  
+  const winner = results.variantA.conversionRate > results.variantB.conversionRate ? 'A' : 'B';
+  const winnerLabel = winner === 'A' ? 'Na kartě destinace' : 'V detailu destinace';
+  const winnerRate = winner === 'A' ? results.variantA.conversionRate : results.variantB.conversionRate;
+  
+  return `Varianta ${winner} (${winnerLabel}) je statisticky významně lepší s konverzí ${winnerRate.toFixed(1)}% (p=${significance.pValue.toFixed(3)}). Doporučujeme nasadit tuto variantu pro všechny uživatele.`;
+}

@@ -20,6 +20,7 @@ import Wishlist from "./pages/Wishlist";
 import VlakyAutobusy from "./pages/VlakyAutobusy";
 import PriceComparison from "./pages/PriceComparison";
 import ABTestAnalyticsDashboard from "./pages/ABTestAnalyticsDashboard";
+import ShareABTestDashboard from "./pages/ShareABTestDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
       <Route path="/porovnani-cen" component={PriceComparison} />
       <Route path="/admin/ab-test-analytics" component={ABTestAnalyticsDashboard} />
+      <Route path="/admin/share-ab-test" component={ShareABTestDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

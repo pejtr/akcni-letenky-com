@@ -1114,6 +1114,11 @@ export const appRouter = router({
         totalSessions: results.variantA.assignments + results.variantB.assignments,
       };
     }),
+
+    getFullAnalytics: protectedProcedure.query(async () => {
+      const { getSharePlacementAnalytics } = await import("./abTest");
+      return await getSharePlacementAnalytics();
+    }),
   }),
 });
 

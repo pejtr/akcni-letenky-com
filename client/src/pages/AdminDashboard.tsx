@@ -312,6 +312,51 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+        {/* Admin Navigation */}
+        <div className="mt-8">
+          <h2 className="text-lg font-bold mb-4">Další sekce</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link href="/admin/share-ab-test">
+              <Card className="hover:shadow-md transition-shadow cursor-pointer border-blue-200">
+                <CardContent className="pt-5 pb-4 flex items-center gap-3">
+                  <div className="p-2 bg-blue-50 rounded-lg">
+                    <BarChart3 className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">A/B Test: Sdílecí tlačítka</p>
+                    <p className="text-xs text-muted-foreground">Karta vs. detail stránka</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/ab-test">
+              <Card className="hover:shadow-md transition-shadow cursor-pointer border-purple-200">
+                <CardContent className="pt-5 pb-4 flex items-center gap-3">
+                  <div className="p-2 bg-purple-50 rounded-lg">
+                    <BarChart3 className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">A/B Test: Chatbot</p>
+                    <p className="text-xs text-muted-foreground">Persona varianty</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/emails">
+              <Card className="hover:shadow-md transition-shadow cursor-pointer border-green-200">
+                <CardContent className="pt-5 pb-4 flex items-center gap-3">
+                  <div className="p-2 bg-green-50 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Email Analytics</p>
+                    <p className="text-xs text-muted-foreground">Newsletter a notifikace</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </div>
       </main>
     </div>
   );

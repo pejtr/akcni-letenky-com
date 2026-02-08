@@ -1463,3 +1463,17 @@
 - [x] Guest mode: continues to work with localStorage only
 - [x] 12 vitest tests for sync logic (all passing)
 - [x] All 228 tests passing across 19 test files
+
+## A/B Test Dashboard in Admin Panel (2026-02-08)
+- [x] Create getComprehensiveResults tRPC endpoint with daily trends, event breakdown
+- [x] Add statistical significance calculation (z-score test with p-value)
+- [x] Create ShareABTestDashboard page with comprehensive analytics
+- [x] Add conversion rate comparison with visual progress bars
+- [x] Add daily trend data for time-series analysis
+- [x] Add event breakdown table (impressions, clicks, shares per variant)
+- [x] Generate actionable Czech-language recommendations
+- [x] Add lift calculation and winner determination
+- [x] Register route /admin/share-ab-test in App.tsx
+- [x] Add navigation cards in AdminDashboard (Další sekce)
+- [x] Write 17 vitest tests for analytics logic (all passing)
+- [x] All 245 tests passing across 20 test files
