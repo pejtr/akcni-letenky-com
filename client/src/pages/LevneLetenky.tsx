@@ -14,7 +14,7 @@ export default function LevneLetenky() {
   const [departureDate, setDepartureDate] = useState<string>("");
   const [priceMin, setPriceMin] = useState<number>(0);
   const [priceMax, setPriceMax] = useState<number>(50000);
-  const [currency, setCurrency] = useState<"CZK" | "EUR" | "USD">("CZK");
+  const [currency, setCurrency] = useState<"CZK" | "EUR" | "USD" | "GBP">("CZK");
 
   // Real-time exchange rates from Czech National Bank (CNB)
   const { data: currencyData } = trpc.currency.getRates.useQuery(undefined, {
@@ -27,8 +27,9 @@ export default function LevneLetenky() {
     CZK: 1,
     EUR: 0.040,
     USD: 0.043,
+    GBP: 0.034,
   };
-  const currencySymbols: Record<string, string> = currencyData?.symbols ?? { CZK: "Kč", EUR: "€", USD: "$" };
+  const currencySymbols: Record<string, string> = currencyData?.symbols ?? { CZK: "Kč", EUR: "€", USD: "$", GBP: "£" };
 
   const convertPrice = (priceCzk: number): string => {
     const converted = priceCzk * exchangeRates[currency];
@@ -220,7 +221,7 @@ export default function LevneLetenky() {
             <div className="flex items-center gap-1.5">
               <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md border">
                 <Globe className="w-3.5 h-3.5 text-gray-500" />
-                {(["CZK", "EUR", "USD"] as const).map((c) => (
+                {(["CZK", "EUR", "USD", "GBP"] as const).map((c) => (
                   <button
                     key={c}
                     onClick={() => setCurrency(c)}

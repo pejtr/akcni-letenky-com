@@ -213,6 +213,94 @@ export async function determineEmailAbTestWinner(testId: number): Promise<{
 }
 
 /**
+ * Automatically evaluate all active A/B tests.
+ * If both variants have 50+ sends, determine the winner based on CTR
+ * and automatically switch to the winning variant.
+ * Called after each remarketing batch or on a schedule.
+ */
+export async function autoEvaluateAbTests(): Promise<{
+  evaluated: number;
+  winnersFound: number;
+  results: Array<{ testId: number; testName: string; winner: "A" | "B" | "none"; variantARate: number; variantBRate: number }>
+}> {
+  const db = await getDb();
+  if (!db) return { evaluated: 0, winnersFound: 0, results: [] };
+
+  const activeTests = await db
+    .select()
+    .from(emailAbTests)
+    .where(eq(emailAbTests.status, "active"));
+
+  const MIN_SENDS_FOR_AUTO_EVAL = 50;
+  const results: Array<{ testId: number; testName: string; winner: "A" | "B" | "none"; variantARate: number; variantBRate: number }> = [];
+  let winnersFound = 0;
+
+  for (const test of activeTests) {
+    // Skip tests that haven't reached minimum sends
+    if (test.variantASent < MIN_SENDS_FOR_AUTO_EVAL || test.variantBSent < MIN_SENDS_FOR_AUTO_EVAL) {
+      continue;
+    }
+
+    // Calculate CTR for each variant
+    const variantARate = test.variantASent > 0 ? (test.variantAClicked / test.variantASent) * 100 : 0;
+    const variantBRate = test.variantBSent > 0 ? (test.variantBClicked / test.variantBSent) * 100 : 0;
+
+    // Determine winner: variant with higher CTR wins if difference is >= 5% relative
+    const diff = Math.abs(variantARate - variantBRate);
+    const avgRate = (variantARate + variantBRate) / 2;
+    const relativeDiff = avgRate > 0 ? (diff / avgRate) * 100 : 0;
+
+    let winner: "A" | "B" | "none" = "none";
+    if (relativeDiff >= 5) {
+      winner = variantARate > variantBRate ? "A" : "B";
+    } else if (test.variantASent >= 100 && test.variantBSent >= 100) {
+      // At 100+ sends, even small differences matter - pick the better one
+      winner = variantARate >= variantBRate ? "A" : "B";
+    }
+
+    if (winner !== "none") {
+      // Auto-complete the test and set the winner
+      await db
+        .update(emailAbTests)
+        .set({ winner, status: "completed" })
+        .where(eq(emailAbTests.id, test.id));
+      winnersFound++;
+      console.log(`[EmailAbTest] Auto-evaluated test "${test.testName}": Winner is Variant ${winner} (A: ${variantARate.toFixed(1)}% vs B: ${variantBRate.toFixed(1)}% CTR)`);
+    }
+
+    results.push({
+      testId: test.id,
+      testName: test.testName,
+      winner,
+      variantARate: Math.round(variantARate * 100) / 100,
+      variantBRate: Math.round(variantBRate * 100) / 100,
+    });
+  }
+
+  return { evaluated: results.length, winnersFound, results };
+}
+
+/**
+ * Get the winning variant for completed tests.
+ * If a test has a winner, always use that variant instead of round-robin.
+ */
+export async function getWinningVariant(testId: number): Promise<EmailVariant | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const tests = await db.select().from(emailAbTests).where(eq(emailAbTests.id, testId)).limit(1);
+  const test = tests[0];
+  if (!test || !test.winner || test.winner === "none") return null;
+
+  const variant = test.winner as "A" | "B";
+  return {
+    subject: variant === "A" ? test.variantASubject : test.variantBSubject,
+    ctaText: variant === "A" ? test.variantACtaText : test.variantBCtaText,
+    variant,
+  };
+}
+
+/**
  * Pause or resume an A/B test
  */
 export async function toggleEmailAbTestStatus(testId: number): Promise<string> {

@@ -10,7 +10,7 @@ import { getDb } from "./db";
 import { wishlists, users, flights } from "../drizzle/schema";
 import { sql, eq, and, lte } from "drizzle-orm";
 import { isEmailServiceConfigured } from "./emailService";
-import { pickEmailVariant, recordEmailSent, type EmailVariant } from "./emailAbTest";
+import { pickEmailVariant, recordEmailSent, autoEvaluateAbTests, type EmailVariant } from "./emailAbTest";
 
 interface UserWishlistData {
   email: string;
@@ -323,6 +323,11 @@ export function scheduleWishlistRemarketing(): void {
       const sent = await processWishlistRemarketing();
       if (sent > 0) {
         console.log(`[WishlistRemarketing] Sent ${sent} remarketing emails`);
+      }
+      // Auto-evaluate A/B tests after each batch
+      const evalResult = await autoEvaluateAbTests();
+      if (evalResult.winnersFound > 0) {
+        console.log(`[WishlistRemarketing] A/B test auto-evaluation: ${evalResult.winnersFound} winner(s) found`);
       }
     } catch (error) {
       console.error("[WishlistRemarketing] Processing error:", error);

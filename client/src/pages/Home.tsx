@@ -580,6 +580,7 @@ export default function Home() {
                       loading="lazy"
                       decoding="async"
                       fetchPriority={index < 4 ? "high" : "low"}
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/destinations/paris.jpg'; }}
                     />
                     {/* CTA overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-orange-600/90 to-orange-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1">

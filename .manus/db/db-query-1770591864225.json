@@ -1,0 +1,130 @@
+{
+  "query": "DESCRIBE email_ab_tests;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute DESCRIBE email_ab_tests;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": "auto_increment"
+    },
+    {
+      "Field": "testName",
+      "Type": "varchar(200)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "status",
+      "Type": "varchar(20)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "active",
+      "Extra": ""
+    },
+    {
+      "Field": "variantASubject",
+      "Type": "text",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "variantACtaText",
+      "Type": "varchar(100)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "Rezervovat",
+      "Extra": ""
+    },
+    {
+      "Field": "variantBSubject",
+      "Type": "text",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "variantBCtaText",
+      "Type": "varchar(100)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "Zobrazit nabídku",
+      "Extra": ""
+    },
+    {
+      "Field": "variantASent",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "variantBSent",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "variantAOpened",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "variantBOpened",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "variantAClicked",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "variantBClicked",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "0",
+      "Extra": ""
+    },
+    {
+      "Field": "winner",
+      "Type": "varchar(10)",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "createdAt",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint(11)\tNO\tPRI\tNULL\tauto_increment\ntestName\tvarchar(200)\tNO\t\tNULL\t\nstatus\tvarchar(20)\tNO\t\tactive\t\nvariantASubject\ttext\tNO\t\tNULL\t\nvariantACtaText\tvarchar(100)\tNO\t\tRezervovat\t\nvariantBSubject\ttext\tNO\t\tNULL\t\nvariantBCtaText\tvarchar(100)\tNO\t\tZobrazit nabídku\t\nvariantASent\tint(11)\tNO\t\t0\t\nvariantBSent\tint(11)\tNO\t\t0\t\nvariantAOpened\tint(11)\tNO\t\t0\t\nvariantBOpened\tint(11)\tNO\t\t0\t\nvariantAClicked\tint(11)\tNO\t\t0\t\nvariantBClicked\tint(11)\tNO\t\t0\t\nwinner\tvarchar(10)\tYES\t\tNULL\t\ncreatedAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t\n",
+  "stderr": "",
+  "execution_time_ms": 158
+}

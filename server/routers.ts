@@ -111,6 +111,7 @@ import {
   toggleEmailAbTestStatus,
   recordEmailOpened,
   recordEmailClicked,
+  autoEvaluateAbTests,
 } from "./emailAbTest";
 import { recordConversionEvent, getConversionFunnel, getFunnelSummary } from "./conversionFunnel";
 import { getClientRates } from "./currencyRates";
@@ -1525,6 +1526,12 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
       .mutation(async ({ input }) => {
         await recordEmailClicked(input.testId, input.variant);
         return { success: true };
+      }),
+
+    autoEvaluate: protectedProcedure
+      .mutation(async ({ ctx }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        return await autoEvaluateAbTests();
       }),
   }),
 

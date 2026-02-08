@@ -1718,3 +1718,10 @@
 - [x] Fix desktop header: elements overlapping (logo, nav, urgency timer, CTA button too crowded)
 - [x] Fix mobile header: newsletter bar overlapping content, layout broken
 - [x] Fix site_settings table missing from database (google_ads_id, fb_pixel_id queries failing)
+
+## New Features Batch 4 (2026-02-08)
+- [x] Add GBP (British Pound) to currency switcher on Levné Letenky page
+- [x] Automatic A/B test evaluation - auto-determine winner after 50+ sends per variant
+- [x] Set up RESEND_API_KEY for remarketing email delivery
+- [x] Fix broken image preview (Hanoj, Vietnam shows alt text instead of photo)
+- [x] Fix slow image loading on flight offer cards (add lazy loading, error handling)

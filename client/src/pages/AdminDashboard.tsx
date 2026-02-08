@@ -3,7 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb, Settings, Check, Heart, Mail, Play, Pause, Award } from "lucide-react";
+import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb, Settings, Check, Heart, Mail, Play, Pause, Award, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
 import HistoricalCharts from "@/components/HistoricalCharts";
@@ -1179,6 +1179,7 @@ function EmailAbTestCard() {
   const createTest = trpc.emailAbTest.create.useMutation({ onSuccess: () => refetch() });
   const determineWinner = trpc.emailAbTest.determineWinner.useMutation({ onSuccess: () => refetch() });
   const toggleStatus = trpc.emailAbTest.toggleStatus.useMutation({ onSuccess: () => refetch() });
+  const autoEvaluate = trpc.emailAbTest.autoEvaluate.useMutation({ onSuccess: () => refetch() });
   const utils = trpc.useUtils();
 
   const [showForm, setShowForm] = useState(false);
@@ -1300,6 +1301,25 @@ function EmailAbTestCard() {
                 Zatím žádné A/B testy emailů. Vytvořte první test pro optimalizaci remarketing emailů.
               </p>
             )}
+
+            {/* Auto-evaluate button */}
+            <div className="flex items-center gap-2 mb-3">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs"
+                onClick={() => autoEvaluate.mutate()}
+                disabled={autoEvaluate.isPending}
+              >
+                {autoEvaluate.isPending ? <RefreshCw className="w-3 h-3 mr-1 animate-spin" /> : <Zap className="w-3 h-3 mr-1" />}
+                Auto-vyhodnotit (50+ odeslaných)
+              </Button>
+              {autoEvaluate.data && (
+                <span className="text-[10px] text-muted-foreground">
+                  Vyhodnoceno: {autoEvaluate.data.evaluated}, Vítězů: {autoEvaluate.data.winnersFound}
+                </span>
+              )}
+            </div>
 
             {showForm ? (
               <div className="border rounded-lg p-3 space-y-2">
