@@ -3,7 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb, Settings, Check } from "lucide-react";
+import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb, Settings, Check, Heart, Mail, Play, Pause, Award } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
 import HistoricalCharts from "@/components/HistoricalCharts";
@@ -391,6 +391,12 @@ export default function AdminDashboard() {
         {/* Strategic Recommendations */}
         <div className="mt-6">
           <StrategicRecommendationsCard />
+        </div>
+
+        {/* Wishlist Remarketing & Email A/B Test */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          <WishlistRemarketingCard />
+          <EmailAbTestCard />
         </div>
 
         {/* Site Settings - Pixel IDs */}
@@ -1101,6 +1107,264 @@ function TrackingPixelSettings() {
               Kódy se načtou po souhlasu uživatele s cookies (GDPR banner).
             </p>
           </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Wishlist Remarketing Card ============
+
+function WishlistRemarketingCard() {
+  const { data: stats, isLoading, refetch } = trpc.wishlistRemarketing.getStats.useQuery();
+  const processNow = trpc.wishlistRemarketing.processNow.useMutation({
+    onSuccess: () => refetch(),
+  });
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">Wishlist Remarketing</CardTitle>
+        <Heart className="w-4 h-4 text-pink-600" />
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="bg-blue-50 rounded-lg p-3 text-center">
+            <p className="text-2xl font-bold text-blue-700">{isLoading ? '...' : stats?.totalFavorites || 0}</p>
+            <p className="text-[10px] text-blue-600 font-medium">Celkem oblíbených</p>
+          </div>
+          <div className="bg-amber-50 rounded-lg p-3 text-center">
+            <p className="text-2xl font-bold text-amber-700">{isLoading ? '...' : stats?.pendingRemarketing || 0}</p>
+            <p className="text-[10px] text-amber-600 font-medium">Čeká na email</p>
+          </div>
+          <div className="bg-green-50 rounded-lg p-3 text-center">
+            <p className="text-2xl font-bold text-green-700">{isLoading ? '...' : stats?.alreadyRemarketed || 0}</p>
+            <p className="text-[10px] text-green-600 font-medium">Odesláno</p>
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground mb-3">
+          Automaticky odesílá emaily uživatelům, kteří si uložili letenky do oblíbených, ale neprovedli nákup do 24 hodin. Běží každých 30 minut.
+        </p>
+
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={() => processNow.mutate()}
+          disabled={processNow.isPending}
+        >
+          {processNow.isPending ? (
+            <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+          ) : (
+            <Send className="w-3 h-3 mr-1" />
+          )}
+          {processNow.isPending ? 'Odesílám...' : 'Spustit nyní'}
+        </Button>
+
+        {processNow.data && (
+          <p className="text-xs text-green-600 mt-2 font-medium">
+            Odesláno {processNow.data.sent} {processNow.data.sent === 1 ? 'email' : 'emailů'}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Email A/B Test Card ============
+
+function EmailAbTestCard() {
+  const { data: tests, isLoading, refetch } = trpc.emailAbTest.getAll.useQuery();
+  const createTest = trpc.emailAbTest.create.useMutation({ onSuccess: () => refetch() });
+  const determineWinner = trpc.emailAbTest.determineWinner.useMutation({ onSuccess: () => refetch() });
+  const toggleStatus = trpc.emailAbTest.toggleStatus.useMutation({ onSuccess: () => refetch() });
+  const utils = trpc.useUtils();
+
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    testName: '',
+    variantASubject: '{{name}}, vaše oblíbené letenky do {{destination}} stále čekají!',
+    variantACtaText: 'Rezervovat',
+    variantBSubject: 'Poslední šance! Letenky do {{destination}} za skvělou cenu',
+    variantBCtaText: 'Chci letět!',
+  });
+
+  const handleCreate = () => {
+    if (!form.testName) return;
+    createTest.mutate(form);
+    setShowForm(false);
+    setForm({
+      testName: '',
+      variantASubject: '{{name}}, vaše oblíbené letenky do {{destination}} stále čekají!',
+      variantACtaText: 'Rezervovat',
+      variantBSubject: 'Poslední šance! Letenky do {{destination}} za skvělou cenu',
+      variantBCtaText: 'Chci letět!',
+    });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">A/B Test Emailů</CardTitle>
+        <Mail className="w-4 h-4 text-violet-600" />
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="flex justify-center py-4">
+            <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <>
+            {tests && tests.length > 0 ? (
+              <div className="space-y-3 mb-3 max-h-[300px] overflow-y-auto">
+                {tests.map((test) => {
+                  const aRate = test.variantASent > 0 ? ((test.variantAClicked / test.variantASent) * 100).toFixed(1) : '0.0';
+                  const bRate = test.variantBSent > 0 ? ((test.variantBClicked / test.variantBSent) * 100).toFixed(1) : '0.0';
+                  return (
+                    <div key={test.id} className="border rounded-lg p-3 text-xs">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-sm">{test.testName}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          test.status === 'active' ? 'bg-green-100 text-green-700' :
+                          test.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          {test.status === 'active' ? 'Aktivní' : test.status === 'completed' ? 'Dokončeno' : 'Pozastaveno'}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div className={`p-2 rounded ${test.winner === 'A' ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}`}>
+                          <p className="font-semibold mb-1 flex items-center gap-1">
+                            Varianta A
+                            {test.winner === 'A' && <Award className="w-3 h-3 text-green-600" />}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground truncate" title={test.variantASubject}>Předmět: {test.variantASubject}</p>
+                          <p className="text-[10px] text-muted-foreground">CTA: {test.variantACtaText}</p>
+                          <div className="mt-1 flex gap-2">
+                            <span>Odesláno: <strong>{test.variantASent}</strong></span>
+                            <span>CTR: <strong>{aRate}%</strong></span>
+                          </div>
+                        </div>
+                        <div className={`p-2 rounded ${test.winner === 'B' ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}`}>
+                          <p className="font-semibold mb-1 flex items-center gap-1">
+                            Varianta B
+                            {test.winner === 'B' && <Award className="w-3 h-3 text-green-600" />}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground truncate" title={test.variantBSubject}>Předmět: {test.variantBSubject}</p>
+                          <p className="text-[10px] text-muted-foreground">CTA: {test.variantBCtaText}</p>
+                          <div className="mt-1 flex gap-2">
+                            <span>Odesláno: <strong>{test.variantBSent}</strong></span>
+                            <span>CTR: <strong>{bRate}%</strong></span>
+                          </div>
+                        </div>
+                      </div>
+                      {test.status !== 'completed' && (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-[10px] h-6 px-2"
+                            onClick={() => toggleStatus.mutate({ testId: test.id })}
+                          >
+                            {test.status === 'active' ? <Pause className="w-3 h-3 mr-1" /> : <Play className="w-3 h-3 mr-1" />}
+                            {test.status === 'active' ? 'Pozastavit' : 'Obnovit'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-[10px] h-6 px-2"
+                            onClick={() => determineWinner.mutate({ testId: test.id })}
+                          >
+                            <Trophy className="w-3 h-3 mr-1" />
+                            Vyhodnotit
+                          </Button>
+                        </div>
+                      )}
+                      {determineWinner.data && determineWinner.variables?.testId === test.id && (
+                        <p className={`text-[10px] mt-1 font-medium ${
+                          determineWinner.data.confidence === 'significant' ? 'text-green-600' : 'text-amber-600'
+                        }`}>
+                          {determineWinner.data.confidence === 'significant'
+                            ? `Vítěz: Varianta ${determineWinner.data.winner} (A: ${determineWinner.data.variantARate}% vs B: ${determineWinner.data.variantBRate}%)`
+                            : `Zatím nedostatek dat (A: ${determineWinner.data.variantARate}% vs B: ${determineWinner.data.variantBRate}%)`
+                          }
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground mb-3 italic">
+                Zatím žádné A/B testy emailů. Vytvořte první test pro optimalizaci remarketing emailů.
+              </p>
+            )}
+
+            {showForm ? (
+              <div className="border rounded-lg p-3 space-y-2">
+                <Input
+                  placeholder="Název testu"
+                  value={form.testName}
+                  onChange={(e) => setForm(f => ({ ...f, testName: e.target.value }))}
+                  className="text-xs h-8"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <p className="text-[10px] font-semibold mb-1">Varianta A</p>
+                    <Input
+                      placeholder="Předmět emailu A"
+                      value={form.variantASubject}
+                      onChange={(e) => setForm(f => ({ ...f, variantASubject: e.target.value }))}
+                      className="text-[10px] h-7 mb-1"
+                    />
+                    <Input
+                      placeholder="CTA text A"
+                      value={form.variantACtaText}
+                      onChange={(e) => setForm(f => ({ ...f, variantACtaText: e.target.value }))}
+                      className="text-[10px] h-7"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-semibold mb-1">Varianta B</p>
+                    <Input
+                      placeholder="Předmět emailu B"
+                      value={form.variantBSubject}
+                      onChange={(e) => setForm(f => ({ ...f, variantBSubject: e.target.value }))}
+                      className="text-[10px] h-7 mb-1"
+                    />
+                    <Input
+                      placeholder="CTA text B"
+                      value={form.variantBCtaText}
+                      onChange={(e) => setForm(f => ({ ...f, variantBCtaText: e.target.value }))}
+                      className="text-[10px] h-7"
+                    />
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  Použijte {'{{name}}'}, {'{{destination}}'}, {'{{count}}'} jako proměnné v předmětu.
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" className="text-xs h-7" onClick={handleCreate} disabled={createTest.isPending}>
+                    {createTest.isPending ? 'Vytvářím...' : 'Vytvořit test'}
+                  </Button>
+                  <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => setShowForm(false)}>
+                    Zrušit
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full text-xs"
+                onClick={() => setShowForm(true)}
+              >
+                <FlaskConical className="w-3 h-3 mr-1" />
+                Nový A/B test emailů
+              </Button>
+            )}
+          </>
         )}
       </CardContent>
     </Card>

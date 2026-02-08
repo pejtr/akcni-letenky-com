@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { Heart, Plane, MapPin, Clock, ArrowRight, Filter, SortAsc, SortDesc, Calendar, Share2 } from "lucide-react";
+import { Heart, Plane, MapPin, Clock, ArrowRight, Filter, SortAsc, SortDesc, Calendar, Share2, Globe } from "lucide-react";
 import { trackViewContent, trackInitiateCheckout, trackAddToWishlist } from "@/lib/fbPixel";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,6 +14,21 @@ export default function LevneLetenky() {
   const [departureDate, setDepartureDate] = useState<string>("");
   const [priceMin, setPriceMin] = useState<number>(0);
   const [priceMax, setPriceMax] = useState<number>(50000);
+  const [currency, setCurrency] = useState<"CZK" | "EUR" | "USD">("CZK");
+
+  // Approximate exchange rates (CZK base)
+  const exchangeRates: Record<string, number> = {
+    CZK: 1,
+    EUR: 0.040, // 1 CZK ≈ 0.040 EUR (25 CZK/EUR)
+    USD: 0.043, // 1 CZK ≈ 0.043 USD (23 CZK/USD)
+  };
+  const currencySymbols: Record<string, string> = { CZK: "Kč", EUR: "€", USD: "$" };
+
+  const convertPrice = (priceCzk: number): string => {
+    const converted = priceCzk * exchangeRates[currency];
+    if (currency === "CZK") return converted.toLocaleString("cs-CZ");
+    return converted.toLocaleString("cs-CZ", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  };
 
   const { data: flights, isLoading } = trpc.pelikan.getFlights.useQuery({
     sortBy,
@@ -181,7 +196,7 @@ export default function LevneLetenky() {
                 onChange={(e) => setPriceMin(Math.min(Number(e.target.value), priceMax - 100))}
                 className="w-20 h-1.5 accent-[#E91E63] cursor-pointer"
               />
-              <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">{priceMin.toLocaleString('cs-CZ')} Kč</span>
+              <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">{convertPrice(priceMin)} {currencySymbols[currency]}</span>
               <span className="text-xs text-gray-400">–</span>
               <input
                 type="range"
@@ -192,7 +207,25 @@ export default function LevneLetenky() {
                 onChange={(e) => setPriceMax(Math.max(Number(e.target.value), priceMin + 100))}
                 className="w-20 h-1.5 accent-[#E91E63] cursor-pointer"
               />
-              <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">{priceMax.toLocaleString('cs-CZ')} Kč</span>
+              <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">{convertPrice(priceMax)} {currencySymbols[currency]}</span>
+            </div>
+
+            {/* Currency Selector */}
+            <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md border">
+              <Globe className="w-3.5 h-3.5 text-gray-500" />
+              {(["CZK", "EUR", "USD"] as const).map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCurrency(c)}
+                  className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
+                    currency === c
+                      ? "bg-[#1a5276] text-white"
+                      : "text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
             </div>
 
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
@@ -319,8 +352,13 @@ export default function LevneLetenky() {
                         <div className="flex items-center justify-between pt-4 border-t">
                           <div>
                             <span className="text-3xl font-bold text-[#1a5276] whitespace-nowrap">
-                              {flight.salePrice.toLocaleString("cs-CZ")} Kč
+                              {convertPrice(flight.salePrice)} {currencySymbols[currency]}
                             </span>
+                            {currency !== "CZK" && (
+                              <span className="text-gray-400 text-xs ml-1 line-through">
+                                {flight.salePrice.toLocaleString("cs-CZ")} Kč
+                              </span>
+                            )}
                             <span className="text-gray-500 text-sm ml-2">za osobu · zpáteční</span>
                           </div>
                           <div className="flex items-center gap-2">

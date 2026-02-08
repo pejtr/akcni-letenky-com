@@ -103,6 +103,15 @@ import { getHistoricalData } from "./historicalAnalytics";
 import { recordClickEvent, recordClickEventsBatch, getHeatmapData } from "./clickHeatmap";
 import { scheduleFollowup, processFollowupQueue, getFollowupStats } from "./emailFollowup";
 import { processWishlistRemarketing, getWishlistRemarketingStats } from "./wishlistRemarketing";
+import {
+  createEmailAbTest,
+  getAllEmailAbTests,
+  getActiveEmailAbTest,
+  determineEmailAbTestWinner,
+  toggleEmailAbTestStatus,
+  recordEmailOpened,
+  recordEmailClicked,
+} from "./emailAbTest";
 import { recordConversionEvent, getConversionFunnel, getFunnelSummary } from "./conversionFunnel";
 import { getSiteSetting, setSiteSetting, getAllSiteSettings } from "./db";
 import {
@@ -1461,6 +1470,61 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
       const sent = await processWishlistRemarketing();
       return { sent };
     }),
+  }),
+
+  // ============ Email A/B Test ============
+  emailAbTest: router({
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Forbidden");
+      return await getAllEmailAbTests();
+    }),
+
+    getActive: publicProcedure.query(async () => {
+      return await getActiveEmailAbTest();
+    }),
+
+    create: protectedProcedure
+      .input(z.object({
+        testName: z.string().min(1),
+        variantASubject: z.string().min(1),
+        variantACtaText: z.string().min(1),
+        variantBSubject: z.string().min(1),
+        variantBCtaText: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        const id = await createEmailAbTest(input);
+        return { id };
+      }),
+
+    determineWinner: protectedProcedure
+      .input(z.object({ testId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        return await determineEmailAbTestWinner(input.testId);
+      }),
+
+    toggleStatus: protectedProcedure
+      .input(z.object({ testId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        const newStatus = await toggleEmailAbTestStatus(input.testId);
+        return { status: newStatus };
+      }),
+
+    trackOpen: publicProcedure
+      .input(z.object({ testId: z.number(), variant: z.enum(["A", "B"]) }))
+      .mutation(async ({ input }) => {
+        await recordEmailOpened(input.testId, input.variant);
+        return { success: true };
+      }),
+
+    trackClick: publicProcedure
+      .input(z.object({ testId: z.number(), variant: z.enum(["A", "B"]) }))
+      .mutation(async ({ input }) => {
+        await recordEmailClicked(input.testId, input.variant);
+        return { success: true };
+      }),
   }),
 
   // ============ Site Settings (Admin) ============

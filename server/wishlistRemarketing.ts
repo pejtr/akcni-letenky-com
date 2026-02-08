@@ -3,13 +3,14 @@
  * 
  * Sends personalized remarketing emails to users who added flights to their wishlist
  * but didn't click through to purchase within 24 hours.
- * Runs on a scheduled interval to check for stale wishlist items.
+ * Supports A/B testing of email subject lines and CTA texts.
  */
 
 import { getDb } from "./db";
 import { wishlists, users, flights } from "../drizzle/schema";
 import { sql, eq, and, lte } from "drizzle-orm";
 import { isEmailServiceConfigured } from "./emailService";
+import { pickEmailVariant, recordEmailSent, type EmailVariant } from "./emailAbTest";
 
 interface UserWishlistData {
   email: string;
@@ -46,8 +47,6 @@ export async function processWishlistRemarketing(): Promise<number> {
 
   const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
 
-  // Find wishlist items older than 24h that haven't been remarketed
-  // isFavorite = 1 means active favorite, 2 = already remarketed
   const staleWishlistItems = await db
     .select({
       wishlistId: wishlists.id,
@@ -98,12 +97,20 @@ export async function processWishlistRemarketing(): Promise<number> {
 
   let sentCount = 0;
 
+  // Pick A/B test variant (if active test exists)
+  const abVariant = await pickEmailVariant();
+
   const userIds = Object.keys(userWishlists);
   for (const userIdStr of userIds) {
     const userId = Number(userIdStr);
     const userData = userWishlists[userId];
     try {
-      await sendWishlistRemarketingEmail(userData);
+      await sendWishlistRemarketingEmail(userData, abVariant);
+      
+      // Record A/B test send
+      if (abVariant) {
+        await recordEmailSent(abVariant.variant);
+      }
       
       // Mark these wishlist items as remarketed by updating isFavorite to 2
       for (const item of userData.items) {
@@ -114,7 +121,7 @@ export async function processWishlistRemarketing(): Promise<number> {
       }
       
       sentCount++;
-      console.log(`[WishlistRemarketing] Sent remarketing email to ${userData.email} with ${userData.items.length} items`);
+      console.log(`[WishlistRemarketing] Sent remarketing email to ${userData.email} (variant: ${abVariant?.variant || 'default'}) with ${userData.items.length} items`);
     } catch (error) {
       console.error(`[WishlistRemarketing] Failed to send to ${userData.email}:`, error);
     }
@@ -125,8 +132,12 @@ export async function processWishlistRemarketing(): Promise<number> {
 
 /**
  * Send a wishlist remarketing email to a user
+ * Uses A/B test variant if available, otherwise falls back to default
  */
-async function sendWishlistRemarketingEmail(userData: UserWishlistData): Promise<void> {
+async function sendWishlistRemarketingEmail(
+  userData: UserWishlistData,
+  abVariant: EmailVariant | null
+): Promise<void> {
   const { Resend } = await import("resend");
 
   if (!process.env.RESEND_API_KEY) {
@@ -137,15 +148,25 @@ async function sendWishlistRemarketingEmail(userData: UserWishlistData): Promise
   const fromEmail = process.env.RESEND_FROM_EMAIL || "Akční Letenky <onboarding@resend.dev>";
   const siteUrl = process.env.VITE_APP_URL || "https://akcni-letenky.manus.space";
 
-  const topItems = userData.items.slice(0, 3); // Max 3 items in email
+  const topItems = userData.items.slice(0, 3);
   const firstDest = topItems[0]?.flightCountry || "vaší vysněné destinaci";
 
-  const html = buildWishlistEmailHtml(userData.name, topItems, siteUrl);
+  // Use A/B test subject or default
+  const subject = abVariant
+    ? abVariant.subject
+        .replace("{{name}}", userData.name)
+        .replace("{{destination}}", firstDest)
+        .replace("{{count}}", String(userData.items.length))
+    : `${userData.name}, vaše oblíbené letenky do ${firstDest} stále čekají!`;
+
+  const ctaText = abVariant?.ctaText || "Rezervovat";
+
+  const html = buildWishlistEmailHtml(userData.name, topItems, siteUrl, ctaText);
 
   await resend.emails.send({
     from: fromEmail,
     to: userData.email,
-    subject: `${userData.name}, vaše oblíbené letenky do ${firstDest} stále čekají!`,
+    subject,
     html,
   });
 }
@@ -153,7 +174,8 @@ async function sendWishlistRemarketingEmail(userData: UserWishlistData): Promise
 function buildWishlistEmailHtml(
   userName: string,
   items: UserWishlistData["items"],
-  siteUrl: string
+  siteUrl: string,
+  ctaText: string = "Rezervovat"
 ): string {
   const itemsHtml = items.map((item) => {
     const title = item.flightTitle || "Zpáteční letenka";
@@ -173,7 +195,7 @@ function buildWishlistEmailHtml(
         </td>
         <td width="120" style="vertical-align:middle;text-align:center;">
           <a href="${link}" style="display:inline-block;background:#E91E63;color:#fff;padding:8px 16px;border-radius:20px;text-decoration:none;font-size:13px;font-weight:bold;">
-            Rezervovat
+            ${ctaText}
           </a>
         </td>
       </tr>

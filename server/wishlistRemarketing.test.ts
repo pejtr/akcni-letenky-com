@@ -10,6 +10,12 @@ vi.mock("./emailService", () => ({
   isEmailServiceConfigured: vi.fn(),
 }));
 
+// Mock emailAbTest
+vi.mock("./emailAbTest", () => ({
+  pickEmailVariant: vi.fn().mockResolvedValue(null),
+  recordEmailSent: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Mock resend
 vi.mock("resend", () => ({
   Resend: vi.fn().mockImplementation(() => ({

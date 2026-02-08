@@ -1699,3 +1699,8 @@
 - [x] Price range slider (min-max Kč) on LevneLetenky page with client-side filtering
 - [x] Email remarketing for wishlist users who didn't purchase within 24h
 - [x] Fix: site_settings table not created in database - push schema
+
+## New Features Batch 2 (2026-02-08)
+- [x] A/B test for email templates - test different subject lines and CTA texts for remarketing emails
+- [x] Admin dashboard section for wishlist remarketing - stats (pending/sent/remarketed) + manual trigger button
+- [x] Currency conversion in price filter - allow users to see prices in EUR and USD alongside CZK

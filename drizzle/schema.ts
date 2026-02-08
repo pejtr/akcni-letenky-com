@@ -844,3 +844,28 @@ export const siteSettings = mysqlTable("site_settings", {
   settingValue: text("settingValue"),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
+
+/**
+ * Email A/B Test table - tracks different email template variants and their performance
+ */
+export const emailAbTests = mysqlTable("email_ab_tests", {
+  id: int("id").autoincrement().primaryKey(),
+  testName: varchar("testName", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["active", "completed", "paused"]).default("active").notNull(),
+  variantASubject: text("variantASubject").notNull(),
+  variantACtaText: varchar("variantACtaText", { length: 100 }).notNull(),
+  variantBSubject: text("variantBSubject").notNull(),
+  variantBCtaText: varchar("variantBCtaText", { length: 100 }).notNull(),
+  variantASent: int("variantASent").default(0).notNull(),
+  variantBSent: int("variantBSent").default(0).notNull(),
+  variantAOpened: int("variantAOpened").default(0).notNull(),
+  variantBOpened: int("variantBOpened").default(0).notNull(),
+  variantAClicked: int("variantAClicked").default(0).notNull(),
+  variantBClicked: int("variantBClicked").default(0).notNull(),
+  winner: mysqlEnum("winner", ["none", "A", "B"]).default("none").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailAbTest = typeof emailAbTests.$inferSelect;
+export type InsertEmailAbTest = typeof emailAbTests.$inferInsert;
