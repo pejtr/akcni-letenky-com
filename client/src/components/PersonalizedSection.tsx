@@ -160,6 +160,7 @@ export default function PersonalizedSection() {
                       <span className="text-xl font-bold text-[#E91E63]">
                         {rec.estimatedPrice.toLocaleString("cs-CZ")} Kč
                       </span>
+                      <span className="text-xs text-gray-400">zpát.</span>
                       <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">
                         <TrendingDown className="w-3 h-3 inline" /> Sleva
                       </span>

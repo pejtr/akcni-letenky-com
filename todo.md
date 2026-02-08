@@ -1664,3 +1664,13 @@
 
 ## Subtle Animation on Main CTA Button (2026-02-08)
 - [x] Add subtle animation to header RYCHLÁ REZERVACE / ZAREZERVOVAT TEĎ button to make it more prominent
+
+## Fix Broken Destination Images + Zpáteční Letenky + Sticky Banner Countdown (2026-02-08)
+- [x] Fix broken destination card images (Kypr, Malta, Chorvatsko, Zanzibar, wellness) - uploaded to CDN
+- [x] Update sticky banner with dynamic decreasing ticket count (countdown from 15 to 3)
+- [x] Change sticky banner price to "od 899 Kč"
+- [x] Change flight card title from "X → Y - Letenka" to "X → Y – DestinationName" (server-side)
+- [x] Add "zpáteční" label next to price on flight cards (LevneLetenky, TopFlightsThisWeek, PersonalizedSection)
+- [x] Change badge on flight card image from "Letenka" to destination name
+- [x] Update LevneLetenky hero text to "Levné Zpáteční Letenky"
+- [x] All 344 tests passing across 31 test files

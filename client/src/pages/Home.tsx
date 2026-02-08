@@ -30,6 +30,7 @@ import PriceAlertModal from "@/components/PriceAlertModal";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
+import { useTicketCountdown } from "@/hooks/useTicketCountdown";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -83,6 +84,8 @@ export default function Home() {
   const { ctaVariant: footerCta, trackClick: trackFooterClick } = useCtaAbTest("footer_cta");
   const { ctaVariant: stickyCta, trackClick: trackStickyClick } = useCtaAbTest("sticky_banner");
   const { ctaVariant: reservationCta, trackClick: trackReservationClick } = useCtaAbTest("reservation_button");
+  // Dynamic ticket countdown for urgency
+  const ticketCount = useTicketCountdown();
   // Click heatmap tracking
   useClickTracking(true);
   // Conversion funnel tracking
@@ -840,7 +843,7 @@ export default function Home() {
                   <>
                     {stickyCta.text.split(/\{\{|\}\}/).map((part, i) => 
                       i % 2 === 1 ? (
-                        <span key={i} className="text-[#E91E63] font-extrabold price-highlight-pulse">{part}</span>
+                        <span key={i} className="text-[#E91E63] font-extrabold price-highlight-pulse">{part === "COUNTDOWN" ? ticketCount : part}</span>
                       ) : part
                     )}
                   </>

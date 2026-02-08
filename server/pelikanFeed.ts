@@ -99,20 +99,29 @@ export async function fetchFlights(forceRefresh = false): Promise<FlightOffer[]>
     const result = parser.parse(xmlText);
     const items = result?.rss?.channel?.item || [];
     
-    const flights: FlightOffer[] = (Array.isArray(items) ? items : [items]).map((item: any) => ({
-      id: item['g:id'] || '',
-      title: item['g:title'] || '',
-      description: item['g:description'] || '',
-      link: item['g:link'] || '',
-      imageUrl: item['g:image_link'] || '',
-      price: parsePrice(item['g:price'] || '0'),
-      salePrice: parsePrice(item['g:sale_price'] || '0'),
-      country: item['g:custom_label_0'] || '',
-      destination: item['g:custom_label_1'] || '',
-      departure: item['g:custom_label_2'] || '',
-      discount: parseDiscount(item['g:custom_label_3'] || ''),
-      type: 'flight' as const,
-    }));
+    const flights: FlightOffer[] = (Array.isArray(items) ? items : [items]).map((item: any) => {
+      const rawTitle = item['g:title'] || '';
+      const destination = item['g:custom_label_1'] || '';
+      // Replace " - Letenka" suffix with destination name for better UX
+      const title = rawTitle.replace(/ - Letenka$/, destination ? ` – ${destination}` : '');
+      const rawDesc = item['g:description'] || '';
+      // Add "zpáteční" to description if not already present
+      const description = rawDesc.includes('zpáteční') ? rawDesc : rawDesc.replace(/Letenka /, 'Zpáteční letenka ');
+      return {
+        id: item['g:id'] || '',
+        title,
+        description,
+        link: item['g:link'] || '',
+        imageUrl: item['g:image_link'] || '',
+        price: parsePrice(item['g:price'] || '0'),
+        salePrice: parsePrice(item['g:sale_price'] || '0'),
+        country: item['g:custom_label_0'] || '',
+        destination: item['g:custom_label_1'] || '',
+        departure: item['g:custom_label_2'] || '',
+        discount: parseDiscount(item['g:custom_label_3'] || ''),
+        type: 'flight' as const,
+      };
+    });
 
     // Update cache
     flightsCache = {

@@ -81,13 +81,13 @@ export default function LevneLetenky() {
       <section className="bg-gradient-to-r from-[#1a5276] to-[#2980b9] text-white py-12">
         <div className="container text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            ✈️ Levné Letenky
+            ✈️ Levné Zpáteční Letenky
           </h1>
           <p className="text-xl opacity-90 mb-2">
             {flights?.length || 0} aktuálních nabídek letů
           </p>
           <p className="text-lg opacity-75">
-            Nejlevnější letenky s až 50% slevou. Objevte tisíce destinací po celém světě.
+            Nejlevnější zpáteční letenky s až 50% slevou. Objevte tisíce destinací po celém světě.
           </p>
         </div>
       </section>
@@ -196,7 +196,7 @@ export default function LevneLetenky() {
                         </button>
                         <div className="absolute bottom-3 left-3 bg-black/60 text-white px-2 py-1 rounded text-sm flex items-center gap-1">
                           <Plane className="w-4 h-4" />
-                          Letenka
+                          {flight.destination}
                         </div>
                       </div>
 
@@ -239,7 +239,7 @@ export default function LevneLetenky() {
                             <span className="text-3xl font-bold text-[#1a5276]">
                               {flight.salePrice.toLocaleString("cs-CZ")} Kč
                             </span>
-                            <span className="text-gray-500 text-sm ml-2">za osobu</span>
+                            <span className="text-gray-500 text-sm ml-2">za osobu · zpáteční</span>
                           </div>
                           <div className="flex gap-2">
                             <a

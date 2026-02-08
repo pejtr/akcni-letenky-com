@@ -125,6 +125,7 @@ export default function TopFlightsThisWeek() {
                   <div className="mb-3">
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-black text-[#FFD700]">{dest.price.toLocaleString()} Kč</span>
+                      <span className="text-xs text-gray-300 ml-1">zpáteční</span>
                       {dest.originalPrice && dest.originalPrice > dest.price && (
                         <span className="text-sm text-gray-300 line-through">{dest.originalPrice.toLocaleString()} Kč</span>
                       )}
@@ -156,7 +157,7 @@ export default function TopFlightsThisWeek() {
 
                 {/* CTA */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-400">
-                  <span className="text-sm font-semibold text-white">Praha → {dest.destination || "Barcelona"}</span>
+                  <span className="text-sm font-semibold text-white">Praha ↔ {dest.destination || "Barcelona"}</span>
                   <span className="text-xs text-gray-300 group-hover:text-[#FFD700] transition-colors">
                     Zobrazit lety →
                   </span>
