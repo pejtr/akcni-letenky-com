@@ -3,7 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag } from "lucide-react";
+import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb } from "lucide-react";
 import { Link } from "wouter";
 
 export default function AdminDashboard() {
@@ -367,9 +367,15 @@ export default function AdminDashboard() {
           <WeeklyReportCard />
         </div>
 
-        {/* Push Notifications */}
-        <div className="mt-6">
+        {/* Push Notifications & A/B Testing */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           <PushNotificationsCard />
+          <PushAbTestCard />
+        </div>
+
+        {/* Strategic Recommendations */}
+        <div className="mt-6">
+          <StrategicRecommendationsCard />
         </div>
 
         {/* RESEND_API_KEY Warning */}
@@ -680,6 +686,294 @@ function PushNotificationsCard() {
         {broadcast.isSuccess && (
           <p className="text-xs text-green-600 mt-2 text-center">
             ✅ Odesláno: {broadcast.data.sent} úspěšně, {broadcast.data.failed} selhalo
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Strategic Recommendations Card ============
+
+function StrategicRecommendationsCard() {
+  const generateStrategy = trpc.weeklyReport.generateStrategy.useMutation();
+  const lastResult = trpc.weeklyReport.getLastResult.useQuery();
+  const strategy = generateStrategy.data || lastResult.data?.strategy;
+
+  const priorityColors: Record<string, string> = {
+    high: 'bg-red-50 text-red-700 border-red-200',
+    medium: 'bg-amber-50 text-amber-700 border-amber-200',
+    low: 'bg-blue-50 text-blue-700 border-blue-200',
+  };
+
+  const categoryIcons: Record<string, string> = {
+    growth: '📈', retention: '🔄', optimization: '⚡', content: '📝', monetization: '💰',
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">🧠 Strategická doporučení (AI)</CardTitle>
+        <Brain className="w-4 h-4 text-emerald-600" />
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground mb-3">
+          AI analyzuje týdenní data a generuje akční doporučení pro maximalizaci ROI.
+        </p>
+
+        {strategy && (
+          <div className="space-y-3 mb-4">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Lightbulb className="w-3 h-3 text-emerald-600" />
+                <span className="text-xs font-semibold text-emerald-800">Klíčové zjištění</span>
+              </div>
+              <p className="text-xs text-emerald-700">{strategy.keyInsight}</p>
+            </div>
+
+            {strategy.recommendations.map((rec: any, i: number) => (
+              <div key={i} className={`border rounded-lg p-3 ${priorityColors[rec.priority] || 'bg-gray-50 text-gray-700 border-gray-200'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm">{categoryIcons[rec.category] || '📋'}</span>
+                  <span className="text-xs font-bold">{rec.title}</span>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-semibold ${
+                    rec.priority === 'high' ? 'bg-red-100 text-red-800' :
+                    rec.priority === 'medium' ? 'bg-amber-100 text-amber-800' :
+                    'bg-blue-100 text-blue-800'
+                  }`}>
+                    {rec.priority === 'high' ? 'Vysoká' : rec.priority === 'medium' ? 'Střední' : 'Nízká'}
+                  </span>
+                </div>
+                <p className="text-[11px] mb-1.5 opacity-90">{rec.description}</p>
+                <p className="text-[10px] font-semibold text-green-700 mb-1">💡 {rec.expectedImpact}</p>
+                <ul className="text-[10px] space-y-0.5 ml-3 list-disc opacity-80">
+                  {rec.actionSteps.map((step: string, j: number) => (
+                    <li key={j}>{step}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            <p className="text-[10px] text-muted-foreground text-right">
+              Vygenerováno: {new Date(strategy.generatedAt).toLocaleString('cs-CZ')}
+            </p>
+          </div>
+        )}
+
+        {!strategy && !generateStrategy.isPending && (
+          <p className="text-xs text-muted-foreground mb-3 italic">
+            Zatím nebyla vygenerována žádná doporučení. Klikněte pro analýzu.
+          </p>
+        )}
+
+        <Button
+          size="sm"
+          className="w-full"
+          onClick={() => generateStrategy.mutate()}
+          disabled={generateStrategy.isPending}
+        >
+          {generateStrategy.isPending ? (
+            <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+          ) : (
+            <Brain className="w-3 h-3 mr-1" />
+          )}
+          {generateStrategy.isPending ? 'Analyzuji data...' : 'Generovat doporučení'}
+        </Button>
+
+        {generateStrategy.isError && (
+          <p className="text-xs text-red-600 mt-2">Chyba: {generateStrategy.error.message}</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Push A/B Test Card ============
+
+function PushAbTestCard() {
+  const { data: abTests, refetch } = trpc.pushNotifications.getAbTests.useQuery();
+  const createTest = trpc.pushNotifications.createAbTest.useMutation({ onSuccess: () => refetch() });
+  const determineWinner = trpc.pushNotifications.determineWinner.useMutation({ onSuccess: () => refetch() });
+  const [showForm, setShowForm] = useState(false);
+  const [testName, setTestName] = useState('');
+  const [varATitle, setVarATitle] = useState('');
+  const [varABody, setVarABody] = useState('');
+  const [varBTitle, setVarBTitle] = useState('');
+  const [varBBody, setVarBBody] = useState('');
+  const [testUrl, setTestUrl] = useState('');
+
+  const activeTests = abTests?.filter((t: any) => t.status === 'active') || [];
+  const completedTests = abTests?.filter((t: any) => t.status === 'completed') || [];
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">🧪 A/B Test Push Notifikací</CardTitle>
+        <FlaskConical className="w-4 h-4 text-violet-600" />
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground mb-3">
+          Testujte různé titulky a texty pro maximalizaci open rate.
+        </p>
+
+        {/* Active tests */}
+        {activeTests.length > 0 && (
+          <div className="space-y-2 mb-3">
+            <p className="text-xs font-semibold text-violet-700">Aktivní testy:</p>
+            {activeTests.map((test: any) => (
+              <div key={test.id} className="bg-violet-50 border border-violet-200 rounded-lg p-2.5">
+                <p className="text-xs font-bold text-violet-800 mb-1">{test.testName}</p>
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div className="bg-white rounded p-1.5 border">
+                    <p className="text-[9px] font-semibold text-blue-600 mb-0.5">Varianta A</p>
+                    <p className="text-[10px] font-medium">{test.variantA.title}</p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">
+                      Odesláno: {test.variantA.sent} | Otevřeno: {test.variantA.opened} ({test.variantA.openRate}%)
+                    </p>
+                  </div>
+                  <div className="bg-white rounded p-1.5 border">
+                    <p className="text-[9px] font-semibold text-orange-600 mb-0.5">Varianta B</p>
+                    <p className="text-[10px] font-medium">{test.variantB.title}</p>
+                    <p className="text-[9px] text-muted-foreground mt-0.5">
+                      Odesláno: {test.variantB.sent} | Otevřeno: {test.variantB.opened} ({test.variantB.openRate}%)
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-xs h-7"
+                  onClick={() => determineWinner.mutate({ testId: test.id })}
+                  disabled={determineWinner.isPending}
+                >
+                  <Trophy className="w-3 h-3 mr-1" />
+                  Vyhodnotit vítěze
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Completed tests */}
+        {completedTests.length > 0 && (
+          <div className="space-y-2 mb-3">
+            <p className="text-xs font-semibold text-gray-600">Dokončené testy:</p>
+            {completedTests.slice(0, 3).map((test: any) => (
+              <div key={test.id} className="bg-gray-50 border border-gray-200 rounded-lg p-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] font-medium">{test.testName}</p>
+                  {test.winner ? (
+                    <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-semibold">
+                      🏆 Vítěz: {test.winner}
+                    </span>
+                  ) : (
+                    <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+                      Remíza
+                    </span>
+                  )}
+                </div>
+                <p className="text-[9px] text-muted-foreground">
+                  A: {test.variantA.openRate}% | B: {test.variantB.openRate}%
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Create new test form */}
+        {showForm ? (
+          <div className="space-y-2 border border-violet-200 rounded-lg p-3 bg-violet-50/50">
+            <input
+              type="text"
+              placeholder="Název testu (např. CTA test únor)"
+              value={testName}
+              onChange={(e) => setTestName(e.target.value)}
+              className="w-full text-xs border rounded px-2 py-1.5"
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-[9px] font-semibold text-blue-600 mb-1">Varianta A</p>
+                <input
+                  type="text"
+                  placeholder="Titulek A"
+                  value={varATitle}
+                  onChange={(e) => setVarATitle(e.target.value)}
+                  className="w-full text-xs border rounded px-2 py-1 mb-1"
+                />
+                <textarea
+                  placeholder="Text A"
+                  value={varABody}
+                  onChange={(e) => setVarABody(e.target.value)}
+                  rows={2}
+                  className="w-full text-xs border rounded px-2 py-1 resize-none"
+                />
+              </div>
+              <div>
+                <p className="text-[9px] font-semibold text-orange-600 mb-1">Varianta B</p>
+                <input
+                  type="text"
+                  placeholder="Titulek B"
+                  value={varBTitle}
+                  onChange={(e) => setVarBTitle(e.target.value)}
+                  className="w-full text-xs border rounded px-2 py-1 mb-1"
+                />
+                <textarea
+                  placeholder="Text B"
+                  value={varBBody}
+                  onChange={(e) => setVarBBody(e.target.value)}
+                  rows={2}
+                  className="w-full text-xs border rounded px-2 py-1 resize-none"
+                />
+              </div>
+            </div>
+            <input
+              type="text"
+              placeholder="URL odkaz (volitelné)"
+              value={testUrl}
+              onChange={(e) => setTestUrl(e.target.value)}
+              className="w-full text-xs border rounded px-2 py-1.5"
+            />
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                className="flex-1 text-xs h-7"
+                onClick={() => {
+                  if (!testName || !varATitle || !varABody || !varBTitle || !varBBody) return;
+                  createTest.mutate({
+                    testName,
+                    variantATitle: varATitle,
+                    variantABody: varABody,
+                    variantBTitle: varBTitle,
+                    variantBBody: varBBody,
+                    url: testUrl || undefined,
+                  });
+                  setShowForm(false);
+                  setTestName(''); setVarATitle(''); setVarABody(''); setVarBTitle(''); setVarBBody(''); setTestUrl('');
+                }}
+                disabled={createTest.isPending || !testName || !varATitle || !varABody || !varBTitle || !varBBody}
+              >
+                {createTest.isPending ? <RefreshCw className="w-3 h-3 mr-1 animate-spin" /> : <FlaskConical className="w-3 h-3 mr-1" />}
+                Spustit test
+              </Button>
+              <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => setShowForm(false)}>
+                Zrušit
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button
+            size="sm"
+            className="w-full"
+            onClick={() => setShowForm(true)}
+          >
+            <FlaskConical className="w-3 h-3 mr-1" />
+            Nový A/B test
+          </Button>
+        )}
+
+        {createTest.isSuccess && (
+          <p className="text-xs text-green-600 mt-2 text-center">
+            ✅ Test spuštěn: A={createTest.data.variantASent}, B={createTest.data.variantBSent}
           </p>
         )}
       </CardContent>

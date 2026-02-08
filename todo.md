@@ -1526,3 +1526,27 @@
 - [x] Update service worker to handle different notification categories with specific actions
 - [x] Update broadcast tRPC endpoint with category parameter
 - [x] All 277 tests passing across 23 test files
+
+## User Push Notification Category Preferences (2026-02-08)
+- [x] Add notification_preferences column to push_subscriptions table
+- [x] Create tRPC endpoints for getting/updating preferences
+- [x] Build preferences UI in PushNotificationBanner (toggle per category with icons)
+- [x] Filter push notifications by user preferences before sending
+- [x] Write vitest tests
+
+## LLM Weekly Strategic Recommendations (2026-02-08)
+- [x] Create strategicRecommendations.ts module using invokeLLM with structured JSON schema
+- [x] Generate 3-5 actionable recommendations with priority/category/steps
+- [x] Add recommendations to weekly report email (appended HTML section)
+- [x] Add StrategicRecommendationsCard to AdminDashboard with on-demand generation
+- [x] Automatic generation integrated into weekly report flow + fallback strategy
+- [x] Write vitest tests (5 tests passing)
+
+## A/B Testing for Push Notifications (2026-02-08)
+- [x] Create push_ab_tests table for tracking test variants
+- [x] Implement 50/50 variant splitting for push broadcasts (createAndRunAbTest)
+- [x] Track open rates per variant via service worker (recordAbTestOpen)
+- [x] Add PushAbTestCard in AdminDashboard with create/view/determine winner
+- [x] Add results/winner display with completed test history
+- [x] Write vitest tests (10 tests passing)
+- [x] All 292 tests passing across 25 test files

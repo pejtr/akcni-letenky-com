@@ -81,13 +81,22 @@ import {
 } from "./browsingHistory";
 import { generateDailyArticles } from "./articleGenerator";
 import { sendDailyReport, getLastReportResult, collectDailyMetrics } from "./dailyReport";
-import { sendWeeklyReport, getLastWeeklyResult } from "./weeklyReport";
+import { sendWeeklyReport, getLastWeeklyResult, collectWeeklyMetrics, calculateWeekOverWeek } from "./weeklyReport";
+import { generateStrategicRecommendations } from "./strategicRecommendations";
 import {
   savePushSubscription,
   removePushSubscription,
   isPushConfigured,
   getPushStats,
   sendBroadcastPush,
+  updateNotificationPreferences,
+  getNotificationPreferences,
+  createAndRunAbTest,
+  recordAbTestOpen,
+  getAbTests,
+  determineAbTestWinner,
+  ALL_CATEGORIES,
+  type NotificationCategory,
 } from "./pushNotifications";
 import { adminAnalyticsRouter } from "./adminAnalytics";
 import {
@@ -1106,6 +1115,20 @@ export const appRouter = router({
       if (ctx.user.role !== "admin") throw new Error("Unauthorized");
       return await sendWeeklyReport();
     }),
+
+    // Generate strategic recommendations on demand (admin)
+    generateStrategy: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      const now = new Date();
+      const weekEnd = new Date(now);
+      const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const prevWeekEnd = new Date(weekStart);
+      const prevWeekStart = new Date(weekStart.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const currentMetrics = await collectWeeklyMetrics(weekStart, weekEnd);
+      const previousMetrics = await collectWeeklyMetrics(prevWeekStart, prevWeekEnd);
+      const comparison = calculateWeekOverWeek(currentMetrics, previousMetrics);
+      return await generateStrategicRecommendations(comparison);
+    }),
   }),
 
   // ============ Push Notifications ============
@@ -1149,6 +1172,24 @@ export const appRouter = router({
       return await getPushStats();
     }),
 
+    // Get notification preferences for a subscription
+    getPreferences: publicProcedure
+      .input(z.object({ endpoint: z.string() }))
+      .query(async ({ input }) => {
+        const prefs = await getNotificationPreferences(input.endpoint);
+        return { preferences: prefs, allCategories: ALL_CATEGORIES };
+      }),
+
+    // Update notification preferences
+    updatePreferences: publicProcedure
+      .input(z.object({
+        endpoint: z.string(),
+        preferences: z.array(z.enum(["price_drop", "news", "deal", "custom"])),
+      }))
+      .mutation(async ({ input }) => {
+        return await updateNotificationPreferences(input.endpoint, input.preferences);
+      }),
+
     // Send broadcast push (admin) - supports news, deals, and custom messages
     broadcast: protectedProcedure
       .input(z.object({
@@ -1166,6 +1207,46 @@ export const appRouter = router({
           tag: `broadcast-${input.category}-${Date.now()}`,
           data: { type: input.category },
         });
+      }),
+
+    // Create and run A/B test (admin)
+    createAbTest: protectedProcedure
+      .input(z.object({
+        testName: z.string(),
+        variantATitle: z.string(),
+        variantABody: z.string(),
+        variantBTitle: z.string(),
+        variantBBody: z.string(),
+        category: z.enum(["price_drop", "news", "deal", "custom"]).default("custom"),
+        url: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+        return await createAndRunAbTest(input);
+      }),
+
+    // Record A/B test notification open (public - called from service worker)
+    recordAbOpen: publicProcedure
+      .input(z.object({
+        testId: z.number(),
+        variant: z.enum(["A", "B"]),
+      }))
+      .mutation(async ({ input }) => {
+        return await recordAbTestOpen(input.testId, input.variant);
+      }),
+
+    // Get all A/B tests (admin)
+    getAbTests: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      return await getAbTests();
+    }),
+
+    // Determine A/B test winner (admin)
+    determineWinner: protectedProcedure
+      .input(z.object({ testId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+        return await determineAbTestWinner(input.testId);
       }),
   }),
 

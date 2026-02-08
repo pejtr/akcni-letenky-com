@@ -152,6 +152,7 @@ describe("Weekly Report Service", () => {
       };
       const result = calculateWeekOverWeek(mockWeeklyMetrics, betterPrevious);
       expect(result.changes!.affiliateClicks.value).toBe(-75);
+      // 125/200 = 62.5%, change = -37.5%, Math.round(-37.5) = -37
       expect(result.changes!.affiliateClicks.percent).toBe(-37);
     });
   });

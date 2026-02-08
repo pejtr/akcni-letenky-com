@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE push_subscriptions ADD COLUMN notificationPreferences TEXT DEFAULT '[\"price_drop\",\"news\",\"deal\",\"custom\"]';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute ALTER TABLE push_subscriptions ADD COLUMN notificationPreferences TEXT DEFAULT '[\"price_drop\",\"news\",\"deal\",\"custom\"]';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1101 (42000) at line 1: BLOB/TEXT/JSON column 'notificationPreferences' can't have a default value"
+  ]
+}

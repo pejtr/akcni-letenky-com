@@ -13,6 +13,7 @@ import { Resend } from "resend";
 import { getDb } from "./db";
 import { dailyReportLog } from "../drizzle/schema";
 import { desc, gte, lte, and } from "drizzle-orm";
+import { generateStrategicRecommendations, generateRecommendationsHTML, type WeeklyStrategy } from "./strategicRecommendations";
 
 // ============ Types ============
 
@@ -432,6 +433,15 @@ export async function sendWeeklyReport(): Promise<{
   const previousMetrics = await collectWeeklyMetrics(prevWeekStart, prevWeekEnd);
   const comparison = calculateWeekOverWeek(currentMetrics, previousMetrics);
 
+  // Generate strategic recommendations via LLM
+  let strategy: WeeklyStrategy | null = null;
+  try {
+    strategy = await generateStrategicRecommendations(comparison);
+    console.log(`[WeeklyReport] Generated ${strategy.recommendations.length} strategic recommendations`);
+  } catch (err) {
+    console.error("[WeeklyReport] Failed to generate strategic recommendations:", err);
+  }
+
   let emailSent = false;
   let ownerNotified = false;
 
@@ -442,11 +452,20 @@ export async function sendWeeklyReport(): Promise<{
       const fromEmail = process.env.RESEND_FROM_EMAIL || "Akční Letenky <onboarding@resend.dev>";
       const toEmail = process.env.DAILY_REPORT_EMAIL || process.env.OWNER_EMAIL || "onboarding@resend.dev";
 
+      // Append strategic recommendations to email HTML
+      let emailHtml = generateWeeklyReportHTML(currentMetrics, comparison);
+      if (strategy) {
+        emailHtml = emailHtml.replace(
+          "</body>",
+          `${generateRecommendationsHTML(strategy)}</body>`
+        );
+      }
+
       const { error } = await resend.emails.send({
         from: fromEmail,
         to: toEmail,
         subject: `📈 Týdenní souhrn – ${currentMetrics.weekLabel} | ${currentMetrics.totalAffiliateClicks} kliků`,
-        html: generateWeeklyReportHTML(currentMetrics, comparison),
+        html: emailHtml,
         text: generateWeeklyReportText(currentMetrics, comparison),
       });
 
@@ -494,6 +513,7 @@ export async function sendWeeklyReport(): Promise<{
     success: emailSent || ownerNotified,
     metrics: currentMetrics,
     comparison,
+    strategy,
     emailSent,
     ownerNotified,
   };

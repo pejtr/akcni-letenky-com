@@ -735,6 +735,9 @@ export const pushSubscriptions = mysqlTable("push_subscriptions", {
   userId: int("userId"), // Optional - if user is logged in
   sessionId: varchar("sessionId", { length: 64 }), // Session identifier
   isActive: int("isActive").default(1), // 1 = active, 0 = unsubscribed/expired
+  // Category preferences: JSON array of enabled categories
+  // Default: all categories enabled ["price_drop","news","deal","custom"]
+  notificationPreferences: text("notificationPreferences").default('["price_drop","news","deal","custom"]'),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -756,3 +759,28 @@ export const dailyReportLog = mysqlTable("daily_report_log", {
 
 export type DailyReportLogEntry = typeof dailyReportLog.$inferSelect;
 export type InsertDailyReportLogEntry = typeof dailyReportLog.$inferInsert;
+
+/**
+ * Push A/B Tests - tracks A/B test variants for push notifications
+ */
+export const pushAbTests = mysqlTable("push_ab_tests", {
+  id: int("id").autoincrement().primaryKey(),
+  testName: varchar("testName", { length: 255 }).notNull(),
+  status: varchar("status", { length: 20 }).default("active"), // active, completed, cancelled
+  variantATitle: text("variantA_title").notNull(),
+  variantABody: text("variantA_body").notNull(),
+  variantBTitle: text("variantB_title").notNull(),
+  variantBBody: text("variantB_body").notNull(),
+  category: varchar("category", { length: 20 }).default("custom"),
+  url: text("url"),
+  variantASent: int("variantA_sent").default(0),
+  variantAOpened: int("variantA_opened").default(0),
+  variantBSent: int("variantB_sent").default(0),
+  variantBOpened: int("variantB_opened").default(0),
+  winner: varchar("winner", { length: 1 }), // 'A' or 'B' or null
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type PushAbTest = typeof pushAbTests.$inferSelect;
+export type InsertPushAbTest = typeof pushAbTests.$inferInsert;

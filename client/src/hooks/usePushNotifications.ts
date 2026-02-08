@@ -1,7 +1,7 @@
 /**
  * usePushNotifications Hook
  * 
- * Manages browser push notification subscription state.
+ * Manages browser push notification subscription state and category preferences.
  * Handles service worker registration, permission requests,
  * and subscription management via tRPC.
  */
@@ -10,15 +10,35 @@ import { useState, useEffect, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 
 export type PushPermissionState = "default" | "granted" | "denied" | "unsupported";
+export type NotificationCategory = "price_drop" | "news" | "deal" | "custom";
+
+export const CATEGORY_LABELS: Record<NotificationCategory, string> = {
+  price_drop: "Poklesy cen",
+  news: "Novinky",
+  deal: "Akční nabídky",
+  custom: "Ostatní",
+};
+
+export const CATEGORY_DESCRIPTIONS: Record<NotificationCategory, string> = {
+  price_drop: "Upozornění na pokles cen sledovaných destinací",
+  news: "Novinky a tipy pro cestování",
+  deal: "Speciální akční nabídky a slevy",
+  custom: "Ostatní oznámení a důležité informace",
+};
 
 export function usePushNotifications() {
   const [permission, setPermission] = useState<PushPermissionState>("default");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null);
+  const [preferences, setPreferences] = useState<NotificationCategory[]>([
+    "price_drop", "news", "deal", "custom",
+  ]);
 
   const subscribeMutation = trpc.pushNotifications.subscribe.useMutation();
   const unsubscribeMutation = trpc.pushNotifications.unsubscribe.useMutation();
+  const updatePrefsMutation = trpc.pushNotifications.updatePreferences.useMutation();
 
   // Check if push is supported
   const isSupported = typeof window !== "undefined" && "serviceWorker" in navigator && "PushManager" in window;
@@ -28,6 +48,19 @@ export function usePushNotifications() {
     ? (import.meta as any).env?.VITE_VAPID_PUBLIC_KEY
     : null;
 
+  // Fetch preferences when we have an endpoint
+  const prefsQuery = trpc.pushNotifications.getPreferences.useQuery(
+    { endpoint: currentEndpoint || "" },
+    { enabled: !!currentEndpoint && isSubscribed }
+  );
+
+  // Sync fetched preferences
+  useEffect(() => {
+    if (prefsQuery.data?.preferences) {
+      setPreferences(prefsQuery.data.preferences as NotificationCategory[]);
+    }
+  }, [prefsQuery.data]);
+
   // Check current permission and subscription state
   useEffect(() => {
     if (!isSupported) {
@@ -35,10 +68,7 @@ export function usePushNotifications() {
       return;
     }
 
-    // Check Notification permission
     setPermission(Notification.permission as PushPermissionState);
-
-    // Check if already subscribed
     checkSubscription();
   }, [isSupported]);
 
@@ -50,6 +80,9 @@ export function usePushNotifications() {
       if (registration) {
         const subscription = await registration.pushManager.getSubscription();
         setIsSubscribed(!!subscription);
+        if (subscription) {
+          setCurrentEndpoint(subscription.endpoint);
+        }
       }
     } catch (err) {
       console.warn("[PushNotifications] Failed to check subscription:", err);
@@ -79,7 +112,6 @@ export function usePushNotifications() {
     setError(null);
 
     try {
-      // Request notification permission
       const perm = await Notification.requestPermission();
       setPermission(perm as PushPermissionState);
 
@@ -89,11 +121,9 @@ export function usePushNotifications() {
         return false;
       }
 
-      // Register service worker
       const registration = await navigator.serviceWorker.register("/sw.js");
       await navigator.serviceWorker.ready;
 
-      // Subscribe to push
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
@@ -101,7 +131,6 @@ export function usePushNotifications() {
 
       const subJson = subscription.toJSON();
 
-      // Save subscription to server
       await subscribeMutation.mutateAsync({
         endpoint: subJson.endpoint!,
         keys: {
@@ -111,6 +140,7 @@ export function usePushNotifications() {
       });
 
       setIsSubscribed(true);
+      setCurrentEndpoint(subJson.endpoint!);
       setIsLoading(false);
       return true;
     } catch (err: any) {
@@ -133,10 +163,7 @@ export function usePushNotifications() {
       if (registration) {
         const subscription = await registration.pushManager.getSubscription();
         if (subscription) {
-          // Unsubscribe from push manager
           await subscription.unsubscribe();
-
-          // Remove from server
           await unsubscribeMutation.mutateAsync({
             endpoint: subscription.endpoint,
           });
@@ -144,6 +171,7 @@ export function usePushNotifications() {
       }
 
       setIsSubscribed(false);
+      setCurrentEndpoint(null);
       setIsLoading(false);
       return true;
     } catch (err: any) {
@@ -154,6 +182,39 @@ export function usePushNotifications() {
     }
   }, [isSupported, unsubscribeMutation]);
 
+  // Update category preferences
+  const updatePreferences = useCallback(async (newPrefs: NotificationCategory[]) => {
+    if (!currentEndpoint) return false;
+
+    try {
+      await updatePrefsMutation.mutateAsync({
+        endpoint: currentEndpoint,
+        preferences: newPrefs,
+      });
+      setPreferences(newPrefs);
+      return true;
+    } catch (err: any) {
+      console.error("[PushNotifications] Failed to update preferences:", err);
+      setError(err.message || "Nepodařilo se uložit předvolby.");
+      return false;
+    }
+  }, [currentEndpoint, updatePrefsMutation]);
+
+  // Toggle a single category
+  const toggleCategory = useCallback(async (category: NotificationCategory) => {
+    const newPrefs = preferences.includes(category)
+      ? preferences.filter((c) => c !== category)
+      : [...preferences, category];
+    
+    // Ensure at least one category is enabled
+    if (newPrefs.length === 0) {
+      setError("Musíte mít alespoň jednu kategorii aktivní.");
+      return false;
+    }
+
+    return await updatePreferences(newPrefs);
+  }, [preferences, updatePreferences]);
+
   return {
     isSupported,
     permission,
@@ -162,5 +223,9 @@ export function usePushNotifications() {
     error,
     subscribe,
     unsubscribe,
+    preferences,
+    updatePreferences,
+    toggleCategory,
+    isPrefsLoading: prefsQuery.isLoading || updatePrefsMutation.isPending,
   };
 }

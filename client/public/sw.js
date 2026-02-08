@@ -6,6 +6,7 @@
  * - News and updates
  * - Promotional deals and offers
  * - Custom broadcast messages
+ * - A/B test variant tracking
  * 
  * Registered from the frontend when user opts in to push notifications.
  */
@@ -76,7 +77,7 @@ self.addEventListener("push", (event) => {
     },
     vibrate: [200, 100, 200],
     actions: config.actions,
-    requireInteraction: notificationType === "deal", // Deals stay visible until user interacts
+    requireInteraction: notificationType === "deal",
   };
 
   event.waitUntil(
@@ -88,29 +89,53 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const url = event.notification.data?.url || "/";
+  const notifData = event.notification.data || {};
+  const url = notifData.url || "/";
 
   if (event.action === "dismiss") {
     return;
   }
 
+  // Track A/B test open if this notification is part of a test
+  if (notifData.abTestId && notifData.variant) {
+    event.waitUntil(
+      trackAbTestOpen(notifData.abTestId, notifData.variant)
+    );
+  }
+
   // Open the URL or focus existing tab
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
-      // Try to focus an existing tab
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && "focus" in client) {
           client.navigate(url);
           return client.focus();
         }
       }
-      // Open a new tab
       if (self.clients.openWindow) {
         return self.clients.openWindow(url);
       }
     })
   );
 });
+
+// Track A/B test notification open via tRPC
+async function trackAbTestOpen(testId, variant) {
+  try {
+    const response = await fetch("/api/trpc/pushNotifications.recordAbOpen", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        json: { testId: testId, variant: variant },
+      }),
+    });
+    if (!response.ok) {
+      console.warn("[SW] Failed to track A/B test open:", response.status);
+    }
+  } catch (err) {
+    console.warn("[SW] Failed to track A/B test open:", err);
+  }
+}
 
 // Handle service worker activation
 self.addEventListener("activate", (event) => {
