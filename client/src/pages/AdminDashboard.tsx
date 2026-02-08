@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb } from "lucide-react";
 import { Link } from "wouter";
 import HistoricalCharts from "@/components/HistoricalCharts";
+import HeatmapVisualization from "@/components/HeatmapVisualization";
+import ConversionFunnelDashboard from "@/components/ConversionFunnelDashboard";
 
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -317,6 +319,12 @@ export default function AdminDashboard() {
         {/* Historical Charts (30 days) */}
         <div className="mt-8">
           <HistoricalCharts />
+        </div>
+
+        {/* Heatmap & Conversion Funnel */}
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <HeatmapVisualization />
+          <ConversionFunnelDashboard />
         </div>
 
         {/* Admin Navigation */}

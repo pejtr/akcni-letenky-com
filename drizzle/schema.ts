@@ -1,4 +1,4 @@
-import { int, bigint, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, bigint, float, json, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -784,3 +784,53 @@ export const pushAbTests = mysqlTable("push_ab_tests", {
 
 export type PushAbTest = typeof pushAbTests.$inferSelect;
 export type InsertPushAbTest = typeof pushAbTests.$inferInsert;
+
+/**
+ * Click events for heatmap tracking
+ */
+export const clickEvents = mysqlTable("click_events", {
+  id: int("id").autoincrement().primaryKey(),
+  page: varchar("page", { length: 255 }).notNull().default("/"),
+  x: float("x").notNull(),
+  y: float("y").notNull(),
+  viewportWidth: int("viewportWidth").notNull(),
+  viewportHeight: int("viewportHeight").notNull(),
+  elementTag: varchar("elementTag", { length: 50 }),
+  elementText: varchar("elementText", { length: 255 }),
+  elementId: varchar("elementId", { length: 100 }),
+  elementClass: varchar("elementClass", { length: 255 }),
+  sessionId: varchar("sessionId", { length: 64 }),
+  userId: int("userId"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+/**
+ * Conversion events for funnel tracking
+ */
+export const conversionEvents = mysqlTable("conversion_events", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  userId: int("userId"),
+  eventType: varchar("eventType", { length: 50 }).notNull(),
+  page: varchar("page", { length: 255 }),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+/**
+ * Email follow-ups for automated post-exit-intent emails
+ */
+export const emailFollowups = mysqlTable("email_followups", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull(),
+  destinationName: varchar("destinationName", { length: 255 }),
+  destinationSlug: varchar("destinationSlug", { length: 255 }),
+  triggerSource: varchar("triggerSource", { length: 50 }).notNull().default("exit_intent"),
+  scheduledAt: timestamp("scheduledAt").notNull(),
+  sentAt: timestamp("sentAt"),
+  openedAt: timestamp("openedAt"),
+  clickedAt: timestamp("clickedAt"),
+  status: varchar("status", { length: 20 }).notNull().default("pending"),
+  metadata: json("metadata"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});

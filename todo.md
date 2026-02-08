@@ -1579,3 +1579,34 @@
 - [x] Integrate into AdminDashboard between existing charts and navigation
 - [x] Write vitest tests (11 tests passing)
 - [x] All 310 tests passing across 27 test files
+
+## Bug Fix: Newsletter Banner Overlapping Hero Heading (2026-02-08)
+- [x] Fix newsletter banner z-index (z-40 below header z-50) and position (top-14)
+- [x] Add spacer div to prevent content jump when banner is visible
+- [x] Increase hero section top padding (pt-24/pt-36) to account for both header + newsletter bar
+
+## Click Heatmap on Homepage (2026-02-08)
+- [x] Create useClickTracking hook for frontend click capture
+- [x] Store click data in click_events table (x, y, element, page, viewport, timestamp)
+- [x] Build HeatmapVisualization component for admin dashboard with SVG overlay
+- [x] Add date range filter (7d/14d/30d) and page selector
+- [x] Show top clicked elements and clicks-by-hour chart
+- [x] Write vitest tests (7 tests passing)
+
+## Automated Email Follow-up for Exit-Intent Popup (2026-02-08)
+- [x] Create emailFollowup.ts service with scheduleFollowup and processFollowupQueue
+- [x] Build HTML email template with destination-specific content and CTA
+- [x] Schedule follow-up email 1 hour after exit-intent capture
+- [x] Track follow-up status (pending/sent/failed) in email_followups table
+- [x] Register cron processor running every 15 minutes
+- [x] Write vitest tests (6 tests passing)
+
+## Conversion Funnel Dashboard (2026-02-08)
+- [x] Define 6 funnel stages (page_visit → destination_view → offer_view → affiliate_click → newsletter_signup → price_alert_set)
+- [x] Create conversionFunnel.ts with recordConversionEvent, getConversionFunnel, getFunnelSummary
+- [x] Build ConversionFunnelDashboard component with visual funnel bars and drop-off %
+- [x] Add date range selector (7d/14d/30d/60d) for funnel analysis
+- [x] Show biggest drop-off point, top pages, and daily conversion trend
+- [x] Integrate useConversionTracking hook into Home.tsx for automatic event capture
+- [x] Write vitest tests (8 tests passing)
+- [x] All 330+ tests passing across 30 test files

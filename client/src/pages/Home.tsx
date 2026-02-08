@@ -27,6 +27,8 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { Heart, Award, Bell } from "lucide-react";
 import PriceAlertModal from "@/components/PriceAlertModal";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
+import { useClickTracking } from "@/hooks/useClickTracking";
+import { useConversionTracking } from "@/hooks/useConversionTracking";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -79,6 +81,11 @@ export default function Home() {
   const { ctaVariant: featuredCta, trackClick: trackFeaturedClick } = useCtaAbTest("featured_cta");
   const { ctaVariant: footerCta, trackClick: trackFooterClick } = useCtaAbTest("footer_cta");
   const { ctaVariant: stickyCta, trackClick: trackStickyClick } = useCtaAbTest("sticky_banner");
+  // Click heatmap tracking
+  useClickTracking(true);
+  // Conversion funnel tracking
+  const { trackAffiliateClick: trackFunnelAffiliateClick, trackDestinationView: trackFunnelDestView } = useConversionTracking();
+  
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
   const [priceAlertModal, setPriceAlertModal] = useState<{
@@ -135,6 +142,7 @@ export default function Home() {
     
     // Track the click
     trackAffiliateClick(destination, destSlug, "search", kiwiUrl);
+    trackFunnelAffiliateClick(destination);
     
     // Open in new tab
     window.open(kiwiUrl, "_blank");
@@ -404,7 +412,7 @@ export default function Home() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
-                    onClick={() => trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl)}
+                    onClick={() => { trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl); trackFunnelAffiliateClick(city.to); }}
                   >
                     <div className="relative h-48 overflow-hidden">
                       {/* Gold "Nejprodávanější" Badge for top 3 */}
@@ -542,7 +550,7 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden flex flex-col"
-                  onClick={() => trackAffiliateClick(dest.name, dest.slug, "grid", kiwiUrl)}
+                  onClick={() => { trackAffiliateClick(dest.name, dest.slug, "grid", kiwiUrl); trackFunnelAffiliateClick(dest.name); }}
                 >
                   {/* Discount Badge */}
                   <div className="absolute top-2 right-2 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
@@ -622,7 +630,7 @@ export default function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
-                      onClick={() => trackAffiliateClick(country.name, country.slug, "states-tab", kiwiUrl)}
+                      onClick={() => { trackAffiliateClick(country.name, country.slug, "states-tab", kiwiUrl); trackFunnelAffiliateClick(country.name); }}
                     >
                       <div className="relative h-48 overflow-hidden">
                         <img
@@ -655,7 +663,7 @@ export default function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden border border-gray-100 p-3"
-                      onClick={() => trackAffiliateClick(city.name, city.slug, "cities-tab", kiwiUrl)}
+                      onClick={() => { trackAffiliateClick(city.name, city.slug, "cities-tab", kiwiUrl); trackFunnelAffiliateClick(city.name); }}
                     >
                       <div className="flex items-center gap-3">
                         <img
@@ -711,7 +719,7 @@ export default function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
-                      onClick={() => trackAffiliateClick(dest.title, dest.slug, "top-tab", kiwiUrl)}
+                      onClick={() => { trackAffiliateClick(dest.title, dest.slug, "top-tab", kiwiUrl); trackFunnelAffiliateClick(dest.title); }}
                     >
                       <div className="relative h-48 overflow-hidden">
                         <img

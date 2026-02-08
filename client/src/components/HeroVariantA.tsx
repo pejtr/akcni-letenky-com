@@ -28,7 +28,7 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
 
   return (
     <section 
-      className="relative bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20 overflow-hidden"
+      className="relative bg-gradient-to-br from-blue-600 to-purple-700 text-white pt-24 pb-20 overflow-hidden"
       style={{
         backgroundImage: 'url("/hero-bg.jpg")',
         backgroundSize: 'cover',

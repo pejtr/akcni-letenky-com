@@ -100,6 +100,9 @@ import {
 } from "./pushNotifications";
 import { adminAnalyticsRouter } from "./adminAnalytics";
 import { getHistoricalData } from "./historicalAnalytics";
+import { recordClickEvent, recordClickEventsBatch, getHeatmapData } from "./clickHeatmap";
+import { scheduleFollowup, processFollowupQueue, getFollowupStats } from "./emailFollowup";
+import { recordConversionEvent, getConversionFunnel, getFunnelSummary } from "./conversionFunnel";
 import {
   type FlightOffer,
   type VacationOffer,
@@ -1314,6 +1317,119 @@ export const appRouter = router({
     getFullAnalytics: protectedProcedure.query(async () => {
       const { getSharePlacementAnalytics } = await import("./abTest");
       return await getSharePlacementAnalytics();
+    }),
+  }),
+
+  // ============ Click Heatmap ============
+  heatmap: router({
+    record: publicProcedure
+      .input(z.object({
+        page: z.string(),
+        x: z.number(),
+        y: z.number(),
+        viewportWidth: z.number(),
+        viewportHeight: z.number(),
+        elementTag: z.string().optional(),
+        elementText: z.string().optional(),
+        elementId: z.string().optional(),
+        elementClass: z.string().optional(),
+        sessionId: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await recordClickEvent({ ...input, userId: ctx.user?.id });
+        return { success: true };
+      }),
+
+    recordBatch: publicProcedure
+      .input(z.object({
+        events: z.array(z.object({
+          page: z.string(),
+          x: z.number(),
+          y: z.number(),
+          viewportWidth: z.number(),
+          viewportHeight: z.number(),
+          elementTag: z.string().optional(),
+          elementText: z.string().optional(),
+          elementId: z.string().optional(),
+          elementClass: z.string().optional(),
+          sessionId: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await recordClickEventsBatch(
+          input.events.map(e => ({ ...e, userId: ctx.user?.id }))
+        );
+        return { success: true };
+      }),
+
+    getData: protectedProcedure
+      .input(z.object({
+        page: z.string().optional(),
+        days: z.number().min(1).max(90).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        return await getHeatmapData(input?.page || "/", input?.days || 7);
+      }),
+  }),
+
+  // ============ Conversion Funnel ============
+  conversionFunnel: router({
+    trackEvent: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        eventType: z.string(),
+        page: z.string().optional(),
+        metadata: z.record(z.string(), z.any()).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await recordConversionEvent({
+          sessionId: input.sessionId,
+          userId: ctx.user?.id,
+          eventType: input.eventType,
+          page: input.page,
+          metadata: input.metadata,
+        });
+        return { success: true };
+      }),
+
+    getFunnel: protectedProcedure
+      .input(z.object({
+        days: z.number().min(1).max(90).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        return await getConversionFunnel(input?.days || 30);
+      }),
+
+    getSummary: protectedProcedure
+      .input(z.object({
+        days: z.number().min(1).max(90).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        return await getFunnelSummary(input?.days || 30);
+      }),
+  }),
+
+  // ============ Email Follow-up ============
+  emailFollowup: router({
+    schedule: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        destinationName: z.string().optional(),
+        destinationSlug: z.string().optional(),
+        triggerSource: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await scheduleFollowup(input);
+        return { success: true };
+      }),
+
+    getStats: protectedProcedure.query(async () => {
+      return await getFollowupStats();
+    }),
+
+    processQueue: protectedProcedure.mutation(async () => {
+      const sent = await processFollowupQueue();
+      return { sent };
     }),
   }),
 });

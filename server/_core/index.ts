@@ -11,6 +11,7 @@ import { scheduleDailyArticleGeneration } from "../articleGenerator";
 import { schedulePriceCheckCron } from "../priceCheckCron";
 import { scheduleDailyReport } from "../dailyReport";
 import { scheduleWeeklyReport } from "../weeklyReport";
+import { scheduleFollowupProcessor } from "../emailFollowup";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -94,6 +95,9 @@ async function startServer() {
 
     // Initialize weekly report scheduler (Monday 8:00 AM CET)
     scheduleWeeklyReport();
+
+    // Email follow-up processor (every 15 min)
+    scheduleFollowupProcessor();
   });
 }
 

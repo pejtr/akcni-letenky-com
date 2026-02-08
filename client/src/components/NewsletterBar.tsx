@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Mail, Gift, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,60 +61,65 @@ export default function NewsletterBar() {
   const IconComponent = variant.icon === 'gift' ? Gift : variant.icon === 'sparkles' ? Sparkles : Mail;
 
   return (
-    <div className={`fixed top-16 left-0 right-0 bg-gradient-to-r ${variant.bgGradient} text-white shadow-lg z-[90] animate-in slide-in-from-top`}>
-      <div className="container py-3">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          {/* Left side - Icon + Text */}
-          <div className="flex items-center gap-3 flex-1 min-w-[250px]">
-            <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
-              <IconComponent className="w-5 h-5 md:w-6 md:h-6" />
+    <>
+      {/* Spacer to prevent content overlap - matches the height of the fixed bar */}
+      <div className="h-[56px] md:h-[52px]" />
+      {/* Fixed newsletter bar positioned below the header (top-14 = 56px = header height) */}
+      <div className={`fixed top-14 left-0 right-0 bg-gradient-to-r ${variant.bgGradient} text-white shadow-lg z-40 animate-in slide-in-from-top`}>
+        <div className="container py-2.5">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            {/* Left side - Icon + Text */}
+            <div className="flex items-center gap-3 flex-1 min-w-[250px]">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
+                <IconComponent className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-sm md:text-base leading-tight">
+                  {variant.title}
+                </p>
+                <p className="text-xs md:text-sm text-white/90 leading-tight">
+                  {variant.subtitle}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-bold text-sm md:text-base">
-                {variant.title}
-              </p>
-              <p className="text-xs md:text-sm text-white/90">
-                {variant.subtitle}
-              </p>
-            </div>
+
+            {/* Right side - Form or Success Message */}
+            {isSuccess ? (
+              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                <Mail className="w-5 h-5" />
+                <span className="font-semibold text-sm">✅ Děkujeme! Brzy vám pošleme první nabídky.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-1 max-w-md">
+                <Input
+                  type="email"
+                  placeholder="váš@email.cz"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/90 border-none text-black placeholder:text-gray-500 h-9"
+                  required
+                />
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-white text-[#E91E63] hover:bg-gray-100 font-bold whitespace-nowrap h-9 px-5"
+                >
+                  {isSubmitting ? "..." : variant.buttonText}
+                </Button>
+              </form>
+            )}
+
+            {/* Close button */}
+            <button
+              onClick={handleClose}
+              className="bg-white/20 hover:bg-white/30 rounded-full p-1.5 transition-colors"
+              aria-label="Zavřít"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-
-          {/* Right side - Form or Success Message */}
-          {isSuccess ? (
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-              <Mail className="w-5 h-5" />
-              <span className="font-semibold text-sm">✅ Děkujeme! Brzy vám pošleme první nabídky.</span>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-1 max-w-md">
-              <Input
-                type="email"
-                placeholder="váš@email.cz"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/90 border-none text-black placeholder:text-gray-500 h-10"
-                required
-              />
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-white text-[#E91E63] hover:bg-gray-100 font-bold whitespace-nowrap h-10 px-6"
-              >
-                {isSubmitting ? "..." : variant.buttonText}
-              </Button>
-            </form>
-          )}
-
-          {/* Close button */}
-          <button
-            onClick={handleClose}
-            className="bg-white/20 hover:bg-white/30 rounded-full p-1.5 transition-colors"
-            aria-label="Zavřít"
-          >
-            <X className="w-4 h-4" />
-          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS conversion_events (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sessionId VARCHAR(64) NOT NULL,\n  userId INT,\n  eventType VARCHAR(50) NOT NULL,\n  page VARCHAR(255),\n  metadata JSON,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_session_type (sessionId, eventType),\n  INDEX idx_type_created (eventType, createdAt),\n  INDEX idx_created (createdAt)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute CREATE TABLE IF NOT EXISTS conversion_events (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sessionId VARCHAR(64) NOT NULL,\n  userId INT,\n  eventType VARCHAR(50) NOT NULL,\n  page VARCHAR(255),\n  metadata JSON,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_session_type (sessionId, eventType),\n  INDEX idx_type_created (eventType, createdAt),\n  INDEX idx_created (createdAt)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 534
+}

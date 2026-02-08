@@ -34,7 +34,7 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
     <>
       {/* Hero Section - Clean Design */}
       <section 
-        className="relative py-32 overflow-hidden"
+        className="relative pt-36 pb-32 overflow-hidden"
         style={{
           backgroundImage: 'url("/hero-bg.jpg")',
           backgroundSize: 'cover',
