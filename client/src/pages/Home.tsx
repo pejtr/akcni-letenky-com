@@ -351,7 +351,7 @@ export default function Home() {
               href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm shadow-md hover:shadow-lg"
+              className="hidden sm:flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm cta-btn-animated"
               onClick={() => trackReservationClick()}
             >
               <Plane className="w-3.5 h-3.5 flex-shrink-0" />

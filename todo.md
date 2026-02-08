@@ -1661,3 +1661,6 @@
 - [x] Store UTM source in session for persistent personalization
 - [x] Write vitest tests (13 tests passing)
 - [x] All 344 tests passing across 31 test files
+
+## Subtle Animation on Main CTA Button (2026-02-08)
+- [x] Add subtle animation to header RYCHLÁ REZERVACE / ZAREZERVOVAT TEĎ button to make it more prominent
