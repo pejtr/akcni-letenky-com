@@ -625,17 +625,17 @@ export const appRouter = router({
         z.object({
           country: z.string().optional(),
           departure: z.string().optional(),
-          sortBy: z.enum(["price_asc", "price_desc", "default"]).default("default"),
-          limit: z.number().default(100),
-        }).optional()
-      )
-      .query(async ({ input }) => {
-        let flights = await pelikanCache.getFlights();
-        
-        // Filter by country
-        if (input?.country) {
-          flights = flights.filter(f => 
-            f.country.toLowerCase().includes(input.country!.toLowerCase())
+sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]).default("default"),
+           limit: z.number().default(100),
+         }).optional()
+       )
+       .query(async ({ input }) => {
+         let flights = await pelikanCache.getFlights();
+         
+         // Filter by country
+         if (input?.country) {
+           flights = flights.filter(f => 
+             f.country.toLowerCase().includes(input.country!.toLowerCase())
           );
         }
         
@@ -647,14 +647,28 @@ export const appRouter = router({
         }
         
         // Sort
-        if (input?.sortBy === "price_asc") {
-          flights = [...flights].sort((a, b) => a.salePrice - b.salePrice);
-        } else if (input?.sortBy === "price_desc") {
-          flights = [...flights].sort((a, b) => b.salePrice - a.salePrice);
-        }
-        
-        // Limit
-        return flights.slice(0, input?.limit || 100);
+         if (input?.sortBy === "price_asc") {
+           flights = [...flights].sort((a, b) => a.salePrice - b.salePrice);
+         } else if (input?.sortBy === "price_desc") {
+           flights = [...flights].sort((a, b) => b.salePrice - a.salePrice);
+         } else if (input?.sortBy === "popularity") {
+           // Sort by discount percentage (higher discount = more popular)
+           flights = [...flights].sort((a, b) => {
+             const discountA = parseInt((a as any).discount || '0');
+             const discountB = parseInt((b as any).discount || '0');
+             return discountB - discountA;
+           });
+         } else if (input?.sortBy === "departure") {
+           // Sort by departure date (earliest first)
+           flights = [...flights].sort((a, b) => {
+             const dateA = (a as any).departureDate || '';
+             const dateB = (b as any).departureDate || '';
+             return dateA.localeCompare(dateB);
+           });
+         }
+         
+         // Limit
+         return flights.slice(0, input?.limit || 100);
       }),
 
     // Get all vacations from Pelikán feed

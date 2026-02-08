@@ -222,7 +222,7 @@ export default function DestinationPage() {
                                       {new Intl.NumberFormat("cs-CZ").format(flight.originalPrice)} Kč
                                     </p>
                                   )}
-                                  <p className="text-2xl font-bold text-pink-600">
+                                  <p className="text-2xl font-bold text-pink-600 whitespace-nowrap">
                                     {new Intl.NumberFormat("cs-CZ").format(flight.price)} Kč
                                   </p>
                                   <Button size="sm" className="mt-2">

@@ -21,6 +21,8 @@ import MobileMenu from "@/components/MobileMenu";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
 import PersonalizedSection from "@/components/PersonalizedSection";
+import CountdownTimer from "@/components/CountdownTimer";
+import GdprConsentBanner from "@/components/GdprConsentBanner";
 import SocialSharePanel from "@/components/SocialSharePanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
@@ -350,16 +352,19 @@ export default function Home() {
               )}
             </Link>
             
-            <a 
-              href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm cta-btn-animated"
-              onClick={() => trackReservationClick()}
-            >
-              <Plane className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>{reservationCta.text}</span>
-            </a>
+            <div className="hidden sm:flex items-center gap-2">
+              <CountdownTimer className="hidden lg:flex" />
+              <a 
+                href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm cta-btn-animated"
+                onClick={() => trackReservationClick()}
+              >
+                <Plane className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>{reservationCta.text}</span>
+              </a>
+            </div>
           </div>
         </div>
       </header>
@@ -449,7 +454,7 @@ export default function Home() {
                         {city.description}
                       </p>
                       <div className="flex items-center justify-center gap-3 mb-3">
-                        <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] text-white font-bold rounded-lg px-5 py-3 text-center shadow-md text-2xl">
+                        <div className="bg-gradient-to-r from-[#FF6B35] to-[#FF8C42] text-white font-bold rounded-lg px-5 py-3 text-center shadow-md text-2xl whitespace-nowrap">
                           od {formatPrice(city.price)}
                         </div>
                         <div className="text-gray-400 line-through text-base">
@@ -593,7 +598,7 @@ export default function Home() {
                     
                     {/* Price */}
                     <div className="flex items-baseline gap-2 mb-2">
-                      <span className="text-lg md:text-xl font-bold text-orange-600">od {formatPrice(dest.price)}</span>
+                      <span className="text-lg md:text-xl font-bold text-orange-600 whitespace-nowrap">od {formatPrice(dest.price)}</span>
                       <span className="text-xs text-gray-400 line-through">od {formatPrice(Math.round(dest.price * 1.35))}</span>
                     </div>
                     
@@ -1059,6 +1064,9 @@ export default function Home() {
         destinationSlug={priceAlertModal.slug}
         currentPrice={priceAlertModal.price}
       />
+
+      {/* GDPR Consent Banner */}
+      <GdprConsentBanner />
       
     </div>
   );

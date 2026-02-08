@@ -222,7 +222,7 @@ export default function PriceComparison() {
                         <div className="space-y-3 mb-4">
                           <div className="flex items-center gap-2">
                             <Euro className="w-4 h-4 text-gray-500" />
-                            <span className="text-2xl font-bold text-blue-600">
+                            <span className="text-2xl font-bold text-blue-600 whitespace-nowrap">
                               {route.flight.price} Kč
                             </span>
                           </div>
@@ -271,7 +271,7 @@ export default function PriceComparison() {
                         <div className="space-y-3 mb-4">
                           <div className="flex items-center gap-2">
                             <Euro className="w-4 h-4 text-gray-500" />
-                            <span className="text-2xl font-bold text-green-600">
+                            <span className="text-2xl font-bold text-green-600 whitespace-nowrap">
                               {route.train.price} Kč
                             </span>
                           </div>
@@ -320,7 +320,7 @@ export default function PriceComparison() {
                         <div className="space-y-3 mb-4">
                           <div className="flex items-center gap-2">
                             <Euro className="w-4 h-4 text-gray-500" />
-                            <span className="text-2xl font-bold text-orange-600">
+                            <span className="text-2xl font-bold text-orange-600 whitespace-nowrap">
                               {route.bus.price} Kč
                             </span>
                           </div>

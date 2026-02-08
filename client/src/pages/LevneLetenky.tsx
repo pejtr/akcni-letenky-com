@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LevneLetenky() {
-  const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc">("default");
+  const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "popularity" | "departure">("default");
   const [country, setCountry] = useState<string>("");
   const [departure, setDeparture] = useState<string>("");
 
@@ -137,6 +137,8 @@ export default function LevneLetenky() {
                 <SelectItem value="default">Výchozí</SelectItem>
                 <SelectItem value="price_asc">Cena: nejnižší</SelectItem>
                 <SelectItem value="price_desc">Cena: nejvyšší</SelectItem>
+                <SelectItem value="popularity">Nejpopulárnější</SelectItem>
+                <SelectItem value="departure">Datum odletu</SelectItem>
               </SelectContent>
             </Select>
 
@@ -236,7 +238,7 @@ export default function LevneLetenky() {
 
                         <div className="flex items-center justify-between pt-4 border-t">
                           <div>
-                            <span className="text-3xl font-bold text-[#1a5276]">
+                            <span className="text-3xl font-bold text-[#1a5276] whitespace-nowrap">
                               {flight.salePrice.toLocaleString("cs-CZ")} Kč
                             </span>
                             <span className="text-gray-500 text-sm ml-2">za osobu · zpáteční</span>

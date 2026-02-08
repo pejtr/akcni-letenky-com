@@ -114,7 +114,7 @@ export default function Dovolene() {
               </p>
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xl font-bold text-[#FF6B00]">
+                  <span className="text-xl font-bold text-[#FF6B00] whitespace-nowrap">
                     {vacation.salePrice.toLocaleString("cs-CZ")} Kč
                   </span>
                   <span className="text-gray-500 text-xs ml-1">/ os.</span>
@@ -189,7 +189,7 @@ export default function Dovolene() {
               </div>
               <div className="flex items-center justify-between pt-4 border-t">
                 <div>
-                  <span className="text-3xl font-bold text-[#FF6B00]">
+                  <span className="text-3xl font-bold text-[#FF6B00] whitespace-nowrap">
                     {vacation.salePrice.toLocaleString("cs-CZ")} Kč
                   </span>
                   <span className="text-gray-500 text-sm ml-2">za osobu</span>

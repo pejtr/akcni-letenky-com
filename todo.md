@@ -1674,3 +1674,10 @@
 - [x] Change badge on flight card image from "Letenka" to destination name
 - [x] Update LevneLetenky hero text to "Levné Zpáteční Letenky"
 - [x] All 344 tests passing across 31 test files
+
+## Price Badge Fix + New Features (2026-02-08)
+- [x] Fix price badge text wrapping - add whitespace-nowrap to keep price + Kč on one line
+- [x] Implement countdown timer next to main CTA button ("Akce končí za HH:MM:SS")
+- [x] Add GDPR consent banner with Facebook Pixel conditional loading
+- [x] Add flight sorting options: popularity and departure date to LevneLetenky page
+- [x] All 358 tests passing across 32 test files
