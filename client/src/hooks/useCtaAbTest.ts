@@ -66,6 +66,18 @@ export const CTA_TESTS: Record<string, CtaTestConfig> = {
       subtext: "Akce končí brzy",
     },
   },
+  reservation_button: {
+    testName: "cta_reservation_v1",
+    position: "header_reservation",
+    variantA: {
+      text: "RYCHLÁ REZERVACE",
+      emoji: "✈️",
+    },
+    variantB: {
+      text: "ZAREZERVOVAT TEĎ",
+      emoji: "🚀",
+    },
+  },
   sticky_banner: {
     testName: "cta_sticky_v2",
     position: "sticky_banner",

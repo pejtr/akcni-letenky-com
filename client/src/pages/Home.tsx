@@ -13,6 +13,7 @@ import ChatbotWidget from "@/components/ChatbotWidget";
 
 import WhatsAppBanner from "@/components/WhatsAppBanner";
 import NewsletterBar from "@/components/NewsletterBar";
+import FacebookCampaignBanner from "@/components/FacebookCampaignBanner";
 
 import SocialProofNotification from "@/components/SocialProofNotification";
 import OmioSection from "@/components/OmioSection";
@@ -81,6 +82,7 @@ export default function Home() {
   const { ctaVariant: featuredCta, trackClick: trackFeaturedClick } = useCtaAbTest("featured_cta");
   const { ctaVariant: footerCta, trackClick: trackFooterClick } = useCtaAbTest("footer_cta");
   const { ctaVariant: stickyCta, trackClick: trackStickyClick } = useCtaAbTest("sticky_banner");
+  const { ctaVariant: reservationCta, trackClick: trackReservationClick } = useCtaAbTest("reservation_button");
   // Click heatmap tracking
   useClickTracking(true);
   // Conversion funnel tracking
@@ -272,6 +274,8 @@ export default function Home() {
       {/* Exit Intent Popup */}
       <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
       
+      {/* Facebook Campaign Banner - shown to FB visitors */}
+      <FacebookCampaignBanner />
       {/* Newsletter Bar */}
       <NewsletterBar />
       {/* Breadcrumbs with Schema.org */}
@@ -348,9 +352,10 @@ export default function Home() {
               target="_blank" 
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm shadow-md hover:shadow-lg"
+              onClick={() => trackReservationClick()}
             >
               <Plane className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>RYCHLÁ REZERVACE</span>
+              <span>{reservationCta.text}</span>
             </a>
           </div>
         </div>
@@ -835,13 +840,13 @@ export default function Home() {
                   <>
                     {stickyCta.text.split(/\{\{|\}\}/).map((part, i) => 
                       i % 2 === 1 ? (
-                        <span key={i} className="text-[#E91E63] font-extrabold">{part}</span>
+                        <span key={i} className="text-[#E91E63] font-extrabold price-highlight-pulse">{part}</span>
                       ) : part
                     )}
                   </>
                 ) : stickyCta.text}
               </a> |{" "}
-              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold">80 %</span> – od 4 990 Kč</a> |{" "}
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold price-highlight-pulse">80 %</span> – od 4 990 Kč</a> |{" "}
               <a href="/levne-letenky?kategorie=eurovikendy" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Eurovíkendy</a> |{" "}
               <a href="/levne-letenky?kategorie=business" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Business class</a>
             </p>

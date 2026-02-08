@@ -177,3 +177,19 @@
     }
   }
 }
+/* Subtle pulse animation for sticky banner highlighted prices */
+@keyframes price-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.price-highlight-pulse {
+  animation: price-pulse 2s ease-in-out infinite;
+  display: inline-block;
+}

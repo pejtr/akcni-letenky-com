@@ -1643,3 +1643,21 @@
 
 ## Unify Duplicate Reservation Buttons (2026-02-08)
 - [x] Unify duplicate "REZERVACE" header + "Rezervovat" button into single "RYCHLÁ REZERVACE"
+
+## A/B Test for RYCHLÁ REZERVACE Button (2026-02-08)
+- [x] Create A/B test hook for reservation button text (RYCHLÁ REZERVACE vs ZAREZERVOVAT TEĎ)
+- [x] Integrate into header CTA button and mobile menu
+- [x] Track clicks per variant via trackEvent
+- [x] Write vitest tests (13 tests passing)
+
+## Pulse Animation on Sticky Banner Prices (2026-02-08)
+- [x] Add CSS pulse animation for highlighted price numbers in sticky banner
+- [x] Apply animation to magenta-colored price spans
+- [x] Ensure animation is subtle and not distracting
+
+## Personalized Facebook UTM Banner (2026-02-08)
+- [x] Detect Facebook UTM parameters (utm_source=facebook)
+- [x] Show personalized banner text referencing current campaign for FB visitors
+- [x] Store UTM source in session for persistent personalization
+- [x] Write vitest tests (13 tests passing)
+- [x] All 344 tests passing across 31 test files
