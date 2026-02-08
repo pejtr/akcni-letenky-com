@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Heart, Plane, MapPin, Clock, ArrowRight, Filter, SortAsc, SortDesc, Calendar, Share2 } from "lucide-react";
+import { trackViewContent, trackInitiateCheckout, trackAddToWishlist } from "@/lib/fbPixel";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +12,8 @@ export default function LevneLetenky() {
   const [country, setCountry] = useState<string>("");
   const [departure, setDeparture] = useState<string>("");
   const [departureDate, setDepartureDate] = useState<string>("");
+  const [priceMin, setPriceMin] = useState<number>(0);
+  const [priceMax, setPriceMax] = useState<number>(50000);
 
   const { data: flights, isLoading } = trpc.pelikan.getFlights.useQuery({
     sortBy,
@@ -29,6 +32,29 @@ export default function LevneLetenky() {
       source: "flights-page",
       affiliatePartner: "pelikan",
       affiliateUrl: flight.link,
+    });
+    // FB Pixel: track checkout initiation for retargeting
+    trackInitiateCheckout({
+      contentName: `${flight.origin} → ${flight.destination}`,
+      value: flight.salePrice || flight.price,
+    });
+  };
+
+  // Track flight view for FB Pixel retargeting
+  const handleFlightView = (flight: any) => {
+    trackViewContent({
+      contentName: `${flight.origin} → ${flight.destination}`,
+      contentCategory: "flights",
+      value: flight.salePrice || flight.price,
+    });
+  };
+
+  // Track wishlist add for FB Pixel retargeting
+  const handleWishlistPixel = (flight: any) => {
+    trackAddToWishlist({
+      contentName: `${flight.origin} → ${flight.destination}`,
+      contentCategory: "flights",
+      value: flight.salePrice || flight.price,
     });
   };
 
@@ -143,6 +169,32 @@ export default function LevneLetenky() {
               />
             </div>
 
+            {/* Price Range Slider */}
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-md border">
+              <span className="text-xs font-medium text-gray-500 whitespace-nowrap">Cena:</span>
+              <input
+                type="range"
+                min={0}
+                max={50000}
+                step={100}
+                value={priceMin}
+                onChange={(e) => setPriceMin(Math.min(Number(e.target.value), priceMax - 100))}
+                className="w-20 h-1.5 accent-[#E91E63] cursor-pointer"
+              />
+              <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">{priceMin.toLocaleString('cs-CZ')} Kč</span>
+              <span className="text-xs text-gray-400">–</span>
+              <input
+                type="range"
+                min={0}
+                max={50000}
+                step={100}
+                value={priceMax}
+                onChange={(e) => setPriceMax(Math.max(Number(e.target.value), priceMin + 100))}
+                className="w-20 h-1.5 accent-[#E91E63] cursor-pointer"
+              />
+              <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">{priceMax.toLocaleString('cs-CZ')} Kč</span>
+            </div>
+
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Řazení" />
@@ -156,7 +208,7 @@ export default function LevneLetenky() {
               </SelectContent>
             </Select>
 
-            {(country || departure || departureDate) && (
+            {(country || departure || departureDate || priceMin > 0 || priceMax < 50000) && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -164,6 +216,8 @@ export default function LevneLetenky() {
                   setCountry("");
                   setDeparture("");
                   setDepartureDate("");
+                  setPriceMin(0);
+                  setPriceMax(50000);
                 }}
               >
                 Zrušit filtry
@@ -184,7 +238,18 @@ export default function LevneLetenky() {
             </div>
           ) : flights && flights.length > 0 ? (
             <div className="grid gap-4">
-              {flights.map((flight) => {
+              {flights
+                .filter((f) => {
+                  const price = f.salePrice || f.price;
+                  if (priceMin > 0 && price < priceMin) return false;
+                  if (priceMax < 50000 && price > priceMax) return false;
+                  if (departureDate && 'departureDate' in f && f.departureDate) {
+                    const fd = new Date(f.departureDate as string).toISOString().split('T')[0];
+                    if (fd < departureDate) return false;
+                  }
+                  return true;
+                })
+                .map((flight) => {
                 const rating = getSimulatedRating(flight.id);
                 return (
                   <div
@@ -208,7 +273,7 @@ export default function LevneLetenky() {
                             {flight.discount}
                           </span>
                         )}
-                        <button className="absolute top-3 left-3 bg-white/90 p-2 rounded-full hover:bg-white transition-colors">
+                        <button onClick={() => handleWishlistPixel(flight)} className="absolute top-3 left-3 bg-white/90 p-2 rounded-full hover:bg-white transition-colors">
                           <Heart className="w-5 h-5 text-gray-400 hover:text-red-500" />
                         </button>
                         <div className="absolute bottom-3 left-3 bg-black/60 text-white px-2 py-1 rounded text-sm flex items-center gap-1">

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Flame, Zap, CheckCircle } from "lucide-react";
 import { trackFormInteraction } from "@/lib/abTest";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
+import HeroBackgroundSlideshow from "@/components/HeroBackgroundSlideshow";
 
 interface HeroVariantBProps {
   onSearch: (from: string, destination: string, duration: string, passengers: number) => void;
@@ -32,39 +33,15 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
 
   return (
     <>
-      {/* Hero Section - Clean Design */}
+      {/* Hero Section - Dynamic Slideshow */}
       <section 
         className="relative pt-36 pb-32 overflow-hidden"
-        style={{
-          backgroundImage: 'url("/hero-bg.jpg")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
       >
-        {/* Animated Background Layer */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: 'url("/hero-bg.jpg")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            animation: 'float 20s ease-in-out infinite',
-          }}
-        />
+        {/* Dynamic Background Slideshow */}
+        <HeroBackgroundSlideshow />
         
         {/* Subtle Overlay for readability */}
-        <div className="absolute inset-0 bg-black/30"></div>
-        
-        <style>{`
-          @keyframes float {
-            0%, 100% {
-              transform: translateY(0px) scale(1.05);
-            }
-            50% {
-              transform: translateY(-10px) scale(1.08);
-            }
-          }
-        `}</style>
+        <div className="absolute inset-0 bg-black/35 z-[1]"></div>
 
         {/* Content */}
         <div className="container relative z-10">

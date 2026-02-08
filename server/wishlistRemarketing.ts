@@ -1,0 +1,284 @@
+/**
+ * Wishlist Remarketing Service
+ * 
+ * Sends personalized remarketing emails to users who added flights to their wishlist
+ * but didn't click through to purchase within 24 hours.
+ * Runs on a scheduled interval to check for stale wishlist items.
+ */
+
+import { getDb } from "./db";
+import { wishlists, users, flights } from "../drizzle/schema";
+import { sql, eq, and, lte } from "drizzle-orm";
+import { isEmailServiceConfigured } from "./emailService";
+
+interface UserWishlistData {
+  email: string;
+  name: string;
+  items: Array<{
+    wishlistId: number;
+    userId: number;
+    flightId: number;
+    destinationId: string | null;
+    addedAt: number | null;
+    userName: string | null;
+    userEmail: string | null;
+    flightTitle: string | null;
+    flightPrice: number;
+    flightCountry: string | null;
+    flightImageUrl: string | null;
+    flightAffiliateUrl: string;
+  }>;
+}
+
+/**
+ * Process wishlist remarketing - find users with 24h+ old wishlist items
+ * who haven't been sent a remarketing email yet
+ */
+export async function processWishlistRemarketing(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const configured = await isEmailServiceConfigured();
+  if (!configured) {
+    console.log("[WishlistRemarketing] Email service not configured, skipping");
+    return 0;
+  }
+
+  const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+
+  // Find wishlist items older than 24h that haven't been remarketed
+  // isFavorite = 1 means active favorite, 2 = already remarketed
+  const staleWishlistItems = await db
+    .select({
+      wishlistId: wishlists.id,
+      userId: wishlists.userId,
+      flightId: wishlists.flightId,
+      destinationId: wishlists.destinationId,
+      addedAt: wishlists.addedAt,
+      userName: users.name,
+      userEmail: users.email,
+      flightTitle: flights.toCity,
+      flightPrice: flights.price,
+      flightCountry: flights.toCity,
+      flightImageUrl: flights.imageUrl,
+      flightAffiliateUrl: flights.affiliateUrl,
+    })
+    .from(wishlists)
+    .innerJoin(users, eq(wishlists.userId, users.id))
+    .innerJoin(flights, eq(wishlists.flightId, flights.id))
+    .where(
+      and(
+        lte(wishlists.addedAt, twentyFourHoursAgo),
+        eq(wishlists.isFavorite, 1)
+      )
+    )
+    .limit(50);
+
+  if (staleWishlistItems.length === 0) {
+    return 0;
+  }
+
+  // Group by user to send one email per user with all their wishlist items
+  const userWishlists: Record<number, UserWishlistData> = {};
+
+  for (const item of staleWishlistItems) {
+    if (!item.userEmail) continue;
+    
+    const existing = userWishlists[item.userId];
+    if (existing) {
+      existing.items.push(item);
+    } else {
+      userWishlists[item.userId] = {
+        email: item.userEmail,
+        name: item.userName || "cestovatel",
+        items: [item],
+      };
+    }
+  }
+
+  let sentCount = 0;
+
+  const userIds = Object.keys(userWishlists);
+  for (const userIdStr of userIds) {
+    const userId = Number(userIdStr);
+    const userData = userWishlists[userId];
+    try {
+      await sendWishlistRemarketingEmail(userData);
+      
+      // Mark these wishlist items as remarketed by updating isFavorite to 2
+      for (const item of userData.items) {
+        await db
+          .update(wishlists)
+          .set({ isFavorite: 2 }) // 2 = remarketed
+          .where(eq(wishlists.id, item.wishlistId));
+      }
+      
+      sentCount++;
+      console.log(`[WishlistRemarketing] Sent remarketing email to ${userData.email} with ${userData.items.length} items`);
+    } catch (error) {
+      console.error(`[WishlistRemarketing] Failed to send to ${userData.email}:`, error);
+    }
+  }
+
+  return sentCount;
+}
+
+/**
+ * Send a wishlist remarketing email to a user
+ */
+async function sendWishlistRemarketingEmail(userData: UserWishlistData): Promise<void> {
+  const { Resend } = await import("resend");
+
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY not configured");
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "Akční Letenky <onboarding@resend.dev>";
+  const siteUrl = process.env.VITE_APP_URL || "https://akcni-letenky.manus.space";
+
+  const topItems = userData.items.slice(0, 3); // Max 3 items in email
+  const firstDest = topItems[0]?.flightCountry || "vaší vysněné destinaci";
+
+  const html = buildWishlistEmailHtml(userData.name, topItems, siteUrl);
+
+  await resend.emails.send({
+    from: fromEmail,
+    to: userData.email,
+    subject: `${userData.name}, vaše oblíbené letenky do ${firstDest} stále čekají!`,
+    html,
+  });
+}
+
+function buildWishlistEmailHtml(
+  userName: string,
+  items: UserWishlistData["items"],
+  siteUrl: string
+): string {
+  const itemsHtml = items.map((item) => {
+    const title = item.flightTitle || "Zpáteční letenka";
+    const price = item.flightPrice ? `${item.flightPrice.toLocaleString("cs-CZ")} Kč` : "skvělá cena";
+    const link = item.flightAffiliateUrl || `${siteUrl}/levne-letenky`;
+    const image = item.flightImageUrl || "";
+
+    return `
+    <tr><td style="padding:10px 0;border-bottom:1px solid #eee;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        ${image ? `<td width="120" style="vertical-align:top;"><img src="${image}" width="120" height="80" style="border-radius:8px;object-fit:cover;" alt="${title}" /></td>` : ""}
+        <td style="padding:0 15px;vertical-align:top;">
+          <p style="margin:0 0 5px;font-weight:bold;color:#003087;font-size:15px;">${title}</p>
+          <p style="margin:0 0 5px;color:#333;font-size:13px;">${item.flightCountry || ""}</p>
+          <p style="margin:0;color:#E91E63;font-weight:bold;font-size:18px;">od ${price}</p>
+        </td>
+        <td width="120" style="vertical-align:middle;text-align:center;">
+          <a href="${link}" style="display:inline-block;background:#E91E63;color:#fff;padding:8px 16px;border-radius:20px;text-decoration:none;font-size:13px;font-weight:bold;">
+            Rezervovat
+          </a>
+        </td>
+      </tr>
+      </table>
+    </td></tr>`;
+  }).join("");
+
+  return `<!DOCTYPE html>
+<html lang="cs">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:20px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+  <tr><td style="background:linear-gradient(135deg,#003087,#0052cc);padding:30px 40px;text-align:center;">
+    <h1 style="color:#FFD700;margin:0;font-size:24px;">Akční Letenky</h1>
+    <p style="color:#fff;margin:8px 0 0;font-size:14px;opacity:0.9;">Vaše oblíbené letenky čekají!</p>
+  </td></tr>
+  <tr><td style="padding:30px 40px;">
+    <h2 style="color:#003087;margin:0 0 15px;font-size:20px;">Ahoj ${userName}!</h2>
+    <p style="color:#333;font-size:15px;line-height:1.6;margin:0 0 20px;">
+      Všimli jsme si, že máte v oblíbených ${items.length === 1 ? "letenku" : "letenky"}, 
+      ${items.length === 1 ? "která" : "které"} stále ${items.length === 1 ? "čeká" : "čekají"} na vaši rezervaci. 
+      <strong>Ceny se mohou kdykoliv změnit</strong> — neváhejte a zajistěte si ${items.length === 1 ? "ji" : "je"} ještě dnes!
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF3E0;border-left:4px solid #FF9800;border-radius:4px;margin:0 0 20px;">
+    <tr><td style="padding:12px 16px;">
+      <p style="margin:0;color:#E65100;font-size:14px;font-weight:bold;">Zbývá omezený počet míst za tuto cenu!</p>
+    </td></tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0">
+    ${itemsHtml}
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:25px 0;">
+    <tr><td style="text-align:center;">
+      <a href="${siteUrl}/levne-letenky?utm_source=remarketing&utm_medium=email&utm_campaign=wishlist_24h" 
+         style="display:inline-block;background:#003087;color:#fff;padding:12px 30px;border-radius:25px;text-decoration:none;font-weight:bold;font-size:15px;">
+        Zobrazit všechny akční letenky
+      </a>
+    </td></tr>
+    </table>
+    <p style="color:#666;font-size:13px;line-height:1.5;margin:15px 0 0;">
+      <strong>Tip:</strong> Zpáteční letenky od 899 Kč — nové nabídky každý den!
+    </p>
+  </td></tr>
+  <tr><td style="background:#f8f9fa;padding:20px 40px;text-align:center;border-top:1px solid #eee;">
+    <p style="color:#999;font-size:12px;margin:0;">
+      Tento email jste obdrželi, protože máte uložené letenky v oblíbených na Akční Letenky.<br>
+      <a href="${siteUrl}/odhlasit" style="color:#999;">Odhlásit se z odběru</a>
+    </p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+}
+
+/**
+ * Get wishlist remarketing statistics
+ */
+export async function getWishlistRemarketingStats(): Promise<{
+  totalFavorites: number;
+  pendingRemarketing: number;
+  alreadyRemarketed: number;
+}> {
+  const db = await getDb();
+  if (!db) {
+    return { totalFavorites: 0, pendingRemarketing: 0, alreadyRemarketed: 0 };
+  }
+
+  const stats = await db
+    .select({
+      isFavorite: wishlists.isFavorite,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(wishlists)
+    .where(sql`${wishlists.isFavorite} > 0`)
+    .groupBy(wishlists.isFavorite);
+
+  const result = { totalFavorites: 0, pendingRemarketing: 0, alreadyRemarketed: 0 };
+  for (const s of stats) {
+    const count = Number(s.count);
+    result.totalFavorites += count;
+    if (s.isFavorite === 1) result.pendingRemarketing = count;
+    if (s.isFavorite === 2) result.alreadyRemarketed = count;
+  }
+
+  return result;
+}
+
+/**
+ * Schedule the wishlist remarketing processor to run every 30 minutes
+ */
+export function scheduleWishlistRemarketing(): void {
+  setInterval(async () => {
+    try {
+      const sent = await processWishlistRemarketing();
+      if (sent > 0) {
+        console.log(`[WishlistRemarketing] Sent ${sent} remarketing emails`);
+      }
+    } catch (error) {
+      console.error("[WishlistRemarketing] Processing error:", error);
+    }
+  }, 30 * 60 * 1000); // Every 30 minutes
+
+  console.log("[WishlistRemarketing] Processor scheduled (every 30 min)");
+}

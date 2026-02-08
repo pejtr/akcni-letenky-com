@@ -1689,3 +1689,13 @@
 - [x] Add social sharing buttons (Facebook, Twitter) on flight detail/listing pages
 - [x] All 358 tests passing across 32 test files
 - [x] Change "od 4 990 Kč" in sticky banner Dovolená link to red color
+
+## Dynamic Hero Background Slideshow (2026-02-08)
+- [ ] Add dynamic background slideshow to hero section with smooth crossfade between destination photos
+
+## New Features Batch (2026-02-08)
+- [x] Enlarge logo on desktop (h-10 → h-14 md, h-16 lg)
+- [x] FB Pixel retargeting events for flight click tracking (ViewContent, AddToWishlist, InitiateCheckout)
+- [x] Price range slider (min-max Kč) on LevneLetenky page with client-side filtering
+- [x] Email remarketing for wishlist users who didn't purchase within 24h
+- [x] Fix: site_settings table not created in database - push schema

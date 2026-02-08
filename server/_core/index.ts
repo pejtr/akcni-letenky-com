@@ -12,6 +12,7 @@ import { schedulePriceCheckCron } from "../priceCheckCron";
 import { scheduleDailyReport } from "../dailyReport";
 import { scheduleWeeklyReport } from "../weeklyReport";
 import { scheduleFollowupProcessor } from "../emailFollowup";
+import { scheduleWishlistRemarketing } from "../wishlistRemarketing";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -98,6 +99,9 @@ async function startServer() {
 
     // Email follow-up processor (every 15 min)
     scheduleFollowupProcessor();
+
+    // Wishlist remarketing processor (every 30 min)
+    scheduleWishlistRemarketing();
   });
 }
 

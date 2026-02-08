@@ -102,6 +102,7 @@ import { adminAnalyticsRouter } from "./adminAnalytics";
 import { getHistoricalData } from "./historicalAnalytics";
 import { recordClickEvent, recordClickEventsBatch, getHeatmapData } from "./clickHeatmap";
 import { scheduleFollowup, processFollowupQueue, getFollowupStats } from "./emailFollowup";
+import { processWishlistRemarketing, getWishlistRemarketingStats } from "./wishlistRemarketing";
 import { recordConversionEvent, getConversionFunnel, getFunnelSummary } from "./conversionFunnel";
 import { getSiteSetting, setSiteSetting, getAllSiteSettings } from "./db";
 import {
@@ -1444,6 +1445,20 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
 
     processQueue: protectedProcedure.mutation(async () => {
       const sent = await processFollowupQueue();
+      return { sent };
+    }),
+  }),
+
+  // ============ Wishlist Remarketing ============
+  wishlistRemarketing: router({
+    getStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Forbidden");
+      return await getWishlistRemarketingStats();
+    }),
+
+    processNow: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Forbidden");
+      const sent = await processWishlistRemarketing();
       return { sent };
     }),
   }),
