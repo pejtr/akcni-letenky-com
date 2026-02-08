@@ -13,7 +13,7 @@ import type { FlightOffer, VacationOffer } from "./pelikanFeed";
 
 const CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
 let checkInterval: NodeJS.Timeout | null = null;
-let lastCheckResult: { checked: number; notified: number; recordedPrices: number; timestamp: Date } | null = null;
+let lastCheckResult: { checked: number; notified: number; emailsSent: number; emailsFailed: number; recordedPrices: number; timestamp: Date } | null = null;
 
 /**
  * Extract the lowest price for each destination from the Pelikan cache
@@ -56,6 +56,8 @@ function extractDestinationPrices(
 export async function runPriceCheck(): Promise<{
   checked: number;
   notified: number;
+  emailsSent: number;
+  emailsFailed: number;
   recordedPrices: number;
   timestamp: Date;
 }> {
@@ -105,6 +107,8 @@ export async function runPriceCheck(): Promise<{
     const checkResult = {
       checked: result.checked,
       notified: result.notified,
+      emailsSent: result.emailsSent,
+      emailsFailed: result.emailsFailed,
       recordedPrices,
       timestamp,
     };
@@ -112,21 +116,26 @@ export async function runPriceCheck(): Promise<{
     lastCheckResult = checkResult;
 
     console.log(
-      `[PriceCheck] Complete: ${result.checked} alerts checked, ${result.notified} notifications sent, ${recordedPrices} prices recorded`
+      `[PriceCheck] Complete: ${result.checked} alerts checked, ${result.notified} notifications sent, ${result.emailsSent} emails sent, ${result.emailsFailed} emails failed, ${recordedPrices} prices recorded`
     );
 
     // Send summary to owner if any notifications were sent
     if (result.notified > 0) {
       await notifyOwner({
         title: `📊 Hlídač cen: ${result.notified} upozornění odesláno`,
-        content: `Automatická kontrola cen dokončena.\n\nZkontrolováno: ${result.checked} hlídačů\nOdesláno upozornění: ${result.notified}\nZaznamenáno cen: ${recordedPrices}\n\nČas: ${timestamp.toLocaleString("cs-CZ")}`,
+        content: `Automatická kontrola cen dokončena.\n\nZkontrolováno: ${result.checked} hlídačů\nOdesláno upozornění: ${result.notified}\nEmaily odeslány: ${result.emailsSent}\nEmaily selhaly: ${result.emailsFailed}\nZaznamenáno cen: ${recordedPrices}\n\nČas: ${timestamp.toLocaleString("cs-CZ")}`,
+      });
+    } else if (result.emailsFailed > 0) {
+      await notifyOwner({
+        title: `⚠️ Hlídač cen: ${result.emailsFailed} emailů selhalo`,
+        content: `Některé emaily se nepodařilo odeslat.\n\nZkontrolováno: ${result.checked} hlídačů\nEmaily selhaly: ${result.emailsFailed}\n\nČas: ${timestamp.toLocaleString("cs-CZ")}`,
       });
     }
 
     return checkResult;
   } catch (error) {
     console.error("[PriceCheck] Error during price check:", error);
-    return { checked: 0, notified: 0, recordedPrices, timestamp };
+    return { checked: 0, notified: 0, emailsSent: 0, emailsFailed: 0, recordedPrices, timestamp };
   }
 }
 

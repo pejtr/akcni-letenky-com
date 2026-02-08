@@ -3,12 +3,14 @@
  * 
  * Allows users to subscribe to price drop notifications for specific destinations.
  * Checks prices periodically and notifies users when prices drop below their threshold.
+ * Supports email notifications via Resend integration.
  */
 
 import { getDb } from "./db";
 import { priceAlerts, priceHistory } from "../drizzle/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
+import { sendPriceDropEmail, logNotification } from "./emailService";
 
 // ============ Price Alert CRUD ============
 
@@ -19,11 +21,12 @@ export async function createPriceAlert(data: {
   currentPrice: number;
   targetPrice?: number;
   priceDropPercent?: number;
+  notifyEmail?: string;
+  emailEnabled?: boolean;
 }) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  // Check for existing alert for same destination (by userId or slug)
   const conditions = [
     eq(priceAlerts.destinationSlug, data.destinationSlug),
     eq(priceAlerts.isActive, 1),
@@ -39,13 +42,14 @@ export async function createPriceAlert(data: {
     .limit(1);
 
   if (existing.length > 0) {
-    // Update existing alert
     await db
       .update(priceAlerts)
       .set({
         currentPrice: data.currentPrice,
         targetPrice: data.targetPrice || null,
         priceDropPercent: data.priceDropPercent || 10,
+        notifyEmail: data.notifyEmail || existing[0].notifyEmail,
+        emailEnabled: data.emailEnabled !== undefined ? (data.emailEnabled ? 1 : 0) : existing[0].emailEnabled,
       })
       .where(eq(priceAlerts.id, existing[0].id));
     return { id: existing[0].id, updated: true };
@@ -58,9 +62,25 @@ export async function createPriceAlert(data: {
     currentPrice: data.currentPrice,
     targetPrice: data.targetPrice || null,
     priceDropPercent: data.priceDropPercent || 10,
+    notifyEmail: data.notifyEmail || null,
+    emailEnabled: data.emailEnabled ? 1 : 0,
   });
 
   return { id: Number(result[0].insertId), updated: false };
+}
+
+export async function updatePriceAlertEmail(alertId: number, email: string | null, enabled: boolean) {
+  const db = await getDb();
+  if (!db) return false;
+
+  await db
+    .update(priceAlerts)
+    .set({
+      notifyEmail: email,
+      emailEnabled: enabled ? 1 : 0,
+    })
+    .where(eq(priceAlerts.id, alertId));
+  return true;
 }
 
 export async function getPriceAlertsByUserId(userId: number) {
@@ -151,14 +171,16 @@ export async function getLatestPriceForDestination(destinationSlug: string) {
   return result[0] || null;
 }
 
-// ============ Price Check & Notification ============
+// ============ Price Check & Notification (with Email) ============
 
 export async function checkPriceDropsAndNotify() {
   const db = await getDb();
-  if (!db) return { checked: 0, notified: 0 };
+  if (!db) return { checked: 0, notified: 0, emailsSent: 0, emailsFailed: 0 };
 
   const activeAlerts = await getActivePriceAlerts();
   let notified = 0;
+  let emailsSent = 0;
+  let emailsFailed = 0;
 
   for (const alert of activeAlerts) {
     const latestPrice = await getLatestPriceForDestination(alert.destinationSlug);
@@ -167,7 +189,6 @@ export async function checkPriceDropsAndNotify() {
     const priceDrop = alert.currentPrice - latestPrice.price;
     const dropPercent = (priceDrop / alert.currentPrice) * 100;
 
-    // Check if price dropped enough
     const shouldNotify =
       (alert.targetPrice && latestPrice.price <= alert.targetPrice) ||
       dropPercent >= (alert.priceDropPercent || 10);
@@ -180,11 +201,47 @@ export async function checkPriceDropsAndNotify() {
         if (hoursSinceLastNotification < 24) continue;
       }
 
-      // Send notification to owner (who can forward to user)
+      // 1. Always send owner notification
       await notifyOwner({
         title: `🔔 Pokles ceny: ${alert.destinationName}`,
         content: `Cena letenky do ${alert.destinationName} klesla o ${dropPercent.toFixed(0)}%!\n\nPůvodní cena: ${alert.currentPrice} Kč\nNová cena: ${latestPrice.price} Kč\nÚspora: ${priceDrop} Kč`,
       });
+
+      // 2. Send email notification if enabled and email is set
+      if (alert.emailEnabled && alert.notifyEmail) {
+        const emailResult = await sendPriceDropEmail({
+          to: alert.notifyEmail,
+          destinationName: alert.destinationName,
+          destinationSlug: alert.destinationSlug,
+          oldPrice: alert.currentPrice,
+          newPrice: latestPrice.price,
+          dropPercent: Math.round(dropPercent),
+          targetPrice: alert.targetPrice,
+          alertId: alert.id,
+          userId: alert.userId,
+        });
+
+        if (emailResult.success) {
+          emailsSent++;
+        } else {
+          emailsFailed++;
+          console.warn(`[PriceAlerts] Email failed for alert ${alert.id}: ${emailResult.error}`);
+        }
+      } else {
+        // Log as owner-only notification
+        await logNotification({
+          alertId: alert.id,
+          userId: alert.userId,
+          notifyEmail: null,
+          destinationName: alert.destinationName,
+          destinationSlug: alert.destinationSlug,
+          oldPrice: alert.currentPrice,
+          newPrice: latestPrice.price,
+          dropPercent: Math.round(dropPercent),
+          channel: "owner_notification",
+          status: "sent",
+        });
+      }
 
       // Update alert record
       await db
@@ -198,7 +255,6 @@ export async function checkPriceDropsAndNotify() {
 
       notified++;
     } else {
-      // Update last checked time
       await db
         .update(priceAlerts)
         .set({ lastCheckedAt: new Date() })
@@ -206,14 +262,14 @@ export async function checkPriceDropsAndNotify() {
     }
   }
 
-  return { checked: activeAlerts.length, notified };
+  return { checked: activeAlerts.length, notified, emailsSent, emailsFailed };
 }
 
 // ============ Price Alert Stats ============
 
 export async function getPriceAlertStats() {
   const db = await getDb();
-  if (!db) return { total: 0, active: 0, notified: 0 };
+  if (!db) return { total: 0, active: 0, notified: 0, withEmail: 0 };
 
   const all = await db.select().from(priceAlerts);
   const active = all.filter((a) => a.isActive === 1);
@@ -221,10 +277,12 @@ export async function getPriceAlertStats() {
     (sum, a) => sum + (a.alertCount || 0),
     0
   );
+  const withEmail = all.filter((a) => a.notifyEmail && a.emailEnabled === 1).length;
 
   return {
     total: all.length,
     active: active.length,
     notified: totalNotifications,
+    withEmail,
   };
 }

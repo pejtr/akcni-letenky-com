@@ -1,0 +1,16 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'price_alerts' AND COLUMN_NAME IN ('notifyEmail', 'emailEnabled'); CREATE TABLE IF NOT EXISTS notification_log (id INT AUTO_INCREMENT PRIMARY KEY, alertId INT NOT NULL, userId INT DEFAULT NULL, notifyEmail VARCHAR(255) DEFAULT NULL, destinationName VARCHAR(100) NOT NULL, destinationSlug VARCHAR(100) NOT NULL, oldPrice INT NOT NULL, newPrice INT NOT NULL, dropPercent INT NOT NULL, channel VARCHAR(30) NOT NULL, status VARCHAR(20) NOT NULL, errorMessage TEXT DEFAULT NULL, sentAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'price_alerts' AND COLUMN_NAME IN ('notifyEmail', 'emailEnabled'); CREATE TABLE IF NOT EXISTS notification_log (id INT AUTO_INCREMENT PRIMARY KEY, alertId INT NOT NULL, userId INT DEFAULT NULL, notifyEmail VARCHAR(255) DEFAULT NULL, destinationName VARCHAR(100) NOT NULL, destinationSlug VARCHAR(100) NOT NULL, oldPrice INT NOT NULL, newPrice INT NOT NULL, dropPercent INT NOT NULL, channel VARCHAR(30) NOT NULL, status VARCHAR(20) NOT NULL, errorMessage TEXT DEFAULT NULL, sentAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);",
+  "rows": [
+    {
+      "COLUMN_NAME": "notifyEmail"
+    },
+    {
+      "COLUMN_NAME": "emailEnabled"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nnotifyEmail\nemailEnabled\n",
+  "stderr": "",
+  "execution_time_ms": 414
+}

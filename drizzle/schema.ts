@@ -626,12 +626,36 @@ export const priceAlerts = mysqlTable("price_alerts", {
   lastCheckedAt: timestamp("lastCheckedAt"),
   lastAlertSentAt: timestamp("lastAlertSentAt"),
   alertCount: int("alertCount").default(0),
+  notifyEmail: varchar("notifyEmail", { length: 255 }),
+  emailEnabled: int("emailEnabled").default(0),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 export type PriceAlert = typeof priceAlerts.$inferSelect;
 export type InsertPriceAlert = typeof priceAlerts.$inferInsert;
+
+/**
+ * Notification log - tracks all sent notifications (email, push, owner)
+ */
+export const notificationLog = mysqlTable("notification_log", {
+  id: int("id").autoincrement().primaryKey(),
+  alertId: int("alertId").notNull(),
+  userId: int("userId"),
+  notifyEmail: varchar("notifyEmail", { length: 255 }),
+  destinationName: varchar("destinationName", { length: 100 }).notNull(),
+  destinationSlug: varchar("destinationSlug", { length: 100 }).notNull(),
+  oldPrice: int("oldPrice").notNull(),
+  newPrice: int("newPrice").notNull(),
+  dropPercent: int("dropPercent").notNull(),
+  channel: varchar("channel", { length: 30 }).notNull(),
+  status: varchar("status", { length: 20 }).notNull(),
+  errorMessage: text("errorMessage"),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+});
+
+export type NotificationLogEntry = typeof notificationLog.$inferSelect;
+export type InsertNotificationLogEntry = typeof notificationLog.$inferInsert;
 
 /**
  * Price history - tracks price changes over time for destinations

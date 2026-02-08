@@ -53,7 +53,14 @@ import {
   recordPrice,
   getPriceAlertStats,
   checkPriceDropsAndNotify,
+  updatePriceAlertEmail,
 } from "./priceAlerts";
+import {
+  getNotificationHistory,
+  getNotificationStats,
+  isEmailServiceConfigured,
+  testEmailService,
+} from "./emailService";
 import { runPriceCheck, getLastCheckResult } from "./priceCheckCron";
 import {
   createSocialShare,
@@ -849,6 +856,8 @@ export const appRouter = router({
         currentPrice: z.number(),
         targetPrice: z.number().optional(),
         priceDropPercent: z.number().optional(),
+        notifyEmail: z.string().email().optional(),
+        emailEnabled: z.boolean().optional(),
       }))
       .mutation(async ({ input }) => {
         return await createPriceAlert(input);
@@ -903,6 +912,30 @@ export const appRouter = router({
 
     getCronStatus: protectedProcedure.query(async () => {
       return getLastCheckResult();
+    }),
+
+    updateEmail: protectedProcedure
+      .input(z.object({
+        alertId: z.number(),
+        email: z.string().email().nullable(),
+        enabled: z.boolean(),
+      }))
+      .mutation(async ({ input }) => {
+        return await updatePriceAlertEmail(input.alertId, input.email, input.enabled);
+      }),
+
+    getNotificationHistory: protectedProcedure
+      .input(z.object({ limit: z.number().optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        return await getNotificationHistory(ctx.user.id, input?.limit);
+      }),
+
+    getNotificationStats: protectedProcedure.query(async () => {
+      return await getNotificationStats();
+    }),
+
+    getEmailStatus: protectedProcedure.query(async () => {
+      return await testEmailService();
     }),
   }),
 

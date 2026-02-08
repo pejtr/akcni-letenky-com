@@ -1424,3 +1424,18 @@
 - [x] Fix overlapping navigation items in the top header bar
 - [x] Ensure proper spacing between logo and menu items
 - [x] Fix "Rezervovat" button being cut off on the right
+
+## Email Notifications for Price Alerts (2026-02-08)
+- [x] Add notifyEmail and emailEnabled columns to price_alerts table
+- [x] Create emailService.ts with Resend integration + HTML email templates
+- [x] Build beautiful HTML email template for price drop notifications (Czech language)
+- [x] Create notificationLog table for tracking sent emails
+- [x] Integrate email sending into checkPriceDropsAndNotify flow
+- [x] Update priceCheckCron.ts to report email stats
+- [x] Add email management UI to Wishlist page (inline email setup per alert)
+- [x] Add notification history tab to Wishlist page
+- [x] Add email status banner (configured/not configured)
+- [x] Add updateEmail, getNotificationHistory, getNotificationStats, getEmailStatus tRPC endpoints
+- [x] Write vitest tests for emailService (all passing)
+- [x] All 216 tests passing across 18 test files
+- [ ] Configure RESEND_API_KEY secret for production email delivery

@@ -161,9 +161,9 @@ describe("Price Alerts Module", () => {
       // Override the chain for this specific call
       mockDb.select.mockReturnValueOnce({
         from: vi.fn().mockResolvedValue([
-          { id: 1, isActive: 1, alertCount: 3 },
-          { id: 2, isActive: 0, alertCount: 1 },
-          { id: 3, isActive: 1, alertCount: 0 },
+          { id: 1, isActive: 1, alertCount: 3, emailEnabled: 1, notifyEmail: "test@test.cz" },
+          { id: 2, isActive: 0, alertCount: 1, emailEnabled: 0, notifyEmail: null },
+          { id: 3, isActive: 1, alertCount: 0, emailEnabled: 1, notifyEmail: "a@b.cz" },
         ]),
       });
 
@@ -172,13 +172,14 @@ describe("Price Alerts Module", () => {
         total: 3,
         active: 2,
         notified: 4,
+        withEmail: 2,
       });
     });
 
     it("should return zeros when database is not available", async () => {
       (getDb as any).mockResolvedValue(null);
       const result = await getPriceAlertStats();
-      expect(result).toEqual({ total: 0, active: 0, notified: 0 });
+      expect(result).toEqual({ total: 0, active: 0, notified: 0, withEmail: 0 });
     });
   });
 });
