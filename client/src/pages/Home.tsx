@@ -320,9 +320,7 @@ export default function Home() {
             <Link href="/vlaky-autobusy" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
               🚆 VLAKY
             </Link>
-            <a href="#search" className="text-xs xl:text-sm text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1.5 py-1">
-              🚀 REZERVACE
-            </a>
+
           </nav>
 
           {/* Mobile Menu & Actions */}
@@ -352,7 +350,7 @@ export default function Home() {
               className="hidden sm:flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs xl:text-sm shadow-md hover:shadow-lg"
             >
               <Plane className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>Rezervovat</span>
+              <span>RYCHLÁ REZERVACE</span>
             </a>
           </div>
         </div>
@@ -832,8 +830,18 @@ export default function Home() {
           <div className="container">
             <p className="text-center text-sm md:text-base font-bold text-black">
               <span className="text-[#E91E63]">{stickyCta.emoji}</span>{" "}
-              <a href="/levne-letenky" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>{stickyCta.text}</a> |{" "}
-              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až 80 %</a> |{" "}
+              <a href="/levne-letenky" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>
+                {stickyCta.text.includes("{{") ? (
+                  <>
+                    {stickyCta.text.split(/\{\{|\}\}/).map((part, i) => 
+                      i % 2 === 1 ? (
+                        <span key={i} className="text-[#E91E63] font-extrabold">{part}</span>
+                      ) : part
+                    )}
+                  </>
+                ) : stickyCta.text}
+              </a> |{" "}
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold">80 %</span> – od 4 990 Kč</a> |{" "}
               <a href="/levne-letenky?kategorie=eurovikendy" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Eurovíkendy</a> |{" "}
               <a href="/levne-letenky?kategorie=business" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Business class</a>
             </p>

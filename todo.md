@@ -1610,3 +1610,36 @@
 - [x] Integrate useConversionTracking hook into Home.tsx for automatic event capture
 - [x] Write vitest tests (8 tests passing)
 - [x] All 330+ tests passing across 30 test files
+
+## Facebook Pixel & Google Ads Tag Integration (2026-02-08)
+- [ ] Create tracking pixel management system with admin-configurable IDs
+- [ ] Implement Facebook Pixel (fbq) with standard events (PageView, ViewContent, Search, Lead, AddToWishlist)
+- [ ] Implement Google Ads gtag with conversion tracking events
+- [ ] Add GDPR consent banner for cookie/tracking compliance
+- [ ] Fire retargeting events at funnel drop-off points
+- [ ] Add pixel ID configuration in admin settings
+- [ ] Write vitest tests
+
+## Automatic User Segmentation (2026-02-08)
+- [ ] Define user segments (high_intent, active, casual, dormant, new)
+- [ ] Create segmentation engine based on conversion funnel behavior
+- [ ] Store user segments in database with auto-refresh
+- [ ] Build segment management UI in admin dashboard
+- [ ] Add segment-based email targeting for campaigns
+- [ ] Write vitest tests
+
+## Real-time Admin Push Notifications for Milestones (2026-02-08)
+- [ ] Define configurable daily milestones (e.g., 100 clicks, 10 registrations, 50 affiliate clicks)
+- [ ] Create milestone tracking service that monitors metrics in real-time
+- [ ] Send push notification to admin when milestone is reached
+- [ ] Add milestone configuration UI in admin dashboard
+- [ ] Track milestone history and streaks
+- [ ] Write vitest tests
+
+## Bug Fix: Sticky Banner Text Improvements (2026-02-08)
+- [x] Add specific price to "Zbývá jen X letenek" text (e.g., "za tuto cenu od 590 Kč")
+- [x] Highlight ticket count number with different color (e.g., red/white)
+- [x] Fix "Dovolená se slevou až 80 %" - add specific price/destination context
+
+## Unify Duplicate Reservation Buttons (2026-02-08)
+- [x] Unify duplicate "REZERVACE" header + "Rezervovat" button into single "RYCHLÁ REZERVACE"

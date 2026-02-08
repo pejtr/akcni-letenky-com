@@ -28,7 +28,7 @@ export default function MobileMenu() {
     document.body.style.overflow = "unset";
   };
 
-  const menuItems = [
+  const menuItems: { href: string; label: string; icon: React.ReactNode; external?: boolean }[] = [
     {
       href: "/",
       label: "Nejlevnější Lety",
@@ -55,9 +55,10 @@ export default function MobileMenu() {
       icon: <Train className="w-5 h-5" />,
     },
     {
-      href: "/rychla-rezervace",
-      label: "Rychlá Rezervace",
-      icon: <MapPin className="w-5 h-5" />,
+      href: "https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs",
+      label: "RYCHLÁ REZERVACE",
+      icon: <Plane className="w-5 h-5" />,
+      external: true,
     },
   ];
 
@@ -108,18 +109,35 @@ export default function MobileMenu() {
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={closeMenu}
-                  className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-100 transition-colors group"
-                >
-                  <span className="text-[#E91E63] group-hover:scale-110 transition-transform">
-                    {item.icon}
-                  </span>
-                  <span className="font-medium text-gray-700 group-hover:text-[#E91E63]">
-                    {item.label}
-                  </span>
-                </Link>
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={closeMenu}
+                    className="flex items-center gap-3 p-4 rounded-lg bg-[#E91E63] hover:bg-[#C2185B] transition-colors group"
+                  >
+                    <span className="text-white group-hover:scale-110 transition-transform">
+                      {item.icon}
+                    </span>
+                    <span className="font-bold text-white">
+                      {item.label}
+                    </span>
+                  </a>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={closeMenu}
+                    className="flex items-center gap-3 p-4 rounded-lg hover:bg-gray-100 transition-colors group"
+                  >
+                    <span className="text-[#E91E63] group-hover:scale-110 transition-transform">
+                      {item.icon}
+                    </span>
+                    <span className="font-medium text-gray-700 group-hover:text-[#E91E63]">
+                      {item.label}
+                    </span>
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

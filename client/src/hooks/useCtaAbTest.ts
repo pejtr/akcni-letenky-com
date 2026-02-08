@@ -70,11 +70,11 @@ export const CTA_TESTS: Record<string, CtaTestConfig> = {
     testName: "cta_sticky_v2",
     position: "sticky_banner",
     variantA: {
-      text: "Akční nabídka: Letenky do 1 500 Kč",
+      text: "Akční nabídka: Letenky od 590 Kč",
       emoji: "✈️",
     },
     variantB: {
-      text: "Zbývá jen 12 letenek za tuto cenu!",
+      text: "Zbývá jen {{12}} letenek od {{1 499 Kč}}!",
       emoji: "🔥",
       subtext: "Klikněte a ušetřete",
     },
