@@ -1,7 +1,12 @@
 /**
  * Service Worker for Akční Letenky
  * 
- * Handles push notifications for price drop alerts.
+ * Handles push notifications for:
+ * - Price drop alerts
+ * - News and updates
+ * - Promotional deals and offers
+ * - Custom broadcast messages
+ * 
  * Registered from the frontend when user opts in to push notifications.
  */
 
@@ -19,26 +24,59 @@ self.addEventListener("push", (event) => {
     };
   }
 
+  const notificationType = data.data?.type || "custom";
+
+  // Category-specific icons and actions
+  const categoryConfig = {
+    price_drop: {
+      icon: data.icon || "/favicon.ico",
+      badge: "/favicon.ico",
+      actions: [
+        { action: "open", title: "📉 Zobrazit nabídku" },
+        { action: "dismiss", title: "Zavřít" },
+      ],
+    },
+    news: {
+      icon: data.icon || "/favicon.ico",
+      badge: "/favicon.ico",
+      actions: [
+        { action: "open", title: "📰 Přečíst novinku" },
+        { action: "dismiss", title: "Zavřít" },
+      ],
+    },
+    deal: {
+      icon: data.icon || "/favicon.ico",
+      badge: "/favicon.ico",
+      actions: [
+        { action: "open", title: "🏷️ Zobrazit akci" },
+        { action: "dismiss", title: "Zavřít" },
+      ],
+    },
+    custom: {
+      icon: data.icon || "/favicon.ico",
+      badge: "/favicon.ico",
+      actions: [
+        { action: "open", title: "Otevřít" },
+        { action: "dismiss", title: "Zavřít" },
+      ],
+    },
+  };
+
+  const config = categoryConfig[notificationType] || categoryConfig.custom;
+
   const options = {
     body: data.body || "Nová nabídka na Akční Letenky!",
-    icon: data.icon || "/favicon.ico",
-    badge: data.badge || "/favicon.ico",
-    tag: data.tag || "akcni-letenky",
+    icon: config.icon,
+    badge: config.badge,
+    tag: data.tag || `akcni-letenky-${notificationType}`,
     data: {
       url: data.url || "/",
+      type: notificationType,
       ...data.data,
     },
     vibrate: [200, 100, 200],
-    actions: [
-      {
-        action: "open",
-        title: "Zobrazit nabídku",
-      },
-      {
-        action: "dismiss",
-        title: "Zavřít",
-      },
-    ],
+    actions: config.actions,
+    requireInteraction: notificationType === "deal", // Deals stay visible until user interacts
   };
 
   event.waitUntil(

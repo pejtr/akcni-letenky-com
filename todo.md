@@ -1500,3 +1500,29 @@
 - [x] Add RESEND_API_KEY warning banner in AdminDashboard
 - [x] VAPID keys auto-generated and configured
 - [x] All 257 tests passing across 22 test files
+
+## Bug Fix: Sticky Banner Not Clickable (2026-02-08)
+- [x] Fix yellow sticky banner "Akční nabídka: Letenky do 1 500 Kč" - made all items clickable with proper links
+
+## Daily Report Day-over-Day Comparison (2026-02-08)
+- [x] Store daily metrics in daily_report_log table for historical comparison
+- [x] Add previous day metrics retrieval function (getPreviousDayMetrics)
+- [x] Calculate day-over-day changes (absolute + percentage) via calculateDayOverDay
+- [x] Add trend arrows (↑/↓) and color coding in HTML email template
+- [x] Update admin dashboard preview with TrendBadge comparison data
+- [x] Write vitest tests (17 tests passing)
+
+## Weekly Summary Report (2026-02-08)
+- [x] Create weeklyReport.ts module with weekly metrics aggregation
+- [x] Build HTML email template for weekly report with week-over-week comparison
+- [x] Create tRPC endpoints (getLastResult, sendNow) for weekly report
+- [x] Register cron job to run weekly (Monday 8:00 AM CET)
+- [x] Add WeeklyReportCard to AdminDashboard with best/worst day stats
+- [x] Write vitest tests (12 tests passing)
+
+## Push Notifications for News & Offers (2026-02-08)
+- [x] Add notification type/category support (price_drop, news, deal, custom)
+- [x] Create admin UI with category selector and quick templates for news/deals
+- [x] Update service worker to handle different notification categories with specific actions
+- [x] Update broadcast tRPC endpoint with category parameter
+- [x] All 277 tests passing across 23 test files

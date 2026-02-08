@@ -10,6 +10,7 @@ import { serveStatic, setupVite } from "./vite";
 import { scheduleDailyArticleGeneration } from "../articleGenerator";
 import { schedulePriceCheckCron } from "../priceCheckCron";
 import { scheduleDailyReport } from "../dailyReport";
+import { scheduleWeeklyReport } from "../weeklyReport";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -90,6 +91,9 @@ async function startServer() {
 
     // Initialize daily report scheduler (7:00 AM CET)
     scheduleDailyReport();
+
+    // Initialize weekly report scheduler (Monday 8:00 AM CET)
+    scheduleWeeklyReport();
   });
 }
 

@@ -81,6 +81,7 @@ import {
 } from "./browsingHistory";
 import { generateDailyArticles } from "./articleGenerator";
 import { sendDailyReport, getLastReportResult, collectDailyMetrics } from "./dailyReport";
+import { sendWeeklyReport, getLastWeeklyResult } from "./weeklyReport";
 import {
   savePushSubscription,
   removePushSubscription,
@@ -1094,6 +1095,19 @@ export const appRouter = router({
     }),
   }),
 
+  // ============ Weekly Report ============
+  weeklyReport: router({
+    getLastResult: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      return getLastWeeklyResult();
+    }),
+
+    sendNow: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Unauthorized");
+      return await sendWeeklyReport();
+    }),
+  }),
+
   // ============ Push Notifications ============
   pushNotifications: router({
     // Subscribe to push notifications
@@ -1135,12 +1149,13 @@ export const appRouter = router({
       return await getPushStats();
     }),
 
-    // Send broadcast push (admin)
+    // Send broadcast push (admin) - supports news, deals, and custom messages
     broadcast: protectedProcedure
       .input(z.object({
         title: z.string(),
         body: z.string(),
         url: z.string().optional(),
+        category: z.enum(["price_drop", "news", "deal", "custom"]).default("custom"),
       }))
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== "admin") throw new Error("Unauthorized");
@@ -1148,6 +1163,8 @@ export const appRouter = router({
           title: input.title,
           body: input.body,
           url: input.url,
+          tag: `broadcast-${input.category}-${Date.now()}`,
+          data: { type: input.category },
         });
       }),
   }),

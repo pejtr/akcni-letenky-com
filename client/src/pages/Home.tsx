@@ -811,13 +811,14 @@ export default function Home() {
       </section>
 
       {/* Sticky Bottom Banner - Always visible */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-[100] animate-in slide-in-from-bottom">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-[100] animate-in slide-in-from-bottom" style={{ pointerEvents: 'auto' }}>
           <div className="container">
             <p className="text-center text-sm md:text-base font-bold text-black">
-              <span className="text-[#E91E63]">Akční nabídka:</span> <span className="text-blue-700">Letenky do 1 500 Kč</span> | 
-              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline"> Dovolená se slevou až 80 %</a> | 
-              <span className="text-blue-700"> Eurovíkendy</span> | 
-              <span className="text-blue-700"> Business class</span>
+              <span className="text-[#E91E63]">Akční nabídka:</span>{" "}
+              <a href="/levne-letenky" className="text-blue-700 hover:underline cursor-pointer">Letenky do 1 500 Kč</a> |{" "}
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer">Dovolená se slevou až 80 %</a> |{" "}
+              <a href="/levne-letenky?kategorie=eurovikendy" className="text-blue-700 hover:underline cursor-pointer">Eurovíkendy</a> |{" "}
+              <a href="/levne-letenky?kategorie=business" className="text-blue-700 hover:underline cursor-pointer">Business class</a>
             </p>
           </div>
         </div>

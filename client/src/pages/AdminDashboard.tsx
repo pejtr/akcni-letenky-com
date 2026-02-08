@@ -3,7 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle } from "lucide-react";
+import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag } from "lucide-react";
 import { Link } from "wouter";
 
 export default function AdminDashboard() {
@@ -363,7 +363,12 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           {/* Daily Report Card */}
           <DailyReportCard />
-          {/* Push Notifications Card */}
+          {/* Weekly Report Card */}
+          <WeeklyReportCard />
+        </div>
+
+        {/* Push Notifications */}
+        <div className="mt-6">
           <PushNotificationsCard />
         </div>
 
@@ -374,7 +379,17 @@ export default function AdminDashboard() {
   );
 }
 
-// ============ Daily Report Card ============
+// ============ Daily Report Card (with Day-over-Day) ============
+
+function TrendBadge({ value, percent }: { value: number; percent: number }) {
+  if (value === 0) return <span className="text-[10px] text-gray-400">→ 0%</span>;
+  const isUp = value > 0;
+  return (
+    <span className={`text-[10px] font-semibold ${isUp ? 'text-green-600' : 'text-red-500'}`}>
+      {isUp ? '↑' : '↓'} {isUp ? '+' : ''}{value} ({isUp ? '+' : ''}{percent}%)
+    </span>
+  );
+}
 
 function DailyReportCard() {
   const { data: lastResult, refetch } = trpc.dailyReport.getLastResult.useQuery();
@@ -382,6 +397,7 @@ function DailyReportCard() {
     onSuccess: () => refetch(),
   });
   const { data: preview } = trpc.dailyReport.preview.useQuery();
+  const comparison = lastResult?.comparison;
 
   return (
     <Card>
@@ -391,7 +407,7 @@ function DailyReportCard() {
       </CardHeader>
       <CardContent>
         <p className="text-xs text-muted-foreground mb-3">
-          Automatický report se odesílá každý den v 7:00 CET.
+          Automatický report se odesílá každý den v 7:00 CET se srovnáním s předchozím dnem.
         </p>
 
         {preview && (
@@ -399,18 +415,22 @@ function DailyReportCard() {
             <div className="bg-blue-50 rounded p-2 text-center">
               <p className="text-lg font-bold text-blue-700">{preview.affiliateClicks}</p>
               <p className="text-[10px] text-blue-600">Affiliate kliky</p>
+              {comparison?.changes && <TrendBadge {...comparison.changes.affiliateClicks} />}
             </div>
             <div className="bg-green-50 rounded p-2 text-center">
               <p className="text-lg font-bold text-green-700">{preview.pageViews}</p>
               <p className="text-[10px] text-green-600">Zobrazení</p>
+              {comparison?.changes && <TrendBadge {...comparison.changes.pageViews} />}
             </div>
             <div className="bg-purple-50 rounded p-2 text-center">
               <p className="text-lg font-bold text-purple-700">{preview.newRegistrations}</p>
               <p className="text-[10px] text-purple-600">Registrace</p>
+              {comparison?.changes && <TrendBadge {...comparison.changes.newRegistrations} />}
             </div>
             <div className="bg-orange-50 rounded p-2 text-center">
               <p className="text-lg font-bold text-orange-700">{preview.chatbotConversations}</p>
               <p className="text-[10px] text-orange-600">Chatbot</p>
+              {comparison?.changes && <TrendBadge {...comparison.changes.chatbotConversations} />}
             </div>
           </div>
         )}
@@ -420,8 +440,9 @@ function DailyReportCard() {
             lastResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
           }`}>
             Poslední report: {lastResult.metrics.date}
-            {lastResult.emailSent ? ' ✉️ Email odeslán' : ''}
+            {lastResult.emailSent ? ' ✉️ Email' : ''}
             {lastResult.ownerNotified ? ' 🔔 Notifikace' : ''}
+            {comparison?.previous ? ` · Srovnání s ${comparison.previous.date}` : ' · Bez předchozích dat'}
           </div>
         )}
 
@@ -443,34 +464,168 @@ function DailyReportCard() {
   );
 }
 
-// ============ Push Notifications Card ============
+// ============ Weekly Report Card ============
+
+function WeeklyReportCard() {
+  const { data: lastResult, refetch } = trpc.weeklyReport.getLastResult.useQuery();
+  const sendNow = trpc.weeklyReport.sendNow.useMutation({
+    onSuccess: () => refetch(),
+  });
+  const comparison = lastResult?.comparison;
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">📈 Týdenní souhrn</CardTitle>
+        <Calendar className="w-4 h-4 text-indigo-600" />
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground mb-3">
+          Automatický týdenní souhrn se odesílá každé pondělí v 8:00 CET.
+        </p>
+
+        {lastResult && (
+          <>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <div className="bg-indigo-50 rounded p-2 text-center">
+                <p className="text-lg font-bold text-indigo-700">{lastResult.metrics.totalAffiliateClicks}</p>
+                <p className="text-[10px] text-indigo-600">Kliky/týden</p>
+                {comparison?.changes && <TrendBadge {...comparison.changes.affiliateClicks} />}
+              </div>
+              <div className="bg-teal-50 rounded p-2 text-center">
+                <p className="text-lg font-bold text-teal-700">{lastResult.metrics.totalPageViews}</p>
+                <p className="text-[10px] text-teal-600">Zobrazení/týden</p>
+                {comparison?.changes && <TrendBadge {...comparison.changes.pageViews} />}
+              </div>
+              <div className="bg-rose-50 rounded p-2 text-center">
+                <p className="text-lg font-bold text-rose-700">{lastResult.metrics.totalNewRegistrations}</p>
+                <p className="text-[10px] text-rose-600">Registrace/týden</p>
+                {comparison?.changes && <TrendBadge {...comparison.changes.newRegistrations} />}
+              </div>
+              <div className="bg-amber-50 rounded p-2 text-center">
+                <p className="text-lg font-bold text-amber-700">{lastResult.metrics.avgDailyClicks}</p>
+                <p className="text-[10px] text-amber-600">Průměr/den</p>
+              </div>
+            </div>
+
+            {lastResult.metrics.bestDay && (
+              <p className="text-xs text-green-600 mb-1">
+                🏆 Nejlepší den: {lastResult.metrics.bestDay.date} ({lastResult.metrics.bestDay.clicks} kliků)
+              </p>
+            )}
+
+            <div className={`text-xs p-2 rounded mb-3 ${
+              lastResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+            }`}>
+              Poslední report: {lastResult.metrics.weekLabel}
+              {lastResult.emailSent ? ' ✉️' : ''}
+              {lastResult.ownerNotified ? ' 🔔' : ''}
+            </div>
+          </>
+        )}
+
+        {!lastResult && (
+          <p className="text-xs text-muted-foreground mb-3 italic">
+            Zatím nebyl odeslán žádný týdenní report.
+          </p>
+        )}
+
+        <Button
+          size="sm"
+          className="w-full"
+          onClick={() => sendNow.mutate()}
+          disabled={sendNow.isPending}
+        >
+          {sendNow.isPending ? (
+            <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+          ) : (
+            <Calendar className="w-3 h-3 mr-1" />
+          )}
+          Odeslat týdenní souhrn nyní
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Push Notifications Card (Enhanced with categories) ============
+
+const PUSH_CATEGORIES = [
+  { value: 'custom' as const, label: 'Vlastní zpráva', icon: '💬', color: 'text-gray-600' },
+  { value: 'news' as const, label: 'Novinka', icon: '📰', color: 'text-blue-600' },
+  { value: 'deal' as const, label: 'Akční nabídka', icon: '🏷️', color: 'text-red-600' },
+  { value: 'price_drop' as const, label: 'Pokles ceny', icon: '📉', color: 'text-green-600' },
+];
 
 function PushNotificationsCard() {
   const { data: pushStats } = trpc.pushNotifications.getStats.useQuery();
   const broadcast = trpc.pushNotifications.broadcast.useMutation();
   const [broadcastTitle, setBroadcastTitle] = useState('');
   const [broadcastBody, setBroadcastBody] = useState('');
+  const [broadcastUrl, setBroadcastUrl] = useState('');
+  const [broadcastCategory, setBroadcastCategory] = useState<'custom' | 'news' | 'deal' | 'price_drop'>('custom');
+
+  const selectedCat = PUSH_CATEGORIES.find(c => c.value === broadcastCategory);
+
+  // Quick templates
+  const applyTemplate = (cat: typeof broadcastCategory) => {
+    setBroadcastCategory(cat);
+    if (cat === 'news') {
+      setBroadcastTitle('📰 Novinka na Akční Letenky');
+      setBroadcastBody('');
+    } else if (cat === 'deal') {
+      setBroadcastTitle('🏷️ Akční nabídka!');
+      setBroadcastBody('Exkluzivní slevy na letenky – pouze dnes!');
+      setBroadcastUrl('/levne-letenky');
+    } else if (cat === 'price_drop') {
+      setBroadcastTitle('📉 Pokles cen letenek!');
+      setBroadcastBody('Ceny letenek klesly – podívejte se na aktuální nabídky.');
+      setBroadcastUrl('/levne-letenky');
+    } else {
+      setBroadcastTitle('');
+      setBroadcastBody('');
+      setBroadcastUrl('');
+    }
+  };
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">🔔 Push notifikace</CardTitle>
+        <CardTitle className="text-sm font-medium">🔔 Push notifikace – Broadcast</CardTitle>
         <Bell className="w-4 h-4 text-purple-600" />
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-2 mb-3">
+        <div className="grid grid-cols-3 gap-2 mb-4">
           <div className="bg-gray-50 rounded p-2 text-center">
             <p className="text-lg font-bold">{pushStats?.configured ? '✅' : '❌'}</p>
             <p className="text-[10px] text-muted-foreground">Konfigurováno</p>
           </div>
           <div className="bg-gray-50 rounded p-2 text-center">
             <p className="text-lg font-bold">{pushStats?.activeSubscriptions || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Aktivní</p>
+            <p className="text-[10px] text-muted-foreground">Aktivní odběratelé</p>
           </div>
           <div className="bg-gray-50 rounded p-2 text-center">
             <p className="text-lg font-bold">{pushStats?.totalSubscriptions || 0}</p>
             <p className="text-[10px] text-muted-foreground">Celkem</p>
           </div>
+        </div>
+
+        {/* Category selector */}
+        <div className="flex gap-1.5 mb-3">
+          {PUSH_CATEGORIES.map((cat) => (
+            <button
+              key={cat.value}
+              onClick={() => applyTemplate(cat.value)}
+              className={`flex-1 text-[10px] py-1.5 px-1 rounded border transition-all ${
+                broadcastCategory === cat.value
+                  ? 'border-blue-500 bg-blue-50 font-semibold'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <span className="block text-sm">{cat.icon}</span>
+              {cat.label}
+            </button>
+          ))}
         </div>
 
         <div className="space-y-2 mb-3">
@@ -481,11 +636,18 @@ function PushNotificationsCard() {
             onChange={(e) => setBroadcastTitle(e.target.value)}
             className="w-full text-xs border rounded px-2 py-1.5"
           />
-          <input
-            type="text"
+          <textarea
             placeholder="Text notifikace"
             value={broadcastBody}
             onChange={(e) => setBroadcastBody(e.target.value)}
+            rows={2}
+            className="w-full text-xs border rounded px-2 py-1.5 resize-none"
+          />
+          <input
+            type="text"
+            placeholder="URL odkaz (volitelné, např. /levne-letenky)"
+            value={broadcastUrl}
+            onChange={(e) => setBroadcastUrl(e.target.value)}
             className="w-full text-xs border rounded px-2 py-1.5"
           />
         </div>
@@ -495,23 +657,29 @@ function PushNotificationsCard() {
           className="w-full"
           onClick={() => {
             if (!broadcastTitle || !broadcastBody) return;
-            broadcast.mutate({ title: broadcastTitle, body: broadcastBody });
+            broadcast.mutate({
+              title: broadcastTitle,
+              body: broadcastBody,
+              url: broadcastUrl || undefined,
+              category: broadcastCategory,
+            });
             setBroadcastTitle('');
             setBroadcastBody('');
+            setBroadcastUrl('');
           }}
           disabled={broadcast.isPending || !broadcastTitle || !broadcastBody}
         >
           {broadcast.isPending ? (
             <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
           ) : (
-            <Bell className="w-3 h-3 mr-1" />
+            <Megaphone className="w-3 h-3 mr-1" />
           )}
-          Odeslat broadcast
+          Odeslat {selectedCat?.label?.toLowerCase() || 'broadcast'} ({pushStats?.activeSubscriptions || 0} odběratelů)
         </Button>
 
         {broadcast.isSuccess && (
           <p className="text-xs text-green-600 mt-2 text-center">
-            Odesláno: {broadcast.data.sent} úspěšně, {broadcast.data.failed} selhalo
+            ✅ Odesláno: {broadcast.data.sent} úspěšně, {broadcast.data.failed} selhalo
           </p>
         )}
       </CardContent>
