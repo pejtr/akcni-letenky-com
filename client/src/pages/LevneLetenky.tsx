@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { Heart, Plane, MapPin, Clock, ArrowRight, Filter, SortAsc, SortDesc } from "lucide-react";
+import { Heart, Plane, MapPin, Clock, ArrowRight, Filter, SortAsc, SortDesc, Calendar, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +10,7 @@ export default function LevneLetenky() {
   const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "popularity" | "departure">("default");
   const [country, setCountry] = useState<string>("");
   const [departure, setDeparture] = useState<string>("");
+  const [departureDate, setDepartureDate] = useState<string>("");
 
   const { data: flights, isLoading } = trpc.pelikan.getFlights.useQuery({
     sortBy,
@@ -129,6 +130,19 @@ export default function LevneLetenky() {
               </SelectContent>
             </Select>
 
+            {/* Departure Date Filter */}
+            <div className="relative">
+              <Calendar className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+              <input
+                type="date"
+                value={departureDate}
+                onChange={(e) => setDepartureDate(e.target.value)}
+                className="pl-9 pr-3 py-2 border rounded-md text-sm w-[180px] bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Datum odletu"
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Řazení" />
@@ -142,13 +156,14 @@ export default function LevneLetenky() {
               </SelectContent>
             </Select>
 
-            {(country || departure) && (
+            {(country || departure || departureDate) && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
                   setCountry("");
                   setDeparture("");
+                  setDepartureDate("");
                 }}
               >
                 Zrušit filtry
@@ -243,7 +258,26 @@ export default function LevneLetenky() {
                             </span>
                             <span className="text-gray-500 text-sm ml-2">za osobu · zpáteční</span>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
+                            {/* Social sharing */}
+                            <a
+                              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(flight.link)}&quote=${encodeURIComponent(`Zpáteční letenka ${flight.title} za ${flight.salePrice.toLocaleString("cs-CZ")} Kč!`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-lg bg-[#1877F2] hover:bg-[#166FE5] text-white transition-colors"
+                              title="Sdílet na Facebooku"
+                            >
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                            </a>
+                            <a
+                              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Zpáteční letenka ${flight.title} za ${flight.salePrice.toLocaleString("cs-CZ")} Kč! ✈️`)}&url=${encodeURIComponent(flight.link)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-lg bg-black hover:bg-gray-800 text-white transition-colors"
+                              title="Sdílet na X (Twitter)"
+                            >
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            </a>
                             <a
                               href={flight.link}
                               target="_blank"

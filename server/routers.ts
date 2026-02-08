@@ -103,6 +103,7 @@ import { getHistoricalData } from "./historicalAnalytics";
 import { recordClickEvent, recordClickEventsBatch, getHeatmapData } from "./clickHeatmap";
 import { scheduleFollowup, processFollowupQueue, getFollowupStats } from "./emailFollowup";
 import { recordConversionEvent, getConversionFunnel, getFunnelSummary } from "./conversionFunnel";
+import { getSiteSetting, setSiteSetting, getAllSiteSettings } from "./db";
 import {
   type FlightOffer,
   type VacationOffer,
@@ -1445,6 +1446,28 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
       const sent = await processFollowupQueue();
       return { sent };
     }),
+  }),
+
+  // ============ Site Settings (Admin) ============
+  siteSettings: router({
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new Error("Forbidden");
+      return await getAllSiteSettings();
+    }),
+
+    get: publicProcedure
+      .input(z.object({ key: z.string() }))
+      .query(async ({ input }) => {
+        return { value: await getSiteSetting(input.key) };
+      }),
+
+    set: protectedProcedure
+      .input(z.object({ key: z.string(), value: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        await setSiteSetting(input.key, input.value);
+        return { success: true };
+      }),
   }),
 });
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, Shield, Cookie } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
 
 const CONSENT_KEY = "gdpr_consent";
 const CONSENT_ANALYTICS_KEY = "gdpr_analytics";
@@ -87,6 +88,16 @@ export default function GdprConsentBanner() {
   const [analytics, setAnalytics] = useState(true);
   const [marketing, setMarketing] = useState(true);
 
+  // Fetch Pixel IDs from admin settings
+  const { data: fbPixelData } = trpc.siteSettings.get.useQuery({ key: "fb_pixel_id" });
+  const { data: googleAdsData } = trpc.siteSettings.get.useQuery({ key: "google_ads_id" });
+
+  useEffect(() => {
+    // Set pixel IDs on window for the loader functions
+    if (fbPixelData?.value) (window as any).__FB_PIXEL_ID = fbPixelData.value;
+    if (googleAdsData?.value) (window as any).__GA_ID = googleAdsData.value;
+  }, [fbPixelData, googleAdsData]);
+
   useEffect(() => {
     const stored = getStoredConsent();
     if (stored) {
@@ -98,7 +109,7 @@ export default function GdprConsentBanner() {
     // Show banner after a short delay for better UX
     const timer = setTimeout(() => setVisible(true), 1500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [fbPixelData, googleAdsData]);
 
   const handleAcceptAll = useCallback(() => {
     const consent: ConsentState = {

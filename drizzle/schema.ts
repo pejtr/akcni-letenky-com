@@ -834,3 +834,13 @@ export const emailFollowups = mysqlTable("email_followups", {
   metadata: json("metadata"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+/**
+ * Site settings table - stores admin-configurable settings (FB Pixel ID, Google Ads ID, etc.)
+ */
+export const siteSettings = mysqlTable("site_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  settingKey: varchar("settingKey", { length: 100 }).notNull().unique(),
+  settingValue: text("settingValue"),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});

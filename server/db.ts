@@ -657,3 +657,57 @@ export async function getRecentClicks(limit: number = 20) {
 
   return result;
 }
+
+
+// ============ Site Settings ============
+import { siteSettings } from "../drizzle/schema";
+
+export async function getSiteSetting(key: string): Promise<string | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(siteSettings)
+    .where(eq(siteSettings.settingKey, key))
+    .limit(1);
+
+  return result[0]?.settingValue ?? null;
+}
+
+export async function setSiteSetting(key: string, value: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  const existing = await db
+    .select()
+    .from(siteSettings)
+    .where(eq(siteSettings.settingKey, key))
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .update(siteSettings)
+      .set({ settingValue: value, updatedAt: new Date() })
+      .where(eq(siteSettings.settingKey, key));
+  } else {
+    await db.insert(siteSettings).values({
+      settingKey: key,
+      settingValue: value,
+    });
+  }
+}
+
+export async function getAllSiteSettings(): Promise<Record<string, string>> {
+  const db = await getDb();
+  if (!db) return {};
+
+  const result = await db.select().from(siteSettings);
+  const settings: Record<string, string> = {};
+  for (const row of result) {
+    if (row.settingValue) {
+      settings[row.settingKey] = row.settingValue;
+    }
+  }
+  return settings;
+}

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb } from "lucide-react";
+import { BarChart3, TrendingUp, MousePointerClick, MapPin, ArrowLeft, RefreshCw, Send, Bell, AlertTriangle, Calendar, Megaphone, Newspaper, Tag, FlaskConical, Brain, Trophy, Lightbulb, Settings, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
 import HistoricalCharts from "@/components/HistoricalCharts";
 import HeatmapVisualization from "@/components/HeatmapVisualization";
@@ -390,6 +391,11 @@ export default function AdminDashboard() {
         {/* Strategic Recommendations */}
         <div className="mt-6">
           <StrategicRecommendationsCard />
+        </div>
+
+        {/* Site Settings - Pixel IDs */}
+        <div className="mt-6">
+          <TrackingPixelSettings />
         </div>
 
         {/* RESEND_API_KEY Warning */}
@@ -989,6 +995,112 @@ function PushAbTestCard() {
           <p className="text-xs text-green-600 mt-2 text-center">
             ✅ Test spuštěn: A={createTest.data.variantASent}, B={createTest.data.variantBSent}
           </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Tracking Pixel Settings ============
+
+function TrackingPixelSettings() {
+  const { data: settings, isLoading } = trpc.siteSettings.getAll.useQuery();
+  const utils = trpc.useUtils();
+  const setSetting = trpc.siteSettings.set.useMutation({
+    onSuccess: () => utils.siteSettings.getAll.invalidate(),
+  });
+
+  const [fbPixelId, setFbPixelId] = useState("");
+  const [googleAdsId, setGoogleAdsId] = useState("");
+  const [saved, setSaved] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (settings) {
+      setFbPixelId(settings.fb_pixel_id || "");
+      setGoogleAdsId(settings.google_ads_id || "");
+    }
+  }, [settings]);
+
+  const handleSave = async (key: string, value: string, label: string) => {
+    await setSetting.mutateAsync({ key, value });
+    setSaved(label);
+    setTimeout(() => setSaved(null), 2000);
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="animate-pulse h-20 bg-gray-200 rounded"></div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Settings className="w-5 h-5 text-blue-600" />
+          Nastavení měřicích kódů
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Facebook Pixel ID</label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Např. 123456789012345"
+              value={fbPixelId}
+              onChange={(e) => setFbPixelId(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              size="sm"
+              onClick={() => handleSave("fb_pixel_id", fbPixelId, "Facebook Pixel")}
+              disabled={setSetting.isPending}
+            >
+              {saved === "Facebook Pixel" ? <Check className="w-4 h-4" /> : "Uložit"}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Najdete v Meta Business Suite → Events Manager → Data Sources → Pixel ID
+          </p>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Google Ads Conversion ID</label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Např. AW-123456789"
+              value={googleAdsId}
+              onChange={(e) => setGoogleAdsId(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              size="sm"
+              onClick={() => handleSave("google_ads_id", googleAdsId, "Google Ads")}
+              disabled={setSetting.isPending}
+            >
+              {saved === "Google Ads" ? <Check className="w-4 h-4" /> : "Uložit"}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Najdete v Google Ads → Tools → Conversions → Conversion ID
+          </p>
+        </div>
+
+        {(settings?.fb_pixel_id || settings?.google_ads_id) && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
+            <p className="text-xs text-green-700 font-medium">✅ Aktivní měřicí kódy:</p>
+            <ul className="text-xs text-green-600 mt-1 space-y-0.5">
+              {settings?.fb_pixel_id && <li>Facebook Pixel: {settings.fb_pixel_id}</li>}
+              {settings?.google_ads_id && <li>Google Ads: {settings.google_ads_id}</li>}
+            </ul>
+            <p className="text-xs text-green-600 mt-1">
+              Kódy se načtou po souhlasu uživatele s cookies (GDPR banner).
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>

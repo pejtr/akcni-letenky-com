@@ -1681,3 +1681,11 @@
 - [x] Add GDPR consent banner with Facebook Pixel conditional loading
 - [x] Add flight sorting options: popularity and departure date to LevneLetenky page
 - [x] All 358 tests passing across 32 test files
+
+## Admin Facebook Pixel ID + Date Filter + Social Sharing (2026-02-08)
+- [x] Add Facebook Pixel ID input field to admin settings with save/update functionality
+- [x] Connect Pixel ID from admin to GDPR consent banner for dynamic Pixel loading
+- [x] Add datepicker calendar filter for departure date on LevneLetenky page
+- [x] Add social sharing buttons (Facebook, Twitter) on flight detail/listing pages
+- [x] All 358 tests passing across 32 test files
+- [x] Change "od 4 990 Kč" in sticky banner Dovolená link to red color
