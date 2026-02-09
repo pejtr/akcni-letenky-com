@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 
 describe("RESEND_API_KEY", () => {
   it("should be set in environment", () => {
-    // The key should be set via webdev_request_secrets
     const key = process.env.RESEND_API_KEY;
     expect(key).toBeDefined();
     expect(typeof key).toBe("string");
@@ -11,8 +10,19 @@ describe("RESEND_API_KEY", () => {
 
   it("should start with re_ prefix (Resend format)", () => {
     const key = process.env.RESEND_API_KEY;
-    if (key) {
-      expect(key.startsWith("re_")).toBe(true);
-    }
+    expect(key).toBeDefined();
+    expect(key!.startsWith("re_")).toBe(true);
+  });
+
+  it("should be a valid Resend API key (list domains)", async () => {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) return;
+
+    const response = await fetch("https://api.resend.com/domains", {
+      headers: { Authorization: `Bearer ${key}` },
+    });
+    // 200 = valid key, we just check it's not 401/403
+    expect(response.status).not.toBe(401);
+    expect(response.status).not.toBe(403);
   });
 });
