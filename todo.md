@@ -1725,3 +1725,13 @@
 - [x] Set up RESEND_API_KEY for remarketing email delivery
 - [x] Fix broken image preview (Hanoj, Vietnam shows alt text instead of photo)
 - [x] Fix slow image loading on flight offer cards (add lazy loading, error handling)
+
+## New Features Batch 5 (2026-02-09)
+- [ ] Real-time email dashboard - history of sent remarketing emails with open/click rates
+- [ ] Segmented email templates - different templates for users with 1 item vs 3+ items in wishlist
+- [ ] Auto-switch to winning A/B variant - automatically use winner template after conclusive test
+- [x] Change chatbot icon from airplane to chat icon
+
+## Réunion Content (2026-02-09)
+- [x] Create Réunion article/landing page on akcni-letenky.com
+- [x] Write Facebook post for Last Minute Dovolené page about Réunion

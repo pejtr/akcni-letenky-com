@@ -102,7 +102,7 @@ import { adminAnalyticsRouter } from "./adminAnalytics";
 import { getHistoricalData } from "./historicalAnalytics";
 import { recordClickEvent, recordClickEventsBatch, getHeatmapData } from "./clickHeatmap";
 import { scheduleFollowup, processFollowupQueue, getFollowupStats } from "./emailFollowup";
-import { processWishlistRemarketing, getWishlistRemarketingStats } from "./wishlistRemarketing";
+import { processWishlistRemarketing, getWishlistRemarketingStats, getRemarketingEmailDashboard } from "./wishlistRemarketing";
 import {
   createEmailAbTest,
   getAllEmailAbTests,
@@ -1472,6 +1472,15 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
       const sent = await processWishlistRemarketing();
       return { sent };
     }),
+
+    emailDashboard: protectedProcedure
+      .input(z.object({
+        days: z.number().min(1).max(90).optional().default(7),
+      }).optional())
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Forbidden");
+        return await getRemarketingEmailDashboard(input?.days ?? 7);
+      }),
   }),
 
   // ============ Email A/B Test ============

@@ -1,0 +1,8 @@
+{
+  "query": "DESCRIBE remarketing_email_log;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute DESCRIBE remarketing_email_log;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 1: Table 'gquhzstpdbnw3ec4kqtsec.remarketing_email_log' doesn't exist"
+  ]
+}

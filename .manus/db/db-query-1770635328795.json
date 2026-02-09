@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS remarketing_email_log (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  userEmail VARCHAR(320) NOT NULL,\n  userName VARCHAR(255),\n  variant ENUM('A', 'B', 'default') NOT NULL DEFAULT 'default',\n  abTestId INT,\n  subject TEXT NOT NULL,\n  itemCount INT NOT NULL DEFAULT 1,\n  status ENUM('sent', 'opened', 'clicked', 'bounced', 'failed') NOT NULL DEFAULT 'sent',\n  openedAt TIMESTAMP NULL,\n  clickedAt TIMESTAMP NULL,\n  sentAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute CREATE TABLE IF NOT EXISTS remarketing_email_log (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  userEmail VARCHAR(320) NOT NULL,\n  userName VARCHAR(255),\n  variant ENUM('A', 'B', 'default') NOT NULL DEFAULT 'default',\n  abTestId INT,\n  subject TEXT NOT NULL,\n  itemCount INT NOT NULL DEFAULT 1,\n  status ENUM('sent', 'opened', 'clicked', 'bounced', 'failed') NOT NULL DEFAULT 'sent',\n  openedAt TIMESTAMP NULL,\n  clickedAt TIMESTAMP NULL,\n  sentAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 205
+}

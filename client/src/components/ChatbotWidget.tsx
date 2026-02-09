@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Send, Minimize2, Maximize2, ExternalLink, Expand, Shrink, Trash2, Plane } from "lucide-react";
+import { X, Send, Minimize2, Maximize2, ExternalLink, Expand, Shrink, Trash2, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 
@@ -386,7 +386,7 @@ export default function ChatbotWidget() {
           <div className="relative">
             {/* Icon-only button - no face when collapsed */}
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-r from-[#f97316] to-[#ec4899] flex items-center justify-center shadow-xl hover:scale-110 transition-transform animate-pulse">
-              <Plane className="w-7 h-7 md:w-8 md:h-8 text-white" />
+              <MessageCircle className="w-7 h-7 md:w-8 md:h-8 text-white" />
             </div>
             {/* Online indicator */}
             <div className="absolute bottom-0 right-0 w-4 h-4 md:w-5 md:h-5 bg-green-500 rounded-full border-2 border-white animate-pulse" />
@@ -416,7 +416,7 @@ export default function ChatbotWidget() {
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white rounded-t-2xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
-                <Plane className="w-5 h-5 text-white" />
+                <MessageCircle className="w-5 h-5 text-white" />
               </div>
               <div>
                 <p className="font-semibold">Travel Asistent</p>
@@ -436,10 +436,10 @@ export default function ChatbotWidget() {
 
           {/* Loading Animation */}
           <div className="flex flex-col items-center justify-center h-[200px] p-6">
-            {/* Animated plane icon */}
+            {/* Animated chat icon */}
             <div className="relative mb-6">
               <div className="w-20 h-20 rounded-full bg-gradient-to-r from-orange-100 to-pink-100 flex items-center justify-center">
-                <Plane className="w-10 h-10 text-orange-500 animate-bounce" />
+                <MessageCircle className="w-10 h-10 text-orange-500 animate-bounce" />
               </div>
               {/* Pulsing rings */}
               <div className="absolute inset-0 rounded-full border-4 border-orange-300 animate-ping opacity-30" />

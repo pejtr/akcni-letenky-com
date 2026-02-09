@@ -7,8 +7,8 @@
  */
 
 import { getDb } from "./db";
-import { wishlists, users, flights } from "../drizzle/schema";
-import { sql, eq, and, lte } from "drizzle-orm";
+import { wishlists, users, flights, remarketingEmailLog } from "../drizzle/schema";
+import { sql, eq, and, lte, desc, gte } from "drizzle-orm";
 import { isEmailServiceConfigured } from "./emailService";
 import { pickEmailVariant, recordEmailSent, autoEvaluateAbTests, type EmailVariant } from "./emailAbTest";
 
@@ -105,11 +105,28 @@ export async function processWishlistRemarketing(): Promise<number> {
     const userId = Number(userIdStr);
     const userData = userWishlists[userId];
     try {
+      const subject = getEmailSubject(userData, abVariant);
       await sendWishlistRemarketingEmail(userData, abVariant);
       
       // Record A/B test send
       if (abVariant) {
         await recordEmailSent(abVariant.variant);
+      }
+
+      // Log the email send to remarketing_email_log
+      try {
+        await db.insert(remarketingEmailLog).values({
+          userId,
+          userEmail: userData.email,
+          userName: userData.name,
+          variant: abVariant?.variant || "default",
+          abTestId: null,
+          subject,
+          itemCount: userData.items.length,
+          status: "sent",
+        });
+      } catch (logErr) {
+        console.error(`[WishlistRemarketing] Failed to log email:`, logErr);
       }
       
       // Mark these wishlist items as remarketed by updating isFavorite to 2
@@ -131,8 +148,32 @@ export async function processWishlistRemarketing(): Promise<number> {
 }
 
 /**
+ * Get the email subject based on item count (segmented templates) and A/B variant
+ */
+function getEmailSubject(userData: UserWishlistData, abVariant: EmailVariant | null): string {
+  const firstDest = userData.items[0]?.flightCountry || "vaší vysněné destinaci";
+  const count = userData.items.length;
+
+  if (abVariant) {
+    return abVariant.subject
+      .replace("{{name}}", userData.name)
+      .replace("{{destination}}", firstDest)
+      .replace("{{count}}", String(count));
+  }
+
+  // Segmented default subjects based on item count
+  if (count === 1) {
+    return `${userData.name}, vaše oblíbená letenka do ${firstDest} stále čeká!`;
+  } else if (count <= 3) {
+    return `${userData.name}, ${count} letenky ve vašich oblíbených čekají na rezervaci`;
+  } else {
+    return `${userData.name}, máte ${count} letenkových nabídek v oblíbených — ceny se mohou změnit!`;
+  }
+}
+
+/**
  * Send a wishlist remarketing email to a user
- * Uses A/B test variant if available, otherwise falls back to default
+ * Uses segmented templates based on item count + A/B test variant
  */
 async function sendWishlistRemarketingEmail(
   userData: UserWishlistData,
@@ -160,18 +201,11 @@ async function sendWishlistRemarketingEmail(
     }
   }
 
-  const topItems = userData.items.slice(0, 3);
-  const firstDest = topItems[0]?.flightCountry || "vaší vysněné destinaci";
+  const itemCount = userData.items.length;
+  const topItems = userData.items.slice(0, itemCount === 1 ? 1 : itemCount <= 3 ? 3 : 5);
 
-  // Use A/B test subject or default
-  const subject = abVariant
-    ? abVariant.subject
-        .replace("{{name}}", userData.name)
-        .replace("{{destination}}", firstDest)
-        .replace("{{count}}", String(userData.items.length))
-    : `${userData.name}, vaše oblíbené letenky do ${firstDest} stále čekají!`;
-
-  const ctaText = abVariant?.ctaText || "Rezervovat";
+  const subject = getEmailSubject(userData, abVariant);
+  const ctaText = abVariant?.ctaText || (itemCount === 1 ? "Rezervovat teď" : itemCount <= 3 ? "Zobrazit nabídky" : "Prohlédnout všechny");
 
   const html = buildWishlistEmailHtml(
     userData.name,
@@ -179,7 +213,8 @@ async function sendWishlistRemarketingEmail(
     siteUrl,
     ctaText,
     activeTestId,
-    abVariant?.variant || null
+    abVariant?.variant || null,
+    itemCount
   );
 
   await resend.emails.send({
@@ -196,7 +231,8 @@ function buildWishlistEmailHtml(
   siteUrl: string,
   ctaText: string = "Rezervovat",
   testId: number | null = null,
-  variant: "A" | "B" | null = null
+  variant: "A" | "B" | null = null,
+  totalItemCount: number = 1
 ): string {
   const itemsHtml = items.map((item) => {
     const title = item.flightTitle || "Zpáteční letenka";
@@ -242,11 +278,20 @@ function buildWishlistEmailHtml(
   </td></tr>
   <tr><td style="padding:30px 40px;">
     <h2 style="color:#003087;margin:0 0 15px;font-size:20px;">Ahoj ${userName}!</h2>
+    ${totalItemCount === 1 ? `
     <p style="color:#333;font-size:15px;line-height:1.6;margin:0 0 20px;">
-      Všimli jsme si, že máte v oblíbených ${items.length === 1 ? "letenku" : "letenky"}, 
-      ${items.length === 1 ? "která" : "které"} stále ${items.length === 1 ? "čeká" : "čekají"} na vaši rezervaci. 
-      <strong>Ceny se mohou kdykoliv změnit</strong> — neváhejte a zajistěte si ${items.length === 1 ? "ji" : "je"} ještě dnes!
-    </p>
+      Vaše oblíbená letenka stále čeká na rezervaci. 
+      <strong>Tato cena nemusí vydržet dlouho</strong> — zajistěte si ji ještě dnes!
+    </p>` : totalItemCount <= 3 ? `
+    <p style="color:#333;font-size:15px;line-height:1.6;margin:0 0 20px;">
+      Máte ${totalItemCount} letenky v oblíbených, které stále čekají na vaši rezervaci.
+      <strong>Ceny se mohou kdykoliv změnit</strong> — neváhejte a zajistěte si je!
+    </p>` : `
+    <p style="color:#333;font-size:15px;line-height:1.6;margin:0 0 20px;">
+      Máte celkem <strong>${totalItemCount} letenkových nabídek</strong> v oblíbených!
+      To je spousta skvělých příležitostí k cestování. Ceny se mění každý den — 
+      <strong>rezervujte si ty nejlepší ještě dnes</strong>.
+    </p>`}
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF3E0;border-left:4px solid #FF9800;border-radius:4px;margin:0 0 20px;">
     <tr><td style="padding:12px 16px;">
       <p style="margin:0;color:#E65100;font-size:14px;font-weight:bold;">Zbývá omezený počet míst za tuto cenu!</p>
@@ -312,6 +357,73 @@ export async function getWishlistRemarketingStats(): Promise<{
   }
 
   return result;
+}
+
+/**
+ * Get remarketing email dashboard data - history of sent emails with open/click rates
+ */
+export async function getRemarketingEmailDashboard(days: number = 7): Promise<{
+  totalSent: number;
+  totalOpened: number;
+  totalClicked: number;
+  openRate: number;
+  clickRate: number;
+  recentEmails: Array<{
+    id: number;
+    userEmail: string;
+    userName: string | null;
+    variant: string;
+    subject: string;
+    itemCount: number;
+    status: string;
+    openedAt: Date | null;
+    clickedAt: Date | null;
+    sentAt: Date;
+  }>;
+  dailyStats: Array<{
+    date: string;
+    sent: number;
+    opened: number;
+    clicked: number;
+  }>;
+}> {
+  const db = await getDb();
+  if (!db) {
+    return { totalSent: 0, totalOpened: 0, totalClicked: 0, openRate: 0, clickRate: 0, recentEmails: [], dailyStats: [] };
+  }
+
+  const sinceDate = new Date();
+  sinceDate.setDate(sinceDate.getDate() - days);
+
+  // Get recent emails
+  const recentEmails = await db
+    .select()
+    .from(remarketingEmailLog)
+    .orderBy(desc(remarketingEmailLog.sentAt))
+    .limit(50);
+
+  // Calculate totals
+  const totalSent = recentEmails.length;
+  const totalOpened = recentEmails.filter(e => e.status === "opened" || e.status === "clicked" || e.openedAt).length;
+  const totalClicked = recentEmails.filter(e => e.status === "clicked" || e.clickedAt).length;
+  const openRate = totalSent > 0 ? Math.round((totalOpened / totalSent) * 10000) / 100 : 0;
+  const clickRate = totalSent > 0 ? Math.round((totalClicked / totalSent) * 10000) / 100 : 0;
+
+  // Calculate daily stats
+  const dailyMap: Record<string, { sent: number; opened: number; clicked: number }> = {};
+  for (const email of recentEmails) {
+    const date = email.sentAt ? new Date(email.sentAt).toISOString().split("T")[0] : "unknown";
+    if (!dailyMap[date]) dailyMap[date] = { sent: 0, opened: 0, clicked: 0 };
+    dailyMap[date].sent++;
+    if (email.openedAt || email.status === "opened" || email.status === "clicked") dailyMap[date].opened++;
+    if (email.clickedAt || email.status === "clicked") dailyMap[date].clicked++;
+  }
+
+  const dailyStats = Object.entries(dailyMap)
+    .map(([date, stats]) => ({ date, ...stats }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  return { totalSent, totalOpened, totalClicked, openRate, clickRate, recentEmails, dailyStats };
 }
 
 /**

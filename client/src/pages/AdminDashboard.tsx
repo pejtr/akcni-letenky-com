@@ -399,6 +399,11 @@ export default function AdminDashboard() {
           <EmailAbTestCard />
         </div>
 
+        {/* Email Remarketing Dashboard */}
+        <div className="mt-6">
+          <EmailRemarketingDashboard />
+        </div>
+
         {/* Site Settings - Pixel IDs */}
         <div className="mt-6">
           <TrackingPixelSettings />
@@ -1166,6 +1171,121 @@ function WishlistRemarketingCard() {
           <p className="text-xs text-green-600 mt-2 font-medium">
             Odesláno {processNow.data.sent} {processNow.data.sent === 1 ? 'email' : 'emailů'}
           </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============ Email Remarketing Dashboard ============
+
+function EmailRemarketingDashboard() {
+  const { data: dashboard, isLoading } = trpc.wishlistRemarketing.emailDashboard.useQuery({ days: 30 });
+
+  if (isLoading) return <Card><CardContent className="p-6"><p className="text-sm text-muted-foreground">Načítám dashboard...</p></CardContent></Card>;
+  if (!dashboard) return null;
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">Email Remarketing Dashboard</CardTitle>
+        <Mail className="w-4 h-4 text-blue-600" />
+      </CardHeader>
+      <CardContent>
+        {/* KPI Summary */}
+        <div className="grid grid-cols-5 gap-2 mb-4">
+          <div className="bg-blue-50 rounded-lg p-2 text-center">
+            <p className="text-xl font-bold text-blue-700">{dashboard.totalSent}</p>
+            <p className="text-[9px] text-blue-600">Odesláno</p>
+          </div>
+          <div className="bg-green-50 rounded-lg p-2 text-center">
+            <p className="text-xl font-bold text-green-700">{dashboard.totalOpened}</p>
+            <p className="text-[9px] text-green-600">Otevřeno</p>
+          </div>
+          <div className="bg-orange-50 rounded-lg p-2 text-center">
+            <p className="text-xl font-bold text-orange-700">{dashboard.totalClicked}</p>
+            <p className="text-[9px] text-orange-600">Kliknuto</p>
+          </div>
+          <div className="bg-purple-50 rounded-lg p-2 text-center">
+            <p className="text-xl font-bold text-purple-700">{dashboard.openRate}%</p>
+            <p className="text-[9px] text-purple-600">Open Rate</p>
+          </div>
+          <div className="bg-pink-50 rounded-lg p-2 text-center">
+            <p className="text-xl font-bold text-pink-700">{dashboard.clickRate}%</p>
+            <p className="text-[9px] text-pink-600">Click Rate</p>
+          </div>
+        </div>
+
+        {/* Daily Stats Chart (simple bar visualization) */}
+        {dashboard.dailyStats.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Denní přehled (posledních 30 dní)</p>
+            <div className="flex items-end gap-1 h-16">
+              {dashboard.dailyStats.map((day) => {
+                const maxSent = Math.max(...dashboard.dailyStats.map(d => d.sent), 1);
+                const height = Math.max((day.sent / maxSent) * 100, 5);
+                return (
+                  <div key={day.date} className="flex-1 flex flex-col items-center gap-0.5" title={`${day.date}: ${day.sent} odesláno, ${day.opened} otevřeno, ${day.clicked} kliknuto`}>
+                    <div className="w-full bg-blue-200 rounded-t" style={{ height: `${height}%` }}>
+                      <div className="w-full bg-blue-500 rounded-t" style={{ height: `${day.sent > 0 ? (day.opened / day.sent) * 100 : 0}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-between text-[8px] text-muted-foreground mt-1">
+              <span>{dashboard.dailyStats[0]?.date?.slice(5)}</span>
+              <span>{dashboard.dailyStats[dashboard.dailyStats.length - 1]?.date?.slice(5)}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Recent Emails Table */}
+        {dashboard.recentEmails.length > 0 ? (
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-2">Poslední odeslané emaily</p>
+            <div className="max-h-48 overflow-y-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-1 px-1">Email</th>
+                    <th className="text-left py-1 px-1">Varianta</th>
+                    <th className="text-center py-1 px-1">Položky</th>
+                    <th className="text-center py-1 px-1">Status</th>
+                    <th className="text-right py-1 px-1">Odesláno</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboard.recentEmails.slice(0, 20).map((email) => (
+                    <tr key={email.id} className="border-b border-border/50 hover:bg-muted/50">
+                      <td className="py-1 px-1 truncate max-w-[120px]" title={email.userEmail}>{email.userName || email.userEmail}</td>
+                      <td className="py-1 px-1">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                          email.variant === 'A' ? 'bg-blue-100 text-blue-700' :
+                          email.variant === 'B' ? 'bg-purple-100 text-purple-700' :
+                          'bg-gray-100 text-gray-700'
+                        }`}>{email.variant}</span>
+                      </td>
+                      <td className="py-1 px-1 text-center">{email.itemCount}</td>
+                      <td className="py-1 px-1 text-center">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                          email.status === 'clicked' ? 'bg-green-100 text-green-700' :
+                          email.status === 'opened' ? 'bg-blue-100 text-blue-700' :
+                          email.status === 'sent' ? 'bg-gray-100 text-gray-700' :
+                          'bg-red-100 text-red-700'
+                        }`}>{email.status}</span>
+                      </td>
+                      <td className="py-1 px-1 text-right text-muted-foreground">
+                        {new Date(email.sentAt).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground text-center py-4">Zatím nebyly odeslány žádné remarketing emaily.</p>
         )}
       </CardContent>
     </Card>

@@ -72,10 +72,45 @@ export async function getAllEmailAbTests() {
 
 /**
  * Pick which variant to use for the next email send.
- * Uses simple round-robin based on total sent count to keep distribution even.
+ * First checks for completed tests with a winner (auto-switch) and uses that variant.
+ * If no winner exists, uses round-robin on the active test.
  * Returns the variant details (subject + CTA text) along with which variant was picked.
  */
 export async function pickEmailVariant(): Promise<EmailVariant | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  // First: check for most recent completed test with a winner (auto-switch)
+  const completedTests = await db
+    .select()
+    .from(emailAbTests)
+    .where(and(eq(emailAbTests.status, "completed"), eq(emailAbTests.winner, "A")))
+    .orderBy(desc(emailAbTests.createdAt))
+    .limit(1);
+
+  const completedTestsB = await db
+    .select()
+    .from(emailAbTests)
+    .where(and(eq(emailAbTests.status, "completed"), eq(emailAbTests.winner, "B")))
+    .orderBy(desc(emailAbTests.createdAt))
+    .limit(1);
+
+  // Find the most recent completed test with a winner
+  const allCompleted = [...completedTests, ...completedTestsB]
+    .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  
+  if (allCompleted.length > 0) {
+    const winnerTest = allCompleted[0];
+    const variant = winnerTest.winner as "A" | "B";
+    console.log(`[EmailAbTest] Auto-switching to winning variant ${variant} from test "${winnerTest.testName}"`);
+    return {
+      subject: variant === "A" ? winnerTest.variantASubject : winnerTest.variantBSubject,
+      ctaText: variant === "A" ? winnerTest.variantACtaText : winnerTest.variantBCtaText,
+      variant,
+    };
+  }
+
+  // Fallback: use active test with round-robin
   const test = await getActiveEmailAbTest();
   if (!test) return null;
 

@@ -869,3 +869,25 @@ export const emailAbTests = mysqlTable("email_ab_tests", {
 
 export type EmailAbTest = typeof emailAbTests.$inferSelect;
 export type InsertEmailAbTest = typeof emailAbTests.$inferInsert;
+
+/**
+ * Remarketing email send log - tracks all sent remarketing emails for dashboard analytics
+ */
+export const remarketingEmailLog = mysqlTable("remarketing_email_log", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  userEmail: varchar("userEmail", { length: 320 }).notNull(),
+  userName: varchar("userName", { length: 255 }),
+  variant: mysqlEnum("variant", ["A", "B", "default"]).default("default").notNull(),
+  abTestId: int("abTestId"),
+  subject: text("subject").notNull(),
+  itemCount: int("itemCount").notNull().default(1),
+  status: mysqlEnum("status", ["sent", "opened", "clicked", "bounced", "failed"]).default("sent").notNull(),
+  openedAt: timestamp("openedAt"),
+  clickedAt: timestamp("clickedAt"),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type RemarketingEmailLog = typeof remarketingEmailLog.$inferSelect;
+export type InsertRemarketingEmailLog = typeof remarketingEmailLog.$inferInsert;
