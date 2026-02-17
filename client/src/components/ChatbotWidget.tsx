@@ -482,7 +482,7 @@ export default function ChatbotWidget() {
                 isExpanded ? "w-14 h-14" : "w-12 h-12"
               )}>
                 <img
-                  src={persona?.avatar || "/travel-expert-avatar.png"}
+                  src={persona?.avatar || "/travel-expert-avatar-thumb.webp"}
                   alt={persona?.displayName || "Travel Expert"}
                   className="w-full h-full object-cover"
                 />
@@ -559,7 +559,7 @@ export default function ChatbotWidget() {
                       isExpanded ? "w-24 h-24" : "w-20 h-20"
                     )}>
                       <img
-                        src={persona?.avatar || "/travel-expert-avatar.png"}
+                        src={persona?.avatar || "/travel-expert-avatar-thumb.webp"}
                         alt="Travel Expert"
                         className="w-full h-full object-cover"
                       />
@@ -591,7 +591,7 @@ export default function ChatbotWidget() {
                         isExpanded ? "w-10 h-10" : "w-8 h-8"
                       )}>
                         <img
-                          src={persona?.avatar || "/travel-expert-avatar.png"}
+                          src={persona?.avatar || "/travel-expert-avatar-thumb.webp"}
                           alt="Assistant"
                           className="w-full h-full object-cover"
                         />
@@ -619,7 +619,7 @@ export default function ChatbotWidget() {
                       isExpanded ? "w-10 h-10" : "w-8 h-8"
                     )}>
                       <img
-                        src={persona?.avatar || "/travel-expert-avatar.png"}
+                        src={persona?.avatar || "/travel-expert-avatar-thumb.webp"}
                         alt="Assistant"
                         className="w-full h-full object-cover"
                       />

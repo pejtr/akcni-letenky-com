@@ -1,0 +1,5 @@
+Avatar fix verified:
+- Chatbot now shows the woman's photo (travel-expert-avatar-thumb.webp) correctly
+- The avatar appears in the chatbot header, welcome screen, and message bubbles
+- "Ahoj!" greeting with proper avatar is visible
+- All 7 references updated from .png to .webp across ChatbotWidget.tsx and chatbotABTest.ts

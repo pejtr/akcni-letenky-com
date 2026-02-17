@@ -1941,4 +1941,28 @@
 - [x] Add trackSearch() to search form submissions - INTEGRATED in Home.tsx, HeroVariantA, HeroVariantB
 - [x] Add trackSearch to useConversionTracking hook
 - [x] Write 23 vitest tests for SEO and search tracking
+- [x] Create checkpoint
+
+## SEO Testing, Dynamic Sitemap & Meta Retargeting (2026-02-17)
+
+### SEO Testing with Google Rich Results Test
+- [ ] Test homepage structured data with Google Rich Results Test
+- [ ] Summarize findings and recommendations
+
+### Dynamic Sitemap.xml
+- [ ] Create server-side sitemap.xml endpoint that auto-generates from all pages
+- [ ] Include homepage, destination pages, blog articles, airline pages, Réunion page
+- [ ] Add proper priority and changefreq values
+- [ ] Add lastmod timestamps
+- [ ] Update robots.txt to reference sitemap
+- [ ] Write vitest tests for sitemap generation
+
+### Meta Retargeting Campaign Guide
+- [ ] Create step-by-step guide for first Meta retargeting campaign
+- [ ] Include Custom Audience creation for 30-day PageView visitors
+- [ ] Include campaign setup with budget recommendations
+- [ ] Include ad creative recommendations for travel affiliate
 - [ ] Create checkpoint
+
+## Chatbot Avatar Fix (2026-02-17)
+- [x] Fix chatbot avatar/thumbnail - changed from non-existent .png to existing .webp (7 references fixed across ChatbotWidget.tsx and chatbotABTest.ts)
