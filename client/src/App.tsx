@@ -28,6 +28,8 @@ import Aerolinky from "./pages/Aerolinky";
 import DubajPage from "./pages/DubajPage";
 import BaliPage from "./pages/BaliPage";
 import NewYorkPage from "./pages/NewYorkPage";
+import { NotificationWidget } from "./components/NotificationWidget";
+import { HeatmapTracking } from "./components/HeatmapTracking";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -81,7 +83,9 @@ function App() {
       >
         <TooltipProvider>
           <MetaPixel />
+          <HeatmapTracking />
           <Toaster />
+          <NotificationWidget />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

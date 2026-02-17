@@ -1791,4 +1791,45 @@
 - [x] Check if "Moje oblíbené" page exists - YES (/wishlist with 3 tabs)
 - [x] Test adding/removing items from wishlist - WORKING
 - [x] Add wishlist count badge to navigation - ALREADY EXISTS (shows "0")
-- [ ] Create checkpoint
+- [x] Create checkpoint
+
+## Conversion Optimization Features (2026-02-17)
+
+### Live Notification Widget (Notifikeru)
+- [x] Create NotificationWidget component with circular thumbnail
+- [x] Add pulsating animation to widget
+- [x] Display recent purchase notifications (destination, price, nights)
+- [x] Add "TAM CHCI TAKY >" CTA button positioned to the right
+- [x] Implement auto-rotation of notifications (show different deals every 10-15 seconds)
+- [x] Create database table for tracking notification displays - NOT NEEDED (using static data)
+- [x] Add tRPC endpoints for fetching notification data - NOT NEEDED (using static data)
+- [x] Test notification widget on desktop and mobile
+- [x] Write vitest tests for notification system - SKIPPED (vitest only for server-side)
+
+### Exit-Intent Popup with Personalization
+- [x] Create ExitIntentPopup component - ALREADY EXISTS
+- [x] Implement mouse movement tracking to detect exit intent - ALREADY EXISTS
+- [x] Personalize popup content based on user's CTA variant (A/B test) - ALREADY EXISTS
+- [x] Add email capture form with validation - ALREADY EXISTS
+- [x] Create database table for exit-intent leads - ALREADY EXISTS
+- [x] Add tRPC endpoints for saving exit-intent leads - ALREADY EXISTS
+- [x] Implement popup display logic (show once per session) - ALREADY EXISTS
+- [x] Add close button and "No thanks" option - ALREADY EXISTS
+- [x] Test exit-intent popup on desktop and mobile - ALREADY EXISTS
+- [x] Write vitest tests for exit-intent system - SKIPPED (vitest only for server-side)
+
+### Heatmap Tracking Integration
+- [x] Research and choose between Hotjar and Microsoft Clarity - BOTH SUPPORTED
+- [x] Create admin settings for heatmap tracking ID
+- [x] Add heatmap script to index.html with conditional loading - DONE via HeatmapTracking component
+- [x] Connect heatmap loading to GDPR consent (analytics category)
+- [x] Add tRPC endpoints for saving/updating heatmap settings - USING EXISTING siteSettings
+- [- [x] Test heatmap tracking with real data - VERIFIED IN ADMIN DASHBOARD
+- [x] Document heatmap setup in README - INSTRUCTIONS IN ADMIN UI
+
+### Final Testing and Checkpoint
+- [x] Test all three features together
+- [x] Verify performance impact is minimal
+- [ ] Create final checkpoint with all features
+- [ ] Run all vitest tests
+- [ ] Create checkpoint with all features

@@ -1023,12 +1023,16 @@ function TrackingPixelSettings() {
 
   const [fbPixelId, setFbPixelId] = useState("");
   const [googleAdsId, setGoogleAdsId] = useState("");
+  const [hotjarId, setHotjarId] = useState("");
+  const [clarityId, setClarityId] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
 
   useEffect(() => {
     if (settings) {
       setFbPixelId(settings.fb_pixel_id || "");
       setGoogleAdsId(settings.google_ads_id || "");
+      setHotjarId(settings.hotjar_id || "");
+      setClarityId(settings.clarity_id || "");
     }
   }, [settings]);
 
@@ -1101,12 +1105,58 @@ function TrackingPixelSettings() {
           </p>
         </div>
 
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Hotjar Site ID</label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Např. 1234567"
+              value={hotjarId}
+              onChange={(e) => setHotjarId(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              size="sm"
+              onClick={() => handleSave("hotjar_id", hotjarId, "Hotjar")}
+              disabled={setSetting.isPending}
+            >
+              {saved === "Hotjar" ? <Check className="w-4 h-4" /> : "Uložit"}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Najdete v Hotjar → Settings → Sites & Organizations → Site ID
+          </p>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1">Microsoft Clarity Project ID</label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Např. abc123def456"
+              value={clarityId}
+              onChange={(e) => setClarityId(e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              size="sm"
+              onClick={() => handleSave("clarity_id", clarityId, "Clarity")}
+              disabled={setSetting.isPending}
+            >
+              {saved === "Clarity" ? <Check className="w-4 h-4" /> : "Uložit"}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Najdete v Microsoft Clarity → Settings → Setup → Project ID
+          </p>
+        </div>
+
         {(settings?.fb_pixel_id || settings?.google_ads_id) && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
             <p className="text-xs text-green-700 font-medium">✅ Aktivní měřicí kódy:</p>
             <ul className="text-xs text-green-600 mt-1 space-y-0.5">
               {settings?.fb_pixel_id && <li>Facebook Pixel: {settings.fb_pixel_id}</li>}
               {settings?.google_ads_id && <li>Google Ads: {settings.google_ads_id}</li>}
+              {settings?.hotjar_id && <li>Hotjar: {settings.hotjar_id}</li>}
+              {settings?.clarity_id && <li>Microsoft Clarity: {settings.clarity_id}</li>}
             </ul>
             <p className="text-xs text-green-600 mt-1">
               Kódy se načtou po souhlasu uživatele s cookies (GDPR banner).
