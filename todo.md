@@ -2083,7 +2083,7 @@
 - [ ] Verify article quality (grammar, structure, SEO keywords) - requires manual testing
 - [x] Revolut mention integration - DONE (in prompt)
 - [x] Featured image from Unsplash - DONE (in generator)
-- [ ] Create checkpoint
+- [x] Create checkpoint - version a9e3f345
 
 ## Revolut Pop-up Travel Theme Update (2026-02-17)
 - [x] Update all 3 variants with travel-focused messaging
@@ -2091,3 +2091,14 @@
 - [x] Variant B (Text): Headline "Revolut karta pro cestovatele", benefits focus on travel savings
 - [x] Variant C (Minimal): Headline "Revolut karta pro cestovatele", "Ušetřete tisíce na každé cestě"
 - [x] Emphasize travel benefits (no foreign transaction fees, free currency exchange, travel insurance)
+
+## Revolut A/B Test Dashboard - Time-Series Chart (2026-02-17)
+- [x] Install Recharts library for time-series visualization - DONE (v2.15.4)
+- [x] Add time-series data structure (daily conversion rates per variant) - DONE
+- [x] Implement LineChart component showing conversion rate trends - DONE (400px height)
+- [x] Add date range selector (7 days, 30 days, all time) - DONE (dropdown with Calendar icon)
+- [x] Color-code lines by variant (banner=blue, text=green, minimal=purple) - DONE
+- [x] Add tooltips showing exact values on hover - DONE (formatted as percentage)
+- [x] Add simulated trend data (banner declining, text improving, minimal stable) - DONE
+- [ ] Write vitest tests for chart data transformation
+- [ ] Create checkpoint

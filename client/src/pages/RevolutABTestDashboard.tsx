@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { BarChart, TrendingUp, Users, MousePointerClick } from "lucide-react";
+import { BarChart, TrendingUp, Users, MousePointerClick, Calendar } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 interface VariantMetrics {
   variant: string;
@@ -11,6 +12,15 @@ interface VariantMetrics {
   conversions: number;
   conversionRate: number;
 }
+
+interface TimeSeriesDataPoint {
+  date: string;
+  banner: number;
+  text: number;
+  minimal: number;
+}
+
+type DateRange = "7d" | "30d" | "all";
 
 export default function RevolutABTestDashboard() {
   const [metrics, setMetrics] = useState<VariantMetrics[]>([
@@ -24,6 +34,9 @@ export default function RevolutABTestDashboard() {
     text: 33.33,
     minimal: 33.34,
   });
+
+  const [dateRange, setDateRange] = useState<DateRange>("30d");
+  const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesDataPoint[]>([]);
 
   // TODO: Fetch real metrics from Meta Pixel events via tRPC
   // const { data: realMetrics } = trpc.analytics.getRevolutABTestMetrics.useQuery();
@@ -48,7 +61,34 @@ export default function RevolutABTestDashboard() {
       };
       setTrafficWeights(optimizedWeights);
     }
-  }, []);
+
+    // Generate simulated time-series data
+    const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : 90;
+    const today = new Date();
+    const generatedData: TimeSeriesDataPoint[] = [];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toLocaleDateString("cs-CZ", { day: "numeric", month: "short" });
+
+      // Simulate conversion rate trends with some variance
+      const bannerBase = 14.1;
+      const textBase = 17.6;
+      const minimalBase = 11.5;
+
+      const variance = () => (Math.random() - 0.5) * 3;
+
+      generatedData.push({
+        date: dateStr,
+        banner: Math.max(0, bannerBase + variance() - (i / days) * 2), // Slight downward trend
+        text: Math.max(0, textBase + variance() + (i / days) * 1.5), // Slight upward trend
+        minimal: Math.max(0, minimalBase + variance()), // Stable
+      });
+    }
+
+    setTimeSeriesData(generatedData);
+  }, [dateRange]);
 
   const totalImpressions = metrics.reduce((sum, m) => sum + m.impressions, 0);
   const totalClicks = metrics.reduce((sum, m) => sum + m.clicks, 0);
@@ -125,6 +165,83 @@ export default function RevolutABTestDashboard() {
           <p className="text-3xl font-bold">{overallConversionRate.toFixed(1)}%</p>
         </Card>
       </div>
+
+      {/* Time-Series Chart */}
+      <Card className="p-6 mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Vývoj konverzních poměrů v čase</h2>
+          
+          {/* Date Range Selector */}
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-muted-foreground" />
+            <select
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value as DateRange)}
+              className="px-3 py-2 border rounded-lg bg-background text-sm font-medium"
+            >
+              <option value="7d">Posledních 7 dní</option>
+              <option value="30d">Posledních 30 dní</option>
+              <option value="all">Vše (90 dní)</option>
+            </select>
+          </div>
+        </div>
+
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={timeSeriesData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis 
+              dataKey="date" 
+              stroke="#6b7280"
+              style={{ fontSize: "12px" }}
+            />
+            <YAxis 
+              stroke="#6b7280"
+              style={{ fontSize: "12px" }}
+              label={{ value: "Conversion Rate (%)", angle: -90, position: "insideLeft" }}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: "white", 
+                border: "1px solid #e5e7eb", 
+                borderRadius: "8px",
+                padding: "12px"
+              }}
+              formatter={(value: number) => `${value.toFixed(1)}%`}
+            />
+            <Legend 
+              wrapperStyle={{ paddingTop: "20px" }}
+              formatter={(value) => getVariantName(value)}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="banner" 
+              stroke="#3b82f6" 
+              strokeWidth={2}
+              dot={{ fill: "#3b82f6", r: 3 }}
+              activeDot={{ r: 5 }}
+              name="banner"
+            />
+            <Line 
+              type="monotone" 
+              dataKey="text" 
+              stroke="#10b981" 
+              strokeWidth={2}
+              dot={{ fill: "#10b981", r: 3 }}
+              activeDot={{ r: 5 }}
+              name="text"
+            />
+            <Line 
+              type="monotone" 
+              dataKey="minimal" 
+              stroke="#a855f7" 
+              strokeWidth={2}
+              dot={{ fill: "#a855f7", r: 3 }}
+              activeDot={{ r: 5 }}
+              name="minimal"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Card>
 
       {/* Variant Comparison */}
       <Card className="p-6 mb-8">
