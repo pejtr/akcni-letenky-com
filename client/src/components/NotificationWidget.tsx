@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { trackEvent } from "@/lib/abTest";
 
 interface Notification {
   id: string;
@@ -62,10 +63,38 @@ const NOTIFICATIONS: Notification[] = [
   },
 ];
 
+// CTA variants for A/B testing
+const CTA_VARIANTS = [
+  { id: "A", text: "TAM CHCI TAKY >" },
+  { id: "B", text: "ZOBRAZIT NABÍDKU >" },
+  { id: "C", text: "KOUPIT TEĎ >" },
+];
+
+// Get or assign CTA variant
+function getCtaVariant(): typeof CTA_VARIANTS[number] {
+  const stored = localStorage.getItem("notification_cta_variant");
+  if (stored) {
+    const variant = CTA_VARIANTS.find((v) => v.id === stored);
+    if (variant) return variant;
+  }
+  
+  // Assign random variant
+  const randomVariant = CTA_VARIANTS[Math.floor(Math.random() * CTA_VARIANTS.length)];
+  localStorage.setItem("notification_cta_variant", randomVariant.id);
+  
+  // Track assignment
+  trackEvent("notification_widget_cta", "variant_assigned", {
+    variant: randomVariant.id,
+  }).catch(() => {});
+  
+  return randomVariant;
+}
+
 export function NotificationWidget() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [ctaVariant] = useState(getCtaVariant);
 
   const currentNotification = NOTIFICATIONS[currentIndex];
 
@@ -96,6 +125,13 @@ export function NotificationWidget() {
   };
 
   const handleCTA = () => {
+    // Track CTA click with variant
+    trackEvent("notification_widget_cta", "click", {
+      variant: ctaVariant.id,
+      destination: currentNotification.destination,
+      type: currentNotification.type,
+    }).catch(() => {});
+    
     // Navigate to the relevant page based on type
     if (currentNotification.type === "flight") {
       window.location.href = "/levne-letenky";
@@ -165,7 +201,7 @@ export function NotificationWidget() {
             onClick={handleCTA}
             className="bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2 rounded-lg text-sm transition-all hover:scale-105 active:scale-95 shadow-md"
           >
-            TAM CHCI TAKY &gt;
+            {ctaVariant.text}
           </button>
         </div>
       </div>

@@ -13,8 +13,13 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 
-// Meta Pixel ID - user should replace with their actual Pixel ID
-const PIXEL_ID = "YOUR_META_PIXEL_ID";
+// Meta Pixel ID from environment variable
+const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
+
+// Generate unique event ID for deduplication with server-side events
+function generateEventId(): string {
+  return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
 
 // Device type detection
 function getDeviceType(): "mobile" | "tablet" | "desktop" {
@@ -45,6 +50,10 @@ function getViewportDimensions() {
 // Initialize Meta Pixel
 function initMetaPixel() {
   if (typeof window === "undefined" || (window as any).fbq) return;
+  if (!PIXEL_ID) {
+    console.warn("[Meta Pixel] VITE_META_PIXEL_ID not configured");
+    return;
+  }
 
   // Meta Pixel base code
   (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
@@ -86,105 +95,116 @@ function initMetaPixel() {
   fbq("track", "PageView", deviceInfo);
 }
 
-// Track custom event
+// Track custom event with deduplication
 export function trackMetaEvent(
   eventName: string,
-  parameters?: Record<string, any>
+  parameters?: Record<string, any>,
+  eventId?: string
 ) {
-  if (typeof window === "undefined" || !(window as any).fbq) return;
+  if (typeof window === "undefined" || !(window as any).fbq) return eventId;
   
   const fbq = (window as any).fbq;
+  const dedupeId = eventId || generateEventId();
+  
   const enrichedParams = {
     ...parameters,
     device_type: getDeviceType(),
     viewport_width: window.innerWidth,
   };
   
-  fbq("track", eventName, enrichedParams);
+  fbq("track", eventName, enrichedParams, { eventID: dedupeId });
+  return dedupeId;
 }
 
-// Track custom event (for non-standard events)
+// Track custom event (for non-standard events) with deduplication
 export function trackMetaCustomEvent(
   eventName: string,
-  parameters?: Record<string, any>
-) {
-  if (typeof window === "undefined" || !(window as any).fbq) return;
+  parameters?: Record<string, any>,
+  eventId?: string
+): string | undefined {
+  if (typeof window === "undefined" || !(window as any).fbq) return eventId;
   
   const fbq = (window as any).fbq;
+  const dedupeId = eventId || generateEventId();
+  
   const enrichedParams = {
     ...parameters,
     device_type: getDeviceType(),
     viewport_width: window.innerWidth,
   };
   
-  fbq("trackCustom", eventName, enrichedParams);
+  fbq("trackCustom", eventName, enrichedParams, { eventID: dedupeId });
+  return dedupeId;
 }
 
 // Track affiliate click
 export function trackAffiliateClick(
   destination: string,
   partner: string,
-  price?: number
-) {
-  trackMetaCustomEvent("AffiliateClick", {
+  price?: number,
+  eventId?: string
+): string | undefined {
+  return trackMetaCustomEvent("AffiliateClick", {
     destination,
     partner,
     price,
     currency: "CZK",
-  });
+  }, eventId);
 }
 
 // Track newsletter signup
-export function trackNewsletterSignup(variant?: string) {
-  trackMetaEvent("Lead", {
+export function trackNewsletterSignup(variant?: string, eventId?: string): string | undefined {
+  return trackMetaEvent("Lead", {
     content_name: "Newsletter Signup",
     variant,
-  });
+  }, eventId);
 }
 
 // Track wishlist add
-export function trackWishlistAdd(destination: string, price?: number) {
-  trackMetaEvent("AddToWishlist", {
+export function trackWishlistAdd(destination: string, price?: number, eventId?: string): string | undefined {
+  return trackMetaEvent("AddToWishlist", {
     content_name: destination,
     value: price,
     currency: "CZK",
-  });
+  }, eventId);
 }
 
 // Track search
-export function trackSearch(query: string, results?: number) {
-  trackMetaEvent("Search", {
+export function trackSearch(query: string, results?: number, eventId?: string): string | undefined {
+  return trackMetaEvent("Search", {
     search_string: query,
     num_results: results,
-  });
+  }, eventId);
 }
 
 // Track view content (destination page)
 export function trackViewContent(
   destination: string,
   price?: number,
-  category?: string
-) {
-  trackMetaEvent("ViewContent", {
+  category?: string,
+  eventId?: string
+): string | undefined {
+  return trackMetaEvent("ViewContent", {
     content_name: destination,
     content_category: category,
     value: price,
     currency: "CZK",
-  });
+  }, eventId);
 }
 
 // Track initiate checkout (when user clicks to book)
 export function trackInitiateCheckout(
   destination: string,
   price: number,
-  partner: string
-) {
-  trackMetaEvent("InitiateCheckout", {
+  partner: string,
+  eventId?: string
+): string | undefined {
+  return trackMetaEvent("InitiateCheckout", {
     content_name: destination,
     value: price,
     currency: "CZK",
     partner,
-  });
+  }, eventId);
 }
 
 export default function MetaPixel() {
