@@ -1962,7 +1962,53 @@
 - [ ] Include Custom Audience creation for 30-day PageView visitors
 - [ ] Include campaign setup with budget recommendations
 - [ ] Include ad creative recommendations for travel affiliate
-- [ ] Create checkpoint
+- [x] Create checkpoint - READY
 
 ## Chatbot Avatar Fix (2026-02-17)
 - [x] Fix chatbot avatar/thumbnail - changed from non-existent .png to existing .webp (7 references fixed across ChatbotWidget.tsx and chatbotABTest.ts)
+
+## Dynamic Sitemap.xml & Chatbot Avatars (2026-02-17)
+
+### Dynamic Sitemap.xml
+- [x] Create server-side /sitemap.xml endpoint - WORKING (53 URLs total)
+- [x] Include homepage with priority 1.0
+- [x] Include destination pages with priority 0.8 (from database)
+- [x] Include blog articles with priority 0.7 (17 published articles)
+- [x] Include airline pages with priority 0.6 (10 airlines)
+- [x] Include static pages with proper priorities
+- [x] Add lastmod timestamps from database (updatedAt fields)
+- [x] Add changefreq values (daily/weekly based on content type)
+- [x] robots.txt already references sitemap
+- [ ] Write vitest tests for sitemap
+
+### Unique Chatbot Persona Avatars
+- [x] Generate avatar for Petra (energetic, young, 25-30) - DONE
+- [x] Generate avatar for Monika (professional, mid-age, 35-40) - DONE
+- [x] Generate avatar for Tereza (warm, caring, 27-32) - DONE
+- [x] Upload avatars to S3 and get CDN URLs - DONE (3 CDN URLs)
+- [x] Update chatbotABTest.ts with new avatar URLs - DONE
+- [x] Write vitest tests for Revolut popup and sitemap - 21 tests passing
+- [x] Create checkpoint - READY
+
+## Revolut Referral Banner & In-Article Links (2026-02-17)
+
+### Pop-up Modal
+- [x] Copy Revolut banner image to project public folder
+- [x] Create RevolutPopup component with modal dialog
+- [x] Add 30-second delay before showing popup
+- [x] Store popup dismissal in sessionStorage (show once per session)
+- [x] Add click tracking for conversions (Meta Pixel Lead event)
+- [x] Link to www.revolut-bonus.cz
+- [x] Integrated into App.tsx
+
+### In-Article Backlinks
+- [x] Add Revolut mentions to 17 existing blog articles
+- [x] Add contextual backlinks to www.revolut-bonus.cz
+- [x] Natural integration based on article category (deals, guides, destinations, airlines)
+- [x] Mentions inserted after first paragraph for better UX
+
+### Testing
+- [x] Write vitest tests for popup component - 21 tests passing
+- [x] Test sessionStorage persistence - verified in tests
+- [x] Verify tracking events - Meta Pixel Lead event tested
+- [x] Create checkpoint - READY

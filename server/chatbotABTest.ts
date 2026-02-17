@@ -28,7 +28,7 @@ export interface PersonaConfig {
 export const PERSONA_PETRA: PersonaConfig = {
   name: "petra",
   displayName: "Petra",
-  avatar: "/travel-expert-avatar-thumb.webp",
+  avatar: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/YiCaLFJyqhxxXAAh.png",
   tone: "energetic",
   useEmoji: true,
   formalityLevel: "informal",
@@ -58,7 +58,7 @@ STYL KOMUNIKACE:
 export const PERSONA_MONIKA: PersonaConfig = {
   name: "monika",
   displayName: "Monika",
-  avatar: "/travel-expert-avatar-thumb.webp",
+  avatar: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/tPrYjDrPEIMYzLVs.png",
   tone: "professional",
   useEmoji: true,
   formalityLevel: "neutral",
@@ -88,7 +88,7 @@ STYL KOMUNIKACE:
 export const PERSONA_TEREZA: PersonaConfig = {
   name: "tereza",
   displayName: "Tereza",
-  avatar: "/travel-expert-avatar-thumb.webp",
+  avatar: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/pcnUqPBxnUfUjuXQ.png",
   tone: "friendly",
   formalityLevel: "formal",
   useEmoji: false,

@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, title, slug, category, status FROM articles LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user dtffFtxzpGHwBQ5.64844947e81a --database GquhzstpDbNW3eC4KqTsEC --execute SELECT id, title, slug, category, status FROM articles LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Letenky Lufthansa - Recenze, ceny a zkušenosti 2026",
+      "slug": "letenky-lufthansa-recenze-ceny-a-zkusenosti-2026",
+      "category": "airline-review",
+      "status": "published"
+    },
+    {
+      "id": "2",
+      "title": "Akční letenky do Bali - Kompletní průvodce 2026",
+      "slug": "akcni-letenky-do-bali-kompletni-pruvodce-2026",
+      "category": "destination-guide",
+      "status": "published"
+    },
+    {
+      "id": "3",
+      "title": "Letenky Czech Airlines - Recenze, ceny a zkušenosti 2026",
+      "slug": "letenky-czech-airlines-recenze-ceny-a-zkusenosti-2026",
+      "category": "airline-review",
+      "status": "published"
+    },
+    {
+      "id": "30001",
+      "title": "Letenky Ryanair - Recenze, ceny a zkušenosti 2026",
+      "slug": "letenky-ryanair-recenze-ceny-a-zkusenosti-2026",
+      "category": "airline-review",
+      "status": "published"
+    },
+    {
+      "id": "30002",
+      "title": "Nejlevnější letenky na zimu 2026 - Kam letět výhodně",
+      "slug": "nejlevnejsi-letenky-na-zimu-2026-kam-letet-vyhodne",
+      "category": "seasonal-deals",
+      "status": "published"
+    },
+    {
+      "id": "30003",
+      "title": "Akční letenky do Dubaj - Kompletní průvodce 2026",
+      "slug": "akcni-letenky-do-dubaj-kompletni-pruvodce-2026",
+      "category": "destination-guide",
+      "status": "published"
+    },
+    {
+      "id": "60001",
+      "title": "Akční letenky do Thajsko - Kompletní průvodce 2026",
+      "slug": "akcni-letenky-do-thajsko-kompletni-pruvodce-2026",
+      "category": "destination-guide",
+      "status": "published"
+    },
+    {
+      "id": "60002",
+      "title": "Jak najít nejlevnější letenky - 10 osvědčených tipů pro rok 2026",
+      "slug": "jak-najit-nejlevnejsi-letenky-10-osvedcenych-tipu-pro-rok-2026",
+      "category": "travel-tips",
+      "status": "published"
+    },
+    {
+      "id": "90001",
+      "title": "Nejlevnější letenky na jaro 2026 - Kam letět výhodně",
+      "slug": "nejlevnejsi-letenky-na-jaro-2026-kam-letet-vyhodne",
+      "category": "seasonal-deals",
+      "status": "published"
+    },
+    {
+      "id": "120001",
+      "title": "Akční letenky do Barcelona - Kompletní průvodce 2026",
+      "slug": "akcni-letenky-do-barcelona-kompletni-pruvodce-2026",
+      "category": "destination-guide",
+      "status": "published"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\tcategory\tstatus\n1\tLetenky Lufthansa - Recenze, ceny a zkušenosti 2026\tletenky-lufthansa-recenze-ceny-a-zkusenosti-2026\tairline-review\tpublished\n2\tAkční letenky do Bali - Kompletní průvodce 2026\takcni-letenky-do-bali-kompletni-pruvodce-2026\tdestination-guide\tpublished\n3\tLetenky Czech Airlines - Recenze, ceny a zkušenosti 2026\tletenky-czech-airlines-recenze-ceny-a-zkusenosti-2026\tairline-review\tpublished\n30001\tLetenky Ryanair - Recenze, ceny a zkušenosti 2026\tletenky-ryanair-recenze-ceny-a-zkusenosti-2026\tairline-review\tpublished\n30002\tNejlevnější letenky na zimu 2026 - Kam letět výhodně\tnejlevnejsi-letenky-na-zimu-2026-kam-letet-vyhodne\tseasonal-deals\tpublished\n30003\tAkční letenky do Dubaj - Kompletní průvodce 2026\takcni-letenky-do-dubaj-kompletni-pruvodce-2026\tdestination-guide\tpublished\n60001\tAkční letenky do Thajsko - Kompletní průvodce 2026\takcni-letenky-do-thajsko-kompletni-pruvodce-2026\tdestination-guide\tpublished\n60002\tJak najít nejlevnější letenky - 10 osvědčených tipů pro rok 2026\tjak-najit-nejlevnejsi-letenky-10-osvedcenych-tipu-pro-rok-2026\ttravel-tips\tpublished\n90001\tNejlevnější letenky na jaro 2026 - Kam letět výhodně\tnejlevnejsi-letenky-na-jaro-2026-kam-letet-vyhodne\tseasonal-deals\tpublished\n120001\tAkční letenky do Barcelona - Kompletní průvodce 2026\takcni-letenky-do-barcelona-kompletni-pruvodce-2026\tdestination-guide\tpublished\n",
+  "stderr": "",
+  "execution_time_ms": 104
+}

@@ -29,6 +29,7 @@ import DubajPage from "./pages/DubajPage";
 import BaliPage from "./pages/BaliPage";
 import NewYorkPage from "./pages/NewYorkPage";
 import { HeatmapTracking } from "./components/HeatmapTracking";
+import { RevolutPopup } from "./components/RevolutPopup";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -83,6 +84,7 @@ function App() {
         <TooltipProvider>
           <MetaPixel />
           <HeatmapTracking />
+          <RevolutPopup />
           <Toaster />
           <Router />
         </TooltipProvider>
