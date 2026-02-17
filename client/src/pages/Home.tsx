@@ -901,7 +901,7 @@ export default function Home() {
               <div>
                 <h3 className="text-base font-bold mb-3 text-[#003087]">🌴 Akční nabídky</h3>
                 <ul className="space-y-2">
-                  <li><a href="#letenky-1500" className="text-xs text-blue-600 hover:underline">Letenky do 1 500 Kč</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/akcni-letenky/LP:0_1500,S:PRI?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Letenky do 1 500 Kč</a></li>
                   <li><a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Dovolená se slevou až 80 %</a></li>
                   <li><a href="#eurovikendy" className="text-xs text-blue-600 hover:underline">Eurovíkendy</a></li>
                   <li><a href="#business-class" className="text-xs text-blue-600 hover:underline">Business class</a></li>

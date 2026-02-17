@@ -1735,3 +1735,15 @@
 ## Réunion Content (2026-02-09)
 - [x] Create Réunion article/landing page on akcni-letenky.com
 - [x] Write Facebook post for Last Minute Dovolené page about Réunion
+
+## Update Pelikán Affiliate Links (2026-02-09)
+- [ ] Find all "Letenky do 1 500 Kč" links in the codebase
+- [ ] Update links to https://www.pelikan.cz/cs/akcni-letenky/LP:0_1500,S:PRI?a_aid=levne-letenky
+- [ ] Test all updated links
+- [ ] Create checkpoint
+
+## Update Pelikán Affiliate Links (2026-02-09)
+- [x] Find all "Letenky do 1 500 Kč" links in the codebase
+- [x] Update Home.tsx footer link to Pelikán URL
+- [x] Test updated link
+- [ ] Create checkpoint
