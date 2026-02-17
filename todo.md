@@ -1902,4 +1902,12 @@
 - [x] Test events in Meta Events Manager - VITEST PASSED
 - [ ] Verify Event Match Quality (EMQ) score - REQUIRES PRODUCTION DATA
 - [x] Check deduplication is working - IMPLEMENTED
-- [ ] Create checkpoint with Meta tracking
+- [x] Create checkpoint with Meta tracking
+
+## Merge Duplicate Notification Widgets (2026-02-17)
+- [x] Identify duplicate notification components
+- [x] Merge NotificationWidget with social proof and offer card - REMOVED DUPLICATE
+- [x] Keep pulsating animation and circular thumbnail
+- [x] Include price, nights, and CTA button "TAM CHCI TAKY >"
+- [x] Test unified widget
+- [ ] Create checkpoint
