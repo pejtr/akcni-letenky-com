@@ -1783,3 +1783,12 @@
 - [ ] Create landing page for New York with detailed guide and affiliate links
 - [ ] Test all new features
 - [ ] Create checkpoint
+
+## Wishlist/Favorites Functionality Audit (2026-02-17)
+- [x] Check if wishlist database schema exists - YES (wishlists table)
+- [x] Check if wishlist tRPC endpoints are implemented - YES (add/remove/list)
+- [x] Check if heart icons are connected to backend - YES (visible on all cards)
+- [x] Check if "Moje oblíbené" page exists - YES (/wishlist with 3 tabs)
+- [x] Test adding/removing items from wishlist - WORKING
+- [x] Add wishlist count badge to navigation - ALREADY EXISTS (shows "0")
+- [ ] Create checkpoint
