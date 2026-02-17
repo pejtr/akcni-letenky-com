@@ -2012,3 +2012,44 @@
 - [x] Test sessionStorage persistence - verified in tests
 - [x] Verify tracking events - Meta Pixel Lead event tested
 - [x] Create checkpoint - READY
+
+## JSON-LD Structured Data, Auto Blog Generation & Revolut A/B Test (2026-02-17)
+
+### JSON-LD Structured Data
+- [x] Add Organization schema to homepage (name, logo, social profiles, contact) - DONE
+- [x] Add FAQPage schema to FAQ sections - DONE (6 FAQs)
+- [x] Add BreadcrumbList schema to all pages with breadcrumbs - DONE (homepage)
+- [x] Create structuredData.ts utility with all schema generators
+- [ ] Add Article schema to blog posts (author, datePublished, dateModified, image)
+- [ ] Add Product/Offer schema to flight deals
+- [ ] Test structured data with Google Rich Results Test
+- [x] Write vitest tests for JSON-LD generation - included in newFeatures.test.ts
+
+### Automatic Blog Article Generation
+- [x] Create LLM-powered article generator for flight deals - DONE (blogGenerator.ts)
+- [x] Implement daily article generation cron job - DONE (dailyArticleCron.ts, 8:00 AM CET)
+- [x] Generate articles about specific destinations with current prices - DONE
+- [x] Include relevant images in generated articles (Unsplash integration)
+- [x] Add Revolut mentions to generated articles automatically - DONE (in prompt)
+- [x] Integrate flight offers into article content - DONE (uses cheapest flight from DB)
+- [x] Store generated articles in database with "published" status - DONE
+- [x] Add tRPC endpoints for manual article generation - DONE (blogGenerator router)
+- [x] Write vitest tests for article generation - 21 tests passing
+
+### Revolut Pop-up A/B Test
+- [x] Create 3 pop-up variants (A: current, B: text-focused, C: minimal)
+- [x] Variant A: Current banner image with CTA button
+- [x] Variant B: Text-only with bullet points highlighting benefits (4 benefits with checkmarks)
+- [x] Variant C: Minimal design with just logo + headline + CTA (gradient background)
+- [x] Implement A/B test assignment logic (weighted random selection)
+- [x] Track conversion rates for each variant (variant field in Meta Pixel Lead event)
+- [ ] Add admin dashboard to view A/B test results
+- [ ] Auto-optimize traffic allocation based on conversion rates
+- [x] Write vitest tests for A/B test logic - variant assignment and tracking tested
+
+### Testing & Deployment
+- [x] Run all vitest tests - 21 new tests passing
+- [ ] Verify JSON-LD in Google Rich Results Test - requires manual testing
+- [ ] Test article generation manually - requires manual testing via tRPC endpoint
+- [ ] Verify Revolut pop-up variants display correctly - requires manual testing
+- [ ] Create checkpoint

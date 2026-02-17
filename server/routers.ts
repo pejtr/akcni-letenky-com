@@ -37,6 +37,11 @@ import {
   trackCommunityJoin,
 } from "./chatbot";
 import {
+  generateFlightArticle,
+  saveGeneratedArticle,
+  generateDailyArticle,
+} from "./blogGenerator";
+import {
   getABTestStatus,
   calculateABTestResults,
   autoOptimizeTrafficWeights,
@@ -1570,6 +1575,34 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
   currency: router({
     getRates: publicProcedure.query(async () => {
       return await getClientRates();
+    }),
+  }),
+
+  // Blog article generation
+  blogGenerator: router({
+    // Generate article for a specific destination
+    generateArticle: protectedProcedure
+      .input(
+        z.object({
+          destination: z.string(),
+          destinationSlug: z.string(),
+          price: z.number().optional(),
+          currency: z.string().optional(),
+          airline: z.string().optional(),
+          departureDate: z.string().optional(),
+          returnDate: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const article = await generateFlightArticle(input);
+        const slug = await saveGeneratedArticle(article);
+        return { slug, article };
+      }),
+
+    // Generate daily article from cheapest flight
+    generateDaily: protectedProcedure.mutation(async () => {
+      const result = await generateDailyArticle();
+      return result;
     }),
   }),
 });

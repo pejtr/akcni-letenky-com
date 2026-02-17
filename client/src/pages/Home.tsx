@@ -33,6 +33,7 @@ import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import { useTicketCountdown } from "@/hooks/useTicketCountdown";
+import { generateOrganizationSchema, generateBreadcrumbSchema, generateFAQSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -158,7 +159,7 @@ export default function Home() {
     window.open(kiwiUrl, "_blank");
   };
   
-  // SEO: Set document title and meta description
+  // SEO: Set document title, meta description, and structured data
   useEffect(() => {
     document.title = "Levné Letenky z Prahy od 590 Kč | Sleva až -80% | Akční Letenky 2026";
     
@@ -179,6 +180,50 @@ export default function Home() {
       document.head.appendChild(metaKeywords);
     }
     metaKeywords.setAttribute('content', 'akční letenky, levné letenky, last minute letenky, letenky z prahy, nejlevnější letenky, letenky do evropy, letenky do londýna, letenky do paříže');
+    
+    // Add JSON-LD structured data
+    removeAllStructuredData(); // Clean up any existing schemas
+    
+    // Organization schema
+    injectStructuredData(generateOrganizationSchema());
+    
+    // Breadcrumb schema for homepage
+    injectStructuredData(generateBreadcrumbSchema([
+      { name: "Domů", url: "/" }
+    ]));
+    
+    // FAQ schema
+    injectStructuredData(generateFAQSchema([
+      {
+        question: "Jak najít nejlevnější letenky?",
+        answer: "Nejlevnější letenky najdete porovnáním cen napříč aerolinkami. Doporučujeme rezervovat 2-3 měsíce předem, být flexibilní s daty a využívat naše denní akční nabídky. Sledujte také naši FB skupinu s 33 500 členy pro exkluzivní tipy."
+      },
+      {
+        question: "Jsou uvedené ceny konečné?",
+        answer: "Ano, zobrazené ceny jsou obvykle konečné včetně daní a poplatků. Další služby jako zavazadla, výběr sedadla nebo strava mohou být zpoplatněny zvlášť u dopravce nebo agentury."
+      },
+      {
+        question: "Jak funguje rezervace letenek?",
+        answer: "Po výběru letu vás přesměrujeme na web partnera (Pelikán, Kiwi.com), kde dokončíte rezervaci. Platba probíhá přímo u partnera, který zajistí vystavení letenek a potvrzení."
+      },
+      {
+        question: "Mohu letenku stornovat nebo změnit?",
+        answer: "Podmínky storna a změn závisí na tarifu a aerolince. Levné tarify jsou obvykle nevratné, dražší tarify umožňují změny za poplatek. Doporučujeme cestovní pojištění pro případ nečekaných událostí."
+      },
+      {
+        question: "Kdy je nejlepší čas na nákup letenek?",
+        answer: "Obecně platí: čím dříve, tím levněji. Pro evropské destinace rezervujte 1-2 měsíce předem, pro dálkové lety 3-6 měsíců. Last minute nabídky mohou být výhodné, ale výběr je omezený."
+      },
+      {
+        question: "Jaké dokumenty potřebuji k cestě?",
+        answer: "Pro cesty po EU stačí občanský průkaz. Pro mimoevropské destinace potřebujete platný cestovní pas (minimálně 6 měsíců platnosti). Některé země vyžadují víza - ověřte si požadavky před cestou."
+      }
+    ]))
+    
+    return () => {
+      // Cleanup on unmount
+      removeAllStructuredData();
+    };
   }, []);
 
   // Handle scroll for sticky navigation and bottom banner
@@ -834,21 +879,6 @@ export default function Home() {
 
       {/* FAQ Section with Schema.org FAQPage */}
       <section aria-labelledby="faq" className="py-12 bg-white">
-        {/* FAQPage Schema.org JSON-LD */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": faqData.map(faq => ({
-              "@type": "Question",
-              "name": faq.question,
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.answer
-              }
-            }))
-          })}
-        </script>
         <div className="container max-w-4xl">
           <h2 id="faq" className="text-2xl font-bold text-center mb-8">
             Často kladené otázky

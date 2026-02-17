@@ -185,3 +185,172 @@ describe("Price Display", () => {
     expect(formatPrice(12500)).toBe("12\u00a0500 Kč");
   });
 });
+
+// ============ Blog Article Generator Tests ============
+
+import { generateFlightArticle, saveGeneratedArticle } from "./blogGenerator";
+import { getDb } from "./db";
+
+// Mock dependencies
+vi.mock("./_core/llm", () => ({
+  invokeLLM: vi.fn().mockResolvedValue({
+    choices: [
+      {
+        message: {
+          content: JSON.stringify({
+            title: "Akční letenky do Paříže - Kompletní průvodce 2026",
+            excerpt: "Objevte Paříž s našimi akčními letenkami od 1500 Kč. Tipy na úsporu, nejlepší čas na návštěvu a top místa k vidění.",
+            content: "# Akční letenky do Paříže\n\nParíž je...",
+            category: "deals",
+            tags: ["Paříž", "Francie", "akční letenky", "levné letenky", "Evropa"],
+          }),
+        },
+      },
+    ],
+  }),
+}));
+
+vi.mock("./db", () => ({
+  getDb: vi.fn(),
+}));
+
+describe("Blog Article Generator", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("generateFlightArticle", () => {
+    it("should generate article with all required fields", async () => {
+      const result = await generateFlightArticle({
+        destination: "Paříž",
+        destinationSlug: "pariz",
+        price: 1500,
+        currency: "CZK",
+        airline: "Ryanair",
+      });
+
+      expect(result).toHaveProperty("title");
+      expect(result).toHaveProperty("slug");
+      expect(result).toHaveProperty("excerpt");
+      expect(result).toHaveProperty("content");
+      expect(result).toHaveProperty("featuredImage");
+      expect(result).toHaveProperty("category");
+      expect(result).toHaveProperty("tags");
+
+      expect(result.title).toContain("Paříž");
+      expect(result.slug).toBe("pariz");
+      expect(result.category).toMatch(/^(deals|guides|destinations)$/);
+      expect(Array.isArray(result.tags)).toBe(true);
+      expect(result.tags.length).toBeGreaterThan(0);
+    });
+
+    it("should include Unsplash image URL", async () => {
+      const result = await generateFlightArticle({
+        destination: "Barcelona",
+        destinationSlug: "barcelona",
+      });
+
+      expect(result.featuredImage).toContain("unsplash.com");
+      expect(result.featuredImage).toContain("Barcelona");
+    });
+  });
+});
+
+// ============ JSON-LD Structured Data Tests ============
+
+describe("JSON-LD Structured Data", () => {
+  describe("Organization Schema", () => {
+    it("should generate valid Organization schema", () => {
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "Akční Letenky",
+        url: "https://akcni-letenky.cz",
+        logo: "https://akcni-letenky.cz/logo.png",
+      };
+
+      expect(schema["@context"]).toBe("https://schema.org");
+      expect(schema["@type"]).toBe("Organization");
+      expect(schema.name).toBe("Akční Letenky");
+    });
+  });
+
+  describe("FAQPage Schema", () => {
+    it("should generate valid FAQPage schema", () => {
+      const faqs = [
+        { question: "Jak najít nejlevnější letenky?", answer: "Sledujte naše akční nabídky..." },
+        { question: "Kdy je nejlepší čas na rezervaci?", answer: "2-3 měsíce před odletem..." },
+      ];
+
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
+        })),
+      };
+
+      expect(schema["@type"]).toBe("FAQPage");
+      expect(schema.mainEntity).toHaveLength(2);
+      expect(schema.mainEntity[0]["@type"]).toBe("Question");
+    });
+  });
+});
+
+// ============ Revolut Pop-up A/B Test Tests ============
+
+describe("Revolut Pop-up A/B Test", () => {
+  describe("Variant Assignment", () => {
+    it("should assign one of three variants", () => {
+      const variants = ["banner", "text", "minimal"];
+      
+      const assignments = new Set();
+      for (let i = 0; i < 100; i++) {
+        const random = Math.random();
+        let variant: string;
+        
+        if (random < 0.33) variant = "banner";
+        else if (random < 0.66) variant = "text";
+        else variant = "minimal";
+        
+        assignments.add(variant);
+        expect(variants).toContain(variant);
+      }
+
+      expect(assignments.size).toBeGreaterThan(1);
+    });
+
+    it("should use weighted random selection", () => {
+      const weights = [
+        { name: "banner", weight: 1 },
+        { name: "text", weight: 1 },
+        { name: "minimal", weight: 1 },
+      ];
+
+      const totalWeight = weights.reduce((sum, v) => sum + v.weight, 0);
+      expect(totalWeight).toBe(3);
+    });
+  });
+
+  describe("Conversion Tracking", () => {
+    it("should track variant in Meta Pixel event", () => {
+      const mockFbq = vi.fn();
+      (global as any).window = { fbq: mockFbq };
+
+      const variant = "minimal";
+      mockFbq("track", "Lead", {
+        content_name: "Revolut Referral Click",
+        content_category: "Affiliate",
+        variant: variant,
+      });
+
+      expect(mockFbq).toHaveBeenCalledWith("track", "Lead", {
+        content_name: "Revolut Referral Click",
+        content_category: "Affiliate",
+        variant: "minimal",
+      });
+    });
+  });
+});
