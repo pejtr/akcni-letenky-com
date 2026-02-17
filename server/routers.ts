@@ -655,7 +655,7 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
         // Filter by departure (only flights have departure field)
         if (input?.departure) {
           flights = flights.filter(f => 
-            'departure' in f && f.departure.toLowerCase().includes(input.departure!.toLowerCase())
+            'departure' in f && f.departure?.toLowerCase().includes(input.departure!.toLowerCase())
           );
         }
         

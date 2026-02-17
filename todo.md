@@ -1746,4 +1746,31 @@
 - [x] Find all "Letenky do 1 500 Kč" links in the codebase
 - [x] Update Home.tsx footer link to Pelikán URL
 - [x] Test updated link
+- [x] Create checkpoint
+
+## UTM Parameters and New Features (2026-02-17)
+- [x] Add UTM parameters to all affiliate links in footer for tracking
+- [x] Create new subpage with overview of best flights under 1500 Kč
+- [x] Add affiliate link to accommodation section with affiliate code
+- [x] Test all new links and pages
+- [ ] Create checkpoint
+- [x] Update returnFlights destinations to match original akcni-letenky.com exactly (Londýn, New York, Afrika, Maroko, Paříž, Vietnam, Bali, Srí Lanka, Dubaj, Thajsko, Santorini, Jordánsko, Řím, Island, Miami, Barcelona)
+- [x] Create redirect interstitial page with animation before sending users to Pelikán
+- [x] Fix /levne-letenky page showing "Žádné letenky nenalezeny" - ensure flights are loaded from Pelikán API
+- [x] Add do-italie.cz logo and link to footer across all pages
+- [x] Wait for Pelikán cache refresh (30 min) to fix /levne-letenky empty results
+- [x] Fix nested button error on homepage (button cannot contain nested button)
+- [x] Fix chatbot quick reply buttons - emoji icons not displaying correctly
+- [x] Change yellow banner text to "Business class letenky"
+- [x] Add do-italie.cz and revolut-bonus.cz links to footer
+- [x] Unify navigation menu across all pages (use same menu as homepage)
+- [x] Fix /levne-letenky page navigation
+- [x] Create/fix Dovolená (vacation) section page
+- [x] Create/fix Vlaky (trains) section page
+- [x] Create/fix Aerolinky (airlines) section page
+
+## Fix Pelikán Data Import (2026-02-17)
+- [x] Copy working Pelikán code from exim-tours-theme repo
+- [x] Update pelikanFeed.ts to use correct endpoint and XML parsing
+- [x] Test /levne-letenky and /dovolene pages show data (38 flights, 62 vacations)
 - [ ] Create checkpoint

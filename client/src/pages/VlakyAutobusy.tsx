@@ -3,6 +3,7 @@ import { Train, Bus, Plane, Leaf, Clock, Euro, ArrowRight, CheckCircle2 } from "
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { generateOmioReferralLink, generateOmioRouteLink, trackOmioClick } from "@/lib/omioAffiliate";
+import Navigation from "@/components/Navigation";
 
 export default function VlakyAutobusy() {
   const handleOmioSearch = (from: string, to: string) => {
@@ -54,24 +55,11 @@ export default function VlakyAutobusy() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/logo-akcni-letenky.png" alt="Akční Letenky" className="h-10" />
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors">Domů</Link>
-              <Link href="/levne-letenky" className="text-gray-700 hover:text-blue-600 transition-colors">Levné Letenky</Link>
-              <Link href="/dovolene" className="text-gray-700 hover:text-blue-600 transition-colors">Dovolená</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="relative py-20 pt-32 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-4 mb-6">

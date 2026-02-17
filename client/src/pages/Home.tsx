@@ -392,7 +392,7 @@ export default function Home() {
       <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md">
         <div className="container">
           <div className="flex flex-wrap items-center justify-center gap-6 text-white text-sm md:text-base font-medium">
-            <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+            <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=blue-banner&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
               Dovolená se slevou až 80 %
             </a>
             <span className="text-white/60">|</span>
@@ -555,16 +555,15 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {returnFlights.map((dest, index) => {
-              const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${dest.slug}`;
+              const pelikanUrl = `https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=grid&utm_campaign=${dest.slug}`;
+              const redirectUrl = `/redirect?url=${encodeURIComponent(pelikanUrl)}&dest=${encodeURIComponent(dest.name)}`;
               const discountPercent = Math.round(26 + (index * 3) % 12);
               return (
                 <a
                   key={index}
-                  href={kiwiUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={redirectUrl}
                   className="relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden flex flex-col"
-                  onClick={() => { trackAffiliateClick(dest.name, dest.slug, "grid", kiwiUrl); trackFunnelAffiliateClick(dest.name); }}
+                  onClick={() => { trackAffiliateClick(dest.name, dest.slug, "grid", pelikanUrl); trackFunnelAffiliateClick(dest.name); }}
                 >
                   {/* Discount Badge */}
                   <div className="absolute top-2 right-2 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
@@ -858,7 +857,7 @@ export default function Home() {
                   </>
                 ) : stickyCta.text}
               </a> |{" "}
-              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold price-highlight-pulse">80 %</span> – od <span className="text-red-600 font-extrabold">4 990 Kč</span></a> |{" "}
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=sticky-banner&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold price-highlight-pulse">80 %</span> – od <span className="text-red-600 font-extrabold">4 990 Kč</span></a> |{" "}
               <a href="/levne-letenky?kategorie=eurovikendy" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Eurovíkendy</a> |{" "}
               <a href="/levne-letenky?kategorie=business" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Business class</a>
             </p>
@@ -901,8 +900,8 @@ export default function Home() {
               <div>
                 <h3 className="text-base font-bold mb-3 text-[#003087]">🌴 Akční nabídky</h3>
                 <ul className="space-y-2">
-                  <li><a href="https://www.pelikan.cz/cs/akcni-letenky/LP:0_1500,S:PRI?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Letenky do 1 500 Kč</a></li>
-                  <li><a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Dovolená se slevou až 80 %</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/akcni-letenky/LP:0_1500,S:PRI?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=1500kc" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Letenky do 1 500 Kč</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Dovolená se slevou až 80 %</a></li>
                   <li><a href="#eurovikendy" className="text-xs text-blue-600 hover:underline">Eurovíkendy</a></li>
                   <li><a href="#business-class" className="text-xs text-blue-600 hover:underline">Business class</a></li>
                   <li><a href="#top-akce" className="text-xs text-blue-600 hover:underline">🚀TOP akce</a></li>
@@ -931,14 +930,14 @@ export default function Home() {
               <div>
                 <h3 className="text-base font-bold mb-3 text-[#003087]">🏛️ Hotely & Místa</h3>
                 <ul className="space-y-2">
-                  <li><a href="#rim" className="text-xs text-blue-600 hover:underline">Pobyty v Římě</a></li>
-                  <li><a href="#cesko" className="text-xs text-blue-600 hover:underline">Hotely v Česku</a></li>
-                  <li><a href="#benatky" className="text-xs text-blue-600 hover:underline">Pobyt v Benátkách</a></li>
-                  <li><a href="#usa" className="text-xs text-blue-600 hover:underline">Dovolená v USA</a></li>
-                  <li><a href="#slovensko" className="text-xs text-blue-600 hover:underline">Hotely na Slovensku</a></li>
-                  <li><a href="#madeira" className="text-xs text-blue-600 hover:underline">Ostrov Madeira</a></li>
-                  <li><a href="#vlastni-doprava" className="text-xs text-blue-600 hover:underline">S vlastní dopravou</a></li>
-                  <li><a href="#malta" className="text-xs text-blue-600 hover:underline">Ostrov Malta</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=pobyty-rim" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Pobyty v Římě</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=hotely-cesko" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Hotely v Česku</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=pobyty-benatky" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Pobyt v Benátkách</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=dovolena-usa" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Dovolená v USA</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=hotely-slovensko" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Hotely na Slovensku</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=madeira" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Ostrov Madeira</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=vlastni-doprava" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">S vlastní dopravou</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=malta" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Ostrov Malta</a></li>
                 </ul>
               </div>
             </div>
@@ -1039,8 +1038,32 @@ export default function Home() {
             {/* Bottom Yellow Banner */}
             <div className="bg-[#FFD700] rounded-lg px-6 py-3 mt-8 text-center">
               <p className="text-sm text-[#003087]">
-                Půjčka na dovolenou s úrokem od <strong>4,49 %</strong>! To je výhodné financování se Zonky! →
+                <strong>Business class letenky</strong> – Cestujte stylově a pohodlně! ✈️
               </p>
+            </div>
+          </div>
+
+          {/* Partner Websites */}
+          <div className="border-t border-white/20 pt-6 mt-8">
+            <h3 className="text-center text-white font-semibold mb-4">Naši partneři</h3>
+            <div className="flex items-center justify-center gap-6 flex-wrap">
+              <a 
+                href="https://www.do-italie.cz" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
+              >
+                <img src="/logo-do-italie.png" alt="DO-ITALIE.cz" className="w-8 h-6 object-contain" />
+                <span className="text-white text-sm font-medium">DO-ITALIE.cz</span>
+              </a>
+              <a 
+                href="https://www.revolut-bonus.cz" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
+              >
+                <span className="text-white text-sm font-medium">REVOLUT-BONUS.cz</span>
+              </a>
             </div>
           </div>
 

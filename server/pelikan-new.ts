@@ -1,56 +1,37 @@
-/**
- * Pelikán Feed Parser Service
- * Fetches and parses XML feeds from Pelikán.cz
- * Implements 10-hour caching for performance
- */
-
 import xml2js from "xml2js";
 import { promisify } from "util";
+import { redisCache } from "./redisCache";
 
 const parseStringPromise = promisify(xml2js.parseString);
 
 const PELIKAN_FEED_URL = "https://www.pelikan.cz/gf3/pelijee-cz/deals/discount/deals";
 const AFFILIATE_ID = "levne-letenky";
 const CACHE_DURATION = 600 * 60 * 1000; // 600 minutes (10 hours) in milliseconds
-
-export interface FlightOffer {
-  id: string;
-  title: string;
-  description: string;
-  link: string;
-  imageUrl: string;
-  price: number;
-  salePrice: number;
+const REDIS_CACHE_KEY = "pelikan:deals";
+const REDIS_TTL = 600 * 60; // 600 minutes (10 hours) in seconds
+interface PeliканDeal {
+  dealName: string;
+  shortDescription?: string;
+  city: string;
   country: string;
-  destination: string;
-  departure?: string;
-  discount: number;
-  airline?: string;
-  type: 'flight';
-  rating?: number;
-  length?: number;
-  tags?: string[];
-  region?: string;
-}
-
-export interface VacationOffer {
-  id: string;
-  title: string;
-  description: string;
-  link: string;
-  imageUrl: string;
+  length: number;
   price: number;
-  salePrice: number;
-  country: string;
-  destination: string;
-  location: string;
+  priceBeforeDiscount: number;
   discount: number;
-  duration: string;
-  type: 'vacation';
   rating?: number;
-  length?: number;
-  tags?: string[];
+  dealUrl: string;
+  images?: {
+    images?: string[];
+  };
+  image_550x310?: string;
+  image_228x140?: string;
+  image_270x270?: string;
+  image_600x280?: string;
+  image_650x450?: string;
   region?: string;
+  dealDiscountProducts?: {
+    dealDiscountProducts?: Array<{ name: string }>;
+  };
 }
 
 interface CachedData {
@@ -58,7 +39,7 @@ interface CachedData {
   timestamp: number;
 }
 
-// In-memory cache
+// Fallback in-memory cache (used if Redis fails)
 let memoryCache: CachedData | null = null;
 
 function normalizeUrl(url: string): string {
@@ -70,7 +51,7 @@ function normalizeUrl(url: string): string {
 
 function addAffiliateParams(url: string, aid: string): string {
   const separator = url.includes("?") ? "&" : "?";
-  return `${url}${separator}a_aid=${encodeURIComponent(aid)}&utm_source=akcni-letenky&utm_medium=affiliate&utm_campaign=grid`;
+  return `${url}${separator}a_aid=${encodeURIComponent(aid)}&utm_source=meta&utm_medium=cpc&utm_campaign=lastminutedovolene.cz&utm_content=grid`;
 }
 
 function pickImage(deal: any): string {
@@ -121,7 +102,7 @@ function pickImage(deal: any): string {
     }
   }
 
-  // Use high-quality fallback image from Unsplash
+  // Use high-quality fallback image from Unsplash instead of placeholder.com
   return "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&h=600&fit=crop&q=80";
 }
 
@@ -222,7 +203,18 @@ function detectType(deal: any): string {
 }
 
 export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
-  // Check memory cache
+  // Check Redis cache first
+  try {
+    const cachedData = await redisCache.get<any[]>(REDIS_CACHE_KEY);
+    if (cachedData && cachedData.length > 0) {
+      console.log("[Pelikan] Returning Redis cached data");
+      return cachedData.slice(0, limit);
+    }
+  } catch (error) {
+    console.warn("[Pelikan] Redis cache read failed:", (error as Error).message);
+  }
+
+  // Fallback to memory cache
   if (memoryCache && Date.now() - memoryCache.timestamp < CACHE_DURATION) {
     console.log("[Pelikan] Returning memory cached data");
     return memoryCache.data.slice(0, limit);
@@ -238,7 +230,7 @@ export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
     const response = await fetch(PELIKAN_FEED_URL, {
       signal: controller.signal,
       headers: {
-        "User-Agent": "akcni-letenky.com/1.0",
+        "User-Agent": "lastminutedovolene.cz/1.0",
         "Accept-Encoding": "gzip, deflate, br",
         "Accept": "application/xml, text/xml",
       },
@@ -264,7 +256,7 @@ export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
       nodes = nodes.slice(0, 100);
     }
     
-    console.log(`[Pelikan] Found ${nodes.length} deals in XML feed`);
+    // Found deals in XML feed
 
     for (const deal of nodes) {
       if (!deal.dealName?.[0]) continue;
@@ -308,59 +300,59 @@ export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
       // Generate random rating between 4.2 and 5.0
       const rating = parseFloat((Math.random() * (5.0 - 4.2) + 4.2).toFixed(1));
 
-      const city = deal.city?.[0] || "";
-      const country = deal.country?.[0] || "";
-      const type = detectType(deal);
-
-      // Determine if it's a flight or vacation based on type
-      const isVacation = type === "wellness" || type === "more" || type === "exotika";
-
-      const baseOffer = {
+      deals.push({
         id: dealId,
         title: deal.dealName[0],
-        description: deal.shortDescription?.[0] || "",
-        link: affUrl,
-        imageUrl: pickImage(deal),
-        price,
-        salePrice: priceBeforeDiscount,
-        country,
-        destination: city || country,
-        discount: discountNum,
-        rating,
+        shortDescription: deal.shortDescription?.[0] || "",
+        city: deal.city?.[0] || "",
+        country: deal.country?.[0] || "",
         length,
-        tags: detectTags(deal),
+        price,
+        priceBeforeDiscount,
+        discount: discountNum,
+        save,
+        rating,
+        image: pickImage(deal),
+        destination: deal.country?.[0] || deal.city?.[0] || "",
+        type: detectType(deal),
+        dealUrl: affUrl,
         region: deal.region?.[0] || "",
-      };
-
-      if (isVacation) {
-        deals.push({
-          ...baseOffer,
-          location: city,
-          duration: length > 0 ? `${length} dní` : "",
-          type: 'vacation' as const,
-        });
-      } else {
-        deals.push({
-          ...baseOffer,
-          departure: "Praha",
-          airline: "",
-          type: 'flight' as const,
-        });
-      }
+        tags: detectTags(deal),
+        source: "pelikan",
+      });
 
       if (deals.length >= limit) break;
     }
 
-    // Update memory cache
+    // Update Redis cache
+    try {
+      await redisCache.set(REDIS_CACHE_KEY, deals, REDIS_TTL);
+      console.log(`[Pelikan] Cached ${deals.length} deals in Redis`);
+    } catch (error) {
+      console.warn("[Pelikan] Redis cache write failed:", (error as Error).message);
+    }
+
+    // Update memory cache as fallback
     memoryCache = {
       data: deals,
       timestamp: Date.now(),
     };
 
-    console.log(`[Pelikan] Fetched ${deals.length} deals (${deals.filter(d => d.type === 'flight').length} flights, ${deals.filter(d => d.type === 'vacation').length} vacations)`);
+    console.log(`[Pelikan] Fetched ${deals.length} deals`);
     return deals;
   } catch (error) {
     console.error("[Pelikan] Error fetching deals:", error);
+    
+    // Try Redis cache first
+    try {
+      const cachedData = await redisCache.get<any[]>(REDIS_CACHE_KEY);
+      if (cachedData && cachedData.length > 0) {
+        console.log("[Pelikan] Returning stale Redis cache due to error");
+        return cachedData.slice(0, limit);
+      }
+    } catch (cacheError) {
+      console.warn("[Pelikan] Redis cache read failed in error handler");
+    }
     
     // Fallback to memory cache
     if (memoryCache) {
@@ -372,26 +364,4 @@ export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
     console.log("[Pelikan] No cache available, returning empty array");
     return [];
   }
-}
-
-// Separate functions for flights and vacations
-export async function fetchFlights(limit: number = 50): Promise<FlightOffer[]> {
-  const deals = await fetchPelikanDeals(limit * 2); // Fetch more to ensure we have enough flights
-  return deals.filter(d => d.type === 'flight').slice(0, limit) as FlightOffer[];
-}
-
-export async function fetchVacations(limit: number = 50): Promise<VacationOffer[]> {
-  const deals = await fetchPelikanDeals(limit * 2); // Fetch more to ensure we have enough vacations
-  return deals.filter(d => d.type === 'vacation').slice(0, limit) as VacationOffer[];
-}
-
-
-// Get cache status for monitoring
-export function getCacheStatus() {
-  return {
-    flights: memoryCache ? memoryCache.data.filter(d => d.type === 'flight').length : 0,
-    vacations: memoryCache ? memoryCache.data.filter(d => d.type === 'vacation').length : 0,
-    lastUpdated: memoryCache ? new Date(memoryCache.timestamp) : null,
-    nextRefresh: memoryCache ? new Date(memoryCache.timestamp + CACHE_DURATION) : null,
-  };
 }

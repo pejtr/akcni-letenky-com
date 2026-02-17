@@ -5,6 +5,7 @@ import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain } f
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import Navigation from "@/components/Navigation";
 
 // Domestic countries list
 const DOMESTIC_COUNTRIES = ["Česká republika", "Slovensko", "Rakousko", "Maďarsko", "Polsko"];
@@ -216,36 +217,11 @@ export default function Dovolene() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/">
-              <img src="/logo.png" alt="Akční Letenky" className="h-12 cursor-pointer" />
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/levne-letenky" className="text-gray-600 hover:text-[#1a5276]">
-                ✈️ LEVNÉ LETENKY
-              </Link>
-              <Link href="/dovolene" className="text-[#1a5276] font-semibold border-b-2 border-[#E91E63]">
-                ⭐ DOVOLENÉ
-              </Link>
-              <Link href="/" className="text-gray-600 hover:text-[#1a5276]">
-                🏠 Domů
-              </Link>
-            </nav>
-            <a
-              href="tel:+420223340510"
-              className="text-[#E91E63] font-bold text-lg flex items-center gap-2"
-            >
-              📞 223 340 510
-            </a>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#FF6B00] to-[#FF8C00] text-white py-12">
+      <section className="bg-gradient-to-r from-[#FF6B00] to-[#FF8C00] text-white py-12 pt-24">
         <div className="container text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             🏖️ Dovolené a Zájezdy

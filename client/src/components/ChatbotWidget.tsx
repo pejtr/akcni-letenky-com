@@ -35,10 +35,10 @@ export default function ChatbotWidget() {
   const [isReturningUser, setIsReturningUser] = useState(false);
   const [persona, setPersona] = useState<{ name: string; displayName: string; avatar: string; greetingMessage?: string } | null>(null);
   const [quickReplies, setQuickReplies] = useState<string[]>([
-    "💰 Letenky do 1500 Kč",
-    "🔥 Last minute akce",
-    "🏖️ Kam k moři?",
-    "❓ Jak rezervovat?"
+    "Letenky do 1500 Kč",
+    "Last minute akce",
+    "Kam k moři?",
+    "Jak rezervovat?"
   ]);
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [emailCaptured, setEmailCaptured] = useState(false);

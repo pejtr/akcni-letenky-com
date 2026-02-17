@@ -64,8 +64,8 @@ class PelikanCacheService {
 
     try {
       const [flights, vacations] = await Promise.all([
-        fetchFlights(true), // Force refresh
-        fetchVacations(true), // Force refresh
+        fetchFlights(100), // Fetch 100 flights
+        fetchVacations(100), // Fetch 100 vacations
       ]);
 
       this.cache = {
