@@ -1773,4 +1773,13 @@
 - [x] Copy working Pelikán code from exim-tours-theme repo
 - [x] Update pelikanFeed.ts to use correct endpoint and XML parsing
 - [x] Test /levne-letenky and /dovolene pages show data (38 flights, 62 vacations)
+- [x] Create checkpoint
+
+## New Features Batch 6 (2026-02-17)
+- [ ] Add "Pouze přímé lety" (direct flights only) filter to /levne-letenky page
+- [ ] Implement A/B testing system for CTA button text variants
+- [ ] Create landing page for Dubaj with detailed guide and affiliate links
+- [ ] Create landing page for Bali with detailed guide and affiliate links
+- [ ] Create landing page for New York with detailed guide and affiliate links
+- [ ] Test all new features
 - [ ] Create checkpoint

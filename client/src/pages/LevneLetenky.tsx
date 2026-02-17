@@ -7,8 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
+import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
 
 export default function LevneLetenky() {
+  // A/B Testing for CTA button text
+  const { variant: ctaVariant, ctaText } = useABTest({
+    name: "cta_button_flights",
+    variants: ["zobrazit", "koupit", "zjistit"],
+  });
+
   const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc" | "popularity" | "departure">("default");
   const [country, setCountry] = useState<string>("");
   const [departure, setDeparture] = useState<string>("");
@@ -16,6 +23,7 @@ export default function LevneLetenky() {
   const [priceMin, setPriceMin] = useState<number>(0);
   const [priceMax, setPriceMax] = useState<number>(50000);
   const [currency, setCurrency] = useState<"CZK" | "EUR" | "USD" | "GBP">("CZK");
+  const [directFlightsOnly, setDirectFlightsOnly] = useState<boolean>(false);
 
   // Real-time exchange rates from Czech National Bank (CNB)
   const { data: currencyData } = trpc.currency.getRates.useQuery(undefined, {
@@ -167,6 +175,17 @@ export default function LevneLetenky() {
               />
             </div>
 
+            {/* Direct Flights Only Checkbox */}
+            <label className="flex items-center gap-2 cursor-pointer bg-gray-50 px-3 py-2 rounded-md border hover:bg-gray-100 transition-colors">
+              <input
+                type="checkbox"
+                checked={directFlightsOnly}
+                onChange={(e) => setDirectFlightsOnly(e.target.checked)}
+                className="w-4 h-4 accent-[#E91E63] cursor-pointer"
+              />
+              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Pouze přímé lety</span>
+            </label>
+
             {/* Price Range Slider */}
             <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-md border">
               <span className="text-xs font-medium text-gray-500 whitespace-nowrap">Cena:</span>
@@ -231,7 +250,7 @@ export default function LevneLetenky() {
               </SelectContent>
             </Select>
 
-            {(country || departure || departureDate || priceMin > 0 || priceMax < 50000) && (
+            {(country || departure || departureDate || priceMin > 0 || priceMax < 50000 || directFlightsOnly) && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -241,6 +260,7 @@ export default function LevneLetenky() {
                   setDepartureDate("");
                   setPriceMin(0);
                   setPriceMax(50000);
+                  setDirectFlightsOnly(false);
                 }}
               >
                 Zrušit filtry
@@ -269,6 +289,13 @@ export default function LevneLetenky() {
                   if (departureDate && 'departureDate' in f && f.departureDate) {
                     const fd = new Date(f.departureDate as string).toISOString().split('T')[0];
                     if (fd < departureDate) return false;
+                  }
+                  // Filter direct flights only (check if stops field is 0 or "direct" or doesn't exist)
+                  if (directFlightsOnly) {
+                    const stops = 'stops' in f ? f.stops : undefined;
+                    if (stops !== undefined && stops !== 0 && stops !== "direct" && stops !== "Direct") {
+                      return false;
+                    }
                   }
                   return true;
                 })
@@ -375,10 +402,13 @@ export default function LevneLetenky() {
                               href={flight.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              onClick={() => handleOfferClick(flight)}
+                              onClick={() => {
+                                handleOfferClick(flight);
+                                trackABTestConversion("cta_button_flights", ctaVariant);
+                              }}
                               className="inline-flex items-center gap-2 bg-[#FF6B00] hover:bg-[#E65C00] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                             >
-                              Zobrazit na Pelikán.cz
+                              {ctaText}
                               <ArrowRight className="w-4 h-4" />
                             </a>
                           </div>

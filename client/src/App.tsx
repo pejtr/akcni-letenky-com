@@ -25,6 +25,9 @@ import ReunionPage from "./pages/ReunionPage";
 import Letenky1500 from "./pages/Letenky1500";
 import Redirect from "./pages/Redirect";
 import Aerolinky from "./pages/Aerolinky";
+import DubajPage from "./pages/DubajPage";
+import BaliPage from "./pages/BaliPage";
+import NewYorkPage from "./pages/NewYorkPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -49,10 +52,15 @@ function Router() {
       <Route path="/reunion" component={ReunionPage} />
       <Route path="/letenky-reunion" component={ReunionPage} />
       <Route path="/letenky-do-1500" component={Letenky1500} />
-      <Route path="/letenky-1500" component={Letenky1500} />
+      <Route path="/letenky-do-1500" component={Letenky1500} />
       <Route path="/redirect" component={Redirect} />
       <Route path="/aerolinky" component={Aerolinky} />
-      <Route path={"/404"} component={NotFound} />
+      <Route path="/dubaj" component={DubajPage} />
+      <Route path="/letenky-dubaj" component={DubajPage} />
+      <Route path="/bali" component={BaliPage} />
+      <Route path="/letenky-bali" component={BaliPage} />
+      <Route path="/new-york" component={NewYorkPage} />
+      <Route path="/letenky-new-york" component={NewYorkPage} />    <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
