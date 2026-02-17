@@ -1,9 +1,11 @@
-import { trpc } from "@/lib/trpc";
+import { useEffect } from "react";
 import { Link, useParams } from "wouter";
 import { Calendar, User, ArrowLeft, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { generateArticleSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
+import { trpc } from "@/lib/trpc";
 
 export default function BlogPost() {
   const params = useParams<{ slug: string }>();
@@ -11,6 +13,29 @@ export default function BlogPost() {
 
   const { data: article, isLoading, error } = trpc.articles.bySlug.useQuery({ slug });
   const { data: recentArticles } = trpc.articles.recent.useQuery({ limit: 3 });
+
+  // Add Article JSON-LD schema for SEO
+  useEffect(() => {
+    if (!article) return;
+
+    removeAllStructuredData();
+
+    const articleSchema = generateArticleSchema({
+      title: article.title,
+      description: article.excerpt || article.content.substring(0, 160),
+      author: article.author || "Akční Letenky",
+      datePublished: (article.publishedAt || article.createdAt).toISOString(),
+      dateModified: (article.updatedAt || article.publishedAt || article.createdAt).toISOString(),
+      image: article.featuredImage || "https://akcni-letenky.com/default-article-image.jpg",
+      url: `https://akcni-letenky.com/blog/${article.slug}`,
+    });
+
+    injectStructuredData(articleSchema);
+
+    return () => {
+      removeAllStructuredData();
+    };
+  }, [article]);
 
   if (error) {
     return (

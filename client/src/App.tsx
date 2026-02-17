@@ -30,6 +30,7 @@ import BaliPage from "./pages/BaliPage";
 import NewYorkPage from "./pages/NewYorkPage";
 import { HeatmapTracking } from "./components/HeatmapTracking";
 import RevolutPopupABTest from "./components/RevolutPopupABTest";
+import RevolutABTestDashboard from "./pages/RevolutABTestDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/admin/ab-test" component={ABTestDashboard} />
       <Route path="/admin/emails" component={AdminEmails} />
       <Route path="/admin/hero-ab-test" component={HeroABTestDashboard} />
+      <Route path="/admin/revolut-ab-test" component={RevolutABTestDashboard} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
       <Route path="/porovnani-cen" component={PriceComparison} />

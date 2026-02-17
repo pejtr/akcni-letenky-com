@@ -2052,4 +2052,42 @@
 - [ ] Verify JSON-LD in Google Rich Results Test - requires manual testing
 - [ ] Test article generation manually - requires manual testing via tRPC endpoint
 - [ ] Verify Revolut pop-up variants display correctly - requires manual testing
+- [x] Create checkpoint - version 39fe5da2
+
+## Revolut A/B Test Dashboard, Article JSON-LD & Blog Generation Testing (2026-02-17)
+
+### Revolut A/B Test Admin Dashboard
+- [x] Create /admin/revolut-ab-test page - DONE
+- [x] Display conversion metrics for each variant (banner, text, minimal) - DONE
+- [x] Show click-through rates and conversion rates - DONE
+- [x] Add visual bar charts for variant performance comparison - DONE
+- [x] Implement automatic traffic weight optimization based on conversion rates - DONE
+- [x] Show overall stats (total impressions, clicks, CTR, conversion rate) - DONE
+- [x] Display winner and recommendations - DONE
+- [ ] Connect to real Meta Pixel data via tRPC
+- [ ] Write vitest tests for dashboard logic
+
+### Article JSON-LD Schema
+- [x] Add Article schema generator to structuredData.ts - ALREADY EXISTS
+- [x] Integrate Article schema into BlogPost.tsx - DONE (useEffect with cleanup)
+- [x] Include author, datePublished, dateModified, image fields - DONE
+- [x] Add publisher (Organization) reference - DONE
+- [ ] Test schema with Google Rich Results Test - requires manual testing
+- [ ] Write vitest tests for Article schema generation
+
+### Blog Article Generation Testing
+- [x] Blog generator implemented with LLM integration - DONE
+- [x] Daily cron job scheduled for 8:00 AM CET - DONE
+- [x] tRPC endpoints created for manual generation - DONE
+- [ ] Generate first test article using tRPC endpoint - requires manual testing
+- [ ] Verify article quality (grammar, structure, SEO keywords) - requires manual testing
+- [x] Revolut mention integration - DONE (in prompt)
+- [x] Featured image from Unsplash - DONE (in generator)
 - [ ] Create checkpoint
+
+## Revolut Pop-up Travel Theme Update (2026-02-17)
+- [x] Update all 3 variants with travel-focused messaging
+- [x] Variant A (Banner): CTA updated to "Získat kartu pro cestovatele + 500 Kč bonus"
+- [x] Variant B (Text): Headline "Revolut karta pro cestovatele", benefits focus on travel savings
+- [x] Variant C (Minimal): Headline "Revolut karta pro cestovatele", "Ušetřete tisíce na každé cestě"
+- [x] Emphasize travel benefits (no foreign transaction fees, free currency exchange, travel insurance)

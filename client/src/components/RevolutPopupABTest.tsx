@@ -155,7 +155,7 @@ function BannerVariant({ onClose, onClick }: { onClose: () => void; onClick: () 
           onClick={onClick}
           className="w-full bg-white text-blue-600 font-bold py-4 px-6 rounded-lg hover:bg-blue-50 transition-colors text-lg shadow-lg"
         >
-          Získat 500 Kč bonus →
+          Získat kartu pro cestovatele + 500 Kč bonus →
         </button>
       </div>
     </div>
@@ -183,10 +183,10 @@ function TextVariant({ onClose, onClick }: { onClose: () => void; onClick: () =>
           <CreditCard className="w-8 h-8 text-blue-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
-          Revolut pro cestovatele
+          Revolut karta pro cestovatele
         </h2>
         <p className="text-lg text-gray-600 mb-6">
-          Získejte 500 Kč bonus a ušetřete na každé cestě
+          Ušetřete tisíce korun na zahraničních platbách a směnách měn
         </p>
       </div>
 
@@ -211,8 +211,8 @@ function TextVariant({ onClose, onClick }: { onClose: () => void; onClick: () =>
             </svg>
           </div>
           <div>
-            <p className="font-semibold text-gray-900">Bezplatné směny do 1000 EUR měsíčně</p>
-            <p className="text-sm text-gray-600">Mezibankový kurz bez poplatků</p>
+            <p className="font-semibold text-gray-900">Žádné poplatky za platby v zahraničí</p>
+            <p className="text-sm text-gray-600">Plaťte kdekoli na světě bez skrytých poplatků</p>
           </div>
         </div>
 
@@ -223,8 +223,8 @@ function TextVariant({ onClose, onClick }: { onClose: () => void; onClick: () =>
             </svg>
           </div>
           <div>
-            <p className="font-semibold text-gray-900">Platby v zahraničí bez poplatků</p>
-            <p className="text-sm text-gray-600">Ušetřete až 3% na každé platbě</p>
+            <p className="font-semibold text-gray-900">Bezplatné směny do 1000 EUR měsíčně</p>
+            <p className="text-sm text-gray-600">Mezibankový kurz bez poplatků</p>
           </div>
         </div>
 
@@ -246,7 +246,7 @@ function TextVariant({ onClose, onClick }: { onClose: () => void; onClick: () =>
         onClick={onClick}
         className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-4 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all text-lg shadow-lg"
       >
-        Získat 500 Kč bonus →
+        Získat kartu pro cestovatele + 500 Kč bonus →
       </button>
 
       <p className="text-xs text-gray-500 text-center mt-4">
@@ -281,15 +281,15 @@ function MinimalVariant({ onClose, onClick }: { onClose: () => void; onClick: ()
         </div>
 
         <h2 className="text-4xl font-bold mb-4">
-          Revolut
+          Revolut karta pro cestovatele
         </h2>
 
         <p className="text-2xl font-semibold mb-2">
-          500 Kč bonus
+          500 Kč bonus + žádné poplatky v zahraničí
         </p>
 
         <p className="text-lg opacity-90 mb-8">
-          + bezplatné směny do 1000 EUR měsíčně
+          Ušetřete tisíce na každé cestě
         </p>
 
         {/* CTA button */}
@@ -297,7 +297,7 @@ function MinimalVariant({ onClose, onClick }: { onClose: () => void; onClick: ()
           onClick={onClick}
           className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-blue-50 transition-all text-lg shadow-xl hover:shadow-2xl hover:scale-105"
         >
-          Získat bonus →
+          Získat kartu pro cestovatele →
         </button>
       </div>
     </div>
