@@ -91,7 +91,7 @@ export default function Home() {
   // Click heatmap tracking
   useClickTracking(true);
   // Conversion funnel tracking
-  const { trackAffiliateClick: trackFunnelAffiliateClick, trackDestinationView: trackFunnelDestView } = useConversionTracking();
+  const { trackAffiliateClick: trackFunnelAffiliateClick, trackDestinationView: trackFunnelDestView, trackSearch: trackFunnelSearch } = useConversionTracking();
   
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
@@ -147,6 +147,9 @@ export default function Home() {
     
     kiwiUrl += `?adults=${passengers}`;
     
+    // Track the search event (Meta Pixel Search event)
+    trackFunnelSearch(destination, origin);
+    
     // Track the click
     trackAffiliateClick(destination, destSlug, "search", kiwiUrl);
     trackFunnelAffiliateClick(destination);
@@ -155,6 +158,29 @@ export default function Home() {
     window.open(kiwiUrl, "_blank");
   };
   
+  // SEO: Set document title and meta description
+  useEffect(() => {
+    document.title = "Levné Letenky z Prahy od 590 Kč | Sleva až -80% | Akční Letenky 2026";
+    
+    // Set meta description
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.setAttribute('name', 'description');
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute('content', 'Najděte nejlevnější akční letenky do celého světa. Porovnejte ceny letenek z Prahy do Londýna, Paříže, Barcelony a dalších destinací. Last minute slevy až 80%.');
+    
+    // Set meta keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.setAttribute('name', 'keywords');
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.setAttribute('content', 'akční letenky, levné letenky, last minute letenky, letenky z prahy, nejlevnější letenky, letenky do evropy, letenky do londýna, letenky do paříže');
+  }, []);
+
   // Handle scroll for sticky navigation and bottom banner
   useEffect(() => {
     const handleScroll = () => {
@@ -413,8 +439,10 @@ export default function Home() {
 
       {/* Featured European Cities */}
       <section aria-labelledby="featured-cities" className="py-10 bg-[#F0F4F8]">
-        <h2 id="featured-cities" className="sr-only">Nejlevnější letenky do evropských měst</h2>
         <div className="container">
+          <h2 id="featured-cities" className="text-2xl md:text-3xl font-bold text-center mb-8 text-[#003087]">
+            Nejlevnější letenky do evropských měst
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCities.map((city, index) => {
               const destSlug = cityToSlug[city.to.toLowerCase()] || city.to.toLowerCase().replace(/\s+/g, "-");
@@ -622,8 +650,11 @@ export default function Home() {
       </section>
 
       {/* Tabbed Sections: Státy, Města, Letecké společnosti, Top destinace */}
-      <section className="py-12 bg-white">
+      <section aria-labelledby="browse-destinations" className="py-12 bg-white">
         <div className="container">
+          <h2 id="browse-destinations" className="text-2xl md:text-3xl font-bold text-center mb-8 text-[#003087]">
+            Procházejte destinace a aerolinky
+          </h2>
           <Tabs defaultValue="states" className="w-full">
             <TabsList className="flex w-full max-w-3xl mx-auto mb-8 overflow-x-auto gap-1 sm:grid sm:grid-cols-4">
               <TabsTrigger value="states">Státy</TabsTrigger>

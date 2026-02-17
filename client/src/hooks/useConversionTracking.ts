@@ -11,7 +11,8 @@ import {
   trackViewContent, 
   trackInitiateCheckout, 
   trackNewsletterSignup, 
-  trackWishlistAdd 
+  trackWishlistAdd,
+  trackSearch as trackMetaSearch
 } from "@/components/MetaPixel";
 
 function getSessionId(): string {
@@ -79,6 +80,11 @@ export function useConversionTracking() {
       trackEvent("price_alert_set", { destination });
       // Meta Pixel: AddToWishlist event (price alert is similar to wishlist)
       trackWishlistAdd(destination, undefined);
+    },
+    trackSearch: (query: string, origin?: string) => {
+      trackEvent("search", { query, origin });
+      // Meta Pixel: Search event
+      trackMetaSearch(query);
     },
     trackEvent,
   };

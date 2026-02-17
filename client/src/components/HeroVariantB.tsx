@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Flame, Zap, CheckCircle } from "lucide-react";
 import { trackFormInteraction } from "@/lib/abTest";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
+import { trackSearch } from "@/components/MetaPixel";
 import HeroBackgroundSlideshow from "@/components/HeroBackgroundSlideshow";
 
 interface HeroVariantBProps {
@@ -28,6 +29,10 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
 
   const handleSearch = () => {
     trackHeroClick();
+    // Track search event in Meta Pixel
+    if (destination.trim()) {
+      trackSearch(destination.trim());
+    }
     onSearch(from, destination, duration, passengers);
   };
 

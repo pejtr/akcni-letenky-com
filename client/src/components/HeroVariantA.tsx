@@ -5,11 +5,13 @@
  * Features: Simple search form, minimal styling, no trust badges
  */
 
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { trackFormInteraction } from "@/lib/abTest";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
+import { trackSearch } from "@/components/MetaPixel";
 import HeroBackgroundSlideshow from "@/components/HeroBackgroundSlideshow";
 
 interface HeroVariantAProps {
@@ -24,6 +26,10 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
 
   const handleSearch = () => {
     trackHeroClick();
+    // Track search event in Meta Pixel
+    if (destination.trim()) {
+      trackSearch(destination.trim());
+    }
     onSearch(destination, passengers);
   };
 
@@ -104,5 +110,3 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
     </section>
   );
 }
-
-import * as React from "react";

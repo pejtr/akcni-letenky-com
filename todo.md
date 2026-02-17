@@ -1919,7 +1919,7 @@
 - [x] Add trackViewContent() to vacation detail pages - INTEGRATED via useConversionTracking
 - [x] Add trackAddToWishlist() to wishlist heart icons - INTEGRATED via useWishlist
 - [x] Add trackInitiateCheckout() to affiliate link clicks - INTEGRATED via useConversionTracking
-- [ ] Add trackSearch() to search form submissions - TODO
+- [x] Add trackSearch() to search form submissions - INTEGRATED in Home.tsx, HeroVariantA, HeroVariantB
 - [x] Add trackLead() to newsletter subscriptions - INTEGRATED via useConversionTracking
 - [x] Test all tracking events in Meta Events Manager - VITEST PASSED
 
@@ -1931,3 +1931,14 @@
 - [x] Fix HistoricalAnalytics GROUP BY query for MySQL strict mode
 - [x] Test analytics dashboard after fix
 - [x] Create checkpoint with all changes
+
+## SEO Fixes for Homepage (2026-02-17)
+- [x] Fix page title (30-60 characters) using document.title - SET DYNAMICALLY IN Home.tsx useEffect
+- [x] Add meta description (50-160 characters) - SET DYNAMICALLY IN Home.tsx useEffect
+- [x] Add H2 headings to homepage - 6+ VISIBLE H2s (featured cities, top flights, return flights, browse destinations, trust section, FAQ, airlines)
+- [x] Add keywords meta tag - SET DYNAMICALLY IN Home.tsx useEffect
+- [x] Fix html lang attribute from 'en' to 'cs'
+- [x] Add trackSearch() to search form submissions - INTEGRATED in Home.tsx, HeroVariantA, HeroVariantB
+- [x] Add trackSearch to useConversionTracking hook
+- [x] Write 23 vitest tests for SEO and search tracking
+- [ ] Create checkpoint
