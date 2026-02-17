@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { trackWishlistAdd } from '@/components/MetaPixel';
 
 const WISHLIST_KEY = 'akcni-letenky-wishlist';
 const SYNC_FLAG_KEY = 'akcni-letenky-wishlist-synced';
@@ -143,6 +144,8 @@ export function useWishlist() {
             { onSuccess: () => serverQuery.refetch() }
           );
         }
+        // Meta Pixel: AddToWishlist event
+        trackWishlistAdd(destinationId, undefined);
         return [...prev, newItem];
       }
     });

@@ -7,6 +7,12 @@
 
 import { useEffect, useCallback, useRef } from "react";
 import { trpc } from "@/lib/trpc";
+import { 
+  trackViewContent, 
+  trackInitiateCheckout, 
+  trackNewsletterSignup, 
+  trackWishlistAdd 
+} from "@/components/MetaPixel";
 
 function getSessionId(): string {
   let sid = sessionStorage.getItem("conversion_session_id");
@@ -45,11 +51,35 @@ export function useConversionTracking() {
   }, [trackMutation]);
 
   return {
-    trackDestinationView: (slug: string) => trackEvent("destination_view", { slug }),
-    trackOfferView: (offerId: string) => trackEvent("offer_view", { offerId }),
-    trackAffiliateClick: (destination: string) => trackEvent("affiliate_click", { destination }),
-    trackNewsletterSignup: () => trackEvent("newsletter_signup"),
-    trackPriceAlertSet: (destination: string) => trackEvent("price_alert_set", { destination }),
+    trackDestinationView: (slug: string) => {
+      trackEvent("destination_view", { slug });
+      // Meta Pixel: ViewContent event
+      trackViewContent(slug, undefined, "destination");
+    },
+    trackOfferView: (offerId: string, price?: number, type?: "flight" | "vacation") => {
+      trackEvent("offer_view", { offerId });
+      // Meta Pixel: ViewContent event with price
+      if (price && type) {
+        trackViewContent(offerId, price, type);
+      }
+    },
+    trackAffiliateClick: (destination: string, price?: number, provider?: string) => {
+      trackEvent("affiliate_click", { destination });
+      // Meta Pixel: InitiateCheckout event (user is starting purchase journey)
+      if (price) {
+        trackInitiateCheckout(destination, price, provider || "pelikan");
+      }
+    },
+    trackNewsletterSignup: () => {
+      trackEvent("newsletter_signup");
+      // Meta Pixel: Lead event
+      trackNewsletterSignup();
+    },
+    trackPriceAlertSet: (destination: string) => {
+      trackEvent("price_alert_set", { destination });
+      // Meta Pixel: AddToWishlist event (price alert is similar to wishlist)
+      trackWishlistAdd(destination, undefined);
+    },
     trackEvent,
   };
 }

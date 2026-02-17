@@ -88,74 +88,81 @@ export async function getLiveHistoricalData(days: number = 30): Promise<DailyDat
 
   try {
     // Affiliate clicks per day
+    const dateExpr = sql<string>`DATE(${affiliateClicks.createdAt})`;
     const clicksPerDay = await db
       .select({
-        date: sql<string>`DATE(${affiliateClicks.createdAt})`,
+        date: dateExpr,
         count: count(),
       })
       .from(affiliateClicks)
       .where(gte(affiliateClicks.createdAt, startDate))
-      .groupBy(sql`DATE(${affiliateClicks.createdAt})`);
+      .groupBy(dateExpr);
 
     // Registrations per day
+    const regDateExpr = sql<string>`DATE(${users.createdAt})`;
     const registrationsPerDay = await db
       .select({
-        date: sql<string>`DATE(${users.createdAt})`,
+        date: regDateExpr,
         count: count(),
       })
       .from(users)
       .where(gte(users.createdAt, startDate))
-      .groupBy(sql`DATE(${users.createdAt})`);
+      .groupBy(regDateExpr);
 
     // Subscribers per day
+    const subDateExpr = sql<string>`DATE(${emailCaptures.createdAt})`;
     const subscribersPerDay = await db
       .select({
-        date: sql<string>`DATE(${emailCaptures.createdAt})`,
+        date: subDateExpr,
         count: count(),
       })
       .from(emailCaptures)
       .where(gte(emailCaptures.createdAt, startDate))
-      .groupBy(sql`DATE(${emailCaptures.createdAt})`);
+      .groupBy(subDateExpr);
 
     // Chatbot conversations per day
+    const convDateExpr = sql<string>`DATE(${chatbotConversations.createdAt})`;
     const conversationsPerDay = await db
       .select({
-        date: sql<string>`DATE(${chatbotConversations.createdAt})`,
+        date: convDateExpr,
         count: count(),
       })
       .from(chatbotConversations)
       .where(gte(chatbotConversations.createdAt, startDate))
-      .groupBy(sql`DATE(${chatbotConversations.createdAt})`);
+      .groupBy(convDateExpr);
 
     // Chatbot leads per day
+    const leadDateExpr = sql<string>`DATE(${chatbotLeads.createdAt})`;
     const leadsPerDay = await db
       .select({
-        date: sql<string>`DATE(${chatbotLeads.createdAt})`,
+        date: leadDateExpr,
         count: count(),
       })
       .from(chatbotLeads)
       .where(gte(chatbotLeads.createdAt, startDate))
-      .groupBy(sql`DATE(${chatbotLeads.createdAt})`);
+      .groupBy(leadDateExpr);
 
     // Browsing history (page views) per day
+    const pvDateExpr = sql<string>`DATE(${browsingHistory.viewedAt})`;
     const pageViewsPerDay = await db
       .select({
-        date: sql<string>`DATE(${browsingHistory.viewedAt})`,
+        date: pvDateExpr,
         count: count(),
       })
       .from(browsingHistory)
       .where(gte(browsingHistory.viewedAt, startDate))
-      .groupBy(sql`DATE(${browsingHistory.viewedAt})`);
+      .groupBy(pvDateExpr);
 
     // Social shares per day
+    const shareDateExpr = sql<string>`DATE(${socialShares.createdAt})`;
     const sharesPerDay = await db
       .select({
-        date: sql<string>`DATE(${socialShares.createdAt})`,
+        date: shareDateExpr,
         count: count(),
       })
       .from(socialShares)
       .where(gte(socialShares.createdAt, startDate))
-      .groupBy(sql`DATE(${socialShares.createdAt})`);
+      .groupBy(shareDateExpr);
 
     // Build a map of all dates
     const dateMap = new Map<string, DailyDataPoint>();
