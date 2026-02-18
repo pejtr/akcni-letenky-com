@@ -67,6 +67,8 @@ export default function RevolutABTestDashboard() {
   const [statisticalSignificance, setStatisticalSignificance] = useState<StatisticalSignificance[]>([]);
   const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("both");
   const [bayesianResults, setBayesianResults] = useState<BayesianVariantResult[]>([]);
+  const [isTestCompleted, setIsTestCompleted] = useState(false);
+  const [winnerVariant, setWinnerVariant] = useState<string | null>(null);
 
   // TODO: Fetch real metrics from Meta Pixel events via tRPC
   // const { data: realMetrics } = trpc.analytics.getRevolutABTestMetrics.useQuery();
@@ -171,6 +173,28 @@ export default function RevolutABTestDashboard() {
 
     const bayesianResults = calculateBayesianABTest(bayesianVariants, 10000);
     setBayesianResults(bayesianResults);
+
+    // Check for automatic test completion (95% probability threshold)
+    const { shouldStop, winner } = shouldStopTest(bayesianResults, 0.95, 0.01);
+    
+    // Load completion status from localStorage
+    const storedCompleted = localStorage.getItem("revolut_ab_test_completed") === "true";
+    const storedWinner = localStorage.getItem("revolut_ab_test_winner");
+    
+    if (shouldStop && winner && !storedCompleted) {
+      // Test just completed - save to localStorage
+      localStorage.setItem("revolut_ab_test_completed", "true");
+      localStorage.setItem("revolut_ab_test_winner", winner);
+      setIsTestCompleted(true);
+      setWinnerVariant(winner);
+      
+      // TODO: Send notification to owner
+      console.log(`[RevolutABTest] Test completed! Winner: ${winner}`);
+    } else if (storedCompleted && storedWinner) {
+      // Load existing completion status
+      setIsTestCompleted(true);
+      setWinnerVariant(storedWinner);
+    }
   }, [dateRange]);
 
   const totalImpressions = metrics.reduce((sum, m) => sum + m.impressions, 0);
@@ -208,10 +232,35 @@ export default function RevolutABTestDashboard() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Revolut Pop-up A/B Test Dashboard</h1>
-        <p className="text-muted-foreground">
-          Sledujte výkonnost jednotlivých variant a optimalizujte konverze
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Revolut Pop-up A/B Test Dashboard</h1>
+            <p className="text-muted-foreground">
+              Sledujte výkonnost jednotlivých variant a optimalizujte konverze
+            </p>
+          </div>
+          {isTestCompleted && winnerVariant && (
+            <div className="flex items-center gap-4">
+              <div className="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-semibold flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5" />
+                Test dokončen: {getVariantName(winnerVariant)}
+              </div>
+              <button
+                onClick={() => {
+                  if (confirm("Opravdu chcete restartovat A/B test? Všechna data zůstanou zachována, ale test začne znovu s rovnoměrným rozdělením trafficu.")) {
+                    localStorage.removeItem("revolut_ab_test_completed");
+                    localStorage.removeItem("revolut_ab_test_winner");
+                    setIsTestCompleted(false);
+                    setWinnerVariant(null);
+                  }
+                }}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition-colors"
+              >
+                Restartovat test
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Analysis Mode Toggle */}

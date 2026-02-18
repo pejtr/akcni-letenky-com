@@ -2126,4 +2126,17 @@
 - [x] Add visual comparison showing both approaches side-by-side - DONE (conditional rendering based on analysisMode)
 - [x] Implement prior beliefs (uniform prior for unbiased start) - DONE (alpha=1, beta=1 in BetaDistribution)
 - [x] Write vitest tests for Bayesian calculations - 23 tests passing
+- [x] Create checkpoint - version a3c0d934
+
+## Automatic A/B Test Completion (2026-02-18)
+- [x] Create database schema for A/B test results (test_id, variant_winner, completion_date, final_metrics) - DONE (revolutABTestResults table)
+- [x] Add `isCompleted` and `winnerVariant` fields to track test status - DONE
+- [x] Implement automatic test completion logic when threshold is reached - DONE (dashboard checks Bayesian P(best) ≥ 95%)
+- [x] Implement traffic redirection to force winner variant (override random selection) - DONE (localStorage TEST_COMPLETED_KEY + WINNER_VARIANT_KEY)
+- [x] Modified getVariant() to check completion status and return winner when test is completed
+- [ ] Store final test results in database
+- [ ] Send owner notification when test completes
+- [x] Update dashboard UI to show "Test Completed" badge - DONE (green badge with CheckCircle2 icon)
+- [x] Add manual override to restart or stop test - DONE ("Restartovat test" button with confirmation dialog)
+- [ ] Write vitest tests for auto-completion logic
 - [ ] Create checkpoint

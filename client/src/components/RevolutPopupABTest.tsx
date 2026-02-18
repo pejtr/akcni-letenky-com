@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 const POPUP_DELAY_MS = 30000; // 30 seconds
 const STORAGE_KEY = "revolut_popup_dismissed";
 const VARIANT_KEY = "revolut_popup_variant";
+const TEST_COMPLETED_KEY = "revolut_ab_test_completed";
+const WINNER_VARIANT_KEY = "revolut_ab_test_winner";
 
 type PopupVariant = "banner" | "text" | "minimal";
 
@@ -21,8 +23,17 @@ const VARIANTS: VariantConfig[] = [
 
 /**
  * Get or assign variant using weighted random selection
+ * If test is completed, always return winner variant
  */
 function getVariant(): PopupVariant {
+  // Check if test is completed and winner is set
+  const isCompleted = localStorage.getItem(TEST_COMPLETED_KEY) === "true";
+  const winner = localStorage.getItem(WINNER_VARIANT_KEY);
+  
+  if (isCompleted && winner && ["banner", "text", "minimal"].includes(winner)) {
+    return winner as PopupVariant;
+  }
+
   // Check if variant was already assigned
   const stored = sessionStorage.getItem(VARIANT_KEY);
   if (stored && ["banner", "text", "minimal"].includes(stored)) {

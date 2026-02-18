@@ -891,3 +891,39 @@ export const remarketingEmailLog = mysqlTable("remarketing_email_log", {
 
 export type RemarketingEmailLog = typeof remarketingEmailLog.$inferSelect;
 export type InsertRemarketingEmailLog = typeof remarketingEmailLog.$inferInsert;
+
+
+/**
+ * Revolut A/B Test Results - stores completion status and winner
+ */
+export const revolutABTestResults = mysqlTable("revolut_ab_test_results", {
+  id: int("id").autoincrement().primaryKey(),
+  testName: varchar("testName", { length: 100 }).notNull(), // e.g., "revolut_popup_v1"
+  isCompleted: int("isCompleted").default(0).notNull(), // 0 = running, 1 = completed
+  winnerVariant: mysqlEnum("winnerVariant", ["banner", "text", "minimal"]),
+  completionReason: varchar("completionReason", { length: 255 }), // e.g., "Bayesian P(best) >= 95%"
+  
+  // Final metrics at completion
+  bannerImpressions: int("bannerImpressions").default(0),
+  bannerClicks: int("bannerClicks").default(0),
+  bannerConversions: int("bannerConversions").default(0),
+  
+  textImpressions: int("textImpressions").default(0),
+  textClicks: int("textClicks").default(0),
+  textConversions: int("textConversions").default(0),
+  
+  minimalImpressions: int("minimalImpressions").default(0),
+  minimalClicks: int("minimalClicks").default(0),
+  minimalConversions: int("minimalConversions").default(0),
+  
+  // Bayesian statistics at completion
+  winnerProbability: int("winnerProbability").default(0), // Stored as percentage (95 = 95%)
+  winnerExpectedLoss: int("winnerExpectedLoss").default(0), // Stored as basis points (50 = 0.50%)
+  
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RevolutABTestResult = typeof revolutABTestResults.$inferSelect;
+export type InsertRevolutABTestResult = typeof revolutABTestResults.$inferInsert;
