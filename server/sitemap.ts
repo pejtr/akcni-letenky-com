@@ -15,6 +15,7 @@
 import { getDb } from "./db";
 import { articles, destinations } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { destinationCountries, destinationCities } from "../shared/seoDestinations";
 
 interface SitemapUrl {
   loc: string;
@@ -93,7 +94,27 @@ export async function generateSitemap(): Promise<string> {
       });
     }
 
-    // Destination pages - priority 0.8
+    // SEO Country destination pages - priority 0.8
+    for (const country of destinationCountries) {
+      urls.push({
+        loc: `/letenky-do-${country.slug}`,
+        lastmod: new Date().toISOString().split("T")[0],
+        changefreq: "weekly",
+        priority: 0.8,
+      });
+    }
+
+    // SEO City destination pages - priority 0.7
+    for (const city of destinationCities) {
+      urls.push({
+        loc: `/letenky-${city.slug}`,
+        lastmod: new Date().toISOString().split("T")[0],
+        changefreq: "weekly",
+        priority: 0.7,
+      });
+    }
+
+    // Database destination pages - priority 0.8
     const allDestinations = await db.select().from(destinations);
     for (const dest of allDestinations) {
       urls.push({

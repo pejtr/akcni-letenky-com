@@ -2228,3 +2228,25 @@
 - [x] Change links from placeholder to Pelikan.cz URLs with affiliate tracking - DONE (AT:LON, AT:PAR, AT:ROM, AT:BCN)
 - [ ] Test all Kiwi links
 - [ ] Create checkpoint
+
+## Dynamic Sitemap.xml with Priorities (2026-02-18)
+- [ ] Create /api/sitemap.xml route in server
+- [ ] Generate sitemap with all pages: homepage (1.0), countries (0.8), cities (0.7), airlines (0.6), blog (0.8), articles (0.6)
+- [ ] Include lastmod dates for all pages
+- [ ] Add changefreq tags (daily for homepage, weekly for destinations, monthly for articles)
+- [ ] Test sitemap.xml accessibility and validation
+
+## Internal Linking Between Destinations (2026-02-18)
+- [ ] Add relatedCities field to country destinations in seoDestinations.ts
+- [ ] Add relatedCountry field to city destinations in seoDestinations.ts
+- [ ] Update SEODestinationPage to display "Související destinace" section
+- [ ] Link USA → New York, Miami; Itálie → Řím, Milán, Neapol; etc.
+- [ ] Test internal linking navigation
+
+## Schema.org Place Structured Data (2026-02-18)
+- [ ] Add GPS coordinates (latitude, longitude) to all destinations in seoDestinations.ts
+- [ ] Implement Place schema generator function
+- [ ] Add Place JSON-LD to SEODestinationPage component
+- [ ] Include address, geo coordinates, and description in schema
+- [ ] Test structured data with Google Rich Results Test
+- [ ] Create checkpoint
