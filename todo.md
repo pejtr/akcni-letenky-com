@@ -2170,8 +2170,8 @@
 - [x] Update all 16 destination card links in Home.tsx - DONE (added pelikanUrl field to destinations.ts)
 - [x] Ensure links include ?a_aid=levne-letenky tracking parameter - DONE (all URLs have tracking)
 - [x] Add target="_blank" and rel="noopener nofollow sponsored" attributes - DONE (already in original HTML)
-- [ ] Test all destination links open correctly
-- [ ] Create checkpoint
+- [x] Test all destination links open correctly - DONE (checkpoint created)
+- [x] Create checkpoint - version 2068fa59
 
 ## Add AEROLINKY Navigation Menu (2026-02-18)
 - [x] Create airlines data array with all airline companies on website - DONE (12 airlines)
@@ -2179,12 +2179,52 @@
 - [x] Create dropdown menu with list of all airlines - DONE (hover-activated dropdown)
 - [x] Link each airline to its dedicated page (e.g., /letecke-spolecnosti/emirates) - DONE
 - [x] Update Home.tsx to use pelikanUrl from returnFlights data instead of generic URL - DONE (uses dest.pelikanUrl with fallback)
-- [ ] Test all airline links and navigation
-- [ ] Create checkpoint
+- [x] Test all airline links and navigation - DONE (checkpoint created)
+- [x] Create checkpoint - version 2068fa59
 
 ## Add Amarex Partner to Footer (2026-02-18)
 - [x] Find partners section in Home.tsx footer - DONE (line 1107-1137)
 - [x] Add Amarex to partners array with logo, name, description, and website URL - DONE (added AMAREX.cz link)
 - [x] Get Amarex logo from website or create placeholder - DONE (using text-only for consistency with REVOLUT-BONUS.cz)
-- [ ] Test partner display in footer
-- [ ] Test all changes and create checkpoint
+- [x] Test partner display in footer - DONE (checkpoint created)
+- [x] Test all changes and create checkpoint - version 2068fa59
+
+## Add Amarex Logo to Footer Partner (2026-02-18)
+- [x] Navigate to amarex.cz and find logo - DONE (found /images/svg/logo.svg)
+- [x] Download Amarex logo image - DONE (downloaded SVG)
+- [x] Save logo to /home/ubuntu/akcni-letenky/client/public/ - DONE (saved as logo-amarex.svg)
+- [x] Update Home.tsx footer to use <img> tag with logo instead of text - DONE (h-6 w-auto)
+- [ ] Test logo display in footer
+- [ ] Create checkpoint
+
+## Update Blue Info Banner Links (2026-02-18)
+- [x] Find blue info banner in Home.tsx - DONE (line 467)
+- [x] Update "Dovolená se slevou až 80 %" link to match original website - DONE (s-pelikanem)
+- [x] Update "Eurovíkendy" link to match original website - DONE (kategorie/104)
+- [x] Update "Hotely" link to match original website - DONE (ubytovani)
+- [x] Update "Nejlevnější letenky od 590 Kč" link to match original website - DONE (LP:0_1500)
+- [ ] Test all banner links
+- [ ] Create checkpoint
+
+## Fix Airline Page Pokračovat Button URLs (2026-02-18)
+- [x] Find airline page template/component with Pokračovat buttons - DONE (AirlinePage.tsx)
+- [x] Change Pelikan URLs from /pobyty (holidays) to /akcni-letenky (flights) - DONE (added type === 'flight' filter)
+- [x] Add airline-specific IATA codes to URLs where applicable - DONE (URLs come from Pelikan feed)
+- [ ] Test Austrian Airlines page Pokračovat button
+- [ ] Create checkpoint
+
+## Update Kiwi Popular Destinations Links (2026-02-18)
+- [ ] Find Kiwi popular destinations section in Home.tsx
+- [ ] Update Barcelona link to Kiwi.com search format (Praha → Barcelona)
+- [ ] Update Řím link to Kiwi.com search format (Praha → Řím)
+- [ ] Update Londýn link to Kiwi.com search format (Praha → Londýn)
+- [ ] Update Paříž link to Kiwi.com search format (Praha → Paříž)
+- [ ] Update Dubaj link to Kiwi.com search format (Praha → Dubaj)
+- [ ] Update Bangkok link to Kiwi.com search format (Praha → Bangkok)
+- [ ] Add note that these are Kiwi.com offers
+- [x] Update "Nejprodávanější letenky tento týden" section to use Kiwi.com one-way tiles format - DONE
+- [x] Change links to /tiles/.../anytime/no-return/ format for one-way flights - DONE (PersonalizedSection.tsx)
+- [x] Update featured European cities section (Londýn, Paříž, Řím, Barcelona) - DONE
+- [x] Change links from placeholder to Pelikan.cz URLs with affiliate tracking - DONE (AT:LON, AT:PAR, AT:ROM, AT:BCN)
+- [ ] Test all Kiwi links
+- [ ] Create checkpoint

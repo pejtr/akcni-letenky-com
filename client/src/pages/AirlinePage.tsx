@@ -159,7 +159,13 @@ export default function AirlinePage() {
   }
 
   // Filter flights by airline name (case-insensitive partial match)
+  // IMPORTANT: Only show flight offers (type === 'flight'), not vacations
   const airlineFlights = flightsData?.filter((flight) => {
+    // First check if it's a flight offer (not vacation)
+    if ('type' in flight && flight.type !== 'flight') {
+      return false;
+    }
+    
     const flightAirline = ('airline' in flight && flight.airline?.toLowerCase()) || "";
     const searchName = airline.name.toLowerCase();
     // Match by airline name or IATA code

@@ -259,7 +259,7 @@ export default function Home() {
     image: dest.image
   }));
 
-  // Featured European cities with correct images
+  // Featured European cities with correct images and Pelikan.cz affiliate links
   const featuredCities = [
     {
       from: "Praha",
@@ -267,6 +267,7 @@ export default function Home() {
       price: 733,
       description: "Londýn – obchodní i kulturní centrum plné příležitostí a zážitků.",
       image: "/destinations/london.jpg",
+      pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:LON,S:PRI?a_aid=levne-letenky"
     },
     {
       from: "Praha",
@@ -274,6 +275,7 @@ export default function Home() {
       price: 1027,
       description: "Město lásky, umění, módy i gastronomie.",
       image: "/destinations/paris.jpg",
+      pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:PAR,S:PRI?a_aid=levne-letenky"
     },
     {
       from: "Praha",
@@ -281,6 +283,7 @@ export default function Home() {
       price: 712,
       description: "Věčné město – památky, historie a skvělé jídlo.",
       image: "/destinations/rome.jpg",
+      pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:ROM,S:PRI?a_aid=levne-letenky"
     },
     {
       from: "Praha",
@@ -288,6 +291,7 @@ export default function Home() {
       price: 946,
       description: "Gaudí, tapas a městské pláže. Skvělá volba po celý rok.",
       image: "/destinations/barcelona.jpg",
+      pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:BCN,S:PRI?a_aid=levne-letenky"
     },
   ];
 
@@ -463,20 +467,20 @@ export default function Home() {
       <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md">
         <div className="container">
           <div className="flex flex-wrap items-center justify-center gap-6 text-white text-sm md:text-base font-medium">
-            <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=blue-banner&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
-              Dovolená se slevou až 80 %
+            <a href="https://www.pelikan.cz/cs/pobyty/s-pelikanem/?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+              <b>Dovolená se slevou až 80 %</b>
             </a>
             <span className="text-white/60">|</span>
-            <a href="#eurovikendy" className="hover:underline flex items-center gap-1">
+            <a href="https://www.pelikan.cz/cs/pobyty/kategorie/104/?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
               Eurovíkendy
             </a>
             <span className="text-white/60">|</span>
-            <a href="#hotely" className="hover:underline flex items-center gap-1">
+            <a href="https://www.pelikan.cz/cs/ubytovani/?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
               Hotely
             </a>
             <span className="text-white/60">|</span>
-            <a href="#nejlevnejsi" className="hover:underline flex items-center gap-1">
-              Nejlevnější letenky od 590 Kč
+            <a href="https://www.pelikan.cz/cs/akcni-letenky/LP:0_1500,S:PRI?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+              Nejlevnější letenky <b>od 590 Kč</b>
             </a>
           </div>
         </div>
@@ -491,15 +495,15 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCities.map((city, index) => {
               const destSlug = cityToSlug[city.to.toLowerCase()] || city.to.toLowerCase().replace(/\s+/g, "-");
-              const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
+              const affiliateUrl = city.pelikanUrl || `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
               return (
                 <div key={index} className="relative">
                   <a
-                    href={kiwiUrl}
+                    href={affiliateUrl}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener nofollow sponsored"
                     className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
-                    onClick={() => { trackAffiliateClick(city.to, destSlug, "featured", kiwiUrl); trackFunnelAffiliateClick(city.to); }}
+                    onClick={() => { trackAffiliateClick(city.to, destSlug, "featured", affiliateUrl); trackFunnelAffiliateClick(city.to); }}
                   >
                     <div className="relative h-48 overflow-hidden">
                       {/* Gold "Nejprodávanější" Badge for top 3 */}
@@ -1132,7 +1136,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
               >
-                <span className="text-white text-sm font-medium">AMAREX.cz</span>
+                <img src="/logo-amarex.svg" alt="AMAREX.cz" className="h-6 w-auto object-contain" />
               </a>
             </div>
           </div>
