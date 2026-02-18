@@ -19,6 +19,11 @@ import {
   formatCredibleInterval,
   type BayesianVariantResult,
 } from "@/lib/bayesianABTest";
+import {
+  calculateThompsonAllocation,
+  calculateRegret,
+  type ThompsonSamplingVariant,
+} from "@/lib/thompsonSampling";
 
 interface VariantMetrics {
   variant: string;
@@ -69,6 +74,8 @@ export default function RevolutABTestDashboard() {
   const [bayesianResults, setBayesianResults] = useState<BayesianVariantResult[]>([]);
   const [isTestCompleted, setIsTestCompleted] = useState(false);
   const [winnerVariant, setWinnerVariant] = useState<string | null>(null);
+  const [thompsonAllocation, setThompsonAllocation] = useState<Record<string, number>>({});
+  const [cumulativeRegret, setCumulativeRegret] = useState<number>(0);
 
   // TODO: Fetch real metrics from Meta Pixel events via tRPC
   // const { data: realMetrics } = trpc.analytics.getRevolutABTestMetrics.useQuery();
@@ -82,6 +89,19 @@ export default function RevolutABTestDashboard() {
       { variant: "minimal", impressions: 1220, clicks: 78, ctr: 6.4, conversions: 9, conversionRate: 11.5 },
     ];
     setMetrics(simulatedMetrics);
+
+    // Calculate Thompson Sampling allocation
+    const thompsonVariants: ThompsonSamplingVariant[] = simulatedMetrics.map(m => ({
+      name: m.variant,
+      successes: m.conversions,
+      failures: m.clicks - m.conversions,
+    }));
+    
+    const allocation = calculateThompsonAllocation(thompsonVariants);
+    setThompsonAllocation(allocation);
+    
+    const regret = calculateRegret(thompsonVariants);
+    setCumulativeRegret(regret);
 
     // Auto-optimize traffic weights based on conversion rates
     const totalConversionRate = simulatedMetrics.reduce((sum, m) => sum + m.conversionRate, 0);
@@ -305,6 +325,76 @@ export default function RevolutABTestDashboard() {
             </button>
           </div>
         </div>
+      </Card>
+
+      {/* Thompson Sampling Toggle */}
+      <Card className="p-6 mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold mb-1">Režim alokace trafficu</h3>
+            <p className="text-sm text-muted-foreground">
+              Thompson Sampling dynamicky přiděluje více návštěvníků lepším variantám
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                localStorage.setItem("revolut_thompson_sampling_enabled", "false");
+                window.location.reload();
+              }}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                localStorage.getItem("revolut_thompson_sampling_enabled") !== "true"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Rovnoměrné (33/33/33%)
+            </button>
+            <button
+              onClick={() => {
+                localStorage.setItem("revolut_thompson_sampling_enabled", "true");
+                window.location.reload();
+              }}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                localStorage.getItem("revolut_thompson_sampling_enabled") === "true"
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Thompson Sampling
+            </button>
+          </div>
+        </div>
+
+        {/* Thompson Sampling Allocation Display */}
+        {localStorage.getItem("revolut_thompson_sampling_enabled") === "true" && Object.keys(thompsonAllocation).length > 0 && (
+          <div className="mt-6 pt-6 border-t">
+            <h4 className="text-sm font-semibold mb-4">Aktuální alokace trafficu (Thompson Sampling)</h4>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-1">Banner</p>
+                <p className="text-2xl font-bold text-blue-600">{thompsonAllocation.banner?.toFixed(1) || 0}%</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-1">Text</p>
+                <p className="text-2xl font-bold text-green-600">{thompsonAllocation.text?.toFixed(1) || 0}%</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-1">Minimal</p>
+                <p className="text-2xl font-bold text-purple-600">{thompsonAllocation.minimal?.toFixed(1) || 0}%</p>
+              </div>
+            </div>
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-muted-foreground">Kumulativní regret:</span>
+                <span className="text-sm font-bold">{cumulativeRegret.toFixed(2)} konverzí</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Regret = počet konverzí, které jsme ztratili tím, že jsme netestovali pouze nejlepší variantu. Nižší hodnota = efektivnější učení.
+              </p>
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Overall Stats */}

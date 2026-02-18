@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { X, CreditCard, TrendingDown, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { thompsonSampling, loadThompsonData, type ThompsonSamplingVariant } from "@/lib/thompsonSampling";
 
 const POPUP_DELAY_MS = 30000; // 30 seconds
 const STORAGE_KEY = "revolut_popup_dismissed";
 const VARIANT_KEY = "revolut_popup_variant";
 const TEST_COMPLETED_KEY = "revolut_ab_test_completed";
 const WINNER_VARIANT_KEY = "revolut_ab_test_winner";
+const THOMPSON_MODE_KEY = "revolut_thompson_sampling_enabled";
 
 type PopupVariant = "banner" | "text" | "minimal";
 
@@ -22,7 +24,7 @@ const VARIANTS: VariantConfig[] = [
 ];
 
 /**
- * Get or assign variant using weighted random selection
+ * Get or assign variant using Thompson Sampling or weighted random selection
  * If test is completed, always return winner variant
  */
 function getVariant(): PopupVariant {
@@ -40,7 +42,41 @@ function getVariant(): PopupVariant {
     return stored as PopupVariant;
   }
 
-  // Weighted random selection
+  // Check if Thompson Sampling is enabled
+  const thompsonEnabled = localStorage.getItem(THOMPSON_MODE_KEY) === "true";
+  
+  if (thompsonEnabled) {
+    // Load Thompson Sampling data from localStorage
+    const thompsonData = loadThompsonData();
+    
+    if (thompsonData) {
+      // Build variants array for Thompson Sampling
+      const variants: ThompsonSamplingVariant[] = [
+        {
+          name: "banner",
+          successes: thompsonData.banner?.successes || 0,
+          failures: thompsonData.banner?.failures || 0,
+        },
+        {
+          name: "text",
+          successes: thompsonData.text?.successes || 0,
+          failures: thompsonData.text?.failures || 0,
+        },
+        {
+          name: "minimal",
+          successes: thompsonData.minimal?.successes || 0,
+          failures: thompsonData.minimal?.failures || 0,
+        },
+      ];
+
+      // Use Thompson Sampling to select variant
+      const { selectedVariant } = thompsonSampling(variants);
+      sessionStorage.setItem(VARIANT_KEY, selectedVariant);
+      return selectedVariant as PopupVariant;
+    }
+  }
+
+  // Fallback to weighted random selection
   const totalWeight = VARIANTS.reduce((sum, v) => sum + v.weight, 0);
   let random = Math.random() * totalWeight;
   

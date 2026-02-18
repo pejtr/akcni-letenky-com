@@ -2139,4 +2139,15 @@
 - [x] Update dashboard UI to show "Test Completed" badge - DONE (green badge with CheckCircle2 icon)
 - [x] Add manual override to restart or stop test - DONE ("Restartovat test" button with confirmation dialog)
 - [ ] Write vitest tests for auto-completion logic
+- [x] Create checkpoint - version 2f796bf3
+
+## Thompson Sampling for Dynamic Traffic Allocation (2026-02-18)
+- [x] Implement Thompson Sampling algorithm with Beta distribution - DONE (thompsonSampling.ts)
+- [x] Add thompsonSampling() function to select variant based on posterior distributions - DONE
+- [x] Store conversion data (successes/failures) in localStorage for each variant - DONE (storeThompsonData/loadThompsonData)
+- [x] Integrate Thompson Sampling into RevolutPopupABTest getVariant() - DONE (checks THOMPSON_MODE_KEY in localStorage)
+- [x] Add toggle in dashboard to switch between equal weights and Thompson Sampling - DONE (localStorage toggle with page reload)
+- [x] Display current traffic allocation percentages in dashboard - DONE (shows Banner/Text/Minimal percentages)
+- [x] Add cumulative regret display to visualize Thompson Sampling efficiency - DONE (shows regret value with explanation)
+- [x] Write vitest tests for Thompson Sampling algorithm - DONE (17 tests passing)
 - [ ] Create checkpoint
