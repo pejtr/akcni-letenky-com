@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { BarChart, TrendingUp, Users, MousePointerClick, Calendar } from "lucide-react";
+import { BarChart, TrendingUp, Users, MousePointerClick, Calendar, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  calculateZScore,
+  calculatePValue,
+  calculateConfidenceInterval,
+  calculateMinimumSampleSize,
+  isStatisticallySignificant,
+  getSignificanceLabel,
+  formatWithCI,
+} from "@/lib/statisticalSignificance";
 
 interface VariantMetrics {
   variant: string;
@@ -11,6 +20,16 @@ interface VariantMetrics {
   ctr: number;
   conversions: number;
   conversionRate: number;
+}
+
+interface StatisticalSignificance {
+  variant: string;
+  zScore: number;
+  pValue: number;
+  confidenceInterval: [number, number];
+  isSignificant: boolean;
+  significanceLabel: string;
+  minSampleSize: number;
 }
 
 interface TimeSeriesDataPoint {
@@ -37,6 +56,7 @@ export default function RevolutABTestDashboard() {
 
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesDataPoint[]>([]);
+  const [statisticalSignificance, setStatisticalSignificance] = useState<StatisticalSignificance[]>([]);
 
   // TODO: Fetch real metrics from Meta Pixel events via tRPC
   // const { data: realMetrics } = trpc.analytics.getRevolutABTestMetrics.useQuery();
@@ -88,6 +108,49 @@ export default function RevolutABTestDashboard() {
     }
 
     setTimeSeriesData(generatedData);
+
+    // Calculate statistical significance (comparing each variant to banner as control)
+    const controlVariant = simulatedMetrics[0]; // banner is control
+    const controlRate = controlVariant.conversions / controlVariant.clicks;
+    const controlN = controlVariant.clicks;
+
+    const significance: StatisticalSignificance[] = simulatedMetrics.map((variant) => {
+      if (variant.variant === "banner") {
+        // Control variant - no comparison needed
+        const ci = calculateConfidenceInterval(controlRate, controlN);
+        return {
+          variant: variant.variant,
+          zScore: 0,
+          pValue: 1,
+          confidenceInterval: ci,
+          isSignificant: false,
+          significanceLabel: "Kontrolní varianta",
+          minSampleSize: 0,
+        };
+      }
+
+      const variantRate = variant.conversions / variant.clicks;
+      const variantN = variant.clicks;
+
+      const zScore = calculateZScore(variantRate, variantN, controlRate, controlN);
+      const pValue = calculatePValue(zScore);
+      const ci = calculateConfidenceInterval(variantRate, variantN);
+      const isSignificant = isStatisticallySignificant(pValue);
+      const significanceLabel = getSignificanceLabel(pValue);
+      const minSampleSize = calculateMinimumSampleSize(variantRate, controlRate);
+
+      return {
+        variant: variant.variant,
+        zScore,
+        pValue,
+        confidenceInterval: ci,
+        isSignificant,
+        significanceLabel,
+        minSampleSize,
+      };
+    });
+
+    setStatisticalSignificance(significance);
   }, [dateRange]);
 
   const totalImpressions = metrics.reduce((sum, m) => sum + m.impressions, 0);
@@ -282,6 +345,86 @@ export default function RevolutABTestDashboard() {
                   <p className="text-2xl font-bold text-green-600">{metric.conversionRate.toFixed(1)}%</p>
                 </div>
               </div>
+
+              {/* Statistical Significance */}
+              {statisticalSignificance.find((s) => s.variant === metric.variant) && (
+                <div className="mt-4 p-4 bg-muted/30 rounded-lg border">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-semibold">Statistická významnost</h4>
+                    {(() => {
+                      const sig = statisticalSignificance.find((s) => s.variant === metric.variant)!;
+                      if (metric.variant === "banner") {
+                        return (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                            <AlertCircle className="w-3 h-3" />
+                            Kontrolní varianta
+                          </span>
+                        );
+                      }
+                      return sig.isSignificant ? (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Statisticky významné
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                          <XCircle className="w-3 h-3" />
+                          Není významné
+                        </span>
+                      );
+                    })()}
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    {(() => {
+                      const sig = statisticalSignificance.find((s) => s.variant === metric.variant)!;
+                      return (
+                        <>
+                          <div>
+                            <p className="text-muted-foreground mb-1">95% CI</p>
+                            <p className="font-medium">
+                              {(sig.confidenceInterval[0] * 100).toFixed(1)}% - {(sig.confidenceInterval[1] * 100).toFixed(1)}%
+                            </p>
+                          </div>
+                          {metric.variant !== "banner" && (
+                            <>
+                              <div>
+                                <p className="text-muted-foreground mb-1">Z-score</p>
+                                <p className="font-medium">{sig.zScore.toFixed(2)}</p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground mb-1">P-value</p>
+                                <p className="font-medium">{sig.pValue.toFixed(4)}</p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground mb-1">Min. vzorek</p>
+                                <p className="font-medium">{sig.minSampleSize.toLocaleString()}</p>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  {(() => {
+                    const sig = statisticalSignificance.find((s) => s.variant === metric.variant)!;
+                    if (metric.variant !== "banner") {
+                      return (
+                        <p className="mt-3 text-xs text-muted-foreground">
+                          {sig.significanceLabel}
+                          {!sig.isSignificant && metric.clicks < sig.minSampleSize && (
+                            <span className="block mt-1 text-orange-600">
+                              ⚠️ Potřebujete ještě {(sig.minSampleSize - metric.clicks).toLocaleString()} kliků pro validní závěry
+                            </span>
+                          )}
+                        </p>
+                      );
+                    }
+                    return null;
+                  })()}
+                </div>
+              )}
 
               {/* Visual bar for conversion rate */}
               <div className="mt-4">

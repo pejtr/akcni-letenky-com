@@ -2101,4 +2101,16 @@
 - [x] Add tooltips showing exact values on hover - DONE (formatted as percentage)
 - [x] Add simulated trend data (banner declining, text improving, minimal stable) - DONE
 - [ ] Write vitest tests for chart data transformation
+- [x] Create checkpoint - version c3b5e7dc
+
+## Statistical Significance Calculator for A/B Test (2026-02-17)
+- [x] Implement z-score calculation for proportion comparison - DONE (statisticalSignificance.ts)
+- [x] Calculate p-value using standard normal distribution - DONE (error function approximation)
+- [x] Calculate 95% confidence intervals for each variant's conversion rate - DONE
+- [x] Add visual indicators (badges) for statistical significance (p < 0.05) - DONE (green=significant, orange=not significant)
+- [x] Calculate minimum sample size needed for 80% statistical power - DONE
+- [x] Show warning when sample size is insufficient - DONE ("Potřebujete ještě X kliků")
+- [x] Display Z-score, P-value, 95% CI, and Min. sample size - DONE
+- [x] Compare each variant to banner (control) - DONE
+- [x] Write vitest tests for statistical calculations - 19 tests passing
 - [ ] Create checkpoint
