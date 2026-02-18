@@ -717,15 +717,13 @@ export default function Home() {
             <TabsContent value="states" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {countries.map((country, index) => {
-                  const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${country.slug}`;
+                  const seoUrl = `/letenky-do-${country.seoSlug || country.slug}`;
                   return (
                     <a
                       key={index}
-                      href={kiwiUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={seoUrl}
                       className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
-                      onClick={() => { trackAffiliateClick(country.name, country.slug, "states-tab", kiwiUrl); trackFunnelAffiliateClick(country.name); }}
+                      onClick={() => { trackAffiliateClick(country.name, country.slug, "states-tab", seoUrl); trackFunnelAffiliateClick(country.name); }}
                     >
                       <div className="relative h-48 overflow-hidden">
                         <img
@@ -750,15 +748,13 @@ export default function Home() {
             <TabsContent value="cities" className="mt-6">
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {cities.map((city, index) => {
-                  const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${city.slug}`;
+                  const seoUrl = `/letenky-${city.seoSlug || city.slug}`;
                   return (
                     <a
                       key={index}
-                      href={kiwiUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={seoUrl}
                       className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden border border-gray-100 p-3"
-                      onClick={() => { trackAffiliateClick(city.name, city.slug, "cities-tab", kiwiUrl); trackFunnelAffiliateClick(city.name); }}
+                      onClick={() => { trackAffiliateClick(city.name, city.slug, "cities-tab", seoUrl); trackFunnelAffiliateClick(city.name); }}
                     >
                       <div className="flex items-center gap-3">
                         <img
