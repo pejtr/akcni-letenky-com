@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
+import { Heart, ChevronDown } from "lucide-react";
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const wishlistCount = 0; // TODO: Implement wishlist count
@@ -54,12 +54,82 @@ export default function Navigation() {
               <span>DOVOLENÁ</span>
             </a>
           </Link>
-          <Link href="/aerolinky">
-            <a className="flex items-center gap-1.5 text-[#003087] hover:text-[#E91E63] font-semibold text-sm transition-colors">
-              <span>✈️</span>
-              <span>AEROLINKY</span>
-            </a>
-          </Link>
+          {/* AEROLINKY Dropdown */}
+          <div className="relative group">
+            <Link href="/aerolinky">
+              <a className="flex items-center gap-1.5 text-[#003087] hover:text-[#E91E63] font-semibold text-sm transition-colors">
+                <span>✈️</span>
+                <span>AEROLINKY</span>
+                <ChevronDown className="w-3 h-3" />
+              </a>
+            </Link>
+            
+            {/* Dropdown Menu */}
+            <div className="absolute left-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="py-2">
+                <Link href="/letecke-spolecnosti/austrian-airlines">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Austrian Airlines
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/emirates">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Emirates
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/qatar-airways">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Qatar Airways
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/ryanair">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Ryanair
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/air-france">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Air France
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/lufthansa">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Lufthansa
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/icelandair">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Icelandair
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/turkish-airlines">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Turkish Airlines
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/klm">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    KLM
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/british-airways">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    British Airways
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/wizz-air">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    Wizz Air
+                  </a>
+                </Link>
+                <Link href="/letecke-spolecnosti/lot">
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#F5F7FA] hover:text-[#E91E63] transition-colors">
+                    LOT Polish Airlines
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
           <Link href="/vlaky-autobusy">
             <a className="flex items-center gap-1.5 text-[#003087] hover:text-[#E91E63] font-semibold text-sm transition-colors">
               <span>🚆</span>

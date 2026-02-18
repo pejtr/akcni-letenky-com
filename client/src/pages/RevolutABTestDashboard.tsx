@@ -22,6 +22,7 @@ import {
 import {
   calculateThompsonAllocation,
   calculateRegret,
+  generateBetaDistributionCurve,
   type ThompsonSamplingVariant,
 } from "@/lib/thompsonSampling";
 
@@ -507,6 +508,136 @@ export default function RevolutABTestDashboard() {
             />
           </LineChart>
         </ResponsiveContainer>
+      </Card>
+
+      {/* Posterior Distribution Visualization */}
+      <Card className="p-6 mb-8">
+        <h2 className="text-2xl font-bold mb-4">Posteriorní distribuce konverzních poměrů</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Beta distribuce ukazují pravděpodobnostní odhad skutečného konverzního poměru pro každou variantu.
+          Širší křivka = větší nejistota, užší křivka = větší jistota.
+        </p>
+
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis
+              type="number"
+              domain={[0, 1]}
+              tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+              label={{ value: "Konverzní poměr", position: "insideBottom", offset: -5 }}
+              stroke="#6b7280"
+              style={{ fontSize: "12px" }}
+            />
+            <YAxis
+              label={{ value: "Hustota pravděpodobnosti", angle: -90, position: "insideLeft" }}
+              stroke="#6b7280"
+              style={{ fontSize: "12px" }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "white",
+                border: "1px solid #e5e7eb",
+                borderRadius: "8px",
+                padding: "12px"
+              }}
+              formatter={(value: number, name: string) => [
+                value.toFixed(3),
+                name
+              ]}
+              labelFormatter={(value) => `CR: ${(Number(value) * 100).toFixed(1)}%`}
+            />
+            <Legend
+              wrapperStyle={{ paddingTop: "20px" }}
+              formatter={(value) => {
+                const match = value.match(/(.+) \(α=(\d+), β=(\d+)\)/);
+                if (match) {
+                  return `${getVariantName(match[1])} (α=${match[2]}, β=${match[3]})`;
+                }
+                return value;
+              }}
+            />
+            
+            {/* Banner variant */}
+            <Line
+              type="monotone"
+              data={(() => {
+                const bannerMetric = metrics.find(m => m.variant === "banner");
+                if (!bannerMetric) return [];
+                const alpha = 1 + bannerMetric.conversions;
+                const beta = 1 + (bannerMetric.clicks - bannerMetric.conversions);
+                return generateBetaDistributionCurve(alpha, beta, 200);
+              })()}
+              dataKey="y"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              dot={false}
+              name={(() => {
+                const bannerMetric = metrics.find(m => m.variant === "banner");
+                if (!bannerMetric) return "banner";
+                const alpha = 1 + bannerMetric.conversions;
+                const beta = 1 + (bannerMetric.clicks - bannerMetric.conversions);
+                return `banner (α=${alpha}, β=${beta})`;
+              })()}
+            />
+
+            {/* Text variant */}
+            <Line
+              type="monotone"
+              data={(() => {
+                const textMetric = metrics.find(m => m.variant === "text");
+                if (!textMetric) return [];
+                const alpha = 1 + textMetric.conversions;
+                const beta = 1 + (textMetric.clicks - textMetric.conversions);
+                return generateBetaDistributionCurve(alpha, beta, 200);
+              })()}
+              dataKey="y"
+              stroke="#10b981"
+              strokeWidth={2}
+              dot={false}
+              name={(() => {
+                const textMetric = metrics.find(m => m.variant === "text");
+                if (!textMetric) return "text";
+                const alpha = 1 + textMetric.conversions;
+                const beta = 1 + (textMetric.clicks - textMetric.conversions);
+                return `text (α=${alpha}, β=${beta})`;
+              })()}
+            />
+
+            {/* Minimal variant */}
+            <Line
+              type="monotone"
+              data={(() => {
+                const minimalMetric = metrics.find(m => m.variant === "minimal");
+                if (!minimalMetric) return [];
+                const alpha = 1 + minimalMetric.conversions;
+                const beta = 1 + (minimalMetric.clicks - minimalMetric.conversions);
+                return generateBetaDistributionCurve(alpha, beta, 200);
+              })()}
+              dataKey="y"
+              stroke="#a855f7"
+              strokeWidth={2}
+              dot={false}
+              name={(() => {
+                const minimalMetric = metrics.find(m => m.variant === "minimal");
+                if (!minimalMetric) return "minimal";
+                const alpha = 1 + minimalMetric.conversions;
+                const beta = 1 + (minimalMetric.clicks - minimalMetric.conversions);
+                return `minimal (α=${alpha}, β=${beta})`;
+              })()}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <p className="text-sm text-blue-900">
+            <strong>Interpretace:</strong> Křivka posunutá doprava = vyšší konverzní poměr.
+            Užší a vyšší křivka = větší jistota v odhadu (více dat).
+            Překrývající se křivky = varianty jsou si podobné.
+          </p>
+        </div>
       </Card>
 
       {/* Variant Comparison */}

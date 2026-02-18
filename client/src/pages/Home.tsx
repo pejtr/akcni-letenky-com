@@ -628,7 +628,8 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {returnFlights.map((dest, index) => {
-              const pelikanUrl = `https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=grid&utm_campaign=${dest.slug}`;
+              // Use pelikanUrl from data if available, otherwise fallback to generic URL
+              const pelikanUrl = dest.pelikanUrl || `https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=grid&utm_campaign=${dest.slug}`;
               const redirectUrl = `/redirect?url=${encodeURIComponent(pelikanUrl)}&dest=${encodeURIComponent(dest.name)}`;
               const discountPercent = Math.round(26 + (index * 3) % 12);
               return (
@@ -1124,6 +1125,14 @@ export default function Home() {
                 className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
               >
                 <span className="text-white text-sm font-medium">REVOLUT-BONUS.cz</span>
+              </a>
+              <a 
+                href="https://www.amarex.cz" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
+              >
+                <span className="text-white text-sm font-medium">AMAREX.cz</span>
               </a>
             </div>
           </div>

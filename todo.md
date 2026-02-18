@@ -2150,4 +2150,41 @@
 - [x] Display current traffic allocation percentages in dashboard - DONE (shows Banner/Text/Minimal percentages)
 - [x] Add cumulative regret display to visualize Thompson Sampling efficiency - DONE (shows regret value with explanation)
 - [x] Write vitest tests for Thompson Sampling algorithm - DONE (17 tests passing)
+- [x] Create checkpoint - version 0533264b
+
+## Posterior Distribution Visualization (2026-02-18)
+- [x] Implement Beta distribution PDF (probability density function) calculation - DONE
+- [x] Create calculateBetaPDF() function for density curve generation - DONE (with Lanczos approximation for log-Gamma)
+- [x] Add generateBetaDistributionCurve() helper function - DONE (generates 100 points)
+- [x] Add posterior distribution chart to dashboard with Recharts - DONE
+- [x] Display 3 colored density curves (banner=blue, text=green, minimal=purple) - DONE
+- [x] Add x-axis labels (conversion rate 0-100%) and y-axis (density) - DONE
+- [x] Show alpha and beta parameters for each variant in legend - DONE (α and β displayed)
+- [x] Add interpretation guide below chart - DONE (explains curve shape and overlap)
+- [ ] Test visualization with simulated data
+- [ ] Write vitest tests for Beta PDF calculation
 - [ ] Create checkpoint
+
+## Update Destination Card Affiliate Links (2026-02-18)
+- [x] Extract Pelikan.cz affiliate URLs from original HTML - DONE (from pasted_content.txt)
+- [x] Update all 16 destination card links in Home.tsx - DONE (added pelikanUrl field to destinations.ts)
+- [x] Ensure links include ?a_aid=levne-letenky tracking parameter - DONE (all URLs have tracking)
+- [x] Add target="_blank" and rel="noopener nofollow sponsored" attributes - DONE (already in original HTML)
+- [ ] Test all destination links open correctly
+- [ ] Create checkpoint
+
+## Add AEROLINKY Navigation Menu (2026-02-18)
+- [x] Create airlines data array with all airline companies on website - DONE (12 airlines)
+- [x] Add AEROLINKY button to top navigation menu - DONE (with ChevronDown icon)
+- [x] Create dropdown menu with list of all airlines - DONE (hover-activated dropdown)
+- [x] Link each airline to its dedicated page (e.g., /letecke-spolecnosti/emirates) - DONE
+- [x] Update Home.tsx to use pelikanUrl from returnFlights data instead of generic URL - DONE (uses dest.pelikanUrl with fallback)
+- [ ] Test all airline links and navigation
+- [ ] Create checkpoint
+
+## Add Amarex Partner to Footer (2026-02-18)
+- [x] Find partners section in Home.tsx footer - DONE (line 1107-1137)
+- [x] Add Amarex to partners array with logo, name, description, and website URL - DONE (added AMAREX.cz link)
+- [x] Get Amarex logo from website or create placeholder - DONE (using text-only for consistency with REVOLUT-BONUS.cz)
+- [ ] Test partner display in footer
+- [ ] Test all changes and create checkpoint

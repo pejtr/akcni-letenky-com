@@ -9,6 +9,7 @@ export interface Destination {
   country: string;
   image: string;
   slug: string;
+  pelikanUrl?: string; // Optional Pelikan.cz affiliate URL with tracking
 }
 
 export interface CountryDestination {
@@ -26,23 +27,24 @@ export interface TopDestination {
 }
 
 // Zpáteční levné letenky (16 destinations)
+// URLs match original website Pelikan.cz affiliate links with a_aid=levne-letenky tracking
 export const returnFlights: Destination[] = [
-  { name: "Londýn", price: 733, country: "Anglie", image: "/destinations/london.jpg", slug: "london-united-kingdom" },
-  { name: "New York", price: 7490, country: "USA", image: "/destinations/newyork.jpg", slug: "new-york-city-new-york-united-states" },
-  { name: "Afrika", price: 7990, country: "Afrika", image: "/destinations/africa.jpg", slug: "africa" },
-  { name: "Marakéš", price: 1426, country: "Maroko", image: "/destinations/morocco.jpg", slug: "marrakech-morocco" },
-  { name: "Paříž", price: 1027, country: "Francie", image: "/destinations/paris.jpg", slug: "paris-france" },
-  { name: "Hanoj", price: 7990, country: "Vietnam", image: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/PcIFUDsvFHLYFmbN.jpg", slug: "hanoi-vietnam" },
-  { name: "Bali", price: 12790, country: "Indonésie", image: "/destinations/bali.jpg", slug: "denpasar-bali-indonesia" },
-  { name: "Colombo", price: 13990, country: "Srí Lanka", image: "/destinations/srilanka.jpg", slug: "colombo-sri-lanka" },
-  { name: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/destinations/dubai.jpg", slug: "dubai-united-arab-emirates" },
-  { name: "Bangkok", price: 12390, country: "Thajsko", image: "/destinations/thailand.jpg", slug: "bangkok-thailand" },
-  { name: "Santorini", price: 1791, country: "Řecko", image: "/destinations/santorini.jpg", slug: "santorini-greece" },
-  { name: "Jordánsko", price: 1114, country: "Ammán", image: "/destinations/jordan.jpg", slug: "amman-jordan" },
-  { name: "Řím", price: 712, country: "Itálie", image: "/destinations/rome.jpg", slug: "rome-italy" },
-  { name: "Island", price: 1460, country: "Island", image: "/destinations/iceland.jpg", slug: "reykjavik-iceland" },
-  { name: "Miami", price: 9490, country: "USA", image: "/destinations/miami.jpg", slug: "miami-florida-united-states" },
-  { name: "Barcelona", price: 746, country: "Španělsko", image: "/destinations/barcelona.jpg", slug: "barcelona-spain" },
+  { name: "Londýn", price: 733, country: "Anglie", image: "/destinations/london.jpg", slug: "AT:LON,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:LON,S:PRI?a_aid=levne-letenky" },
+  { name: "New York", price: 7490, country: "USA", image: "/destinations/newyork.jpg", slug: "AT:NYC,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:NYC,S:PRI?a_aid=levne-letenky" },
+  { name: "Afrika", price: 7990, country: "Afrika", image: "/destinations/africa.jpg", slug: "DR:AF,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/DR:AF,S:PRI?a_aid=levne-letenky" },
+  { name: "Marakéš", price: 1426, country: "Maroko", image: "/destinations/morocco.jpg", slug: "AT:RAK,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:RAK,S:PRI?a_aid=levne-letenky" },
+  { name: "Paříž", price: 1027, country: "Francie", image: "/destinations/paris.jpg", slug: "AT:PAR,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:PAR,S:PRI?a_aid=levne-letenky" },
+  { name: "Hanoj", price: 7990, country: "Vietnam", image: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/PcIFUDsvFHLYFmbN.jpg", slug: "AT:SGN-HAN,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:SGN-HAN,S:PRI?a_aid=levne-letenky" },
+  { name: "Bali", price: 12790, country: "Indonésie", image: "/destinations/bali.jpg", slug: "AT:DPS,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:DPS,S:PRI?a_aid=levne-letenky" },
+  { name: "Colombo", price: 13990, country: "Srí Lanka", image: "/destinations/srilanka.jpg", slug: "AT:CMB,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:CMB,S:PRI?a_aid=levne-letenky" },
+  { name: "Dubaj", price: 5183, country: "Spojené Arabské Emiráty", image: "/destinations/dubai.jpg", slug: "AT:DXB,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:DXB,S:PRI?a_aid=levne-letenky" },
+  { name: "Bangkok", price: 12390, country: "Thajsko", image: "/destinations/thailand.jpg", slug: "AT:HKT-BKK,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:HKT-BKK,S:PRI?a_aid=levne-letenky" },
+  { name: "Santorini", price: 1791, country: "Řecko", image: "/destinations/santorini.jpg", slug: "AT:JTR,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:JTR,S:PRI?a_aid=levne-letenky" },
+  { name: "Jordánsko", price: 1114, country: "Ammán", image: "/destinations/jordan.jpg", slug: "AT:AMM,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:AMM,S:PRI?a_aid=levne-letenky" },
+  { name: "Řím", price: 712, country: "Itálie", image: "/destinations/rome.jpg", slug: "AT:ROM,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:ROM,S:PRI?a_aid=levne-letenky" },
+  { name: "Island", price: 1460, country: "Island", image: "/destinations/iceland.jpg", slug: "AT:REK,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:REK,S:PRI?a_aid=levne-letenky" },
+  { name: "Miami", price: 9490, country: "USA", image: "/destinations/miami.jpg", slug: "AT:MIA,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:MIA,S:PRI?a_aid=levne-letenky" },
+  { name: "Barcelona", price: 746, country: "Španělsko", image: "/destinations/barcelona.jpg", slug: "AT:BCN,S:PRI", pelikanUrl: "https://www.pelikan.cz/cs/akcni-letenky/AT:BCN,S:PRI?a_aid=levne-letenky" },
 ];
 
 // Státy (Countries)

@@ -182,6 +182,93 @@ export function calculateRegret(variants: ThompsonSamplingVariant[]): number {
 }
 
 /**
+ * Calculate Beta distribution probability density function (PDF)
+ * PDF(x; α, β) = (x^(α-1) * (1-x)^(β-1)) / B(α, β)
+ * where B(α, β) is the Beta function
+ * 
+ * @param x Value between 0 and 1 (conversion rate)
+ * @param alpha Alpha parameter (successes + prior)
+ * @param beta Beta parameter (failures + prior)
+ * @returns Probability density at x
+ */
+export function calculateBetaPDF(x: number, alpha: number, beta: number): number {
+  if (x < 0 || x > 1) return 0;
+  if (alpha <= 0 || beta <= 0) return 0;
+
+  // Handle edge cases
+  if (x === 0) return alpha === 1 ? beta : 0;
+  if (x === 1) return beta === 1 ? alpha : 0;
+
+  // Calculate log of Beta function: ln(B(α,β)) = ln(Γ(α)) + ln(Γ(β)) - ln(Γ(α+β))
+  const logBeta = logGamma(alpha) + logGamma(beta) - logGamma(alpha + beta);
+
+  // Calculate log of PDF: ln(PDF) = (α-1)ln(x) + (β-1)ln(1-x) - ln(B(α,β))
+  const logPDF = (alpha - 1) * Math.log(x) + (beta - 1) * Math.log(1 - x) - logBeta;
+
+  return Math.exp(logPDF);
+}
+
+/**
+ * Calculate log of Gamma function using Lanczos approximation
+ * More numerically stable than calculating Gamma directly
+ */
+function logGamma(z: number): number {
+  if (z <= 0) return Infinity;
+
+  // Lanczos coefficients for g=7
+  const g = 7;
+  const coef = [
+    0.99999999999980993,
+    676.5203681218851,
+    -1259.1392167224028,
+    771.32342877765313,
+    -176.61502916214059,
+    12.507343278686905,
+    -0.13857109526572012,
+    9.9843695780195716e-6,
+    1.5056327351493116e-7,
+  ];
+
+  if (z < 0.5) {
+    // Use reflection formula: Γ(1-z)Γ(z) = π/sin(πz)
+    return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - logGamma(1 - z);
+  }
+
+  z -= 1;
+  let x = coef[0];
+  for (let i = 1; i < g + 2; i++) {
+    x += coef[i] / (z + i);
+  }
+
+  const t = z + g + 0.5;
+  return Math.log(Math.sqrt(2 * Math.PI)) + Math.log(t) * (z + 0.5) - t + Math.log(x);
+}
+
+/**
+ * Generate Beta distribution density curve data points
+ * 
+ * @param alpha Alpha parameter (successes + prior)
+ * @param beta Beta parameter (failures + prior)
+ * @param numPoints Number of points to generate (default: 100)
+ * @returns Array of {x, y} points for plotting
+ */
+export function generateBetaDistributionCurve(
+  alpha: number,
+  beta: number,
+  numPoints: number = 100
+): Array<{ x: number; y: number }> {
+  const points: Array<{ x: number; y: number }> = [];
+
+  for (let i = 0; i <= numPoints; i++) {
+    const x = i / numPoints;
+    const y = calculateBetaPDF(x, alpha, beta);
+    points.push({ x, y });
+  }
+
+  return points;
+}
+
+/**
  * Get Thompson Sampling recommendation
  * 
  * @param variants Array of variants with their success/failure counts
