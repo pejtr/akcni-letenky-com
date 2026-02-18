@@ -2113,4 +2113,17 @@
 - [x] Display Z-score, P-value, 95% CI, and Min. sample size - DONE
 - [x] Compare each variant to banner (control) - DONE
 - [x] Write vitest tests for statistical calculations - 19 tests passing
+- [x] Create checkpoint - version 3ca83f05
+
+## Bayesian A/B Testing Model (2026-02-18)
+- [x] Implement Beta distribution class for Bayesian inference - DONE (bayesianABTest.ts)
+- [x] Implement Monte Carlo sampling for probability calculations - DONE (10,000 samples)
+- [x] Calculate probability that each variant is best - DONE
+- [x] Calculate expected loss for each variant - DONE
+- [x] Calculate 95% credible intervals (Bayesian CI) - DONE
+- [x] Add Bayesian metrics section to dashboard - DONE (blue cards with P(best), expected loss, credible intervals)
+- [x] Create toggle to switch between Frequentist and Bayesian views - DONE (3 buttons: Frekventistická, Bayesovská, Obě)
+- [x] Add visual comparison showing both approaches side-by-side - DONE (conditional rendering based on analysisMode)
+- [x] Implement prior beliefs (uniform prior for unbiased start) - DONE (alpha=1, beta=1 in BetaDistribution)
+- [x] Write vitest tests for Bayesian calculations - 23 tests passing
 - [ ] Create checkpoint

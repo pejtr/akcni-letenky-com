@@ -12,6 +12,13 @@ import {
   getSignificanceLabel,
   formatWithCI,
 } from "@/lib/statisticalSignificance";
+import {
+  calculateBayesianABTest,
+  shouldStopTest,
+  getBayesianRecommendation,
+  formatCredibleInterval,
+  type BayesianVariantResult,
+} from "@/lib/bayesianABTest";
 
 interface VariantMetrics {
   variant: string;
@@ -40,6 +47,7 @@ interface TimeSeriesDataPoint {
 }
 
 type DateRange = "7d" | "30d" | "all";
+type AnalysisMode = "frequentist" | "bayesian" | "both";
 
 export default function RevolutABTestDashboard() {
   const [metrics, setMetrics] = useState<VariantMetrics[]>([
@@ -57,6 +65,8 @@ export default function RevolutABTestDashboard() {
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesDataPoint[]>([]);
   const [statisticalSignificance, setStatisticalSignificance] = useState<StatisticalSignificance[]>([]);
+  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("both");
+  const [bayesianResults, setBayesianResults] = useState<BayesianVariantResult[]>([]);
 
   // TODO: Fetch real metrics from Meta Pixel events via tRPC
   // const { data: realMetrics } = trpc.analytics.getRevolutABTestMetrics.useQuery();
@@ -151,6 +161,16 @@ export default function RevolutABTestDashboard() {
     });
 
     setStatisticalSignificance(significance);
+
+    // Calculate Bayesian results
+    const bayesianVariants = simulatedMetrics.map((variant) => ({
+      name: variant.variant,
+      successes: variant.conversions,
+      failures: variant.clicks - variant.conversions,
+    }));
+
+    const bayesianResults = calculateBayesianABTest(bayesianVariants, 10000);
+    setBayesianResults(bayesianResults);
   }, [dateRange]);
 
   const totalImpressions = metrics.reduce((sum, m) => sum + m.impressions, 0);
@@ -193,6 +213,50 @@ export default function RevolutABTestDashboard() {
           Sledujte výkonnost jednotlivých variant a optimalizujte konverze
         </p>
       </div>
+
+      {/* Analysis Mode Toggle */}
+      <Card className="p-6 mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold mb-1">Metoda analýzy</h3>
+            <p className="text-sm text-muted-foreground">
+              Vyberte statistickou metodu pro vyhodnocení A/B testu
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setAnalysisMode("frequentist")}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                analysisMode === "frequentist"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Frekventistická
+            </button>
+            <button
+              onClick={() => setAnalysisMode("bayesian")}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                analysisMode === "bayesian"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Bayesovská
+            </button>
+            <button
+              onClick={() => setAnalysisMode("both")}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                analysisMode === "both"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Obě
+            </button>
+          </div>
+        </div>
+      </Card>
 
       {/* Overall Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -346,8 +410,9 @@ export default function RevolutABTestDashboard() {
                 </div>
               </div>
 
-              {/* Statistical Significance */}
-              {statisticalSignificance.find((s) => s.variant === metric.variant) && (
+              {/* Frequentist Statistical Significance */}
+              {(analysisMode === "frequentist" || analysisMode === "both") &&
+                statisticalSignificance.find((s) => s.variant === metric.variant) && (
                 <div className="mt-4 p-4 bg-muted/30 rounded-lg border">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-sm font-semibold">Statistická významnost</h4>
@@ -423,6 +488,90 @@ export default function RevolutABTestDashboard() {
                     }
                     return null;
                   })()}
+                </div>
+              )}
+
+              {/* Bayesian Analysis */}
+              {(analysisMode === "bayesian" || analysisMode === "both") &&
+                bayesianResults.find((b) => b.variant === metric.variant) && (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-semibold text-blue-900">Bayesovská analýza</h4>
+                    {(() => {
+                      const bayes = bayesianResults.find((b) => b.variant === metric.variant)!;
+                      if (bayes.probabilityBest >= 0.95) {
+                        return (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Vítěz ({(bayes.probabilityBest * 100).toFixed(0)}%)
+                          </span>
+                        );
+                      } else if (bayes.probabilityBest >= 0.60) {
+                        return (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                            <TrendingUp className="w-3 h-3" />
+                            Vede ({(bayes.probabilityBest * 100).toFixed(0)}%)
+                          </span>
+                        );
+                      } else {
+                        return (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                            <AlertCircle className="w-3 h-3" />
+                            Neutrální
+                          </span>
+                        );
+                      }
+                    })()}
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    {(() => {
+                      const bayes = bayesianResults.find((b) => b.variant === metric.variant)!;
+                      return (
+                        <>
+                          <div>
+                            <p className="text-muted-foreground mb-1">P(nejlepší)</p>
+                            <p className="font-medium text-blue-900">
+                              {(bayes.probabilityBest * 100).toFixed(1)}%
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground mb-1">Oček. ztráta</p>
+                            <p className="font-medium text-blue-900">
+                              {(bayes.expectedLoss * 100).toFixed(2)}%
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground mb-1">95% Cred. Int.</p>
+                            <p className="font-medium text-blue-900">
+                              {formatCredibleInterval(bayes.credibleInterval)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground mb-1">Střední hodnota</p>
+                            <p className="font-medium text-blue-900">
+                              {(bayes.mean * 100).toFixed(1)}%
+                            </p>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  <p className="mt-3 text-xs text-blue-700">
+                    {(() => {
+                      const bayes = bayesianResults.find((b) => b.variant === metric.variant)!;
+                      if (bayes.probabilityBest >= 0.95) {
+                        return `⚡ Silně doporučujeme tuto variantu - ${(bayes.probabilityBest * 100).toFixed(1)}% pravděpodobnost, že je nejlepší`;
+                      } else if (bayes.probabilityBest >= 0.80) {
+                        return `📈 Tato varianta pravděpodobně vede, ale počkejte na více dat`;
+                      } else if (bayes.probabilityBest >= 0.60) {
+                        return `🔍 Mírně vede, ale rozdíly nejsou jasné`;
+                      } else {
+                        return `⏳ Pokračujte v testování pro jasnější výsledky`;
+                      }
+                    })()}
+                  </p>
                 </div>
               )}
 
