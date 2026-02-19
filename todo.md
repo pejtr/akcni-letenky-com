@@ -2264,3 +2264,36 @@
 - [x] Create vitest tests for blog article generation and internal linking
 - [x] Test all 5 blog articles display correctly (verified in database)
 - [x] Create checkpoint
+
+## Schema.org Article JSON-LD Implementation (2026-02-18)
+- [ ] Read blog article page component to understand current structure
+- [ ] Implement Article JSON-LD structured data with author, datePublished, headline, image fields
+- [ ] Add JSON-LD script tag to blog article page component
+- [ ] Create vitest tests for JSON-LD validation
+- [ ] Test structured data with Google Rich Results Test
+- [ ] Update todo.md and create checkpoint
+
+## WhatsApp Message Generator for Group (2026-02-19)
+- [x] Remove WhatsApp chat widget from website
+- [x] Create admin panel page for WhatsApp message generation
+- [x] Implement offer selection UI (60% flights, 40% holidays)
+- [x] Create WhatsApp message formatter with emojis and links
+- [x] Add copy-to-clipboard functionality
+- [x] Add message preview
+- [ ] Create vitest tests
+- [ ] Update todo.md and create checkpoint
+
+## CRITICAL Production Bugs (2026-02-19)
+- [ ] Fix black placeholder logo in hero section
+- [ ] Fix invisible CTA buttons (pink text on pink background)
+- [ ] Test fixes on dev server
+- [ ] Save checkpoint and deploy
+
+## SEO Landing Pages for Destinations (2026-02-19)
+- [x] Add tRPC procedure to fetch real flights from Pelikan API (flights.pelikan)
+- [x] Create dynamic SEO landing page component (/{destination})
+- [x] Add SEO content (why visit, tips, best time to go)
+- [x] Update homepage flight cards to link to new landing pages
+- [x] Test landing pages with real Pelikan data (20 offers displayed)
+- [x] Create vitest tests (8/8 passed)
+- [x] Update todo.md and save checkpoint

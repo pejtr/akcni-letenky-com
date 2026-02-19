@@ -28,6 +28,8 @@ import Aerolinky from "./pages/Aerolinky";
 import DubajPage from "./pages/DubajPage";
 import BaliPage from "./pages/BaliPage";
 import NewYorkPage from "./pages/NewYorkPage";
+import WhatsAppGenerator from "./pages/WhatsAppGenerator";
+import DestinationLandingPage from "./pages/DestinationLandingPage";
 import { HeatmapTracking } from "./components/HeatmapTracking";
 import RevolutPopupABTest from "./components/RevolutPopupABTest";
 import RevolutABTestDashboard from "./pages/RevolutABTestDashboard";
@@ -38,6 +40,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path="/letecka-spolecnost/:slug" component={AirlinePage} />
+      <Route path="/:destination" component={DestinationLandingPage} />
       <Route path="/letenky-do-:slug" component={DestinationPage} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
@@ -64,7 +67,9 @@ function Router() {
       <Route path="/bali" component={BaliPage} />
       <Route path="/letenky-bali" component={BaliPage} />
       <Route path="/new-york" component={NewYorkPage} />
-      <Route path="/letenky-new-york" component={NewYorkPage} />    <Route path={"/404"} component={NotFound} />
+      <Route path="/letenky-new-york" component={NewYorkPage} />
+      <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
+      <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

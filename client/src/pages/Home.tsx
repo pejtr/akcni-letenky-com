@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import ChatbotWidget from "@/components/ChatbotWidget";
 
-import WhatsAppBanner from "@/components/WhatsAppBanner";
 import NewsletterBar from "@/components/NewsletterBar";
 import FacebookCampaignBanner from "@/components/FacebookCampaignBanner";
 
@@ -494,16 +493,16 @@ export default function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCities.map((city, index) => {
-              const destSlug = cityToSlug[city.to.toLowerCase()] || city.to.toLowerCase().replace(/\s+/g, "-");
-              const affiliateUrl = city.pelikanUrl || `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}`;
+              // Simple slug for internal landing pages
+              const simpleSlug = city.to.toLowerCase().replace(/\s+/g, "-").replace(/ý/g, "y").replace(/í/g, "i").replace(/ř/g, "r");
+              const internalUrl = `/${simpleSlug}`;
               return (
                 <div key={index} className="relative">
                   <a
-                    href={affiliateUrl}
-                    target="_blank"
-                    rel="noopener nofollow sponsored"
+                    href={internalUrl}
+                    rel="noopener"
                     className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
-                    onClick={() => { trackAffiliateClick(city.to, destSlug, "featured", affiliateUrl); trackFunnelAffiliateClick(city.to); }}
+                    onClick={() => { trackAffiliateClick(city.to, simpleSlug, "featured", internalUrl); trackFunnelAffiliateClick(city.to); }}
                   >
                     <div className="relative h-48 overflow-hidden">
                       {/* Gold "Nejprodávanější" Badge for top 3 */}
@@ -596,8 +595,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* WhatsApp Community Banner */}
-      <WhatsAppBanner />
+
 
       {/* Nejprodávanější letenky tento týden */}
       <section aria-labelledby="top-this-week" className="py-12 bg-white">

@@ -189,12 +189,40 @@ export const appRouter = router({
         return views;
       }),
 
-    // Increment offer views
+    // Increment view count for offer
     incrementViews: publicProcedure
-      .input(z.object({ flightId: z.number() }))
+      .input(z.object({ offerId: z.number() }))
       .mutation(async ({ input }) => {
-        await incrementOfferViews(input.flightId);
+        await incrementOfferViews(input.offerId);
         return { success: true };
+      }),
+
+    // Get flights by destination (for SEO landing pages)
+    byDestination: publicProcedure
+      .input(z.object({ destination: z.string(), limit: z.number().optional().default(20) }))
+      .query(async ({ input }) => {
+        const allFlights = await pelikanCache.getFlights();
+        
+        // Filter flights by destination (case-insensitive)
+        // Search in destination, title, and country fields
+        const filtered = allFlights.filter((flight: any) => {
+          const searchTerm = input.destination.toLowerCase();
+          return (
+            flight.destination?.toLowerCase().includes(searchTerm) ||
+            flight.title?.toLowerCase().includes(searchTerm) ||
+            flight.country?.toLowerCase().includes(searchTerm)
+          );
+        });
+        
+        return filtered.slice(0, input.limit);
+      }),
+
+    // Get all flights from Pelikan cache
+    pelikan: publicProcedure
+      .input(z.object({ limit: z.number().optional().default(20) }).optional())
+      .query(async ({ input }) => {
+        const flights = await pelikanCache.getFlights();
+        return flights.slice(0, input?.limit || 20);
       }),
   }),
 
