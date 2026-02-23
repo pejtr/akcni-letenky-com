@@ -2297,3 +2297,18 @@
 - [x] Test landing pages with real Pelikan data (20 offers displayed)
 - [x] Create vitest tests (8/8 passed)
 - [x] Update todo.md and save checkpoint
+
+## Automated Daily WhatsApp Message Generation (2026-02-19)
+- [x] Create scheduled task to run daily at 8:00 AM
+- [x] Implement tRPC procedure to generate formatted WhatsApp message with top offers (60% flights, 40% holidays)
+- [x] Send owner notification with generated message and link to admin panel
+- [x] Test scheduled task execution and notification delivery
+- [x] Create vitest tests for message generation and scheduling (19/19 passed)
+- [x] Update todo.md and save checkpoint
+
+## Automated Daily WhatsApp Message Generation (2026-02-23)
+- [x] Create server-side scheduled job for daily 8:00 AM CET message generation
+- [x] Implement WhatsApp message formatter using Pelikan cache (60% flights, 40% holidays)
+- [x] Send owner notification with generated message and admin panel link
+- [x] Create vitest tests for message generation and scheduling (19/19 passed)
+- [x] Update todo.md and save checkpoint

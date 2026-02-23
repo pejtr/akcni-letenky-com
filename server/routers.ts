@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
+import { generateAndNotify, getWhatsAppDailyStatus, getLastGeneratedMessage } from "./whatsappDailyMessage";
 import {
   getFeaturedFlights,
   getAllFlights,
@@ -1631,6 +1632,27 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
     generateDaily: protectedProcedure.mutation(async () => {
       const result = await generateDailyArticle();
       return result;
+    }),
+  }),
+
+  whatsapp: router({
+    // Generate WhatsApp message and send notification (manual trigger)
+    generate: protectedProcedure.mutation(async () => {
+      const result = await generateAndNotify();
+      return result;
+    }),
+
+    // Get status of WhatsApp daily scheduler
+    status: protectedProcedure.query(() => {
+      return getWhatsAppDailyStatus();
+    }),
+
+    // Get last generated message
+    lastMessage: protectedProcedure.query(() => {
+      return {
+        message: getLastGeneratedMessage(),
+        generatedAt: getWhatsAppDailyStatus().lastGeneratedAt,
+      };
     }),
   }),
 });

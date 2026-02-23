@@ -13,6 +13,7 @@ import { scheduleDailyReport } from "../dailyReport";
 import { scheduleWeeklyReport } from "../weeklyReport";
 import { scheduleFollowupProcessor } from "../emailFollowup";
 import { scheduleWishlistRemarketing } from "../wishlistRemarketing";
+import { scheduleWhatsAppDailyMessage } from "../whatsappDailyMessage";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 import { recordEmailOpened, recordEmailClicked } from "../emailAbTest";
 
@@ -148,6 +149,9 @@ async function startServer() {
 
     // Wishlist remarketing processor (every 30 min)
     scheduleWishlistRemarketing();
+
+    // WhatsApp daily message generator (8:00 AM CET)
+    scheduleWhatsAppDailyMessage();
   });
 }
 
