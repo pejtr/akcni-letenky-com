@@ -10,6 +10,7 @@
 
 import { pelikanCache } from "./pelikanCache";
 import { notifyOwner } from "./_core/notification";
+import { sendDailyOffersViaTelegram } from "./telegram";
 import type { FlightOffer, VacationOffer } from "./pelikanFeed";
 
 // ============ Constants ============
@@ -131,6 +132,7 @@ export async function generateAndNotify(): Promise<{
   success: boolean;
   message: string;
   notificationSent: boolean;
+  telegramSent: boolean;
 }> {
   try {
     console.log("[WhatsAppDaily] Generating daily message...");
@@ -146,6 +148,7 @@ export async function generateAndNotify(): Promise<{
         success: false,
         message: "No offers available in Pelikan cache",
         notificationSent: false,
+        telegramSent: false,
       };
     }
 
@@ -168,10 +171,25 @@ export async function generateAndNotify(): Promise<{
       console.warn("[WhatsAppDaily] Failed to send owner notification");
     }
 
+    // Send via Telegram
+    let telegramSent = false;
+    try {
+      const telegramResult = await sendDailyOffersViaTelegram(whatsappMessage);
+      telegramSent = telegramResult.ok;
+      if (telegramSent) {
+        console.log(`[WhatsAppDaily] Telegram message sent (id: ${telegramResult.messageId})`);
+      } else {
+        console.warn(`[WhatsAppDaily] Telegram send failed: ${telegramResult.error}`);
+      }
+    } catch (telegramError) {
+      console.error("[WhatsAppDaily] Telegram error:", telegramError);
+    }
+
     return {
       success: true,
       message: whatsappMessage,
       notificationSent,
+      telegramSent,
     };
   } catch (error) {
     console.error("[WhatsAppDaily] Error generating message:", error);
@@ -179,6 +197,7 @@ export async function generateAndNotify(): Promise<{
       success: false,
       message: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
       notificationSent: false,
+      telegramSent: false,
     };
   }
 }

@@ -2326,3 +2326,11 @@
 - [x] Update footer WhatsApp link to correct group URL (KG1IqrQclfY6NOgkmgs6ml)
 - [x] Update WhatsAppGenerator page link to correct group URL
 - [x] Update ReunionPage WhatsApp link to correct group URL
+
+## Telegram Bot Integration for Daily Offers (2026-02-24)
+- [x] Add Telegram bot token and chat ID as project secrets
+- [x] Create Telegram notification helper on server (server/telegram.ts)
+- [x] Integrate Telegram sending into daily WhatsApp message scheduler
+- [x] Test Telegram message delivery (test message sent successfully)
+- [x] Create vitest tests (13/13 passed)
+- [x] Save checkpoint
