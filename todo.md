@@ -2312,3 +2312,11 @@
 - [x] Send owner notification with generated message and admin panel link
 - [x] Create vitest tests for message generation and scheduling (19/19 passed)
 - [x] Update todo.md and save checkpoint
+
+## WhatsApp Group Join Banner (2026-02-24)
+- [x] Create WhatsApp group join banner component with green gradient, WhatsApp icon, CTA
+- [x] Integrate banner into homepage between Populární destinace and Zpáteční letenky
+- [x] Update footer WhatsApp link to correct group URL
+- [x] Test banner display and link functionality
+- [x] Create vitest tests (13/13 passed)
+- [x] Save checkpoint

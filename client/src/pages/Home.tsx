@@ -23,6 +23,7 @@ import PersonalizedSection from "@/components/PersonalizedSection";
 import CountdownTimer from "@/components/CountdownTimer";
 import GdprConsentBanner from "@/components/GdprConsentBanner";
 import SocialSharePanel from "@/components/SocialSharePanel";
+import WhatsAppGroupBanner from "@/components/WhatsAppGroupBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -616,6 +617,9 @@ export default function Home() {
       {/* Personalized Recommendations */}
       <PersonalizedSection />
 
+      {/* WhatsApp Group Join Banner */}
+      <WhatsAppGroupBanner />
+
       {/* Zpáteční levné letenky Grid */}
       <section aria-labelledby="return-flights" className="py-12 bg-[#F5F7FA]">
         <div className="container">
@@ -1059,7 +1063,7 @@ export default function Home() {
                     </div>
                   </a>
                   <a 
-                    href="https://chat.whatsapp.com/KDpuBfwm1Uw2GYc0PJJQXE" 
+                    href="https://chat.whatsapp.com/FiInAw6a1zw3iE0lem9eTy" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-start gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
