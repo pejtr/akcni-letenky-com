@@ -1063,7 +1063,7 @@ export default function Home() {
                     </div>
                   </a>
                   <a 
-                    href="https://chat.whatsapp.com/FiInAw6a1zw3iE0lem9eTy" 
+                    href="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-start gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/FiInAw6a1zw3iE0lem9eTy";
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml";
 
 export default function WhatsAppGroupBanner() {
   const [dismissed, setDismissed] = useState(false);

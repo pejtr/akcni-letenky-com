@@ -142,7 +142,7 @@ export default function WhatsAppGenerator() {
             <p>1. Vyberte nabídky (doporučeno: 60% letenky, 40% dovolené)</p>
             <p>2. Zkontrolujte náhled zprávy vpravo</p>
             <p>3. Klikněte "Zkopírovat zprávu"</p>
-            <p>4. Vložte zprávu do WhatsApp skupiny: https://chat.whatsapp.com/FiInAw6a1zw3iE0lem9eTy</p>
+            <p>4. Vložte zprávu do WhatsApp skupiny: https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml</p>
           </CardContent>
         </Card>
 

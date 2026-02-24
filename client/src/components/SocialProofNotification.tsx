@@ -1,7 +1,7 @@
 /**
  * Unified Social Proof Notification Widget
  * 
- * Displays real-time notifications like "Petr z Prahy právě rezervoval letenku..."
+ * Displays real-time notifications like "Petr z Prahy právě rezervoval/a letenku..."
  * to increase trust and urgency
  * 
  * Features:
@@ -63,8 +63,8 @@ const DESTINATIONS = [
 ];
 
 const ACTIONS = [
-  "právě rezervoval letenku do",
-  "právě koupil letenku do",
+  "právě rezervoval/a letenku do",
+  "právě koupil/a letenku do",
 ];
 
 export default function SocialProofNotification() {

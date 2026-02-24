@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 
-const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/FiInAw6a1zw3iE0lem9eTy";
+const WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml";
 
 describe("WhatsApp Group Banner", () => {
   describe("WhatsApp group URL configuration", () => {
     it("should use the correct WhatsApp group invite link", () => {
-      expect(WHATSAPP_GROUP_URL).toBe("https://chat.whatsapp.com/FiInAw6a1zw3iE0lem9eTy");
+      expect(WHATSAPP_GROUP_URL).toBe("https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml");
     });
 
     it("should be a valid WhatsApp group invite URL", () => {

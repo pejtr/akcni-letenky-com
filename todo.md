@@ -2320,3 +2320,9 @@
 - [x] Test banner display and link functionality
 - [x] Create vitest tests (13/13 passed)
 - [x] Save checkpoint
+
+## Quick Fixes (2026-02-24)
+- [x] Fix social proof notification: change "rezervoval" to "rezervoval/a" for gender neutrality
+- [x] Update footer WhatsApp link to correct group URL (KG1IqrQclfY6NOgkmgs6ml)
+- [x] Update WhatsAppGenerator page link to correct group URL
+- [x] Update ReunionPage WhatsApp link to correct group URL

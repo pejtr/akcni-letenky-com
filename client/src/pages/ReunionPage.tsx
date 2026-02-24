@@ -528,7 +528,7 @@ export default function ReunionPage() {
               <span className="font-bold">f</span> Tour De Svět
             </a>
             <a
-              href="https://chat.whatsapp.com/KDpuBfwm1Uw2GYc0PJJQXE"
+              href="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-[#25D366] text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-[#1DA851] transition-colors"
