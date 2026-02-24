@@ -2334,3 +2334,6 @@
 - [x] Test Telegram message delivery (test message sent successfully)
 - [x] Create vitest tests (13/13 passed)
 - [x] Save checkpoint
+
+## Remove Revolut-Bonus.cz References (2026-02-24)
+- [x] Remove all references to revolut-bonus.cz (domain blocked)

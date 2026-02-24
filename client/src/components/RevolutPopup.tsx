@@ -41,8 +41,8 @@ export function RevolutPopup() {
       });
     }
     
-    // Open in new tab
-    window.open("https://www.revolut-bonus.cz", "_blank");
+    // Revolut link removed (domain blocked)
+    // window.open("https://www.revolut-bonus.cz", "_blank");
     handleClose();
   };
 

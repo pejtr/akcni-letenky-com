@@ -133,8 +133,8 @@ export function RevolutPopupABTest() {
       });
     }
     
-    // Open in new tab
-    window.open("https://www.revolut-bonus.cz", "_blank");
+    // Revolut link removed (domain blocked)
+    // window.open("https://www.revolut-bonus.cz", "_blank");
     handleClose();
   };
 
@@ -297,7 +297,7 @@ function TextVariant({ onClose, onClick }: { onClose: () => void; onClick: () =>
       </button>
 
       <p className="text-xs text-gray-500 text-center mt-4">
-        Platí pro nové zákazníky. Podmínky na www.revolut-bonus.cz
+        Platí pro nové zákazníky.
       </p>
     </div>
   );
