@@ -33,6 +33,7 @@ import DestinationLandingPage from "./pages/DestinationLandingPage";
 import { HeatmapTracking } from "./components/HeatmapTracking";
 import RevolutPopupABTest from "./components/RevolutPopupABTest";
 import RevolutABTestDashboard from "./pages/RevolutABTestDashboard";
+import TipyCestovatele from "./pages/TipyCestovatele";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/levne-letenky" component={LevneLetenky} />
+      <Route path="/tipy-pro-cestovatele" component={TipyCestovatele} />
       <Route path="/dovolene" component={Dovolene} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/vlaky-autobusy" component={VlakyAutobusy} />

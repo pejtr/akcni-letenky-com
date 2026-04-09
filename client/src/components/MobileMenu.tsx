@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import { Link } from "wouter";
-import { Menu, X, Plane, MapPin, Palmtree, Building2, Zap, Phone, Train } from "lucide-react";
+import { Menu, X, Plane, MapPin, Palmtree, Building2, Zap, Phone, Train, Lightbulb } from "lucide-react";
 import { kiwiDeepLink } from "@shared/affiliateLinks";
 import { Button } from "@/components/ui/button";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
@@ -56,6 +56,11 @@ export default function MobileMenu() {
       href: "/vlaky-autobusy",
       label: "Vlaky & Autobusy",
       icon: <Train className="w-5 h-5" />,
+    },
+    {
+      href: "/tipy-pro-cestovatele",
+      label: "Tipy pro cestovatele",
+      icon: <Lightbulb className="w-5 h-5" />,
     },
     {
       href: kiwiDeepLink({ currency: "CZK", lang: "cs" }, "mobile-menu"),

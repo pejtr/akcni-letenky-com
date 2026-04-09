@@ -22,6 +22,7 @@ import {
   getAllArticles,
   getArticleBySlug,
   getRecentArticles,
+  getArticlesByCategory,
   getAllDestinations,
   getDestinationBySlug,
   getFeaturedDestinations,
@@ -330,6 +331,14 @@ export const appRouter = router({
       .input(z.object({ limit: z.number().default(5) }))
       .query(async ({ input }) => {
         const articles = await getRecentArticles(input.limit);
+        return articles;
+      }),
+
+    // Get articles by category
+    byCategory: publicProcedure
+      .input(z.object({ category: z.string(), limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        const articles = await getArticlesByCategory(input.category, input.limit);
         return articles;
       }),
 

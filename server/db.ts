@@ -432,6 +432,25 @@ export async function getRecentArticles(limit: number = 5) {
   return result;
 }
 
+export async function getArticlesByCategory(category: string, limit?: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { articles } = await import("../drizzle/schema");
+
+  let query = db
+    .select()
+    .from(articles)
+    .where(and(eq(articles.status, "published"), eq(articles.category, category)))
+    .orderBy(desc(articles.publishedAt));
+
+  if (limit) {
+    query = query.limit(limit) as any;
+  }
+
+  return await query;
+}
+
 // Destination Queries
 
 export async function getAllDestinations() {

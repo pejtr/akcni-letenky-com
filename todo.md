@@ -2396,3 +2396,25 @@
 - [x] Add popular destinations quick links with Kiwi.com affiliate links
 - [x] Add SocialProofNotification and CountdownTimer to LevneLetenky page
 - [x] Add Aviasales CTA banner on LevneLetenky page
+
+## Tipy pro cestovatele sekce (2026-04-09)
+- [x] Vytvořit stránku /tipy-pro-cestovatele s kategorizovanými články
+- [x] Přidat backend endpoint articles.byCategory pro filtrování dle kategorie
+- [x] Přidat getArticlesByCategory funkci do db.ts
+- [x] Napsat 8 SEO článků o levných letenkách (kategorie: tips)
+  - [x] 10 triků jak najít levné letenky
+  - [x] Nejlevnější destinace z Prahy
+  - [x] Cenový kalendář letenek
+  - [x] Last minute letenky - mýty a pravda
+  - [x] Levné letenky pro rodinu
+  - [x] Věrnostní programy aerolinek
+  - [x] Příruční zavazadlo pravidla 2025
+  - [x] Skryté poplatky při nákupu letenek
+- [x] Vložit články do databáze přes seed skript
+- [x] Přidat odkaz TIPY do desktop navigace (Navigation.tsx)
+- [x] Přidat Tipy pro cestovatele do MobileMenu.tsx
+- [x] Registrovat route /tipy-pro-cestovatele v App.tsx
+- [x] Přidat affiliate linky Kiwi.com (marker=155221) do každého článku
+- [x] Přidat CTA sekci s Kiwi.com na stránce Tipy
+- [x] Přidat rychlé tipy banner (6 tipů) na stránce
+- [x] Propojit se sekcí Nejnovější z blogu (internal linking)

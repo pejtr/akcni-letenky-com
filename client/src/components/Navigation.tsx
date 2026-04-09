@@ -136,6 +136,12 @@ export default function Navigation() {
               <span>VLAKY</span>
             </a>
           </Link>
+          <Link href="/tipy-pro-cestovatele">
+            <a className="flex items-center gap-1.5 text-[#003087] hover:text-[#E91E63] font-semibold text-sm transition-colors">
+              <span>💡</span>
+              <span>TIPY</span>
+            </a>
+          </Link>
         </nav>
 
         {/* Right Side - Wishlist & CTA */}
