@@ -2418,3 +2418,13 @@
 - [x] Přidat CTA sekci s Kiwi.com na stránce Tipy
 - [x] Přidat rychlé tipy banner (6 tipů) na stránce
 - [x] Propojit se sekcí Nejnovější z blogu (internal linking)
+
+## Automatické denní generování článků 'Tipy pro cestovatele' (2026-04-09)
+- [x] Vytvořit tipsArticleGenerator.ts s 20+ unikátními tématy
+- [x] Přidat generateDailyTipArticle() funkci s LLM
+- [x] Přidat scheduleDailyTipArticle() cron scheduler (každý den v 7:00)
+- [x] Přidat admin tRPC endpoint articles.generateTip pro ruční spuštění
+- [x] Přidat admin tRPC endpoint articles.getTipsStats pro statistiky
+- [x] Napojit scheduler na server/_core/index.ts
+- [x] Přidat admin UI panel pro správu generování tipů (TipsGeneratorCard v AdminDashboard)
+- [x] Napsat vitest testy pro generateDailyTipArticle (8/8 passed)

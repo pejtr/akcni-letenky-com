@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { generateAndNotify, getWhatsAppDailyStatus, getLastGeneratedMessage } from "./whatsappDailyMessage";
 import {
@@ -43,6 +44,10 @@ import {
   saveGeneratedArticle,
   generateDailyArticle,
 } from "./blogGenerator";
+import {
+  generateDailyTipArticle,
+  getTipsGenerationStats,
+} from "./tipsArticleGenerator";
 import {
   getABTestStatus,
   calculateABTestResults,
@@ -349,6 +354,26 @@ export const appRouter = router({
       }
       await generateDailyArticles();
       return { success: true };
+    }),
+
+    // Generate one travel tip article (admin only)
+    generateTip: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      }
+      const result = await generateDailyTipArticle();
+      if (!result.success) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: result.error || "Generation failed" });
+      }
+      return { success: true, slug: result.slug, title: result.title };
+    }),
+
+    // Get tips generation statistics (admin only)
+    getTipsStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      }
+      return await getTipsGenerationStats();
     }),
   }),
 

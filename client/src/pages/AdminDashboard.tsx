@@ -409,6 +409,11 @@ export default function AdminDashboard() {
           <TrackingPixelSettings />
         </div>
 
+        {/* Tips Article Generator */}
+        <div className="mt-6">
+          <TipsGeneratorCard />
+        </div>
+
         {/* RESEND_API_KEY Warning */}
         <ResendKeyWarning />
       </main>
@@ -1587,5 +1592,122 @@ function ResendKeyWarning() {
         </p>
       </div>
     </div>
+  );
+}
+
+// ============ Tips Article Generator Card ============
+function TipsGeneratorCard() {
+  const [lastResult, setLastResult] = React.useState<{ title: string; slug: string } | null>(null);
+
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.articles.getTipsStats.useQuery();
+
+  const generateTip = trpc.articles.generateTip.useMutation({
+    onSuccess: (data) => {
+      setLastResult({ title: data.title, slug: data.slug });
+      refetchStats();
+    },
+  });
+
+  const isGenerating = generateTip.isPending;
+
+  return (
+    <Card className="border-green-200">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div className="flex items-center gap-2">
+          <div className="p-2 bg-green-50 rounded-lg">
+            <Lightbulb className="w-5 h-5 text-green-600" />
+          </div>
+          <div>
+            <CardTitle className="text-base font-bold">Tipy pro cestovatele — AI Generátor</CardTitle>
+            <p className="text-xs text-muted-foreground mt-0.5">Automaticky generuje 1 nový SEO článek každý den v 7:00</p>
+          </div>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => generateTip.mutate()}
+          disabled={isGenerating}
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
+          {isGenerating ? (
+            <>
+              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              Generuji...
+            </>
+          ) : (
+            <>
+              <Zap className="w-4 h-4 mr-2" />
+              Generovat nyní
+            </>
+          )}
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {generateTip.isError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            <strong>Chyba:</strong> {generateTip.error?.message}
+          </div>
+        )}
+
+        {lastResult && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+            <strong>✅ Vygenerováno:</strong>{" "}
+            <a href={`/blog/${lastResult.slug}`} target="_blank" rel="noopener" className="underline font-medium">
+              {lastResult.title}
+            </a>
+          </div>
+        )}
+
+        {statsLoading ? (
+          <div className="grid grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+            ))}
+          </div>
+        ) : stats ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-gray-50 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-green-700">{stats.totalTips}</div>
+              <div className="text-xs text-muted-foreground mt-1">Celkem tipů</div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4 text-center">
+              <div className="text-3xl font-bold text-blue-700">{stats.topicsAvailable - stats.topicsUsed}</div>
+              <div className="text-xs text-muted-foreground mt-1">Zbývající témata</div>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4 text-center">
+              <div className="text-sm font-semibold text-gray-700">
+                {stats.lastGenerated
+                  ? new Date(stats.lastGenerated).toLocaleDateString("cs-CZ", { day: "numeric", month: "short", year: "numeric" })
+                  : "Nikdy"}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">Poslední generování</div>
+            </div>
+          </div>
+        ) : null}
+
+        {stats && stats.recentArticles.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Poslední vygenerované tipy:</h4>
+            <ul className="space-y-1">
+              {stats.recentArticles.map((a) => (
+                <li key={a.slug} className="flex items-center justify-between text-sm">
+                  <a href={`/blog/${a.slug}`} target="_blank" rel="noopener" className="text-blue-600 hover:underline truncate max-w-xs">
+                    {a.title}
+                  </a>
+                  <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
+                    {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString("cs-CZ") : ""}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-700">
+          <strong>ℹ️ Plán:</strong> Každý den v 7:00 se automaticky vygeneruje 1 nový tip z pool 25+ témat. 
+          Každý článek obsahuje affiliate linky Kiwi.com (marker=155221) a SEO optimalizaci.
+          Celkem pokryje <strong>{stats?.topicsAvailable ?? 25}+ dní</strong> bez opakování.
+        </div>
+      </CardContent>
+    </Card>
   );
 }
