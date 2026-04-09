@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { Menu, X, Plane, MapPin, Palmtree, Building2, Zap, Phone, Train } from "lucide-react";
+import { kiwiDeepLink } from "@shared/affiliateLinks";
 import { Button } from "@/components/ui/button";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 
@@ -57,7 +58,7 @@ export default function MobileMenu() {
       icon: <Train className="w-5 h-5" />,
     },
     {
-      href: "https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs",
+      href: kiwiDeepLink({ currency: "CZK", lang: "cs" }, "mobile-menu"),
       label: reservationCta.text,
       icon: <Plane className="w-5 h-5" />,
       external: true,

@@ -15,6 +15,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { kiwiSearchLink } from "@shared/affiliateLinks";
 import {
   getAssignedVariant,
   trackImpression,
@@ -163,7 +164,7 @@ export default function SocialProofNotification() {
   return (
     <div className={positionClasses}>
       {notifications.map((notification, index) => {
-        const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${notification.destinationSlug}?a_aid=levne-letenky`;
+        const kiwiUrl = kiwiSearchLink("prague-czech-republic", notification.destinationSlug, "social-proof");
         
         return (
           <a

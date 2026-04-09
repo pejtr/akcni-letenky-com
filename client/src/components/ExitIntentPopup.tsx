@@ -10,6 +10,7 @@
 
 import * as React from "react";
 import { X, MessageCircle, Plane, Clock, Gift, Sparkles, Tag, ArrowRight } from "lucide-react";
+import { kiwiDeepLink } from "@shared/affiliateLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useViewedDestinations } from "@/hooks/useViewedDestinations";
@@ -291,7 +292,7 @@ export default function ExitIntentPopup({
               {personalizedOffers.map((deal, index) => (
                 <a
                   key={index}
-                  href={`https://www.kiwi.com/deep?from=PRG&to=${deal.slug || deal.destination}&affilid=levneletenky`}
+                  href={kiwiDeepLink({ from: "PRG", to: deal.slug || deal.destination }, "exit-popup")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-4 p-3 border-2 border-gray-200 rounded-xl hover:border-orange-500 hover:shadow-lg transition-all group relative overflow-hidden"

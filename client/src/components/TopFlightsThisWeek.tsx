@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { Plane, TrendingUp, Users } from "lucide-react";
+import { kiwiSearchLink } from "@shared/affiliateLinks";
 
 // Destination to image mapping
 const destinationImages: Record<string, string> = {
@@ -76,7 +77,7 @@ export default function TopFlightsThisWeek() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {topDestinations.map((dest, index) => {
-        const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${dest.destinationSlug}?a_aid=levne-letenky`;
+        const kiwiUrl = kiwiSearchLink("prague-czech-republic", dest.destinationSlug, "top-flights");
         const isTopThree = index < 3;
 
         return (

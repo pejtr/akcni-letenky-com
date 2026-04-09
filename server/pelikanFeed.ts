@@ -177,8 +177,11 @@ function detectTags(deal: any): string[] {
 function detectType(deal: any): string {
   const country = (deal.country?.[0] || "").toLowerCase();
   const city = (deal.city?.[0] || "").toLowerCase();
+  const dealName = (deal.dealName?.[0] || "").toLowerCase();
+  const description = (deal.shortDescription?.[0] || "").toLowerCase();
+  const fullText = `${dealName} ${description} ${country} ${city}`;
 
-  // Check for wellness
+  // Check for wellness via product tag
   let hasWellness = false;
   if (deal.dealDiscountProducts?.[0]?.dealDiscountProducts) {
     const products = deal.dealDiscountProducts[0].dealDiscountProducts;
@@ -186,12 +189,28 @@ function detectType(deal: any): string {
       hasWellness = products.some((p: any) => (p.name?.[0] || "").toUpperCase() === "WELLNESS");
     }
   }
-
   if (hasWellness) return "wellness";
 
+  // PRIMARY SIGNAL: If the deal has a length (nights/days) > 0, it's a hotel stay, not a flight
+  const lengthDays = parseInt(deal.length?.[0] || "0", 10);
+  if (lengthDays > 0) {
+    return "more";
+  }
+
+  // If deal name contains hotel/resort/apartmán keywords → vacation (not a flight)
+  const hotelKeywords = [
+    "hotel", "resort", "apartmán", "apartman", "penzion", "wellness", "spa", "vila",
+    "bungalov", "chata", "chalupa", "pension", "hostel", "lodge", "inn", "suite",
+    "shelter", "haymarket", "vesterbro", "zájezd", "pobyt", "dovolena", "dovolena",
+    "fotbal", "sport", "zápas", "tour", "cruise", "pláž"
+  ];
+  if (hotelKeywords.some(kw => dealName.includes(kw))) {
+    return "more";
+  }
+
   // Check for sea destinations
-  const seaCountries = ["řecko", "španělsko", "italie", "malta", "chorvatsko", "turecko", "egypt", "portugalsko"];
-  if (seaCountries.includes(country) || city.includes("beach")) {
+  const seaCountries = ["řecko", "španělsko", "itálie", "italie", "malta", "chorvatsko", "turecko", "egypt", "portugalsko", "bulharsko", "kypr", "tunisko", "maroko", "francie", "france"];
+  if (seaCountries.some(c => country.includes(c)) || fullText.includes("pláž") || fullText.includes("beach") || fullText.includes("moře")) {
     return "more";
   }
 
@@ -213,9 +232,14 @@ function detectType(deal: any): string {
     "katar", "doha",
     "omán", "muskat"
   ];
-  
   if (exoticCountries.some(exotic => country.includes(exotic) || city.includes(exotic))) {
     return "exotika";
+  }
+
+  // Nearby countries → always vacation (no direct flights from CZ)
+  const nearbyCountries = ["slovensko", "maďarsko", "rakousko", "polsko", "slovinsko", "srbsko", "rumunsko", "černá hora", "skotsko", "anglie", "velká británie", "dánsko", "norsko", "švédsko", "finsko"];
+  if (nearbyCountries.some(c => country.includes(c) || city.includes(c))) {
+    return "more";
   }
 
   return "city";
@@ -330,6 +354,7 @@ export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
         length,
         tags: detectTags(deal),
         region: deal.region?.[0] || "",
+        source: "pelikan" as const,
       };
 
       if (isVacation) {

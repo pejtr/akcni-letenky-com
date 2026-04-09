@@ -8,6 +8,7 @@
 
 import { Resend } from "resend";
 import { getDb } from "./db";
+import { kiwiSearchLink } from "../shared/affiliateLinks";
 import { notificationLog } from "../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -199,7 +200,7 @@ export async function sendPriceDropEmail(params: SendPriceDropEmailParams): Prom
     return { success: false, error: "Email service not configured (RESEND_API_KEY missing)" };
   }
 
-  const searchUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${params.destinationSlug}?affilid=akcniletenky`;
+  const searchUrl = kiwiSearchLink("prague-czech-republic", params.destinationSlug, "email-price-drop");
 
   try {
     const htmlContent = generatePriceDropEmailHTML({

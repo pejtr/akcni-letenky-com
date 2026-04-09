@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
+import SourceBadge from "@/components/SourceBadge";
 
 export default function LevneLetenky() {
   // A/B Testing for CTA button text
@@ -339,9 +340,12 @@ export default function LevneLetenky() {
                             <MapPin className="w-4 h-4 text-green-500" />
                             <span>{flight.country}</span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <span className="text-yellow-500">★</span>
-                            <span className="font-medium">{rating}</span>
+                          <div className="flex items-center gap-2">
+                            <SourceBadge source={(flight as any).source} />
+                            <div className="flex items-center gap-1">
+                              <span className="text-yellow-500">★</span>
+                              <span className="font-medium">{rating}</span>
+                            </div>
                           </div>
                         </div>
 

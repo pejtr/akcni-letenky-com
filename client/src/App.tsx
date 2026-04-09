@@ -39,26 +39,26 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      {/* Specific named routes MUST come before catch-all /:destination */}
       <Route path="/letecka-spolecnost/:slug" component={AirlinePage} />
-      <Route path="/:destination" component={DestinationLandingPage} />
       <Route path="/letenky-do-:slug" component={DestinationPage} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/levne-letenky" component={LevneLetenky} />
-      <Route path="/dovolene" component={Dovolene} />
       <Route path="/admin/ab-test" component={ABTestDashboard} />
       <Route path="/admin/emails" component={AdminEmails} />
       <Route path="/admin/hero-ab-test" component={HeroABTestDashboard} />
       <Route path="/admin/revolut-ab-test" component={RevolutABTestDashboard} />
+      <Route path="/admin/ab-test-analytics" component={ABTestAnalyticsDashboard} />
+      <Route path="/admin/share-ab-test" component={ShareABTestDashboard} />
+      <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/levne-letenky" component={LevneLetenky} />
+      <Route path="/dovolene" component={Dovolene} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
       <Route path="/porovnani-cen" component={PriceComparison} />
-      <Route path="/admin/ab-test-analytics" component={ABTestAnalyticsDashboard} />
-      <Route path="/admin/share-ab-test" component={ShareABTestDashboard} />
       <Route path="/reunion" component={ReunionPage} />
       <Route path="/letenky-reunion" component={ReunionPage} />
-      <Route path="/letenky-do-1500" component={Letenky1500} />
       <Route path="/letenky-do-1500" component={Letenky1500} />
       <Route path="/redirect" component={Redirect} />
       <Route path="/aerolinky" component={Aerolinky} />
@@ -68,8 +68,9 @@ function Router() {
       <Route path="/letenky-bali" component={BaliPage} />
       <Route path="/new-york" component={NewYorkPage} />
       <Route path="/letenky-new-york" component={NewYorkPage} />
-      <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
       <Route path={"/404"} component={NotFound} />
+      {/* Catch-all destination landing pages - MUST be last before NotFound */}
+      <Route path="/:destination" component={DestinationLandingPage} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

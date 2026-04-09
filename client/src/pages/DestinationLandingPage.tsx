@@ -3,18 +3,10 @@ import { trpc } from "@/lib/trpc";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plane, Calendar, TrendingDown, ExternalLink, Heart, Users, Clock } from "lucide-react";
+import { Plane, Calendar, TrendingDown, ExternalLink, Heart, Clock, Star, Hotel } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// Slug mapping for destinations (Kiwi format -> simple format)
-const slugMapping: Record<string, string> = {
-  "barcelona-spain": "barcelona",
-  "london-united-kingdom": "london",
-  "paris-france": "pariz",
-  "rome-italy": "rim",
-  "new-york-city-new-york-united-states": "new-york",
-  "vietnam": "vietnam",
-};
+import LiveViewerCounter from "@/components/LiveViewerCounter";
+import { bookingSearchLink } from "@shared/affiliateLinks";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -23,6 +15,7 @@ const destinationMeta: Record<string, {
   tips: string[];
   bestTime: string;
   image: string;
+  bookingQuery: string; // for Booking.com search
 }> = {
   barcelona: {
     title: "Barcelona",
@@ -32,8 +25,9 @@ const destinationMeta: Record<string, {
       "Ochutnejte tapas v gotické čtvrti",
       "Relaxujte na pláži Barceloneta"
     ],
-    bestTime: "Duben-Červen, Září-Říjen",
-    image: "https://images.unsplash.com/photo-1583422409516-2895a77efded"
+    bestTime: "Duben–Červen, Září–Říjen",
+    image: "https://images.unsplash.com/photo-1583422409516-2895a77efded",
+    bookingQuery: "Barcelona"
   },
   vietnam: {
     title: "Vietnam",
@@ -43,8 +37,9 @@ const destinationMeta: Record<string, {
       "Ochutnejte tradiční pho a banh mi",
       "Navštivte starobylé město Hoi An"
     ],
-    bestTime: "Listopad-Duben",
-    image: "https://images.unsplash.com/photo-1528127269322-539801943592"
+    bestTime: "Listopad–Duben",
+    image: "https://images.unsplash.com/photo-1528127269322-539801943592",
+    bookingQuery: "Vietnam"
   },
   pariz: {
     title: "Paříž",
@@ -54,19 +49,21 @@ const destinationMeta: Record<string, {
       "Navštivte Louvre a Musée d'Orsay",
       "Projděte se po Champs-Élysées"
     ],
-    bestTime: "Duben-Červen, Září-Říjen",
-    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34"
+    bestTime: "Duben–Červen, Září–Říjen",
+    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
+    bookingQuery: "Paris"
   },
   "new-york": {
     title: "New York",
-    description: "Město, které nikdy nespí - mrakodrapy, Broadway a Central Park",
+    description: "Město, které nikdy nespí – mrakodrapy, Broadway a Central Park",
     tips: [
       "Navštivte Sochu svobody a Ellis Island",
       "Projděte se Central Parkem",
       "Zažijte Broadway show"
     ],
-    bestTime: "Duben-Červen, Září-Listopad",
-    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9"
+    bestTime: "Duben–Červen, Září–Listopad",
+    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9",
+    bookingQuery: "New York"
   },
   rim: {
     title: "Řím",
@@ -76,32 +73,78 @@ const destinationMeta: Record<string, {
       "Hoďte minci do Fontány di Trevi",
       "Ochutnejte autentickou italskou pizzu"
     ],
-    bestTime: "Duben-Červen, Září-Říjen",
-    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5"
+    bestTime: "Duben–Červen, Září–Říjen",
+    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5",
+    bookingQuery: "Rome"
+  },
+  london: {
+    title: "Londýn",
+    description: "Kosmopolitní metropole s královskými paláci, muzei a živou kulturní scénou",
+    tips: [
+      "Navštivte Tower of London a Buckinghamský palác",
+      "Projděte se Hyde Parkem",
+      "Zažijte West End muzikál"
+    ],
+    bestTime: "Duben–Září",
+    image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad",
+    bookingQuery: "London"
+  },
+  dubai: {
+    title: "Dubaj",
+    description: "Futuristické město luxusu s nejvyšším mrakodrapem světa a nákupními ráji",
+    tips: [
+      "Vyjeďte na Burj Khalifa",
+      "Navštivte Dubai Mall a souk",
+      "Zažijte safari v poušti"
+    ],
+    bestTime: "Říjen–Duben",
+    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c",
+    bookingQuery: "Dubai"
   },
 };
+
+// Build Booking.com affiliate search URL
+function buildBookingUrl(query: string): string {
+  const encoded = encodeURIComponent(query);
+  return bookingSearchLink(query, "destination-page");
+}
 
 export default function DestinationLandingPage() {
   const params = useParams();
   const destinationSlug = params.destination || "";
-  
-  // Fetch flights from Pelikan cache
-  const { data: flights, isLoading } = trpc.flights.pelikan.useQuery({ limit: 20 });
+
+  // Fetch all offers from Pelikan cache
+  const { data: allOffers, isLoading } = trpc.flights.pelikan.useQuery({ limit: 30 });
+
+  // Better fallback title: capitalize each word, handle Czech slugs
+  const fallbackTitle = destinationSlug
+    .replace(/-/g, " ")
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 
   const meta = destinationMeta[destinationSlug] || {
-    title: destinationSlug.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
-    description: `Nejlevnější letenky do destinace ${destinationSlug}`,
-    tips: [],
+    title: fallbackTitle,
+    description: `Nejlevnější letenky do destinace ${fallbackTitle}. Porovnejte ceny a rezervujte ihned.`,
+    tips: [
+      `Rezervujte letenky do ${fallbackTitle} s předstihem pro nejlepší ceny`,
+      `Porovnejte nabídky více cestovních kanceláří`,
+      `Sledujte aktuální akce a last minute slevy`
+    ],
     bestTime: "Celoročně",
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05"
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05",
+    bookingQuery: fallbackTitle
   };
+
+  // Filter flights for this destination (or show all if no match)
+  const flights = allOffers?.filter((o: any) => o.type === "flight") ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Navigation />
 
       {/* Hero Section */}
-      <section 
+      <section
         className="relative bg-cover bg-center py-24 pt-32"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 48, 135, 0.7), rgba(0, 48, 135, 0.7)), url(${meta.image})`
@@ -122,7 +165,7 @@ export default function DestinationLandingPage() {
               </div>
               <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm">
                 <TrendingDown className="w-4 h-4" />
-                <span>{flights?.length || 0} aktuálních nabídek</span>
+                <span>{flights.length} aktuálních nabídek</span>
               </div>
             </div>
           </div>
@@ -166,14 +209,14 @@ export default function DestinationLandingPage() {
                 </Card>
               ))}
             </div>
-          ) : flights && flights.length > 0 ? (
+          ) : flights.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {flights.map((flight: any) => (
                 <Card key={flight.id} className="overflow-hidden hover:shadow-xl transition-shadow">
                   {/* Flight Image */}
                   <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={flight.imageUrl || meta.image} 
+                    <img
+                      src={flight.imageUrl || meta.image}
                       alt={flight.title}
                       className="w-full h-full object-cover"
                     />
@@ -192,7 +235,7 @@ export default function DestinationLandingPage() {
                     <h3 className="font-bold text-lg mb-2 line-clamp-2">
                       {flight.title}
                     </h3>
-                    
+
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
                       <Plane className="w-4 h-4" />
                       <span>{flight.destination || meta.title}</span>
@@ -210,12 +253,9 @@ export default function DestinationLandingPage() {
                       </span>
                     </div>
 
-                    {/* Social Proof */}
+                    {/* Social Proof - use LiveViewerCounter for realistic numbers */}
                     <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                      <div className="flex items-center gap-1">
-                        <Users className="w-3 h-3" />
-                        <span>{Math.floor(Math.random() * 50) + 10} lidí si prohlédlo</span>
-                      </div>
+                      <LiveViewerCounter destinationId={flight.id} />
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         <span>Dnes</span>
@@ -223,9 +263,9 @@ export default function DestinationLandingPage() {
                     </div>
 
                     {/* CTA Button */}
-                    <a 
-                      href={flight.link} 
-                      target="_blank" 
+                    <a
+                      href={flight.link}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="block"
                     >
@@ -251,17 +291,98 @@ export default function DestinationLandingPage() {
         </div>
       </section>
 
+      {/* Hotel Recommender Section - Booking.com affiliate */}
+      <section className="py-12 bg-blue-50 border-t border-blue-100">
+        <div className="container">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold flex items-center gap-2">
+                <Hotel className="w-8 h-8 text-[#003087]" />
+                Hotely v {meta.title}
+              </h2>
+              <p className="text-gray-600 mt-1">Nejlepší ceny ubytování – porovnáno z tisíců nabídek</p>
+            </div>
+            <a
+              href={buildBookingUrl(meta.bookingQuery)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" className="hidden md:flex gap-2 border-[#003087] text-[#003087] hover:bg-[#003087] hover:text-white">
+                Všechny hotely
+                <ExternalLink className="w-4 h-4" />
+              </Button>
+            </a>
+          </div>
+
+          {/* Booking.com search widget embed */}
+          <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              <div className="flex-1 text-center md:text-left">
+                <p className="text-lg font-semibold text-gray-800 mb-1">
+                  🏨 Najděte ideální hotel v {meta.title}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Přes 1 000 000 ubytování · Okamžité potvrzení · Nejlepší cena garantována
+                </p>
+                <div className="flex items-center gap-1 mt-2">
+                  {[1,2,3,4,5].map(s => (
+                    <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                  <span className="text-sm text-gray-600 ml-1">9.2/10 průměrné hodnocení</span>
+                </div>
+              </div>
+              <a
+                href={buildBookingUrl(meta.bookingQuery)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full md:w-auto"
+              >
+                <Button className="w-full md:w-auto bg-[#003580] hover:bg-[#002a66] text-white px-8 py-3 text-base font-semibold gap-2">
+                  Hledat hotely na Booking.com
+                  <ExternalLink className="w-4 h-4" />
+                </Button>
+              </a>
+            </div>
+          </div>
+
+          {/* Quick hotel category links */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: "Levné hotely", query: `cheap hotels ${meta.bookingQuery}`, icon: "💰" },
+              { label: "Luxusní hotely", query: `luxury hotels ${meta.bookingQuery}`, icon: "⭐" },
+              { label: "Hotely u centra", query: `city center hotels ${meta.bookingQuery}`, icon: "🏙️" },
+              { label: "Apartmány", query: `apartments ${meta.bookingQuery}`, icon: "🏠" },
+            ].map((cat) => (
+              <a
+                key={cat.label}
+                href={buildBookingUrl(cat.query)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white rounded-xl p-4 text-center hover:shadow-md transition-shadow border border-gray-100 hover:border-[#003087]"
+              >
+                <div className="text-2xl mb-1">{cat.icon}</div>
+                <div className="text-sm font-medium text-gray-700">{cat.label}</div>
+              </a>
+            ))}
+          </div>
+
+          <p className="text-xs text-gray-400 mt-4 text-center">
+            * Odkaz vede na Booking.com. Při rezervaci přes náš web získáváme provizi, která nám pomáhá udržovat tento web zdarma.
+          </p>
+        </div>
+      </section>
+
       {/* SEO Content Section */}
       <section className="py-12 bg-gray-50">
         <div className="container max-w-4xl">
           <h2 className="text-3xl font-bold mb-6">Proč letět do {meta.title}?</h2>
           <div className="prose prose-lg">
             <p className="text-gray-700 leading-relaxed">
-              {meta.description}. Najděte si tu nejlepší letenku z naší aktuální nabídky 
+              {meta.description}. Najděte si tu nejlepší letenku z naší aktuální nabídky
               a užijte si nezapomenutelnou dovolenou v {meta.title}.
             </p>
             <p className="text-gray-700 leading-relaxed mt-4">
-              Všechny nabídky jsou aktualizovány denně a obsahují pouze ověřené lety 
+              Všechny nabídky jsou aktualizovány denně a obsahují pouze ověřené lety
               od renomovaných cestovních kanceláří. Rezervujte si svou letenku ještě dnes!
             </p>
           </div>

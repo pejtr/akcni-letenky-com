@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { kiwiSearchLink } from "@shared/affiliateLinks";
 import {
   Heart,
   Trash2,
@@ -236,7 +237,7 @@ export default function Wishlist() {
 
   const getKiwiUrl = (destName: string) => {
     const destSlug = cityToSlug[destName.toLowerCase()] || destName.toLowerCase().replace(/\s+/g, "-");
-    return `https://www.kiwi.com/cs/search/results/prague-czech-republic/${destSlug}?affilid=akcniletenkyakcniletenky`;
+    return kiwiSearchLink("prague-czech-republic", destSlug, "wishlist");
   };
 
   const handleQuickAlert = (item: (typeof wishlistItems)[0]) => {

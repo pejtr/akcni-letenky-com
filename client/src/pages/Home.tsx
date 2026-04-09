@@ -9,6 +9,7 @@ import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { ChevronRight, Plane } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
+import { kiwiSearchLink, kiwiDeepLink } from "@shared/affiliateLinks";
 import ChatbotWidget from "@/components/ChatbotWidget";
 
 import NewsletterBar from "@/components/NewsletterBar";
@@ -140,13 +141,14 @@ export default function Home() {
     
     // Build Kiwi.com search URL
     const origin = "prague-czech-republic"; // Default origin is Prague
-    let kiwiUrl = `https://www.kiwi.com/cs/search/results/${origin}/${destSlug}`;
+    let rawKiwiUrl = `https://www.kiwi.com/cs/search/results/${origin}/${destSlug}`;
     
     if (formattedDate) {
-      kiwiUrl += `/${formattedDate}`;
+      rawKiwiUrl += `/${formattedDate}`;
     }
     
-    kiwiUrl += `?adults=${passengers}`;
+    rawKiwiUrl += `?adults=${passengers}`;
+    const kiwiUrl = `https://tp.media/r?marker=155221.search&trs=267609&p=3791&u=${encodeURIComponent(rawKiwiUrl)}`;
     
     // Track the search event (Meta Pixel Search event)
     trackFunnelSearch(destination, origin);
@@ -341,12 +343,12 @@ export default function Home() {
 
   const handleSearchVariantA = (destination: string, passengers: number) => {
     // Navigate to search results
-    window.location.href = `https://www.kiwi.com/deep?from=PRG&to=${destination}&passengers=${passengers}&affilid=levneletenky`;
+    window.location.href = kiwiDeepLink({ from: "PRG", to: destination, passengers: String(passengers) }, "hero-search-a");
   };
 
   const handleSearchVariantB = (from: string, destination: string, duration: string, passengers: number) => {
     // Navigate to search results
-    window.location.href = `https://www.kiwi.com/deep?from=${from}&to=${destination}&passengers=${passengers}&affilid=levneletenky`;
+    window.location.href = kiwiDeepLink({ from, to: destination, passengers: String(passengers) }, "hero-search-b");
   };
 
   return (
@@ -432,7 +434,7 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-2">
               <CountdownTimer className="hidden lg:flex" />
               <a 
-                href="https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs" 
+                href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "header-cta")} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs cta-btn-animated"
@@ -804,7 +806,7 @@ export default function Home() {
             <TabsContent value="top" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {topDestinations.map((dest, index) => {
-                  const kiwiUrl = `https://www.kiwi.com/cs/search/results/prague-czech-republic/${dest.slug}`;
+                  const kiwiUrl = kiwiSearchLink("prague-czech-republic", dest.slug, "top-destinations");
                   return (
                     <a
                       key={index}
@@ -1120,14 +1122,7 @@ export default function Home() {
                 <img src="/logo-do-italie.png" alt="DO-ITALIE.cz" className="w-8 h-6 object-contain" />
                 <span className="text-white text-sm font-medium">DO-ITALIE.cz</span>
               </a>
-              <a 
-                href="https://www.revolut-bonus.cz" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
-              >
-                <span className="text-white text-sm font-medium">REVOLUT-BONUS.cz</span>
-              </a>
+
               <a 
                 href="https://www.amarex.cz" 
                 target="_blank" 

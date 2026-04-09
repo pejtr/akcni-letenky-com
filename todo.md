@@ -2337,3 +2337,49 @@
 
 ## Remove Revolut-Bonus.cz References (2026-02-24)
 - [x] Remove all references to revolut-bonus.cz (domain blocked)
+
+## Bug Fixes (2026-03-14)
+- [x] Fix: Letenky section shows vacation packages instead of flights (filter by type=flight)
+- [x] Fix: Destination landing page title shows wrong text (routing order + fallback logic)
+
+## Maximální ROI Integrace (2026-03-19)
+- [x] Fix: LiveViewerCounter - příliš podobná čísla, přidat větší rozptyl a seed per-card
+- [x] Fix: Letenky sekce zobrazuje zájezdy místo letenek (detectType logika)
+- [x] Fix: Destination landing page titulek špatný (routing order v App.tsx)
+- [x] Booking.com affiliate hotel sekce na destination pages (zdarma, bez API)
+- [ ] SerpApi integrace - TripAdvisor hodnocení u hotelů (přeskočeno - použijeme Booking.com)
+- [ ] YouTube video recenze u destinací (přeskočeno na přání uživatele)
+- [ ] Chytrý doporučovač - stránka destinace zobrazuje letenky + hotely + aktivity
+- [ ] Booking.com affiliate linky u hotelů
+- [ ] Trip.com affiliate linky u hotelů (alternativa)
+
+## Bug Fixes (2026-03-20)
+- [x] Fix: Vite HMR WebSocket connection error in dev environment (cosmetic only - does not affect production)
+- [x] Fix: LevneLetenky page shows vacation packages - improved detectType with length field as primary signal
+
+## Source Badge (2026-03-20)
+- [ ] Add source badge (Pelikán/Kiwi) to offer cards in LevneLetenky, Home, and DestinationLandingPage
+
+## Konverzní techniky - ROI optimalizace (2026-03-20)
+- [x] Source badge (Pelikán/Kiwi) na offer kartách
+- [ ] #1 Social Proof toasty - FOMO notifikace "Jana z Brna si zarezervovala letenku..."
+- [ ] #2 Countdown timer na offer kartách - "Tato cena platí ještě Xh Ym"
+- [ ] #3 Price anchoring fix - větší přeškrtnutá cena, červená barva
+- [ ] #4 Bundle letenka+hotel na destination pages s Booking.com affiliate
+- [ ] #5 Wishlist + email capture - "Upozorníme vás, pokud cena klesne"
+- [ ] #6 Coupon kód banner s expirací - časově omezená sleva
+- [ ] #7 Geolokace odletu - auto-detect departure city (Praha/Brno/Ostrava)
+- [ ] #8 Spin the Wheel gamifikace - email capture výměnou za slevu
+
+## Travelpayouts Affiliate Integration (2026-04-09)
+- [x] Create centralized affiliate link helper (shared/affiliateLinks.ts) with Travelpayouts marker 155221
+- [x] Fix all 12 Kiwi.com links across 9 files to use Travelpayouts tracking
+- [x] Fix Booking.com link in DestinationLandingPage to use Travelpayouts tracking
+- [x] Connect Kiwi.com program to Travelpayouts (project Akcni-letenky.com)
+- [x] Connect Aviasales, Booking.com, Klook, Agoda, WeGoTrip, Viator, EKTA, VisitorsCoverage
+- [x] Request DiscoverCars connection (23-54% commission, 365d cookie)
+- [x] Request Trip.com connection
+- [x] Request CheapOair connection
+- [ ] Integrate DiscoverCars widget on destination pages (after approval)
+- [ ] Integrate Viator/GetYourGuide activities widget on destination pages (after approval)
+- [ ] Add EKTA travel insurance upsell on checkout/booking pages

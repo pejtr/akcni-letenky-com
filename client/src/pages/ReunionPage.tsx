@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { kiwiDeepLink } from "@shared/affiliateLinks";
 import {
   Plane,
   MapPin,
@@ -31,8 +32,7 @@ const IMAGES = {
   mountain: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/NduVswpGlpgicelP.jpg",
 };
 
-const AFFILIATE_LINK =
-  "https://www.kiwi.com/deep?affilid=akcniletenkyakcniletenky&currency=CZK&lang=cs&destination=RUN";
+const AFFILIATE_LINK = kiwiDeepLink({ currency: "CZK", lang: "cs", destination: "RUN" }, "reunion");
 
 const highlights = [
   {
