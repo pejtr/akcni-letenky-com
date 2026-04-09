@@ -181,38 +181,20 @@ function detectType(deal: any): string {
   const description = (deal.shortDescription?.[0] || "").toLowerCase();
   const fullText = `${dealName} ${description} ${country} ${city}`;
 
+  // Pelikan.cz feed contains ONLY hotel stays, wellness and vacation packages - never pure flights.
+  // Classify by product type for more specific categorization.
+  
   // Check for wellness via product tag
   let hasWellness = false;
+  let hasAccommodation = false;
   if (deal.dealDiscountProducts?.[0]?.dealDiscountProducts) {
     const products = deal.dealDiscountProducts[0].dealDiscountProducts;
     if (Array.isArray(products)) {
       hasWellness = products.some((p: any) => (p.name?.[0] || "").toUpperCase() === "WELLNESS");
+      hasAccommodation = products.some((p: any) => (p.name?.[0] || "").toUpperCase() === "ACCOMMODATION");
     }
   }
   if (hasWellness) return "wellness";
-
-  // PRIMARY SIGNAL: If the deal has a length (nights/days) > 0, it's a hotel stay, not a flight
-  const lengthDays = parseInt(deal.length?.[0] || "0", 10);
-  if (lengthDays > 0) {
-    return "more";
-  }
-
-  // If deal name contains hotel/resort/apartmán keywords → vacation (not a flight)
-  const hotelKeywords = [
-    "hotel", "resort", "apartmán", "apartman", "penzion", "wellness", "spa", "vila",
-    "bungalov", "chata", "chalupa", "pension", "hostel", "lodge", "inn", "suite",
-    "shelter", "haymarket", "vesterbro", "zájezd", "pobyt", "dovolena", "dovolena",
-    "fotbal", "sport", "zápas", "tour", "cruise", "pláž"
-  ];
-  if (hotelKeywords.some(kw => dealName.includes(kw))) {
-    return "more";
-  }
-
-  // Check for sea destinations
-  const seaCountries = ["řecko", "španělsko", "itálie", "italie", "malta", "chorvatsko", "turecko", "egypt", "portugalsko", "bulharsko", "kypr", "tunisko", "maroko", "francie", "france"];
-  if (seaCountries.some(c => country.includes(c)) || fullText.includes("pláž") || fullText.includes("beach") || fullText.includes("moře")) {
-    return "more";
-  }
 
   // Check for exotic destinations
   const exoticCountries = [
@@ -228,7 +210,7 @@ function detectType(deal: any): string {
     "mexiko", "cancún",
     "kuba", "havana",
     "vietnam", "hanoi",
-    "filipiny", "manila",
+    "filipíny", "manila",
     "katar", "doha",
     "omán", "muskat"
   ];
@@ -236,13 +218,8 @@ function detectType(deal: any): string {
     return "exotika";
   }
 
-  // Nearby countries → always vacation (no direct flights from CZ)
-  const nearbyCountries = ["slovensko", "maďarsko", "rakousko", "polsko", "slovinsko", "srbsko", "rumunsko", "černá hora", "skotsko", "anglie", "velká británie", "dánsko", "norsko", "švédsko", "finsko"];
-  if (nearbyCountries.some(c => country.includes(c) || city.includes(c))) {
-    return "more";
-  }
-
-  return "city";
+  // All Pelikan deals are hotel/vacation packages - classify as "more" (vacation)
+  return "more";
 }
 
 export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {

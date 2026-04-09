@@ -2383,3 +2383,16 @@
 - [ ] Integrate DiscoverCars widget on destination pages (after approval)
 - [ ] Integrate Viator/GetYourGuide activities widget on destination pages (after approval)
 - [ ] Add EKTA travel insurance upsell on checkout/booking pages
+
+## CRITICAL BUG (2026-04-09)
+- [ ] Fix detectType: ALL 100 Pelikan offers classified as vacation, 0 flights - Letenky section completely empty
+
+## Flight Widget Integration (2026-04-09)
+- [ ] Fix detectType: Pelikan feed contains ONLY vacation/hotel deals - always classify as vacation
+- [x] Add Kiwi.com Travelpayouts search widget to Letenky page (marker=155221)
+- [x] Add Aviasales Travelpayouts search widget to Letenky page (marker=155221)
+- [x] Update LevneLetenky page to show widgets when no Pelikan flights available
+- [x] Add Kiwi.com Flights Search Form widget (promo_id=3414, trs=516867, shmarker=155221)
+- [x] Add popular destinations quick links with Kiwi.com affiliate links
+- [x] Add SocialProofNotification and CountdownTimer to LevneLetenky page
+- [x] Add Aviasales CTA banner on LevneLetenky page
