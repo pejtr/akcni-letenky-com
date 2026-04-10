@@ -2454,3 +2454,9 @@
 - [x] Integrovat widget do DestinationLandingPage (pod sekci letů, s iataCode pro 7 destinací)
 - [x] Integrovat widget do SEODestinationPage (full-width sekce pod gridem, 15 destinací s IATA kódy)
 - [x] Přidat fallback UI při načítání widgetu (loading spinner + error state s Kiwi.com CTA)
+
+## Aviasales Map Widget na stránce Letenky (2026-04-10)
+- [x] Prozkoumat Aviasales Map widget dokumentaci a embed formát (travelpayouts.com/map_widget/iframe.js)
+- [x] Vytvořit FlightMapWidget komponent (client/src/components/FlightMapWidget.tsx)
+- [x] Integrovat widget na stránku LevneLetenky.tsx (mezi Popular Routes a Aviasales CTA)
+- [x] Přidat loading skeleton a fallback UI (loading overlay s animací + error state s Kiwi.com CTA)

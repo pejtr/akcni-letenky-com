@@ -4,6 +4,7 @@ import { Plane, ArrowRight, Search, Star, TrendingDown, Globe, Zap } from "lucid
 import Navigation from "@/components/Navigation";
 import SocialProofNotification from "@/components/SocialProofNotification";
 import CountdownTimer from "@/components/CountdownTimer";
+import FlightMapWidget from "@/components/FlightMapWidget";
 import { kiwiSearchLink, kiwiAffiliateUrl } from "@shared/affiliateLinks";
 
 // Travelpayouts Kiwi.com widget loader
@@ -180,6 +181,17 @@ export default function LevneLetenky() {
             <div className="p-4 bg-gray-50">
               <KiwiPopularRoutesWidget />
             </div>
+          </div>
+
+          {/* Aviasales Interactive Map Widget */}
+          <div className="mb-10">
+            <FlightMapWidget
+              origin="PRG"
+              locale="cs"
+              currency="CZK"
+              height={580}
+              subId="letenky-page"
+            />
           </div>
 
           {/* Aviasales CTA */}
