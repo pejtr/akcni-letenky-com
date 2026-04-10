@@ -2447,3 +2447,10 @@
 - [x] Nahradit iframe widgety Travelpayouts embed skripty (tpemb.com)
 - [x] Opravit všechny přímé Kiwi.com URL na správný formát s affilid=pejtrview155221
 - [x] Zkontrolovat shared/affiliateLinks.ts a přidat kiwiAffiliateUrl() wrapper pro legacy URL
+
+## Travelpayouts Price Calendar Widget (2026-04-10)
+- [x] Prozkoumat Travelpayouts Price Calendar widget API (Aviasales calendar_widget/iframe.js)
+- [x] Vytvořit znovupoužitelný PriceCalendarWidget komponent (client/src/components/PriceCalendarWidget.tsx)
+- [x] Integrovat widget do DestinationLandingPage (pod sekci letů, s iataCode pro 7 destinací)
+- [x] Integrovat widget do SEODestinationPage (full-width sekce pod gridem, 15 destinací s IATA kódy)
+- [x] Přidat fallback UI při načítání widgetu (loading spinner + error state s Kiwi.com CTA)

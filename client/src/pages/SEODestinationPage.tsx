@@ -15,6 +15,7 @@ import Navigation from "@/components/Navigation";
 // Footer component not available
 import { destinationCountries, destinationCities, type SEODestination } from "../../../shared/seoDestinations";
 import { kiwiAffiliateUrl } from "@shared/affiliateLinks";
+import PriceCalendarWidget from "@/components/PriceCalendarWidget";
 
 export default function SEODestinationPage() {
   const [location] = useLocation();
@@ -274,6 +275,23 @@ export default function SEODestinationPage() {
               </CardContent>
             </Card>
           </div>
+        </div>
+      </div>
+
+      {/* Price Calendar Widget - full width below grid */}
+      <div className="bg-gradient-to-b from-white to-green-50 border-t border-gray-100">
+        <div className="container py-12">
+          <PriceCalendarWidget
+            origin="PRG"
+            destination={destination.iataCode || ""}
+            destinationName={destination.name}
+            currency="CZK"
+            locale="cs"
+            period="year"
+            range="7,14"
+            subId="seo-dest-calendar"
+            width="100%"
+          />
         </div>
       </div>
 

@@ -7,6 +7,7 @@ import { Plane, Calendar, TrendingDown, ExternalLink, Heart, Clock, Star, Hotel 
 import { Skeleton } from "@/components/ui/skeleton";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
 import { bookingSearchLink, kiwiSearchLink } from "@shared/affiliateLinks";
+import PriceCalendarWidget from "@/components/PriceCalendarWidget";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -359,6 +360,23 @@ export default function DestinationLandingPage() {
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Price Calendar Widget - Travelpayouts Aviasales */}
+      <section className="py-12 bg-gradient-to-b from-white to-green-50">
+        <div className="container">
+          <PriceCalendarWidget
+            origin="PRG"
+            destination={meta.iataCode || ""}
+            destinationName={meta.title}
+            currency="CZK"
+            locale="cs"
+            period="year"
+            range="7,14"
+            subId="dest-calendar"
+            width="100%"
+          />
         </div>
       </section>
 
