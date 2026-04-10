@@ -16,6 +16,7 @@ const destinationMeta: Record<string, {
   bestTime: string;
   image: string;
   bookingQuery: string; // for Booking.com search
+  iataCode?: string; // IATA airport code for Kiwi.com widget
 }> = {
   barcelona: {
     title: "Barcelona",
@@ -27,7 +28,8 @@ const destinationMeta: Record<string, {
     ],
     bestTime: "Duben–Červen, Září–Říjen",
     image: "https://images.unsplash.com/photo-1583422409516-2895a77efded",
-    bookingQuery: "Barcelona"
+    bookingQuery: "Barcelona",
+    iataCode: "BCN",
   },
   vietnam: {
     title: "Vietnam",
@@ -39,7 +41,8 @@ const destinationMeta: Record<string, {
     ],
     bestTime: "Listopad–Duben",
     image: "https://images.unsplash.com/photo-1528127269322-539801943592",
-    bookingQuery: "Vietnam"
+    bookingQuery: "Vietnam",
+    iataCode: "SGN",
   },
   pariz: {
     title: "Paříž",
@@ -51,7 +54,8 @@ const destinationMeta: Record<string, {
     ],
     bestTime: "Duben–Červen, Září–Říjen",
     image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
-    bookingQuery: "Paris"
+    bookingQuery: "Paris",
+    iataCode: "CDG",
   },
   "new-york": {
     title: "New York",
@@ -63,7 +67,8 @@ const destinationMeta: Record<string, {
     ],
     bestTime: "Duben–Červen, Září–Listopad",
     image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9",
-    bookingQuery: "New York"
+    bookingQuery: "New York",
+    iataCode: "JFK",
   },
   rim: {
     title: "Řím",
@@ -75,7 +80,8 @@ const destinationMeta: Record<string, {
     ],
     bestTime: "Duben–Červen, Září–Říjen",
     image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5",
-    bookingQuery: "Rome"
+    bookingQuery: "Rome",
+    iataCode: "FCO",
   },
   london: {
     title: "Londýn",
@@ -87,7 +93,8 @@ const destinationMeta: Record<string, {
     ],
     bestTime: "Duben–Září",
     image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad",
-    bookingQuery: "London"
+    bookingQuery: "London",
+    iataCode: "LHR",
   },
   dubai: {
     title: "Dubaj",
@@ -99,7 +106,8 @@ const destinationMeta: Record<string, {
     ],
     bestTime: "Říjen–Duben",
     image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c",
-    bookingQuery: "Dubai"
+    bookingQuery: "Dubai",
+    iataCode: "DXB",
   },
 };
 
@@ -279,14 +287,72 @@ export default function DestinationLandingPage() {
               ))}
             </div>
           ) : (
-            <Card className="p-8 text-center">
-              <p className="text-gray-500 mb-4">
-                Momentálně nemáme k dispozici žádné lety do {meta.title}.
-              </p>
-              <Link href="/">
-                <Button variant="outline">Prohlédnout všechny destinace</Button>
-              </Link>
-            </Card>
+            <div className="space-y-4">
+              {/* Kiwi.com Travelpayouts Search Widget - pre-filled with destination */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-[#003087] rounded-full flex items-center justify-center">
+                    <Plane className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-[#003087]">Vyhledat letenky do {meta.title}</h3>
+                    <p className="text-sm text-gray-500">Porovnáme ceny stovek aerolinek — najdeme nejlepší nabídku</p>
+                  </div>
+                </div>
+
+                {/* Kiwi.com Travelpayouts iframe widget */}
+                <div className="w-full overflow-hidden rounded-xl">
+                  <iframe
+                    src={`https://www.kiwi.com/en/search/results/prague-czechia/${meta.iataCode ? meta.iataCode.toLowerCase() + '-' + (destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'rome-italy' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'ho-chi-minh-city-vietnam' : destinationSlug) : destinationSlug}/anytime/anytime?affilid=pejtrview155221`}
+                    width="100%"
+                    height="500"
+                    frameBorder="0"
+                    className="rounded-xl"
+                    title={`Letenky do ${meta.title}`}
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Direct CTA link */}
+                <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                  <a
+                    href={`https://www.kiwi.com/cs/search/results/prague-czechia/${meta.iataCode ? meta.iataCode.toLowerCase() + '-' + (destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'rome-italy' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'ho-chi-minh-city-vietnam' : destinationSlug) : destinationSlug}/anytime/anytime?affilid=pejtrview155221`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1"
+                  >
+                    <Button className="w-full bg-[#E91E63] hover:bg-[#C2185B] text-white gap-2 text-base py-6">
+                      <Plane className="w-5 h-5" />
+                      Zobrazit všechny letenky do {meta.title} na Kiwi.com
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </a>
+                  <Link href="/">
+                    <Button variant="outline" className="w-full sm:w-auto gap-2">
+                      Prohlédnout další destinace
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Price alert CTA */}
+              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-xl p-4 flex items-center gap-4">
+                <div className="text-3xl">🔔</div>
+                <div className="flex-1">
+                  <p className="font-semibold text-orange-800">Chcete upozornění na slevy do {meta.title}?</p>
+                  <p className="text-sm text-orange-600">Nastavte si cenový alert na Kiwi.com a dostanete e-mail, jakmile ceny klesnou.</p>
+                </div>
+                <a
+                  href={`https://www.kiwi.com/cs/search/results/prague-czechia/${meta.iataCode || destinationSlug}/anytime/anytime?affilid=pejtrview155221`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white whitespace-nowrap">
+                    Nastavit alert
+                  </Button>
+                </a>
+              </div>
+            </div>
           )}
         </div>
       </section>

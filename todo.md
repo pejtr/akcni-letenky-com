@@ -2436,3 +2436,14 @@
 - [x] Přidat admin endpoint articles.shareTipManually pro ruční sdílení existujícího článku
 - [x] Přidat tlačítko "Sdílet na Telegram" do TipsGeneratorCard v AdminDashboard
 - [x] Napsat vitest testy pro Telegram sdílení (15/15 passed)
+
+## Oprava prázdné sekce letů na stránkách destinací (2026-04-10)
+- [x] Prozkoumat DestinationDetail.tsx a najít sekci "Aktuální nabídky letů"
+- [x] Nahradit prázdný stav Kiwi.com Travelpayouts widgetem s předvyplněnou destinací
+- [x] Přidat IATA kódy destinací pro přesné předvyplnění widgetu (BCN, CDG, LHR, FCO, JFK, DXB, SGN)
+
+## Oprava Kiwi.com affiliate linků (2026-04-10)
+- [ ] Najít všechny Kiwi.com URL v projektu bez správného affiliate parametru
+- [ ] Nahradit iframe widgety Travelpayouts embed skripty (tpemb.com)
+- [ ] Opravit všechny přímé Kiwi.com URL na správný formát s affilid=pejtrview155221
+- [ ] Zkontrolovat shared/affiliateLinks.ts a opravit buildKiwiUrl helper
