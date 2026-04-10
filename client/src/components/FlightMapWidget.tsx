@@ -9,7 +9,29 @@
  * Script: //www.travelpayouts.com/map_widget/iframe.js
  */
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Globe, Loader2, TrendingDown, Plane, ArrowLeftRight } from "lucide-react";
+import { Globe, Loader2, TrendingDown, Plane, ArrowLeftRight, CheckCircle } from "lucide-react";
+
+const LS_KEY = "akcni-letenky:flight-map-filter";
+
+/** Read persisted filter from localStorage safely */
+function readPersistedFilter(fallback: boolean): { value: boolean; wasRestored: boolean } {
+  try {
+    const stored = localStorage.getItem(LS_KEY);
+    if (stored === null) return { value: fallback, wasRestored: false };
+    return { value: stored === "true", wasRestored: true };
+  } catch {
+    return { value: fallback, wasRestored: false };
+  }
+}
+
+/** Persist filter to localStorage safely */
+function persistFilter(value: boolean) {
+  try {
+    localStorage.setItem(LS_KEY, String(value));
+  } catch {
+    // ignore quota / private-mode errors
+  }
+}
 
 interface FlightMapWidgetProps {
   /** IATA code of origin city (default: PRG = Prague) */
@@ -48,9 +70,25 @@ export default function FlightMapWidget({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  // Internal state for the toggle — starts from prop, then user can change it
-  const [onlyDirect, setOnlyDirect] = useState(initialOnlyDirect);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Initialise from localStorage (or prop fallback)
+  const [onlyDirect, setOnlyDirect] = useState<boolean>(() => {
+    const { value } = readPersistedFilter(initialOnlyDirect);
+    return value;
+  });
+  // Show a brief "preference restored" toast when localStorage had a saved value
+  const [showRestoredBadge, setShowRestoredBadge] = useState<boolean>(() => {
+    const { wasRestored } = readPersistedFilter(initialOnlyDirect);
+    return wasRestored;
+  });
+
+  // Auto-hide the restored badge after 3 s
+  useEffect(() => {
+    if (!showRestoredBadge) return;
+    const t = setTimeout(() => setShowRestoredBadge(false), 3000);
+    return () => clearTimeout(t);
+  }, [showRestoredBadge]);
 
   const loadWidget = useCallback(
     (directOnly: boolean) => {
@@ -110,10 +148,12 @@ export default function FlightMapWidget({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [origin, locale, currency, oneWay, subId]);
 
-  // Handle toggle change
+  // Handle toggle change — also persist to localStorage
   const handleToggle = (newValue: boolean) => {
     if (newValue === onlyDirect || isTransitioning) return;
     setOnlyDirect(newValue);
+    persistFilter(newValue);
+    setShowRestoredBadge(false); // dismiss any existing badge
     setIsTransitioning(true);
     loadWidget(newValue);
   };
@@ -214,6 +254,12 @@ export default function FlightMapWidget({
             <span className="text-xs text-gray-400 flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />
               Aktualizuji mapu…
+            </span>
+          )}
+          {showRestoredBadge && !isTransitioning && (
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full animate-pulse">
+              <CheckCircle className="w-3 h-3" />
+              Vaše preference obnovena
             </span>
           )}
         </div>

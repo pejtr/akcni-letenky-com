@@ -2465,3 +2465,8 @@
 - [x] Přidat interaktivní toggle "Přímé lety / S přestupem" do FlightMapWidget
 - [x] Překreslit mapu při změně filtru (reload scriptu s novým parametrem only_direct)
 - [x] Přidat animaci přechodu při přepínání filtru (opacity transition + Loader2 spinner v tlačítku)
+
+## localStorage persistence filtru FlightMapWidget (2026-04-10)
+- [x] Uložit filtr "přímé/s přestupem" do localStorage při každé změně (klíč: akcni-letenky:flight-map-filter)
+- [x] Obnovit uloženou preferenci při inicializaci komponenty (lazy useState initializer)
+- [x] Zobrazit vizuální indikátor "Vaše preference obnovena" při načtení uložené hodnoty (badge zmizí po 3s, bezpečné try/catch pro private mode)
