@@ -2470,3 +2470,8 @@
 - [x] Uložit filtr "přímé/s přestupem" do localStorage při každé změně (klíč: akcni-letenky:flight-map-filter)
 - [x] Obnovit uloženou preferenci při inicializaci komponenty (lazy useState initializer)
 - [x] Zobrazit vizuální indikátor "Vaše preference obnovena" při načtení uložené hodnoty (badge zmizí po 3s, bezpečné try/catch pro private mode)
+
+## Tři vylepšení widgetů (2026-04-10)
+- [x] Přidat přepínač zpáteční/jednosměrné do FlightMapWidget s localStorage persistencí (klíč: akcni-letenky:flight-map-oneway)
+- [x] Přidat localStorage persistenci do PriceCalendarWidget (klíče: price-calendar-period + price-calendar-dest)
+- [x] Implementovat analytické sledování přepínání filtrů přes Umami custom events (flight_filter_changed + calendar_period_changed)

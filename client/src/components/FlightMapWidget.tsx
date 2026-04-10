@@ -2,21 +2,33 @@
  * FlightMapWidget - Aviasales Interactive Map Widget (Travelpayouts)
  *
  * Displays an interactive world map with flight prices from a given origin city.
- * Includes a built-in toggle for filtering between direct flights and flights with stopovers.
- * Uses Travelpayouts Aviasales Map Widget (marker=155221).
+ * Includes built-in toggles for:
+ *   1. Direct / Stopover flights
+ *   2. Round-trip / One-way flights
+ * Both preferences are persisted to localStorage and tracked via Umami analytics.
  *
  * Docs: https://support.travelpayouts.com/hc/en-us/articles/203638518
  * Script: //www.travelpayouts.com/map_widget/iframe.js
  */
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Globe, Loader2, TrendingDown, Plane, ArrowLeftRight, CheckCircle } from "lucide-react";
+import {
+  Globe,
+  Loader2,
+  TrendingDown,
+  Plane,
+  ArrowLeftRight,
+  CheckCircle,
+  RefreshCw,
+} from "lucide-react";
 
-const LS_KEY = "akcni-letenky:flight-map-filter";
+// ─── localStorage helpers ─────────────────────────────────────────────────────
 
-/** Read persisted filter from localStorage safely */
-function readPersistedFilter(fallback: boolean): { value: boolean; wasRestored: boolean } {
+const LS_DIRECT_KEY = "akcni-letenky:flight-map-filter";
+const LS_ONEWAY_KEY = "akcni-letenky:flight-map-oneway";
+
+function readLS(key: string, fallback: boolean): { value: boolean; wasRestored: boolean } {
   try {
-    const stored = localStorage.getItem(LS_KEY);
+    const stored = localStorage.getItem(key);
     if (stored === null) return { value: fallback, wasRestored: false };
     return { value: stored === "true", wasRestored: true };
   } catch {
@@ -24,14 +36,31 @@ function readPersistedFilter(fallback: boolean): { value: boolean; wasRestored: 
   }
 }
 
-/** Persist filter to localStorage safely */
-function persistFilter(value: boolean) {
+function writeLS(key: string, value: boolean) {
   try {
-    localStorage.setItem(LS_KEY, String(value));
+    localStorage.setItem(key, String(value));
   } catch {
     // ignore quota / private-mode errors
   }
 }
+
+// ─── Umami analytics helper ───────────────────────────────────────────────────
+
+declare global {
+  interface Window {
+    umami?: { track: (event: string, data?: Record<string, unknown>) => void };
+  }
+}
+
+function trackEvent(event: string, data?: Record<string, unknown>) {
+  try {
+    window.umami?.track(event, data);
+  } catch {
+    // analytics is optional — never crash the UI
+  }
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 interface FlightMapWidgetProps {
   /** IATA code of origin city (default: PRG = Prague) */
@@ -40,12 +69,14 @@ interface FlightMapWidgetProps {
   locale?: string;
   /** Currency code (default: CZK) */
   currency?: string;
-  /** Show one-way prices only (default: false = round trip) */
-  oneWay?: boolean;
   /** Initial filter: show only direct flights (default: false) */
   onlyDirect?: boolean;
+  /** Initial filter: show one-way prices only (default: false = round trip) */
+  oneWay?: boolean;
   /** Whether to show the direct/stopover toggle UI (default: true) */
   showFilterToggle?: boolean;
+  /** Whether to show the round-trip/one-way toggle UI (default: true) */
+  showTripTypeToggle?: boolean;
   /** Optional sub-ID for tracking */
   subId?: string;
   /** Height of the map in px (default: 580) */
@@ -60,9 +91,10 @@ export default function FlightMapWidget({
   origin = "PRG",
   locale = "cs",
   currency = "CZK",
-  oneWay = false,
   onlyDirect: initialOnlyDirect = false,
+  oneWay: initialOneWay = false,
   showFilterToggle = true,
+  showTripTypeToggle = true,
   subId,
   height = 580,
   className = "",
@@ -72,29 +104,41 @@ export default function FlightMapWidget({
   const [hasError, setHasError] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Initialise from localStorage (or prop fallback)
+  // ── Direct filter — init from localStorage ──────────────────────────────────
   const [onlyDirect, setOnlyDirect] = useState<boolean>(() => {
-    const { value } = readPersistedFilter(initialOnlyDirect);
+    const { value } = readLS(LS_DIRECT_KEY, initialOnlyDirect);
     return value;
   });
-  // Show a brief "preference restored" toast when localStorage had a saved value
-  const [showRestoredBadge, setShowRestoredBadge] = useState<boolean>(() => {
-    const { wasRestored } = readPersistedFilter(initialOnlyDirect);
+  const [directWasRestored] = useState<boolean>(() => {
+    const { wasRestored } = readLS(LS_DIRECT_KEY, initialOnlyDirect);
     return wasRestored;
   });
 
-  // Auto-hide the restored badge after 3 s
+  // ── One-way filter — init from localStorage ─────────────────────────────────
+  const [oneWay, setOneWay] = useState<boolean>(() => {
+    const { value } = readLS(LS_ONEWAY_KEY, initialOneWay);
+    return value;
+  });
+  const [onewayWasRestored] = useState<boolean>(() => {
+    const { wasRestored } = readLS(LS_ONEWAY_KEY, initialOneWay);
+    return wasRestored;
+  });
+
+  // Show "preference restored" badge when either filter was restored
+  const [showRestoredBadge, setShowRestoredBadge] = useState<boolean>(
+    directWasRestored || onewayWasRestored
+  );
   useEffect(() => {
     if (!showRestoredBadge) return;
     const t = setTimeout(() => setShowRestoredBadge(false), 3000);
     return () => clearTimeout(t);
   }, [showRestoredBadge]);
 
+  // ── Widget loader ────────────────────────────────────────────────────────────
   const loadWidget = useCallback(
-    (directOnly: boolean) => {
+    (directOnly: boolean, isOneWay: boolean) => {
       if (!containerRef.current) return;
 
-      // Clear previous widget
       containerRef.current.innerHTML = "";
       setIsLoading(true);
       setHasError(false);
@@ -108,7 +152,7 @@ export default function FlightMapWidget({
         origin: origin.toUpperCase(),
         locale,
         currency,
-        one_way: oneWay ? "true" : "false",
+        one_way: isOneWay ? "true" : "false",
         only_direct: directOnly ? "true" : "false",
         powered_by: "true",
       });
@@ -128,36 +172,55 @@ export default function FlightMapWidget({
         setHasError(true);
       };
 
-      // Fallback: hide loading after 7s
       const fallbackTimer = setTimeout(() => {
         setIsLoading(false);
         setIsTransitioning(false);
       }, 7000);
 
       containerRef.current.appendChild(script);
-
       return () => clearTimeout(fallbackTimer);
     },
-    [origin, locale, currency, oneWay, subId]
+    [origin, locale, currency, subId]
   );
 
   // Initial load
   useEffect(() => {
-    const cleanup = loadWidget(onlyDirect);
+    const cleanup = loadWidget(onlyDirect, oneWay);
     return cleanup;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [origin, locale, currency, oneWay, subId]);
+  }, [origin, locale, currency, subId]);
 
-  // Handle toggle change — also persist to localStorage
-  const handleToggle = (newValue: boolean) => {
+  // ── Toggle handlers ──────────────────────────────────────────────────────────
+
+  const handleDirectToggle = (newValue: boolean) => {
     if (newValue === onlyDirect || isTransitioning) return;
     setOnlyDirect(newValue);
-    persistFilter(newValue);
-    setShowRestoredBadge(false); // dismiss any existing badge
+    writeLS(LS_DIRECT_KEY, newValue);
+    setShowRestoredBadge(false);
     setIsTransitioning(true);
-    loadWidget(newValue);
+    trackEvent("flight_filter_changed", {
+      filter: "direct",
+      value: newValue ? "direct_only" : "all_flights",
+      origin,
+    });
+    loadWidget(newValue, oneWay);
   };
 
+  const handleTripTypeToggle = (newValue: boolean) => {
+    if (newValue === oneWay || isTransitioning) return;
+    setOneWay(newValue);
+    writeLS(LS_ONEWAY_KEY, newValue);
+    setShowRestoredBadge(false);
+    setIsTransitioning(true);
+    trackEvent("flight_filter_changed", {
+      filter: "trip_type",
+      value: newValue ? "one_way" : "round_trip",
+      origin,
+    });
+    loadWidget(onlyDirect, newValue);
+  };
+
+  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <div className={`w-full ${className}`}>
       {/* Section Header */}
@@ -177,7 +240,7 @@ export default function FlightMapWidget({
           </div>
         </div>
 
-        {/* Right side: badges + toggle */}
+        {/* Right side: badges + toggles */}
         <div className="flex flex-col items-start sm:items-end gap-2">
           {/* Quick stats badges */}
           <div className="flex flex-wrap gap-2">
@@ -190,12 +253,12 @@ export default function FlightMapWidget({
             </span>
           </div>
 
-          {/* Direct / Stopover toggle */}
+          {/* ── Direct / Stopover toggle ── */}
           {showFilterToggle && (
             <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1 border border-gray-200 shadow-sm">
               <ArrowLeftRight className="w-3.5 h-3.5 text-gray-400 ml-1.5" />
               <button
-                onClick={() => handleToggle(false)}
+                onClick={() => handleDirectToggle(false)}
                 disabled={isTransitioning}
                 className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   !onlyDirect
@@ -203,6 +266,7 @@ export default function FlightMapWidget({
                     : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 } ${isTransitioning ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
                 aria-pressed={!onlyDirect}
+                title="Zobrazit všechny lety včetně přestupů"
               >
                 {!onlyDirect && isTransitioning ? (
                   <span className="flex items-center gap-1.5">
@@ -214,7 +278,7 @@ export default function FlightMapWidget({
                 )}
               </button>
               <button
-                onClick={() => handleToggle(true)}
+                onClick={() => handleDirectToggle(true)}
                 disabled={isTransitioning}
                 className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 ${
                   onlyDirect
@@ -222,6 +286,7 @@ export default function FlightMapWidget({
                     : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 } ${isTransitioning ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
                 aria-pressed={onlyDirect}
+                title="Zobrazit pouze přímé lety bez přestupu"
               >
                 {onlyDirect && isTransitioning ? (
                   <span className="flex items-center gap-1.5">
@@ -234,22 +299,82 @@ export default function FlightMapWidget({
               </button>
             </div>
           )}
+
+          {/* ── Round-trip / One-way toggle ── */}
+          {showTripTypeToggle && (
+            <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1 border border-gray-200 shadow-sm">
+              <RefreshCw className="w-3.5 h-3.5 text-gray-400 ml-1.5" />
+              <button
+                onClick={() => handleTripTypeToggle(false)}
+                disabled={isTransitioning}
+                className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
+                  !oneWay
+                    ? "bg-white text-purple-700 shadow-md border border-purple-100"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                } ${isTransitioning ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
+                aria-pressed={!oneWay}
+                title="Zobrazit ceny zpátečních letenek"
+              >
+                {!oneWay && isTransitioning ? (
+                  <span className="flex items-center gap-1.5">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Načítám…
+                  </span>
+                ) : (
+                  "🔄 Zpáteční"
+                )}
+              </button>
+              <button
+                onClick={() => handleTripTypeToggle(true)}
+                disabled={isTransitioning}
+                className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
+                  oneWay
+                    ? "bg-white text-orange-700 shadow-md border border-orange-100"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                } ${isTransitioning ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
+                aria-pressed={oneWay}
+                title="Zobrazit ceny jednosměrných letenek"
+              >
+                {oneWay && isTransitioning ? (
+                  <span className="flex items-center gap-1.5">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    Načítám…
+                  </span>
+                ) : (
+                  "➡️ Jednosměrné"
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Active filter badge */}
-      {showFilterToggle && (
-        <div className="mb-3 flex items-center gap-2">
+      {/* Active filter badges row */}
+      {(showFilterToggle || showTripTypeToggle) && (
+        <div className="mb-3 flex flex-wrap items-center gap-2">
           <span className="text-xs text-gray-500">Zobrazuji:</span>
-          <span
-            className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full transition-all duration-300 ${
-              onlyDirect
-                ? "bg-green-100 text-green-700 border border-green-200"
-                : "bg-blue-100 text-blue-700 border border-blue-200"
-            }`}
-          >
-            {onlyDirect ? "🟢 Pouze přímé lety" : "✈️ Všechny lety (i s přestupem)"}
-          </span>
+          {showFilterToggle && (
+            <span
+              className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full transition-all duration-300 ${
+                onlyDirect
+                  ? "bg-green-100 text-green-700 border border-green-200"
+                  : "bg-blue-100 text-blue-700 border border-blue-200"
+              }`}
+            >
+              {onlyDirect ? "🟢 Pouze přímé lety" : "✈️ Všechny lety (i s přestupem)"}
+            </span>
+          )}
+          {showTripTypeToggle && (
+            <span
+              className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full transition-all duration-300 ${
+                oneWay
+                  ? "bg-orange-100 text-orange-700 border border-orange-200"
+                  : "bg-purple-100 text-purple-700 border border-purple-200"
+              }`}
+            >
+              {oneWay ? "➡️ Jednosměrné" : "🔄 Zpáteční"}
+            </span>
+          )}
           {isTransitioning && (
             <span className="text-xs text-gray-400 flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />
@@ -292,21 +417,20 @@ export default function FlightMapWidget({
             <p className="text-sm text-gray-500 text-center max-w-xs">
               {onlyDirect
                 ? "Zobrazuji pouze přímé lety bez přestupu"
+                : oneWay
+                ? "Hledám nejlevnější jednosměrné letenky z Prahy"
                 : "Hledám nejlevnější letenky z Prahy do celého světa"}
             </p>
-            {/* Animated city names */}
             <div className="flex gap-2 mt-5 flex-wrap justify-center max-w-xs">
-              {["Praha", "Londýn", "Bangkok", "New York", "Dubaj"].map(
-                (city, i) => (
-                  <span
-                    key={city}
-                    className="text-xs text-blue-400 font-medium animate-pulse"
-                    style={{ animationDelay: `${i * 0.2}s` }}
-                  >
-                    {city}
-                  </span>
-                )
-              )}
+              {["Praha", "Londýn", "Bangkok", "New York", "Dubaj"].map((city, i) => (
+                <span
+                  key={city}
+                  className="text-xs text-blue-400 font-medium animate-pulse"
+                  style={{ animationDelay: `${i * 0.2}s` }}
+                >
+                  {city}
+                </span>
+              ))}
             </div>
           </div>
         )}
