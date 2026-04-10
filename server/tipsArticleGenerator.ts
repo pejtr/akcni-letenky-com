@@ -9,6 +9,7 @@ import { getDb } from "./db";
 import { articles } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { notifyOwner } from "./_core/notification";
+import { sendTelegramMessage } from "./telegram";
 
 // ─── Topic Pool ────────────────────────────────────────────────────────────────
 // 30+ unique topics to ensure months of non-repeating daily articles
@@ -330,6 +331,16 @@ VÝSTUP (JSON):
       content: `Automaticky byl vygenerován a publikován nový článek:\n\n**${parsed.title}**\n\nSlug: /blog/${topic.slug_prefix}\nKategorie: Tipy pro cestovatele`,
     }).catch(() => {}); // non-blocking
 
+    // Share on Telegram
+    await shareTipOnTelegram({
+      title: parsed.title,
+      excerpt: parsed.excerpt,
+      slug: topic.slug_prefix,
+      image: topic.image || randomFallbackImage(),
+    }).catch((e: unknown) => {
+      console.error("[TipsGenerator] Telegram share failed:", e);
+    });
+
     return { slug: topic.slug_prefix, title: parsed.title, success: true };
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -381,6 +392,81 @@ export async function getTipsGenerationStats(): Promise<{
       publishedAt: a.publishedAt,
     })),
   };
+}
+
+/**
+ * Share a new tip article on Telegram channel
+ * Sends a beautifully formatted HTML message with title, excerpt and link
+ */
+export async function shareTipOnTelegram(article: {
+  title: string;
+  excerpt: string;
+  slug: string;
+  image?: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const siteUrl = process.env.VITE_SITE_URL || "https://akcni-letenky.com";
+  const articleUrl = `${siteUrl}/blog/${article.slug}`;
+
+  // Truncate excerpt to keep message clean
+  const shortExcerpt = article.excerpt.length > 180
+    ? article.excerpt.substring(0, 177) + "..."
+    : article.excerpt;
+
+  const message = [
+    `✈️ <b>Nový tip pro cestovatele!</b>`,
+    ``,
+    `💡 <b>${article.title}</b>`,
+    ``,
+    `${shortExcerpt}`,
+    ``,
+    `➡️ <a href="${articleUrl}">Přečstěte celý článek</a>`,
+    ``,
+    `————————————————————`,
+    `🔔 <i>Sledujte nás pro další tipy na levné letenky</i>`,
+    `🛫 <a href="https://akcni-letenky.com">Akční-Letenky.cz</a>`,
+  ].join("\n");
+
+  console.log(`[TipsGenerator] Sharing on Telegram: "${article.title}"`);
+  const result = await sendTelegramMessage(message, { parseMode: "HTML", disableWebPagePreview: false });
+
+  if (result.ok) {
+    console.log(`[TipsGenerator] ✅ Telegram share successful (msg id: ${result.messageId})`);
+  } else {
+    console.error(`[TipsGenerator] ❌ Telegram share failed: ${result.error}`);
+  }
+
+  return result;
+}
+
+/**
+ * Share an existing article on Telegram by slug (for manual admin use)
+ */
+export async function shareTipBySlug(slug: string): Promise<{ ok: boolean; error?: string }> {
+  const db = await getDb();
+  if (!db) return { ok: false, error: "Database not available" };
+
+  const rows = await db
+    .select({
+      title: articles.title,
+      slug: articles.slug,
+      excerpt: articles.excerpt,
+      featuredImage: articles.featuredImage,
+    })
+    .from(articles)
+    .where(eq(articles.slug, slug))
+    .limit(1);
+
+  if (rows.length === 0) {
+    return { ok: false, error: `Article not found: ${slug}` };
+  }
+
+  const article = rows[0]!;
+  return shareTipOnTelegram({
+    title: article.title,
+    excerpt: article.excerpt || "",
+    slug: article.slug,
+    image: article.featuredImage || undefined,
+  });
 }
 
 /**

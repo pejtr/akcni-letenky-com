@@ -18,9 +18,15 @@ vi.mock("./_core/notification", () => ({
   notifyOwner: vi.fn().mockResolvedValue(true),
 }));
 
+// ─── Mock Telegram ────────────────────────────────────────────────────────────
+vi.mock("./telegram", () => ({
+  sendTelegramMessage: vi.fn().mockResolvedValue({ ok: true, messageId: 12345 }),
+}));
+
 import { getDb } from "./db";
 import { invokeLLM } from "./_core/llm";
-import { generateDailyTipArticle, getTipsGenerationStats, scheduleDailyTipArticle } from "./tipsArticleGenerator";
+import { sendTelegramMessage } from "./telegram";
+import { generateDailyTipArticle, getTipsGenerationStats, scheduleDailyTipArticle, shareTipOnTelegram, shareTipBySlug } from "./tipsArticleGenerator";
 
 const mockDb = {
   select: vi.fn().mockReturnThis(),
@@ -186,6 +192,121 @@ describe("tipsArticleGenerator", () => {
     it("schedules without throwing", () => {
       // Just verify it doesn't throw when called
       expect(() => scheduleDailyTipArticle()).not.toThrow();
+    });
+  });
+
+  describe("shareTipOnTelegram", () => {
+    it("sends a formatted Telegram message with article info", async () => {
+      const result = await shareTipOnTelegram({
+        title: "Jak ušetřit na letenkách",
+        excerpt: "Praktický průvodce pro každého cestovatele.",
+        slug: "jak-usetrit-na-letenkach",
+      });
+
+      expect(result.ok).toBe(true);
+      expect(result.messageId).toBe(12345);
+
+      const sendCall = (sendTelegramMessage as ReturnType<typeof vi.fn>).mock.calls[0];
+      const messageText = sendCall[0] as string;
+
+      // Message should contain key elements
+      expect(messageText).toContain("Jak ušetřit na letenkách");
+      expect(messageText).toContain("Praktický průvodce");
+      expect(messageText).toContain("akcni-letenky.com/blog/jak-usetrit-na-letenkach");
+      expect(messageText).toContain("✈️");
+
+      // Parse mode should be HTML
+      const options = sendCall[1];
+      expect(options.parseMode).toBe("HTML");
+    });
+
+    it("truncates long excerpts to 180 chars", async () => {
+      const longExcerpt = "A".repeat(250);
+
+      await shareTipOnTelegram({
+        title: "Test",
+        excerpt: longExcerpt,
+        slug: "test-slug",
+      });
+
+      const messageText = (sendTelegramMessage as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+      // The excerpt in the message should be truncated
+      expect(messageText).toContain("...");
+      expect(messageText).not.toContain("A".repeat(200));
+    });
+
+    it("handles Telegram API failure gracefully", async () => {
+      (sendTelegramMessage as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ ok: false, error: "Bot blocked" });
+
+      const result = await shareTipOnTelegram({
+        title: "Test",
+        excerpt: "Test excerpt.",
+        slug: "test",
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toBe("Bot blocked");
+    });
+  });
+
+  describe("shareTipBySlug", () => {
+    it("returns error when article not found", async () => {
+      mockDb.limit.mockResolvedValue([]); // no article found
+
+      const result = await shareTipBySlug("non-existent-slug");
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toContain("Article not found");
+    });
+
+    it("shares the article when found", async () => {
+      mockDb.limit.mockResolvedValue([{
+        title: "Jak ušetřit",
+        slug: "jak-usetrit",
+        excerpt: "Tipy pro cestovatele.",
+        featuredImage: "https://images.unsplash.com/photo-test",
+      }]);
+
+      const result = await shareTipBySlug("jak-usetrit");
+
+      expect(result.ok).toBe(true);
+    });
+
+    it("returns error when DB unavailable", async () => {
+      (getDb as any).mockResolvedValue(null);
+
+      const result = await shareTipBySlug("any-slug");
+
+      expect(result.ok).toBe(false);
+      expect(result.error).toContain("Database not available");
+    });
+  });
+
+  describe("generateDailyTipArticle - Telegram integration", () => {
+    it("calls Telegram share after successful article generation", async () => {
+      mockDb.limit.mockResolvedValue([]);
+
+      const mockLLMResponse = {
+        choices: [{
+          message: {
+            content: JSON.stringify({
+              title: "Test Tip Article",
+              excerpt: "Test excerpt for Telegram.",
+              metaDescription: "Test meta.",
+              content: "<article><p>Test</p></article>",
+            }),
+          },
+        }],
+      };
+      (invokeLLM as any).mockResolvedValue(mockLLMResponse);
+
+      const result = await generateDailyTipArticle();
+
+      expect(result.success).toBe(true);
+      // Telegram should have been called
+      expect(sendTelegramMessage).toHaveBeenCalled();
+      const telegramCall = (sendTelegramMessage as ReturnType<typeof vi.fn>).mock.calls[0];
+      expect(telegramCall[0]).toContain("Test Tip Article");
     });
   });
 });

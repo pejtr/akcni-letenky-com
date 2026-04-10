@@ -47,6 +47,7 @@ import {
 import {
   generateDailyTipArticle,
   getTipsGenerationStats,
+  shareTipBySlug,
 } from "./tipsArticleGenerator";
 import {
   getABTestStatus,
@@ -375,6 +376,20 @@ export const appRouter = router({
       }
       return await getTipsGenerationStats();
     }),
+
+    // Manually share a tip article on Telegram by slug (admin only)
+    shareTipManually: protectedProcedure
+      .input(z.object({ slug: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+        }
+        const result = await shareTipBySlug(input.slug);
+        if (!result.ok) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: result.error || "Telegram share failed" });
+        }
+        return { success: true };
+      }),
   }),
 
   destinations: router({

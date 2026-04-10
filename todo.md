@@ -2428,3 +2428,11 @@
 - [x] Napojit scheduler na server/_core/index.ts
 - [x] Přidat admin UI panel pro správu generování tipů (TipsGeneratorCard v AdminDashboard)
 - [x] Napsat vitest testy pro generateDailyTipArticle (8/8 passed)
+
+## Automatické sdílení článků na Telegram (2026-04-10)
+- [x] Prozkoumat stávající Telegram bot infrastrukturu (telegramBot.ts / whatsappDailyMessage.ts)
+- [x] Přidat funkci shareTipOnTelegram() do tipsArticleGenerator.ts
+- [x] Automaticky volat shareTipOnTelegram() po každém úspěšném vygenerování článku
+- [x] Přidat admin endpoint articles.shareTipManually pro ruční sdílení existujícího článku
+- [x] Přidat tlačítko "Sdílet na Telegram" do TipsGeneratorCard v AdminDashboard
+- [x] Napsat vitest testy pro Telegram sdílení (15/15 passed)

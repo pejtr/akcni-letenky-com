@@ -1598,6 +1598,8 @@ function ResendKeyWarning() {
 // ============ Tips Article Generator Card ============
 function TipsGeneratorCard() {
   const [lastResult, setLastResult] = React.useState<{ title: string; slug: string } | null>(null);
+  const [sharingSlug, setSharingSlug] = React.useState<string | null>(null);
+  const [shareResult, setShareResult] = React.useState<{ slug: string; ok: boolean } | null>(null);
 
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = trpc.articles.getTipsStats.useQuery();
 
@@ -1605,6 +1607,18 @@ function TipsGeneratorCard() {
     onSuccess: (data) => {
       setLastResult({ title: data.title, slug: data.slug });
       refetchStats();
+    },
+  });
+
+  const shareTip = trpc.articles.shareTipManually.useMutation({
+    onMutate: (vars) => setSharingSlug(vars.slug),
+    onSuccess: (_data, vars) => {
+      setShareResult({ slug: vars.slug, ok: true });
+      setSharingSlug(null);
+    },
+    onError: (_err, vars) => {
+      setShareResult({ slug: vars.slug, ok: false });
+      setSharingSlug(null);
     },
   });
 
@@ -1687,18 +1701,39 @@ function TipsGeneratorCard() {
         {stats && stats.recentArticles.length > 0 && (
           <div className="mt-4">
             <h4 className="text-sm font-semibold text-gray-700 mb-2">Poslední vygenerované tipy:</h4>
-            <ul className="space-y-1">
+            <ul className="space-y-2">
               {stats.recentArticles.map((a) => (
-                <li key={a.slug} className="flex items-center justify-between text-sm">
-                  <a href={`/blog/${a.slug}`} target="_blank" rel="noopener" className="text-blue-600 hover:underline truncate max-w-xs">
+                <li key={a.slug} className="flex items-center justify-between text-sm gap-2">
+                  <a href={`/blog/${a.slug}`} target="_blank" rel="noopener" className="text-blue-600 hover:underline truncate max-w-xs flex-1">
                     {a.title}
                   </a>
-                  <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
+                  <span className="text-xs text-muted-foreground flex-shrink-0">
                     {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString("cs-CZ") : ""}
                   </span>
+                  <button
+                    onClick={() => shareTip.mutate({ slug: a.slug })}
+                    disabled={sharingSlug === a.slug}
+                    title="Sdílet na Telegram"
+                    className="flex-shrink-0 p-1 rounded hover:bg-blue-50 text-blue-500 hover:text-blue-700 disabled:opacity-50 transition-colors"
+                  >
+                    {sharingSlug === a.slug ? (
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    ) : shareResult?.slug === a.slug ? (
+                      shareResult.ok ? (
+                        <Check className="w-3.5 h-3.5 text-green-500" />
+                      ) : (
+                        <span className="text-xs text-red-500">✗</span>
+                      )
+                    ) : (
+                      <Send className="w-3.5 h-3.5" />
+                    )}
+                  </button>
                 </li>
               ))}
             </ul>
+            <p className="text-xs text-muted-foreground mt-2">
+              💬 Klikněte na ikonu <Send className="w-3 h-3 inline" /> pro ruční sdílení článku na Telegram
+            </p>
           </div>
         )}
 
