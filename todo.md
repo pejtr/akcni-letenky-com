@@ -2460,3 +2460,8 @@
 - [x] Vytvořit FlightMapWidget komponent (client/src/components/FlightMapWidget.tsx)
 - [x] Integrovat widget na stránku LevneLetenky.tsx (mezi Popular Routes a Aviasales CTA)
 - [x] Přidat loading skeleton a fallback UI (loading overlay s animací + error state s Kiwi.com CTA)
+
+## Přepínač filtru v FlightMapWidget (2026-04-10)
+- [x] Přidat interaktivní toggle "Přímé lety / S přestupem" do FlightMapWidget
+- [x] Překreslit mapu při změně filtru (reload scriptu s novým parametrem only_direct)
+- [x] Přidat animaci přechodu při přepínání filtru (opacity transition + Loader2 spinner v tlačítku)
