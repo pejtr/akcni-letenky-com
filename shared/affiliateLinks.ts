@@ -81,6 +81,18 @@ export function kiwiTilesLink(origin: string, destination: string, subId?: strin
   return tpLink(PROGRAMS.KIWI, kiwiUrl, subId);
 }
 
+/**
+ * Wrap ANY raw kiwi.com URL through Travelpayouts affiliate tracking.
+ * Use this for legacy kiwiUrl values stored in seoDestinations.ts.
+ * @param rawKiwiUrl - raw kiwi.com URL (without affiliate params)
+ * @param subId - optional sub-tracking ID
+ */
+export function kiwiAffiliateUrl(rawKiwiUrl: string, subId?: string): string {
+  // Already wrapped through tp.media — return as-is
+  if (rawKiwiUrl.includes("tp.media")) return rawKiwiUrl;
+  return tpLink(PROGRAMS.KIWI, rawKiwiUrl, subId);
+}
+
 // ============================================================
 // BOOKING.COM
 // ============================================================

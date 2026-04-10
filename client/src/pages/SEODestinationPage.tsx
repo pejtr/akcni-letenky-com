@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 // Footer component not available
 import { destinationCountries, destinationCities, type SEODestination } from "../../../shared/seoDestinations";
+import { kiwiAffiliateUrl } from "@shared/affiliateLinks";
 
 export default function SEODestinationPage() {
   const [location] = useLocation();
@@ -248,7 +249,7 @@ export default function SEODestinationPage() {
                       className="w-full"
                     >
                       <a
-                        href={destination.kiwiUrl}
+                        href={kiwiAffiliateUrl(destination.kiwiUrl, "seo-dest")}
                         target="_blank"
                         rel="noopener nofollow"
                         className="flex items-center justify-center gap-2"

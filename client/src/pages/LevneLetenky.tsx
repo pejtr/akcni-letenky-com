@@ -4,6 +4,7 @@ import { Plane, ArrowRight, Search, Star, TrendingDown, Globe, Zap } from "lucid
 import Navigation from "@/components/Navigation";
 import SocialProofNotification from "@/components/SocialProofNotification";
 import CountdownTimer from "@/components/CountdownTimer";
+import { kiwiSearchLink, kiwiAffiliateUrl } from "@shared/affiliateLinks";
 
 // Travelpayouts Kiwi.com widget loader
 function KiwiSearchWidget() {
@@ -68,16 +69,10 @@ export default function LevneLetenky() {
   const [destination, setDestination] = useState("");
 
   const buildKiwiLink = (dest?: string) => {
-    const base = "https://www.kiwi.com/cs/search";
-    const params = new URLSearchParams({
-      affilid: "155221",
-      currency: "czk",
-      lang: "cs",
-    });
     if (dest) {
-      return `https://www.kiwi.com/cs/search/results/prague-czechia/${dest}/anytime/anytime?affilid=155221&currency=czk`;
+      return kiwiSearchLink("letiste-vaclava-havla-praha-praha-cesko", dest, "letenky-page");
     }
-    return `https://www.kiwi.com/cs/?affilid=155221&currency=czk`;
+    return kiwiAffiliateUrl("https://www.kiwi.com/cs/", "letenky-page");
   };
 
   return (

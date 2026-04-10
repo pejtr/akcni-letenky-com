@@ -2443,7 +2443,7 @@
 - [x] Přidat IATA kódy destinací pro přesné předvyplnění widgetu (BCN, CDG, LHR, FCO, JFK, DXB, SGN)
 
 ## Oprava Kiwi.com affiliate linků (2026-04-10)
-- [ ] Najít všechny Kiwi.com URL v projektu bez správného affiliate parametru
-- [ ] Nahradit iframe widgety Travelpayouts embed skripty (tpemb.com)
-- [ ] Opravit všechny přímé Kiwi.com URL na správný formát s affilid=pejtrview155221
-- [ ] Zkontrolovat shared/affiliateLinks.ts a opravit buildKiwiUrl helper
+- [x] Najít všechny Kiwi.com URL v projektu bez správného affiliate parametru
+- [x] Nahradit iframe widgety Travelpayouts embed skripty (tpemb.com)
+- [x] Opravit všechny přímé Kiwi.com URL na správný formát s affilid=pejtrview155221
+- [x] Zkontrolovat shared/affiliateLinks.ts a přidat kiwiAffiliateUrl() wrapper pro legacy URL

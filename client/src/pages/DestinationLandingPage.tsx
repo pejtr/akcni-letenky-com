@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plane, Calendar, TrendingDown, ExternalLink, Heart, Clock, Star, Hotel } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
-import { bookingSearchLink } from "@shared/affiliateLinks";
+import { bookingSearchLink, kiwiSearchLink } from "@shared/affiliateLinks";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -300,23 +300,28 @@ export default function DestinationLandingPage() {
                   </div>
                 </div>
 
-                {/* Kiwi.com Travelpayouts iframe widget */}
-                <div className="w-full overflow-hidden rounded-xl">
-                  <iframe
-                    src={`https://www.kiwi.com/en/search/results/prague-czechia/${meta.iataCode ? meta.iataCode.toLowerCase() + '-' + (destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'rome-italy' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'ho-chi-minh-city-vietnam' : destinationSlug) : destinationSlug}/anytime/anytime?affilid=pejtrview155221`}
-                    width="100%"
-                    height="500"
-                    frameBorder="0"
-                    className="rounded-xl"
-                    title={`Letenky do ${meta.title}`}
-                    loading="lazy"
+                {/* Travelpayouts Kiwi.com embed widget (promo_id=3414, marker=155221) */}
+                <div className="w-full overflow-hidden rounded-xl" id={`kiwi-widget-${destinationSlug}`}>
+                  <script
+                    async
+                    data-trs="516867"
+                    data-promo_id="3414"
+                    data-shmarker="155221"
+                    data-locale="cs"
+                    data-currency="CZK"
+                    data-host="www.kiwi.com"
+                    data-origin="PRG"
+                    data-destination={meta.iataCode || ""}
+                    data-width="100%"
+                    data-height="500"
+                    src="https://c189.travelpayouts.com/content?trs=516867&shmarker=155221&promo_id=3414&locale=cs&currency=CZK"
                   />
                 </div>
 
                 {/* Direct CTA link */}
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <a
-                    href={`https://www.kiwi.com/cs/search/results/prague-czechia/${meta.iataCode ? meta.iataCode.toLowerCase() + '-' + (destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'rome-italy' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'ho-chi-minh-city-vietnam' : destinationSlug) : destinationSlug}/anytime/anytime?affilid=pejtrview155221`}
+                    href={kiwiSearchLink("letiste-vaclava-havla-praha-praha-cesko", destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'letiste-rim-fiumicino-rim-italie' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'hanoi-vietnam' : destinationSlug, "dest-page")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1"
@@ -343,7 +348,7 @@ export default function DestinationLandingPage() {
                   <p className="text-sm text-orange-600">Nastavte si cenový alert na Kiwi.com a dostanete e-mail, jakmile ceny klesnou.</p>
                 </div>
                 <a
-                  href={`https://www.kiwi.com/cs/search/results/prague-czechia/${meta.iataCode || destinationSlug}/anytime/anytime?affilid=pejtrview155221`}
+                  href={kiwiSearchLink("letiste-vaclava-havla-praha-praha-cesko", destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'letiste-rim-fiumicino-rim-italie' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'hanoi-vietnam' : destinationSlug, "price-alert")}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
