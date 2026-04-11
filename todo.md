@@ -2475,3 +2475,8 @@
 - [x] Přidat přepínač zpáteční/jednosměrné do FlightMapWidget s localStorage persistencí (klíč: akcni-letenky:flight-map-oneway)
 - [x] Přidat localStorage persistenci do PriceCalendarWidget (klíče: price-calendar-period + price-calendar-dest)
 - [x] Implementovat analytické sledování přepínání filtrů přes Umami custom events (flight_filter_changed + calendar_period_changed)
+
+## Homepage sekce "Kam letět z Prahy?" (2026-04-11)
+-- [x] Přečst Home.tsx a najít správné místo pro sekci (za TopFlightsThisWeek, před PersonalizedSection)
+- [x] Přidat sekci "Kam letět z Prahy?" s FlightMapWidgetem do Home.tsx (HomeFlightMapSection komponent)
+- [x] Sekce je collapsible — teaser s náhledem mapy + quick stats, rozbalí se na plný FlightMapWidget

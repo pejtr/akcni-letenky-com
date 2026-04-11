@@ -23,6 +23,7 @@ import LiveViewerCounter from "@/components/LiveViewerCounter";
 import PersonalizedSection from "@/components/PersonalizedSection";
 import CountdownTimer from "@/components/CountdownTimer";
 import GdprConsentBanner from "@/components/GdprConsentBanner";
+import FlightMapWidget from "@/components/FlightMapWidget";
 import SocialSharePanel from "@/components/SocialSharePanel";
 import WhatsAppGroupBanner from "@/components/WhatsAppGroupBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -616,6 +617,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Kam letět z Prahy? - Interaktivní mapa cen letů */}
+      <HomeFlightMapSection />
+
       {/* Personalized Recommendations */}
       <PersonalizedSection />
 
@@ -1163,5 +1167,83 @@ export default function Home() {
       <GdprConsentBanner />
       
     </div>
+  );
+}
+
+// ── Kam letět z Prahy? sekce ────────────────────────────────────────────────
+function HomeFlightMapSection() {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <section className="py-10 bg-gradient-to-b from-[#EBF4FF] to-white">
+      <div className="container">
+        {/* Section header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-[#003087] rounded-xl p-2.5">
+              <Plane className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black text-[#003087]">
+                Kam letět z Prahy?
+              </h2>
+              <p className="text-sm text-gray-500 mt-0.5">
+                Interaktivní mapa nejlevnějších letů — klikni na destinaci a zjisti cenu
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setExpanded(v => !v)}
+            className="flex items-center gap-2 text-sm font-semibold text-[#003087] bg-white border border-[#003087]/20 rounded-lg px-4 py-2 hover:bg-[#003087]/5 transition-colors"
+            aria-expanded={expanded}
+          >
+            {expanded ? "Skrýt mapu ▲" : "Zobrazit mapu ▼"}
+          </button>
+        </div>
+
+        {/* Preview teaser — always visible */}
+        {!expanded && (
+          <div
+            className="relative rounded-2xl overflow-hidden cursor-pointer group border border-[#003087]/10 shadow-md"
+            onClick={() => setExpanded(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => e.key === "Enter" && setExpanded(true)}
+          >
+            {/* Blurred placeholder map background */}
+            <div className="h-48 bg-gradient-to-br from-[#0a3d7a] via-[#1565c0] to-[#0288d1] flex items-center justify-center relative">
+              <div className="absolute inset-0 opacity-20"
+                style={{backgroundImage: "radial-gradient(circle at 30% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 70% 30%, #fff 1px, transparent 1px), radial-gradient(circle at 50% 70%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 60%, #fff 1px, transparent 1px), radial-gradient(circle at 20% 80%, #fff 1px, transparent 1px)", backgroundSize: "200px 200px"}}
+              />
+              <div className="text-center z-10">
+                <div className="text-5xl mb-3">🗺️</div>
+                <p className="text-white font-bold text-lg">Zobrazit interaktivní mapu letů</p>
+                <p className="text-white/70 text-sm mt-1">Letenky z Prahy od 590 Kč • Klikni pro zobrazení</p>
+              </div>
+              <div className="absolute inset-0 bg-[#003087]/30 group-hover:bg-[#003087]/10 transition-colors" />
+            </div>
+            {/* Quick stats bar */}
+            <div className="bg-white px-6 py-3 flex flex-wrap gap-4 text-sm text-gray-600 border-t border-gray-100">
+              <span>✈️ <strong>Praha → Londýn</strong> od 1 290 Kč</span>
+              <span>✈️ <strong>Praha → Barcelona</strong> od 1 590 Kč</span>
+              <span>✈️ <strong>Praha → Řím</strong> od 1 190 Kč</span>
+              <span className="text-[#003087] font-semibold cursor-pointer hover:underline">+ zobrazit vše →</span>
+            </div>
+          </div>
+        )}
+
+        {/* Full map widget — shown when expanded */}
+        {expanded && (
+          <div className="rounded-2xl overflow-hidden shadow-lg border border-[#003087]/10">
+            <FlightMapWidget
+              origin="PRG"
+              locale="cs"
+              currency="CZK"
+              height={520}
+            />
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
