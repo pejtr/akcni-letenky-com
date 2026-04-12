@@ -15,6 +15,7 @@ import { scheduleFollowupProcessor } from "../emailFollowup";
 import { scheduleWishlistRemarketing } from "../wishlistRemarketing";
 import { scheduleWhatsAppDailyMessage } from "../whatsappDailyMessage";
 import { scheduleDailyTipArticle } from "../tipsArticleGenerator";
+import { scheduleMidnightPriceRefresh } from "../travelpayoutsCache";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 import { recordEmailOpened, recordEmailClicked } from "../emailAbTest";
 
@@ -156,6 +157,9 @@ async function startServer() {
 
     // Daily travel tips article generator (7:00 AM)
     scheduleDailyTipArticle();
+
+    // Travelpayouts price cache (fetch on startup + midnight refresh)
+    scheduleMidnightPriceRefresh();
   });
 }
 

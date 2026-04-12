@@ -2480,3 +2480,16 @@
 -- [x] Přečst Home.tsx a najít správné místo pro sekci (za TopFlightsThisWeek, před PersonalizedSection)
 - [x] Přidat sekci "Kam letět z Prahy?" s FlightMapWidgetem do Home.tsx (HomeFlightMapSection komponent)
 - [x] Sekce je collapsible — teaser s náhledem mapy + quick stats, rozbalí se na plný FlightMapWidget
+
+## Dynamické ceny z Travelpayouts API (2026-04-11)
+- [x] Prozkoumat Travelpayouts Prices API (v1/prices/cheap endpoint, token v X-Access-Token header)
+- [x] Vytvořit server-side caching endpoint `flights.cheapFromPrague` + travelpayoutsCache.ts
+- [x] Cache s 24h refresh cyklem (midnight update) + non-blocking background fetch
+- [x] Aktualizovat HomeFlightMapSection pro zobrazení dynamických cen z API (loading skeleton + green price highlight)
+- [x] Fallback na statické ceny při API chybě (STATIC_PRICES konstanta)
+
+## Seedance 2.0 integrace (2026-04-12)
+- [ ] Uložit checkpoint dynamických cen (travelpayoutsCache + HomeFlightMapSection)
+- [ ] Přidat TRAVELPAYOUTS_API_TOKEN secret
+- [ ] Vytvořit SEO článek "Jak natočit virální video z dovolené pomocí AI" v kategorii tips
+- [ ] Přidat interní dokumentaci Seedance 2.0 do Admin Dashboardu (ResourcesPanel)

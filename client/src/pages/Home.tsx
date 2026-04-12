@@ -1170,9 +1170,33 @@ export default function Home() {
   );
 }
 
-// ── Kam letět z Prahy? sekce ────────────────────────────────────────────────
+// Static fallback prices when API is unavailable
+const STATIC_PRICES = [
+  { iata: "LHR", name: "Londýn", price: 1290 },
+  { iata: "BCN", name: "Barcelona", price: 1590 },
+  { iata: "FCO", name: "Řím", price: 1190 },
+];
+
+// ── Kam letět z Prahy? sekce ────────────────────────────────────────────
 function HomeFlightMapSection() {
   const [expanded, setExpanded] = useState(false);
+
+  // Fetch dynamic prices from Travelpayouts API (cached 24h on server)
+  const { data: cheapFlights, isLoading } = trpc.flights.cheapFromPrague.useQuery(
+    { destinations: ["LHR", "BCN", "FCO", "CDG", "AMS", "LIS", "ATH", "DXB", "BKK"] },
+    {
+      staleTime: 60 * 60 * 1000, // 1h client-side cache
+      retry: false,
+    }
+  );
+
+  // Use dynamic prices if available, fallback to static
+  const displayPrices = cheapFlights && cheapFlights.filter(f => f.price !== null).length >= 2
+    ? cheapFlights.filter(f => f.price !== null).slice(0, 3)
+    : STATIC_PRICES;
+
+  // Find the lowest price for the teaser headline
+  const lowestPrice = cheapFlights?.find(f => f.price !== null)?.price ?? 590;
 
   return (
     <section className="py-10 bg-gradient-to-b from-[#EBF4FF] to-white">
@@ -1188,7 +1212,7 @@ function HomeFlightMapSection() {
                 Kam letět z Prahy?
               </h2>
               <p className="text-sm text-gray-500 mt-0.5">
-                Interaktivní mapa nejlevnějších letů — klikni na destinaci a zjisti cenu
+                Interaktivní mapa nejlevějších letů — klikni na destinaci a zjišti cenu
               </p>
             </div>
           </div>
@@ -1218,16 +1242,40 @@ function HomeFlightMapSection() {
               <div className="text-center z-10">
                 <div className="text-5xl mb-3">🗺️</div>
                 <p className="text-white font-bold text-lg">Zobrazit interaktivní mapu letů</p>
-                <p className="text-white/70 text-sm mt-1">Letenky z Prahy od 590 Kč • Klikni pro zobrazení</p>
+                <p className="text-white/70 text-sm mt-1">
+                  Letenky z Prahy od{" "}
+                  <span className="font-bold text-yellow-300">
+                    {isLoading ? "..." : `${lowestPrice.toLocaleString("cs-CZ")} Kč`}
+                  </span>
+                  {" "}• Klikni pro zobrazení
+                </p>
               </div>
               <div className="absolute inset-0 bg-[#003087]/30 group-hover:bg-[#003087]/10 transition-colors" />
             </div>
-            {/* Quick stats bar */}
+            {/* Dynamic quick stats bar */}
             <div className="bg-white px-6 py-3 flex flex-wrap gap-4 text-sm text-gray-600 border-t border-gray-100">
-              <span>✈️ <strong>Praha → Londýn</strong> od 1 290 Kč</span>
-              <span>✈️ <strong>Praha → Barcelona</strong> od 1 590 Kč</span>
-              <span>✈️ <strong>Praha → Řím</strong> od 1 190 Kč</span>
-              <span className="text-[#003087] font-semibold cursor-pointer hover:underline">+ zobrazit vše →</span>
+              {isLoading ? (
+                <>
+                  <span className="animate-pulse bg-gray-200 rounded h-4 w-40" />
+                  <span className="animate-pulse bg-gray-200 rounded h-4 w-44" />
+                  <span className="animate-pulse bg-gray-200 rounded h-4 w-36" />
+                </>
+              ) : (
+                <>
+                  {displayPrices.map(f => (
+                    <span key={f.iata}>
+                      ✈️ <strong>Praha → {f.name}</strong>{" "}
+                      od{" "}
+                      <span className="text-green-700 font-bold">
+                        {f.price ? f.price.toLocaleString("cs-CZ") : "---"} Kč
+                      </span>
+                    </span>
+                  ))}
+                  <span className="text-[#003087] font-semibold cursor-pointer hover:underline ml-auto">
+                    + zobrazit vše →
+                  </span>
+                </>
+              )}
             </div>
           </div>
         )}

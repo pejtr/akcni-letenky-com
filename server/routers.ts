@@ -44,6 +44,7 @@ import {
   saveGeneratedArticle,
   generateDailyArticle,
 } from "./blogGenerator";
+import { getCheapFlightsForDestinations } from "./travelpayoutsCache";
 import {
   generateDailyTipArticle,
   getTipsGenerationStats,
@@ -231,6 +232,16 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const flights = await pelikanCache.getFlights();
         return flights.slice(0, input?.limit || 20);
+      }),
+
+    // Get cheapest flights from Prague (Travelpayouts API, cached 24h)
+    cheapFromPrague: publicProcedure
+      .input(z.object({
+        destinations: z.array(z.string()).optional().default(["LHR", "CDG", "FCO", "BCN", "AMS", "DXB", "BKK", "LIS", "ATH"])
+      }).optional())
+      .query(async ({ input }) => {
+        const dests = input?.destinations || ["LHR", "CDG", "FCO", "BCN", "AMS", "DXB", "BKK", "LIS", "ATH"];
+        return await getCheapFlightsForDestinations(dests);
       }),
   }),
 
