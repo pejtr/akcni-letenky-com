@@ -12,7 +12,7 @@
  * - CTA button "TAM CHCI TAKY >"
  */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { kiwiSearchLink } from "@shared/affiliateLinks";
@@ -70,7 +70,7 @@ const ACTIONS = [
 
 export default function SocialProofNotification() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [nextId, setNextId] = useState(1);
+  const nextIdRef = useRef(1);
   const trackClickMutation = trpc.affiliate.trackClick.useMutation();
   
   // Get A/B test variant (memoized to prevent re-assignment)
@@ -90,8 +90,8 @@ export default function SocialProofNotification() {
     trackABClick(variant.id);
   };
 
-  // Generate random notification
-  const generateNotification = (): Notification => {
+  // Generate random notification — uses ref so ID is always unique (no stale closure)
+  const generateNotification = useCallback((): Notification => {
     const name = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
     const city = CITIES[Math.floor(Math.random() * CITIES.length)];
     const destObj = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
@@ -102,7 +102,7 @@ export default function SocialProofNotification() {
     const price = Math.floor(Math.random() * (maxPrice - minPrice) + minPrice);
 
     return {
-      id: nextId,
+      id: nextIdRef.current++,
       name,
       city,
       destination: destObj.name,
@@ -112,14 +112,13 @@ export default function SocialProofNotification() {
       imageUrl: destObj.image,
       timestamp: new Date(),
     };
-  };
+  }, []);
 
   // Show notification
-  const showNotification = () => {
+  const showNotification = useCallback(() => {
     const notification = generateNotification();
     setNotifications(prev => [...prev, notification]);
-    setNextId(prev => prev + 1);
-    
+
     // Track impression for A/B test
     trackImpression(variant.id);
 
@@ -127,7 +126,7 @@ export default function SocialProofNotification() {
     setTimeout(() => {
       setNotifications(prev => prev.filter(n => n.id !== notification.id));
     }, variant.displayDuration);
-  };
+  }, [generateNotification, variant]);
 
   // Start showing notifications based on variant timing
   useEffect(() => {
