@@ -2493,3 +2493,8 @@
 - [ ] Přidat TRAVELPAYOUTS_API_TOKEN secret
 - [ ] Vytvořit SEO článek "Jak natočit virální video z dovolené pomocí AI" v kategorii tips
 - [ ] Přidat interní dokumentaci Seedance 2.0 do Admin Dashboardu (ResourcesPanel)
+
+## Dokončené úkoly (2026-05-25)
+- [x] Vložit 3 SEO články s vysokým search volume do DB (Londýn za 1500 Kč, Nejlevnější letenky z Prahy, 7 chyb při rezervaci)
+- [x] Přidat SeedanceResourceCard do AdminDashboard.tsx (5-krokový workflow, pro tipy, nástroje, nápady na obsah)
+- [x] TypeScript kompilace: 0 chyb potvrzeno

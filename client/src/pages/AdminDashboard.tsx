@@ -414,6 +414,11 @@ export default function AdminDashboard() {
           <TipsGeneratorCard />
         </div>
 
+        {/* Seedance 2.0 Resource */}
+        <div className="mt-6">
+          <SeedanceResourceCard />
+        </div>
+
         {/* RESEND_API_KEY Warning */}
         <ResendKeyWarning />
       </main>
@@ -1743,6 +1748,154 @@ function TipsGeneratorCard() {
           Celkem pokryje <strong>{stats?.topicsAvailable ?? 25}+ dní</strong> bez opakování.
         </div>
       </CardContent>
+    </Card>
+  );
+}
+
+// ============ Seedance 2.0 Resource Card ============
+
+function SeedanceResourceCard() {
+  const [expanded, setExpanded] = useState(false);
+
+  const steps = [
+    {
+      step: "1",
+      title: "Vyberte fotografii z destinace",
+      desc: "Nejlepší výsledky: příroda (moře, hory), architektura, zlatá hodina. Minimálně 1024×1024 px.",
+      color: "bg-blue-50 border-blue-200",
+      icon: "📸",
+    },
+    {
+      step: "2",
+      title: "Nahrajte do Higgsfield",
+      desc: "Na app.higgsfield.ai nahrajte foto, zvolte typ pohybu (Camera Forward / Zoom / Orbital) a spusťte generování.",
+      color: "bg-purple-50 border-purple-200",
+      icon: "🎬",
+    },
+    {
+      step: "3",
+      title: "Seedance 2.0 generuje video",
+      desc: "AI oživí fotografii za 30–60 sekund. Výsledek je 4–8 sekundový klip v rozlišení 1080p.",
+      color: "bg-green-50 border-green-200",
+      icon: "✨",
+    },
+    {
+      step: "4",
+      title: "Přidejte cenu letenky a CTA",
+      desc: 'V CapCut nebo InShot přidejte text "Praha → Londýn od 1 290 Kč" + odkaz na Kiwi.com (marker=155221).',
+      color: "bg-orange-50 border-orange-200",
+      icon: "💰",
+    },
+    {
+      step: "5",
+      title: "Publikujte ve správný čas",
+      desc: "Čtvrtek a pátek 16–19 hod jsou nejlepší časy pro travel obsah. Přidejte trending zvuk z TikToku.",
+      color: "bg-red-50 border-red-200",
+      icon: "🚀",
+    },
+  ];
+
+  const proTips = [
+    "Začněte dramatickým záběrem — první 3 sekundy rozhodují",
+    "Cena letenky v textu videa = okamžité kliknutí na affiliate odkaz",
+    "Používejte trending zvuky — algoritmus upřednostňuje populární audio",
+    '"Komentujte destinaci a pošlu vám cenu" = virální engagement trik',
+    "Série 7 videí z jedné dovolené = 7× více obsahu z jednoho tripu",
+  ];
+
+  return (
+    <Card className="border-purple-200">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Play className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">🎬 Seedance 2.0 — Průvodce tvorby viral travel videí</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">
+                Interní resource pro marketing Akční-Letenky
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? "Skrýt" : "Zobrazit průvodce"}
+          </Button>
+        </div>
+      </CardHeader>
+
+      {expanded && (
+        <CardContent className="space-y-6">
+          {/* Workflow Steps */}
+          <div>
+            <h3 className="font-semibold text-sm mb-3 text-purple-700">📋 Workflow krok za krokem</h3>
+            <div className="space-y-3">
+              {steps.map((s) => (
+                <div key={s.step} className={`p-3 rounded-lg border ${s.color} flex gap-3`}>
+                  <div className="text-2xl flex-shrink-0">{s.icon}</div>
+                  <div>
+                    <div className="font-semibold text-sm">
+                      Krok {s.step}: {s.title}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">{s.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pro Tips */}
+          <div>
+            <h3 className="font-semibold text-sm mb-3 text-orange-700">⚡ Pro tipy pro maximální virality</h3>
+            <div className="space-y-2">
+              {proTips.map((tip, i) => (
+                <div key={i} className="flex gap-2 text-sm">
+                  <span className="text-orange-500 font-bold flex-shrink-0">→</span>
+                  <span>{tip}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tools */}
+          <div>
+            <h3 className="font-semibold text-sm mb-3 text-blue-700">🛠️ Potřebné nástroje</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { name: "Higgsfield AI", url: "https://app.higgsfield.ai", desc: "Generování videa ze fotek (Seedance 2.0)", color: "bg-purple-50 border-purple-200" },
+                { name: "CapCut", url: "https://www.capcut.com", desc: "Mobilní editor videa — přidání textu a hudby", color: "bg-blue-50 border-blue-200" },
+                { name: "Kiwi.com (affiliate)", url: "https://tp.media/r?marker=155221&trs=267609&p=4114&u=https%3A%2F%2Fwww.kiwi.com%2Fcs%2F", desc: "Affiliate odkaz marker=155221 pro CTA ve videu", color: "bg-green-50 border-green-200" },
+              ].map((tool) => (
+                <a
+                  key={tool.name}
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`p-3 rounded-lg border ${tool.color} hover:shadow-sm transition-shadow block`}
+                >
+                  <div className="font-semibold text-sm">{tool.name}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{tool.desc}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Content Ideas */}
+          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h3 className="font-semibold text-sm mb-2 text-yellow-700">💡 Nápady na obsah pro Akční-Letenky</h3>
+            <div className="text-xs text-yellow-800 space-y-1">
+              <p>• <strong>Série "Letenka za X Kč"</strong> — video z každé destinace s cenou letenky v titulku</p>
+              <p>• <strong>"Last minute timelapse"</strong> — animace mapy s trasou Praha → destinace + cena</p>
+              <p>• <strong>"Error fare alert"</strong> — dramatické video s destinací + "Londýn za 200 Kč! (jen dnes)"</p>
+              <p>• <strong>Sezónní série</strong> — "Nejlevnější destinace v červenci" s AI videi z každé lokace</p>
+            </div>
+          </div>
+        </CardContent>
+      )}
     </Card>
   );
 }
