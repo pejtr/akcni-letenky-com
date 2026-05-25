@@ -620,6 +620,9 @@ export default function Home() {
       {/* Kam letět z Prahy? - Interaktivní mapa cen letů */}
       <HomeFlightMapSection />
 
+      {/* Tipy pro cestovatele - 3 nejnovější články */}
+      <HomeTipsWidget />
+
       {/* Personalized Recommendations */}
       <PersonalizedSection />
 
@@ -1167,6 +1170,106 @@ export default function Home() {
       <GdprConsentBanner />
       
     </div>
+  );
+}
+
+// ── Tipy pro cestovatele widget ────────────────────────────────────────────
+function HomeTipsWidget() {
+  const { data: articles, isLoading } = trpc.articles.byCategory.useQuery(
+    { category: "tips", limit: 3 },
+    { staleTime: 30 * 60 * 1000 }
+  );
+
+  if (isLoading) {
+    return (
+      <section className="py-10 bg-white">
+        <div className="container">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-[#E91E63] rounded-xl p-2.5">
+              <span className="text-white text-lg">💡</span>
+            </div>
+            <h2 className="text-2xl font-black text-[#003087]">Tipy pro cestovatele</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="rounded-2xl bg-gray-100 animate-pulse h-48" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!articles || articles.length === 0) return null;
+
+  return (
+    <section className="py-10 bg-white">
+      <div className="container">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-[#E91E63] rounded-xl p-2.5">
+              <span className="text-white text-lg">💡</span>
+            </div>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black text-[#003087]">
+                Tipy pro cestovatele
+              </h2>
+              <p className="text-sm text-gray-500 mt-0.5">
+                Jak ušetřit na letenkách a cestovat chytře
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/tipy-pro-cestovatele"
+            className="text-sm font-semibold text-[#E91E63] hover:underline flex items-center gap-1"
+          >
+            Všechny tipy <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {articles.map(article => (
+            <Link key={article.id} href={`/tipy-pro-cestovatele/${article.slug}`}>
+              <div className="group rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer h-full flex flex-col">
+                {article.featuredImage && (
+                  <div className="h-40 overflow-hidden">
+                    <img
+                      src={article.featuredImage}
+                      alt={article.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
+                <div className="p-4 flex flex-col flex-1">
+                  <span className="text-xs font-semibold text-[#E91E63] uppercase tracking-wide mb-2">
+                    Tip pro cestovatele
+                  </span>
+                  <h3 className="font-bold text-[#003087] text-base leading-snug group-hover:text-[#E91E63] transition-colors line-clamp-2">
+                    {article.title}
+                  </h3>
+                  {article.metaDescription && (
+                    <p className="text-sm text-gray-500 mt-2 line-clamp-2 flex-1">
+                      {article.metaDescription}
+                    </p>
+                  )}
+                  <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-[#E91E63]">
+                    Číst dál <ChevronRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-6 text-center">
+          <Link href="/tipy-pro-cestovatele">
+            <Button variant="outline" className="border-[#E91E63] text-[#E91E63] hover:bg-[#E91E63] hover:text-white">
+              Zobrazit všechny tipy pro cestovatele
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 

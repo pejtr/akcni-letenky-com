@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { Calendar, User, ArrowRight, BookOpen, Plane, Lightbulb, TrendingDown, Shield, Star } from "lucide-react";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 import CountdownTimer from "@/components/CountdownTimer";
+import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
 
 const KIWI_LINK = "https://www.kiwi.com/cs/?affilid=155221&currency=czk";
 
@@ -30,6 +32,42 @@ const FEATURED_TIPS = [
 ];
 
 export default function TipyCestovatele() {
+  // Inject Schema.org JSON-LD for SEO
+  useEffect(() => {
+    removeAllStructuredData();
+    // BreadcrumbList
+    injectStructuredData(generateBreadcrumbSchema([
+      { name: "Akční Letenky", url: "/" },
+      { name: "Tipy pro cestovatele", url: "/tipy-pro-cestovatele" },
+    ]));
+    // CollectionPage schema for the tips listing
+    injectStructuredData({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Tipy pro cestovatele | Akční Letenky",
+      "description": "Průvodce levným cestováním: jak najít levné letenky, ušetřit na cestování a cestovat jako profík.",
+      "url": "https://akcni-letenky.com/tipy-pro-cestovatele",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Akční Letenky",
+        "url": "https://akcni-letenky.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://akcni-letenky.com/logo.png"
+        }
+      },
+      "inLanguage": "cs",
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Akční Letenky", "item": "https://akcni-letenky.com" },
+          { "@type": "ListItem", "position": 2, "name": "Tipy pro cestovatele", "item": "https://akcni-letenky.com/tipy-pro-cestovatele" }
+        ]
+      }
+    });
+    return () => removeAllStructuredData();
+  }, []);
+
   const { data: tipsArticles, isLoading: tipsLoading } = trpc.articles.byCategory.useQuery({
     category: "tips",
   });

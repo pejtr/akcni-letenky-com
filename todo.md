@@ -2498,3 +2498,13 @@
 - [x] Vložit 3 SEO články s vysokým search volume do DB (Londýn za 1500 Kč, Nejlevnější letenky z Prahy, 7 chyb při rezervaci)
 - [x] Přidat SeedanceResourceCard do AdminDashboard.tsx (5-krokový workflow, pro tipy, nástroje, nápady na obsah)
 - [x] TypeScript kompilace: 0 chyb potvrzeno
+
+## Tři vylepšení (2026-05-25)
+- [ ] Přidat Tipy widget (3 nejnovější články) na homepage
+- [ ] Rozšířit pool témat v tipsArticleGenerator.ts na 50+ témat
+- [ ] Přidat Schema.org Article JSON-LD do TipyCestovatele a BlogPost
+
+## Tři vylepšení — dokončeno (2026-05-25)
+- [x] Přidat Tipy widget (3 nejnovější články) na homepage — HomeTipsWidget komponenta v Home.tsx
+- [x] Rozšířit pool témat v tipsArticleGenerator.ts na 50 témat (25 původních + 25 nových destinačních)
+- [x] Přidat Schema.org Article JSON-LD do TipyCestovatele (CollectionPage + BreadcrumbList) a nová TipArticle.tsx stránka (Article + BreadcrumbList) s routou /tipy-pro-cestovatele/:slug
