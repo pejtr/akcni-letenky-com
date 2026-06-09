@@ -927,3 +927,37 @@ export const revolutABTestResults = mysqlTable("revolut_ab_test_results", {
 
 export type RevolutABTestResult = typeof revolutABTestResults.$inferSelect;
 export type InsertRevolutABTestResult = typeof revolutABTestResults.$inferInsert;
+
+// ============ Social Media Scheduler ============
+export const socialPosts = mysqlTable("social_posts", {
+  id: int("id").autoincrement().primaryKey(),
+  platform: mysqlEnum("platform", ["instagram", "linkedin", "both"]).notNull().default("both"),
+  postType: mysqlEnum("postType", ["post", "story", "reel"]).notNull().default("post"),
+  contentType: mysqlEnum("contentType", ["deal", "tip", "destination", "custom"]).notNull().default("deal"),
+  caption: text("caption").notNull(),
+  imageUrl: varchar("imageUrl", { length: 1000 }),
+  imagePrompt: text("imagePrompt"),
+  hashtags: text("hashtags"),
+  status: mysqlEnum("status", ["draft", "scheduled", "published", "failed", "cancelled"]).notNull().default("draft"),
+  scheduledAt: timestamp("scheduledAt"),
+  publishedAt: timestamp("publishedAt"),
+  igMediaId: varchar("igMediaId", { length: 100 }),
+  liPostId: varchar("liPostId", { length: 200 }),
+  igError: text("igError"),
+  liError: text("liError"),
+  scheduleCronTaskUid: varchar("scheduleCronTaskUid", { length: 65 }),
+  sourceDestination: varchar("sourceDestination", { length: 100 }),
+  sourcePrice: int("sourcePrice"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SocialPost = typeof socialPosts.$inferSelect;
+export type InsertSocialPost = typeof socialPosts.$inferInsert;
+
+export const socialSettings = mysqlTable("social_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  key: varchar("key", { length: 100 }).notNull().unique(),
+  value: text("value"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SocialSetting = typeof socialSettings.$inferSelect;

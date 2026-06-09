@@ -2508,3 +2508,13 @@
 - [x] Přidat Tipy widget (3 nejnovější články) na homepage — HomeTipsWidget komponenta v Home.tsx
 - [x] Rozšířit pool témat v tipsArticleGenerator.ts na 50 témat (25 původních + 25 nových destinačních)
 - [x] Přidat Schema.org Article JSON-LD do TipyCestovatele (CollectionPage + BreadcrumbList) a nová TipArticle.tsx stránka (Article + BreadcrumbList) s routou /tipy-pro-cestovatele/:slug
+
+## IG + LinkedIn Scheduler (2026-05-25)
+- [ ] DB schema: social_posts tabulka + migrace
+- [ ] Server: AI generátor obsahu (text + obrázek) pro IG/LinkedIn
+- [ ] Server: tRPC procedury pro správu postů
+- [ ] Server: IG Graph API publisher
+- [ ] Server: LinkedIn API publisher
+- [ ] Server: Heartbeat cron (denní posting)
+- [ ] Admin UI: SocialSchedulerCard (fronta, generátor, historie, nastavení)
+- [ ] Secrets: IG_ACCESS_TOKEN, IG_BUSINESS_ACCOUNT_ID, LINKEDIN_ACCESS_TOKEN, LINKEDIN_ORGANIZATION_ID

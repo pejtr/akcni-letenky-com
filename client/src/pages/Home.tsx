@@ -376,76 +376,93 @@ export default function Home() {
           ]
         })}
       </script>
-      {/* Sticky Navigation Header */}
+      {/* Top promo banner - Čedok style */}
+      <div className={cn(
+        "fixed top-0 left-0 right-0 z-50 bg-[#E91E63] text-white text-center text-xs py-1.5 px-4 transition-all duration-300",
+        isScrolled ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
+      )}>
+        <div className="flex items-center justify-center gap-3">
+          <span className="font-semibold">🔥 AKCE: PRÁVĚ JSME ZLEVNILI VYBRANÉ LETENKY — SLEVY AŽ 80 %</span>
+          <a href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "promo-banner")} target="_blank" rel="noopener noreferrer"
+            className="bg-white text-[#E91E63] font-bold px-3 py-0.5 rounded-full text-xs hover:bg-gray-100 transition-colors"
+            onClick={() => trackStickyClick()}>
+            REZERVUJTE TEĎ!
+          </a>
+        </div>
+      </div>
+
+      {/* Sticky Navigation Header - Čedok.cz style: white bg, blue text */}
       <header role="banner"
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-gradient-to-r from-[#FFD700] to-[#FFC107] shadow-md",
-          isScrolled ? "py-1.5" : "py-2"
+          "fixed left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-100 transition-all duration-300",
+          isScrolled ? "top-0 py-2" : "top-8 py-2"
         )}
       >
-        <div className="container flex items-center justify-between gap-2">
+        <div className="container flex items-center justify-between gap-4">
           {/* Logo */}
           <a href="/" className="flex items-center gap-1.5 flex-shrink-0">
             <img 
               src="/logo-akcni-letenky.png" 
               alt="Akční Letenky" 
-              className="h-9 md:h-10 lg:h-12 w-auto"
+              className="h-9 md:h-10 lg:h-11 w-auto"
             />
           </a>
 
-          {/* Navigation - only on xl screens to avoid crowding */}
-          <nav role="navigation" aria-label="Main navigation" className="hidden xl:flex items-center gap-2 flex-shrink">
-            <Link href="/levne-letenky" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
-              💸 LETENKY
+          {/* Main Navigation - Čedok style */}
+          <nav role="navigation" aria-label="Main navigation" className="hidden lg:flex items-center gap-0.5 flex-shrink">
+            <Link href="/levne-letenky" className="text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 transition-colors font-medium flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-md">
+              <Plane className="w-4 h-4" /> Last Minute
             </Link>
-            <Link href="/dovolene" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
-              ⭐ DOVOLENÁ
+            <Link href="/dovolene" className="text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 transition-colors font-medium flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-md">
+              ☀️ Dovolená
             </Link>
-            <a href="#airlines" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
-              ✈️ AEROLINKY
+            <Link href="/levne-letenky" className="text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 transition-colors font-medium flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-md">
+              ✈️ Letenky
+            </Link>
+            <a href="#airlines" className="text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 transition-colors font-medium flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-md">
+              🏢 Aerolinky
             </a>
-            <Link href="/vlaky-autobusy" className="text-xs text-[#003087] hover:text-[#001f5c] transition-colors font-semibold flex items-center gap-1 whitespace-nowrap px-1 py-1">
-              🚆 VLAKY
+            <Link href="/vlaky-autobusy" className="text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 transition-colors font-medium flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-md">
+              🚆 Vlaky
+            </Link>
+            <Link href="/tipy-pro-cestovatele" className="text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 transition-colors font-medium flex items-center gap-1.5 whitespace-nowrap px-3 py-2 rounded-md">
+              💡 Tipy
             </Link>
           </nav>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Hamburger Menu - shown below xl */}
-            <div className="xl:hidden">
+            {/* Hamburger Menu - shown below lg */}
+            <div className="lg:hidden">
               <MobileMenu />
             </div>
-            
+
             {/* Wishlist Heart Icon with Badge */}
             <Link
               href="/wishlist"
-              className="relative text-[#003087] hover:text-[#E91E63] transition-colors inline-block"
-              aria-label="Seznam přání"
-              title="Seznam přání"
+              className="relative text-gray-500 hover:text-[#E91E63] transition-colors inline-block p-2"
+              aria-label="Oblíbené"
+              title="Oblíbené"
             >
               <Heart className="w-5 h-5" />
               {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
                   {wishlistCount}
                 </span>
               )}
             </Link>
-            
-            {/* Countdown + CTA - hidden on mobile */}
-            <div className="hidden md:flex items-center gap-2">
-              <CountdownTimer className="hidden lg:flex" />
-              <a 
-                href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "header-cta")} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 bg-[#E91E63] hover:bg-[#C2185B] text-white px-3 py-1.5 rounded-full transition-colors whitespace-nowrap font-semibold text-xs cta-btn-animated"
-                onClick={() => trackReservationClick()}
-              >
-                <Plane className="w-3.5 h-3.5 flex-shrink-0" />
-                <span className="hidden lg:inline">{reservationCta.text}</span>
-                <span className="lg:hidden">REZERVOVAT</span>
-              </a>
-            </div>
+
+            {/* CTA Button - Čedok style: blue rounded */}
+            <a 
+              href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "header-cta")} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-1.5 bg-[#1565C0] hover:bg-[#0d47a1] text-white px-4 py-2 rounded-full transition-colors whitespace-nowrap font-semibold text-sm shadow-sm"
+              onClick={() => trackReservationClick()}
+            >
+              <Plane className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>ZAREZERVOVAT TEĎ</span>
+            </a>
           </div>
         </div>
       </header>
