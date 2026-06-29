@@ -484,7 +484,7 @@ export default function Home() {
       </section>
 
       {/* Blue Info Banner */}
-      <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md">
+      <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md mt-16">
         <div className="container">
           <div className="flex flex-wrap items-center justify-center gap-6 text-white text-sm md:text-base font-medium">
             <a href="https://www.pelikan.cz/cs/pobyty/s-pelikanem/?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
