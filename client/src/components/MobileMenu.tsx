@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { Menu, X, Plane, MapPin, Palmtree, Building2, Zap, Phone, Train, Lightbulb } from "lucide-react";
-import { kiwiDeepLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import { Button } from "@/components/ui/button";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 
@@ -63,7 +63,10 @@ export default function MobileMenu() {
       icon: <Lightbulb className="w-5 h-5" />,
     },
     {
-      href: kiwiDeepLink({ currency: "CZK", lang: "cs" }, "mobile-menu"),
+      href: pelikanDeepLink("/cs/akcni-letenky", {
+        campaign: "mobile-menu",
+        channel: "mobile-nav",
+      }),
       label: reservationCta.text,
       icon: <Plane className="w-5 h-5" />,
       external: true,
@@ -121,7 +124,7 @@ export default function MobileMenu() {
                   <a
                     href={item.href}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
                     onClick={() => { trackReservationClick(); closeMenu(); }}
                     className="flex items-center gap-3 p-4 rounded-lg bg-[#E91E63] hover:bg-[#C2185B] transition-colors group"
                   >

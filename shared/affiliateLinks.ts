@@ -133,11 +133,63 @@ export function discoverCarsLink(destination: string, subId?: string): string {
 
 export const PELIKAN_AID = "levne-letenky";
 
+export interface PelikanTrackingParams {
+  campaign?: string;
+  channel?: string;
+  content?: string;
+  medium?: string;
+  source?: string;
+}
+
+function normalizePelikanUrl(pathOrUrl: string): URL {
+  const url = new URL(pathOrUrl, "https://www.pelikan.cz");
+  url.protocol = "https:";
+  if (url.hostname === "pelikan.cz") {
+    url.hostname = "www.pelikan.cz";
+  }
+  if (url.hostname === "www.pelikan.cz") {
+    url.pathname = url.pathname.replace(/\/{2,}/g, "/");
+  }
+  return url;
+}
+
+export function pelikanAffiliateUrl(pathOrUrl: string, params: PelikanTrackingParams = {}): string {
+  const url = normalizePelikanUrl(pathOrUrl);
+  url.searchParams.set("a_aid", PELIKAN_AID);
+  url.searchParams.set("utm_source", params.source || "akcni-letenky");
+  url.searchParams.set("utm_medium", params.medium || "affiliate");
+  url.searchParams.set("utm_campaign", params.campaign || "grid");
+  if (params.channel) url.searchParams.set("utm_channel", params.channel);
+  if (params.content) url.searchParams.set("utm_content", params.content);
+  return url.toString();
+}
+
 export function pelikanLink(path: string, campaign?: string): string {
-  const url = `https://www.pelikan.cz${path}`;
-  const separator = url.includes("?") ? "&" : "?";
-  const utmCampaign = campaign || "grid";
-  return `${url}${separator}a_aid=${PELIKAN_AID}&utm_source=akcni-letenky&utm_medium=affiliate&utm_campaign=${utmCampaign}`;
+  return pelikanAffiliateUrl(path, { campaign });
+}
+
+/**
+ * Pelikan partner panel can generate wrapped deeplinks for a target URL.
+ * If PELIKAN_DEEPLINK_TEMPLATE is configured server-side, use a template such as:
+ * https://partners.pelikan.cz/...?url={encodedUrl}&a_aid={aid}&campaign={campaign}&channel={channel}
+ *
+ * In browser/shared contexts without the template, this intentionally falls back
+ * to a direct affiliate URL with full UTM tracking.
+ */
+export function pelikanDeepLink(pathOrUrl: string, params: PelikanTrackingParams = {}): string {
+  const targetUrl = pelikanAffiliateUrl(pathOrUrl, params);
+  const template =
+    typeof process !== "undefined" ? process.env.PELIKAN_DEEPLINK_TEMPLATE : undefined;
+
+  if (!template) return targetUrl;
+
+  return template
+    .split("{url}").join(targetUrl)
+    .split("{encodedUrl}").join(encodeURIComponent(targetUrl))
+    .split("{aid}").join(encodeURIComponent(PELIKAN_AID))
+    .split("{campaign}").join(encodeURIComponent(params.campaign || "grid"))
+    .split("{channel}").join(encodeURIComponent(params.channel || "direct"))
+    .split("{content}").join(encodeURIComponent(params.content || ""));
 }
 
 // Export constants for use in tests

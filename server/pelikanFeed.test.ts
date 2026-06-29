@@ -1,160 +1,138 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock the fetch function
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
 
-// Sample XML responses
 const mockFlightsXml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <item>
-      <g:id>flight-1</g:id>
-      <title>Praha - Londýn</title>
-      <description>Zpáteční letenka Praha - Londýn</description>
-      <link>https://pelikan.cz/flight-1</link>
-      <g:image_link>https://cdn.pelikan.sk/img/london.jpg</g:image_link>
-      <g:price>733 CZK</g:price>
-      <g:sale_price>733 CZK</g:sale_price>
-      <g:custom_label_0>Anglie</g:custom_label_0>
-      <g:custom_label_1>Praha</g:custom_label_1>
-      <g:custom_label_2>Londýn</g:custom_label_2>
-    </item>
-  </channel>
-</rss>`;
+<SERVER>
+  <Calendar>
+    <Calendar>
+      <CALENDAR_ID>LCC-1996</CALENDAR_ID>
+      <URL>https://www.pelikan.cz/akcni-letenka/LCC-1996</URL>
+      <IMAGE_580x400>https://cdn.pelikan.sk/photos/BCN/BCN-580x400.jpg</IMAGE_580x400>
+      <PRICE>1038</PRICE>
+      <TO>Barcelona</TO>
+      <FROM>Bratislava</FROM>
+      <AIRLINE>W6</AIRLINE>
+      <DEPARTURE_IATA>BTS</DEPARTURE_IATA>
+      <DESTINATION_IATA>BCN</DESTINATION_IATA>
+    </Calendar>
+  </Calendar>
+</SERVER>`;
 
 const mockVacationsXml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <item>
-      <g:id>vacation-1</g:id>
-      <title>Dovolená v Egyptě</title>
-      <description>7 nocí all inclusive</description>
-      <link>https://pelikan.cz/vacation-1</link>
-      <g:image_link>https://cdn.pelikan.sk/img/egypt.jpg</g:image_link>
-      <g:price>15990 CZK</g:price>
-      <g:sale_price>12990 CZK</g:sale_price>
-      <g:custom_label_0>Egypt</g:custom_label_0>
-      <g:custom_label_1>Hurghada</g:custom_label_1>
-      <g:custom_label_2>7 nocí</g:custom_label_2>
-    </item>
-  </channel>
-</rss>`;
+<dealDiscountList>
+  <dealDiscounts>
+    <dealDiscounts>
+      <dealName>Wellness pobyt v hotelu</dealName>
+      <shortDescription>Golfovy resort, vstup do wellness v cene</shortDescription>
+      <price>1890</price>
+      <priceBeforeDiscount>3000</priceBeforeDiscount>
+      <length>3</length>
+      <dealUrl>https://www.pelikan.cz//pobyt/kurim-hotel-kaskada</dealUrl>
+      <city>Brno</city>
+      <region>Stredni Morava</region>
+      <country>Ceska republika</country>
+      <images>
+        <images>https://cdn.pelikan.sk/hotel.jpg</images>
+      </images>
+      <discount>30.00</discount>
+    </dealDiscounts>
+  </dealDiscounts>
+</dealDiscountList>`;
 
-describe("Pelikán Feed Parser", () => {
+async function importFeedModule() {
+  vi.resetModules();
+  vi.stubGlobal("fetch", mockFetch);
+  const mod = await import("./pelikanFeed");
+  mod.__resetPelikanFeedCacheForTests();
+  return mod;
+}
+
+describe("Pelikan Feed Parser", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe("fetchFlights", () => {
-    it("should fetch and parse flight offers from XML feed", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: () => Promise.resolve(mockFlightsXml),
-      });
-
-      // Import after mocking
-      const { fetchFlights } = await import("./pelikanFeed");
-      const flights = await fetchFlights(true);
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://lastminutedovolene.cz/api/meta-feed-flights.xml"
-      );
-      expect(flights).toBeInstanceOf(Array);
+  it("fetches flight offers from the Pelikan xmlpromo feed", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      text: () => Promise.resolve(mockFlightsXml),
     });
 
-    it("should handle fetch errors gracefully", async () => {
-      mockFetch.mockRejectedValueOnce(new Error("Network error"));
+    const { fetchFlights, PELIKAN_FLIGHT_FEED_URL } = await importFeedModule();
+    const flights = await fetchFlights(10);
 
-      const { fetchFlights } = await import("./pelikanFeed");
-      const flights = await fetchFlights(true);
-
-      // Should return cached data or empty array
-      expect(Array.isArray(flights)).toBe(true);
+    expect(mockFetch).toHaveBeenCalledWith(
+      PELIKAN_FLIGHT_FEED_URL,
+      expect.objectContaining({
+        headers: expect.objectContaining({ Accept: "application/xml, text/xml" }),
+      })
+    );
+    expect(flights).toHaveLength(1);
+    expect(flights[0]).toMatchObject({
+      id: "lcc-1996",
+      destination: "Barcelona",
+      departure: "Bratislava",
+      salePrice: 1038,
+      airline: "W6",
+      type: "flight",
     });
+    expect(flights[0].link).toContain("www.pelikan.cz/akcni-letenka/LCC-1996");
+    expect(flights[0].link).toContain("a_aid=levne-letenky");
+    expect(flights[0].link).toContain("utm_campaign=flight-feed");
   });
 
-  describe("fetchVacations", () => {
-    it("should fetch and parse vacation offers from XML feed", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: () => Promise.resolve(mockVacationsXml),
-      });
-
-      const { fetchVacations } = await import("./pelikanFeed");
-      const vacations = await fetchVacations(true);
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://lastminutedovolene.cz/api/meta-feed-vacations.xml"
-      );
-      expect(vacations).toBeInstanceOf(Array);
+  it("fetches vacation offers from the Pelikan deals feed", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      text: () => Promise.resolve(mockVacationsXml),
     });
 
-    it("should handle fetch errors gracefully", async () => {
-      mockFetch.mockRejectedValueOnce(new Error("Network error"));
+    const { fetchVacations, PELIKAN_VACATION_FEED_URL } = await importFeedModule();
+    const vacations = await fetchVacations(10);
 
-      const { fetchVacations } = await import("./pelikanFeed");
-      const vacations = await fetchVacations(true);
-
-      // Should return cached data or empty array
-      expect(Array.isArray(vacations)).toBe(true);
+    expect(mockFetch).toHaveBeenCalledWith(
+      PELIKAN_VACATION_FEED_URL,
+      expect.objectContaining({
+        headers: expect.objectContaining({ Accept: "application/xml, text/xml" }),
+      })
+    );
+    expect(vacations).toHaveLength(1);
+    expect(vacations[0]).toMatchObject({
+      id: "kurim-hotel-kaskada",
+      title: "Wellness pobyt v hotelu",
+      destination: "Brno",
+      country: "Ceska republika",
+      price: 3000,
+      salePrice: 1890,
+      discount: 30,
+      type: "vacation",
     });
+    expect(vacations[0].link).toContain("www.pelikan.cz/pobyt/kurim-hotel-kaskada");
+    expect(vacations[0].link).toContain("a_aid=levne-letenky");
+    expect(vacations[0].link).toContain("utm_campaign=vacation-feed");
   });
 
-  describe("getCacheStatus", () => {
-    it("should return cache status information", async () => {
-      const { getCacheStatus } = await import("./pelikanFeed");
-      const status = getCacheStatus();
+  it("handles fetch errors gracefully", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
-      expect(status).toHaveProperty("flights");
-      expect(status).toHaveProperty("vacations");
-      expect(status.flights).toHaveProperty("count");
-      expect(status.flights).toHaveProperty("cached");
-      expect(status.vacations).toHaveProperty("count");
-      expect(status.vacations).toHaveProperty("cached");
+    const { fetchFlights } = await importFeedModule();
+    await expect(fetchFlights(10)).resolves.toEqual([]);
+  });
+
+  it("returns cache status for both Pelikan feeds", async () => {
+    const { getCacheStatus } = await importFeedModule();
+    const status = getCacheStatus();
+
+    expect(status.flights).toMatchObject({
+      count: 0,
+      cached: false,
+      feedUrl: expect.stringContaining("xmlpromo"),
     });
-  });
-});
-
-describe("Pelikán Feed Data Types", () => {
-  it("should define FlightOffer type correctly", async () => {
-    
-    // Type check - this will fail at compile time if types are wrong
-    const testFlight: any = {
-      id: "test-1",
-      title: "Test Flight",
-      description: "Test description",
-      link: "https://test.com",
-      imageUrl: "https://test.com/img.jpg",
-      price: 1000,
-      salePrice: 900,
-      country: "Česko",
-      departure: "Praha",
-      destination: "Londýn",
-      discount: "-10%",
-    };
-
-    expect(testFlight.id).toBe("test-1");
-    expect(testFlight.salePrice).toBe(900);
-  });
-
-  it("should define VacationOffer type correctly", async () => {
-    const testVacation: any = {
-      id: "test-1",
-      title: "Test Vacation",
-      description: "Test description",
-      link: "https://test.com",
-      imageUrl: "https://test.com/img.jpg",
-      price: 15000,
-      salePrice: 12000,
-      country: "Egypt",
-      location: "Hurghada",
-      destination: "Egypt",
-      duration: "7 nocí",
-      discount: "-20%",
-    };
-
-    expect(testVacation.id).toBe("test-1");
-    expect(testVacation.duration).toBe("7 nocí");
+    expect(status.vacations).toMatchObject({
+      count: 0,
+      cached: false,
+      feedUrl: expect.stringContaining("deals/discount/deals"),
+    });
   });
 });

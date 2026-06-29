@@ -1,59 +1,25 @@
 import { trpc } from "@/lib/trpc";
-import { Plane, TrendingUp, Users } from "lucide-react";
-import { kiwiSearchLink } from "@shared/affiliateLinks";
-
-// Destination to image mapping
-const destinationImages: Record<string, string> = {
-  "london": "/london.jpg",
-  "londýn": "/london.jpg",
-  "paris": "/paris.jpg",
-  "paříž": "/paris.jpg",
-  "new york": "/newyork.jpg",
-  "barcelona": "/barcelona.jpg",
-  "rome": "/rome.jpg",
-  "řím": "/rome.jpg",
-  "dubai": "/dubai.jpg",
-  "dubaj": "/dubai.jpg",
-  "bangkok": "/bangkok.jpg",
-  "tokyo": "/tokyo.jpg",
-  "tokio": "/tokyo.jpg",
-  "amsterdam": "/amsterdam.jpg",
-  "berlin": "/berlin.jpg",
-  "berlín": "/berlin.jpg",
-  "vienna": "/vienna.jpg",
-  "vídeň": "/vienna.jpg",
-  "madrid": "/madrid.jpg",
-  "lisbon": "/lisbon.jpg",
-  "lisabon": "/lisbon.jpg",
-};
-
-// Get image for destination (fallback to generic travel image)
-const getDestinationImage = (destination: string): string => {
-  const key = destination.toLowerCase().trim();
-  return destinationImages[key] || "/hero-coastal.jpg";
-};
+import { Plane, TrendingUp } from "lucide-react";
 
 export default function TopFlightsThisWeek() {
-  const { data: topDestinations, isLoading } = trpc.affiliate.getTopThisWeek.useQuery({ limit: 6 });
+  const { data: flights, isLoading } = trpc.pelikan.getFlights.useQuery({
+    limit: 6,
+    sortBy: "price_asc",
+  });
   const trackClickMutation = trpc.affiliate.trackClick.useMutation();
 
-  // Helper function to track affiliate clicks
-  const trackAffiliateClick = (dest: string, destSlug: string, url: string) => {
+  const trackAffiliateClick = (flight: any) => {
     trackClickMutation.mutate({
-      destination: dest,
-      destinationSlug: destSlug,
+      destination: flight.destination,
+      destinationSlug: flight.id,
       source: "top-this-week",
-      affiliatePartner: "kiwi",
-      affiliateUrl: url,
+      affiliatePartner: "pelikan",
+      affiliateUrl: flight.link,
     });
   };
 
-  // Helper to format click count
-  const formatClicks = (clicks: number): string => {
-    if (clicks >= 1000) {
-      return `${(clicks / 1000).toFixed(1)}k`;
-    }
-    return clicks.toString();
+  const formatPrice = (price: number): string => {
+    return new Intl.NumberFormat("cs-CZ").format(price);
   };
 
   if (isLoading) {
@@ -66,99 +32,91 @@ export default function TopFlightsThisWeek() {
     );
   }
 
-  if (!topDestinations || topDestinations.length === 0) {
+  if (!flights || flights.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Zatím nejsou k dispozici žádná data o nejprodávanějších letech.</p>
+        <p className="text-muted-foreground">Aktuální letenky z Pelikán feedu teď nejsou k dispozici.</p>
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {topDestinations.map((dest, index) => {
-        const kiwiUrl = kiwiSearchLink("prague-czech-republic", dest.destinationSlug, "top-flights");
+      {flights.map((flight, index) => {
         const isTopThree = index < 3;
+        const departure = "departure" in flight ? flight.departure : undefined;
+        const airline = "airline" in flight ? flight.airline : undefined;
 
         return (
           <a
-            key={dest.destinationSlug}
-            href={kiwiUrl}
+            key={flight.id}
+            href={flight.link}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackAffiliateClick(dest.destination, dest.destinationSlug, kiwiUrl)}
+            onClick={() => trackAffiliateClick(flight)}
             className="group relative rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-[#E91E63] overflow-hidden min-h-[280px]"
           >
-            {/* Background Image with Overlay */}
-            <div 
+            <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
-              style={{ backgroundImage: `url('${getDestinationImage(dest.destination || "")}')` }}
+              style={{ backgroundImage: `url('${flight.imageUrl || "/hero-coastal.jpg"}')` }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
             </div>
 
-            {/* Content Container */}
             <div className="relative z-10 p-6 h-full flex flex-col justify-end">
-            {/* Hot Badge for Top 3 */}
-            {isTopThree && (
-              <div className="absolute top-3 right-3 bg-gradient-to-r from-[#FF5722] to-[#E91E63] text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
-                🔥 HOT
+              {isTopThree && (
+                <div className="absolute top-3 right-3 bg-gradient-to-r from-[#FF5722] to-[#E91E63] text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
+                  HOT
+                </div>
+              )}
+
+              <div className="absolute top-3 left-3 w-10 h-10 bg-[#FFD700] rounded-full flex items-center justify-center font-black text-lg text-[#003087] shadow-md">
+                #{index + 1}
               </div>
-            )}
 
-            {/* Rank Badge */}
-            <div className="absolute top-3 left-3 w-10 h-10 bg-[#FFD700] rounded-full flex items-center justify-center font-black text-lg text-[#003087] shadow-md">
-              #{index + 1}
-            </div>
-
-              {/* Content */}
               <div className="mt-12">
-                {/* Destination */}
                 <div className="flex items-center gap-2 mb-3">
                   <Plane className="w-5 h-5 text-white group-hover:rotate-45 transition-transform duration-300" />
                   <h3 className="text-xl font-bold text-white group-hover:text-[#FFD700] transition-colors">
-                    {dest.destination || "Barcelona"}
+                    {flight.destination || flight.title}
                   </h3>
                 </div>
 
-                {/* Price Section */}
-                {dest.price && (
+                {flight.salePrice && (
                   <div className="mb-3">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-black text-[#FFD700]">{dest.price.toLocaleString()} Kč</span>
+                      <span className="text-2xl font-black text-[#FFD700]">
+                        {formatPrice(flight.salePrice)} Kč
+                      </span>
                       <span className="text-xs text-gray-300 ml-1">zpáteční</span>
-                      {dest.originalPrice && dest.originalPrice > dest.price && (
-                        <span className="text-sm text-gray-300 line-through">{dest.originalPrice.toLocaleString()} Kč</span>
+                      {flight.price && flight.price > flight.salePrice && (
+                        <span className="text-sm text-gray-300 line-through">
+                          {formatPrice(flight.price)} Kč
+                        </span>
                       )}
                     </div>
-                    {dest.discountPercent > 0 && (
+                    {flight.discount > 0 && (
                       <span className="inline-block mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">
-                        -{dest.discountPercent}% sleva
+                        -{flight.discount}% sleva
                       </span>
                     )}
                   </div>
                 )}
 
-                {/* Stats */}
                 <div className="space-y-2 mb-4">
-                  {/* Click Count */}
                   <div className="flex items-center gap-2 text-sm text-gray-200">
-                    <Users className="w-4 h-4 text-blue-400" />
-                    <span>
-                      <strong className="text-blue-400">{formatClicks(dest.clicks)}</strong> lidí si prohlédlo
-                    </span>
+                    <Plane className="w-4 h-4 text-blue-400" />
+                    <span>{departure || "Praha"} → {flight.destination}</span>
                   </div>
 
-                  {/* Trending Indicator */}
                   <div className="flex items-center gap-2 text-sm text-green-400">
                     <TrendingUp className="w-4 h-4" />
-                    <span className="font-medium">Populární tento týden</span>
+                    <span className="font-medium">Aktuálně z Pelikán feedu</span>
                   </div>
                 </div>
 
-                {/* CTA */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-400">
-                  <span className="text-sm font-semibold text-white">Praha ↔ {dest.destination || "Barcelona"}</span>
+                  <span className="text-sm font-semibold text-white">{airline || "Pelikán.cz"}</span>
                   <span className="text-xs text-gray-300 group-hover:text-[#FFD700] transition-colors">
                     Zobrazit lety →
                   </span>
@@ -166,7 +124,6 @@ export default function TopFlightsThisWeek() {
               </div>
             </div>
 
-            {/* Hover Effect Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#E91E63]/5 to-[#FF5722]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
           </a>
         );

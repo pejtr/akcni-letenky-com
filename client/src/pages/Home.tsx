@@ -1,43 +1,43 @@
-import { useState, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useABTest } from "@/lib/abTest";
 import HeroVariantA from "@/components/HeroVariantA";
 import HeroVariantB from "@/components/HeroVariantB";
 import UrgencyTimer from "@/components/UrgencyTimer";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
 import { ChevronRight, Plane } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
-import { kiwiSearchLink, kiwiDeepLink } from "@shared/affiliateLinks";
-import ChatbotWidget from "@/components/ChatbotWidget";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 
 import NewsletterBar from "@/components/NewsletterBar";
 import FacebookCampaignBanner from "@/components/FacebookCampaignBanner";
 
-import SocialProofNotification from "@/components/SocialProofNotification";
-import OmioSection from "@/components/OmioSection";
 import MobileMenu from "@/components/MobileMenu";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
+import PelikanPrimaryDeals from "@/components/PelikanPrimaryDeals";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
-import PersonalizedSection from "@/components/PersonalizedSection";
-import CountdownTimer from "@/components/CountdownTimer";
-import GdprConsentBanner from "@/components/GdprConsentBanner";
-import FlightMapWidget from "@/components/FlightMapWidget";
-import SocialSharePanel from "@/components/SocialSharePanel";
-import WhatsAppGroupBanner from "@/components/WhatsAppGroupBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
 import { useWishlist } from "@/hooks/useWishlist";
 import { Heart, Award, Bell } from "lucide-react";
-import PriceAlertModal from "@/components/PriceAlertModal";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import { useTicketCountdown } from "@/hooks/useTicketCountdown";
 import { generateOrganizationSchema, generateBreadcrumbSchema, generateFAQSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
 
-// City to Kiwi.com slug mapping
+const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
+const ChatbotWidget = lazy(() => import("@/components/ChatbotWidget"));
+const SocialProofNotification = lazy(() => import("@/components/SocialProofNotification"));
+const OmioSection = lazy(() => import("@/components/OmioSection"));
+const PersonalizedSection = lazy(() => import("@/components/PersonalizedSection"));
+const GdprConsentBanner = lazy(() => import("@/components/GdprConsentBanner"));
+const FlightMapWidget = lazy(() => import("@/components/FlightMapWidget"));
+const WhatsAppGroupBanner = lazy(() => import("@/components/WhatsAppGroupBanner"));
+const PriceAlertModal = lazy(() => import("@/components/PriceAlertModal"));
+
+// City slug mapping for tracking/search attribution
 const cityToSlug: Record<string, string> = {
   "barcelona": "barcelona-spain",
   "londýn": "london-united-kingdom",
@@ -98,6 +98,7 @@ export default function Home() {
   
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
+  const [showDeferredEnhancements, setShowDeferredEnhancements] = useState(false);
   const [priceAlertModal, setPriceAlertModal] = useState<{
     isOpen: boolean;
     destination: string;
@@ -115,51 +116,52 @@ export default function Home() {
   // Affiliate click tracking
   const trackClickMutation = trpc.affiliate.trackClick.useMutation();
   
+  const buildPelikanSearchUrl = (campaign: string, content?: string) =>
+    pelikanDeepLink("/cs/akcni-letenky", {
+      campaign,
+      channel: "homepage",
+      content,
+    });
+
+  const buildPelikanVacationUrl = (campaign: string, content?: string) =>
+    pelikanDeepLink("/cs/pobyty", {
+      campaign,
+      channel: "homepage",
+      content,
+    });
+
   // Helper function to track affiliate clicks
-  const trackAffiliateClick = (dest: string, destSlug: string, source: string, url: string) => {
+  const trackAffiliateClick = (
+    dest: string,
+    destSlug: string,
+    source: string,
+    url: string,
+    partner: "pelikan" | "kiwi" | "internal" = "pelikan"
+  ) => {
     trackClickMutation.mutate({
       destination: dest,
       destinationSlug: destSlug,
       source: source,
-      affiliatePartner: "kiwi",
+      affiliatePartner: partner,
       affiliateUrl: url,
     });
   };
   
-  // Handle search - redirect to Kiwi.com with affiliate link
+  // Handle search - redirect to Pelikan.cz with affiliate tracking
   const handleSearch = () => {
     const destLower = destination.toLowerCase().trim();
-    const destSlug = cityToSlug[destLower] || destLower.replace(/\s+/g, "-");
-    
-    // Parse date from dd.mm.yyyy to yyyy-mm-dd
-    let formattedDate = "";
-    if (departureDate) {
-      const parts = departureDate.split(".");
-      if (parts.length === 3) {
-        formattedDate = `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
-      }
-    }
-    
-    // Build Kiwi.com search URL
-    const origin = "prague-czech-republic"; // Default origin is Prague
-    let rawKiwiUrl = `https://www.kiwi.com/cs/search/results/${origin}/${destSlug}`;
-    
-    if (formattedDate) {
-      rawKiwiUrl += `/${formattedDate}`;
-    }
-    
-    rawKiwiUrl += `?adults=${passengers}`;
-    const kiwiUrl = `https://tp.media/r?marker=155221.search&trs=267609&p=3791&u=${encodeURIComponent(rawKiwiUrl)}`;
+    const destSlug = cityToSlug[destLower] || destLower.replace(/\s+/g, "-") || "all";
+    const pelikanUrl = buildPelikanSearchUrl("homepage-search", `${destSlug}-${duration}-${passengers}`);
     
     // Track the search event (Meta Pixel Search event)
-    trackFunnelSearch(destination, origin);
+    trackFunnelSearch(destination, "prague");
     
     // Track the click
-    trackAffiliateClick(destination, destSlug, "search", kiwiUrl);
+    trackAffiliateClick(destination, destSlug, "search", pelikanUrl, "pelikan");
     trackFunnelAffiliateClick(destination);
     
     // Open in new tab
-    window.open(kiwiUrl, "_blank");
+    window.open(pelikanUrl, "_blank");
   };
   
   // SEO: Set document title, meta description, and structured data
@@ -249,6 +251,21 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [showBottomBanner]);
+
+  useEffect(() => {
+    const win = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    if (win.requestIdleCallback) {
+      const idleId = win.requestIdleCallback(() => setShowDeferredEnhancements(true), { timeout: 2500 });
+      return () => win.cancelIdleCallback?.(idleId);
+    }
+
+    const timeoutId = window.setTimeout(() => setShowDeferredEnhancements(true), 1500);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
@@ -343,19 +360,27 @@ export default function Home() {
   ];
 
   const handleSearchVariantA = (destination: string, passengers: number) => {
-    // Navigate to search results
-    window.location.href = kiwiDeepLink({ from: "PRG", to: destination, passengers: String(passengers) }, "hero-search-a");
+    const destSlug = destination.toLowerCase().trim().replace(/\s+/g, "-") || "all";
+    window.location.href = buildPelikanSearchUrl("hero-search-a", `${destSlug}-${passengers}`);
   };
 
   const handleSearchVariantB = (from: string, destination: string, duration: string, passengers: number) => {
-    // Navigate to search results
-    window.location.href = kiwiDeepLink({ from, to: destination, passengers: String(passengers) }, "hero-search-b");
+    const destSlug = destination.toLowerCase().trim().replace(/\s+/g, "-") || "all";
+    window.location.href = pelikanDeepLink("/cs/akcni-letenky", {
+      campaign: "hero-search-b",
+      channel: "homepage",
+      content: `${from}-${destSlug}-${duration}-${passengers}`,
+    });
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Exit Intent Popup */}
-      <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
+      {showDeferredEnhancements && (
+        <Suspense fallback={null}>
+          <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
+        </Suspense>
+      )}
       
       {/* Facebook Campaign Banner - shown to FB visitors */}
       <FacebookCampaignBanner />
@@ -383,7 +408,7 @@ export default function Home() {
       )}>
         <div className="flex items-center justify-center gap-3">
           <span className="font-semibold">🔥 AKCE: PRÁVĚ JSME ZLEVNILI VYBRANÉ LETENKY — SLEVY AŽ 80 %</span>
-          <a href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "promo-banner")} target="_blank" rel="noopener noreferrer"
+          <a href={buildPelikanSearchUrl("promo-banner")} target="_blank" rel="noopener"
             className="bg-white text-[#E91E63] font-bold px-3 py-0.5 rounded-full text-xs hover:bg-gray-100 transition-colors"
             onClick={() => trackStickyClick()}>
             REZERVUJTE TEĎ!
@@ -454,9 +479,9 @@ export default function Home() {
 
             {/* CTA Button - Čedok style: blue rounded */}
             <a 
-              href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "header-cta")} 
+              href={buildPelikanSearchUrl("header-cta")}
               target="_blank" 
-              rel="noopener noreferrer"
+              rel="noopener"
               className="hidden md:flex items-center gap-1.5 bg-[#1565C0] hover:bg-[#0d47a1] text-white px-4 py-2 rounded-full transition-colors whitespace-nowrap font-semibold text-sm shadow-sm"
               onClick={() => trackReservationClick()}
             >
@@ -473,16 +498,6 @@ export default function Home() {
       ) : (
         <HeroVariantB onSearch={handleSearchVariantB} />
       )}
-
-
-
-      {/* Kiwi.com Search Widget */}
-      <section className="py-8 bg-white">
-        <div className="container">
-          <div id="widget-holder" className="max-w-4xl mx-auto"></div>
-        </div>
-      </section>
-
       {/* Blue Info Banner */}
       <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md mt-16">
         <div className="container">
@@ -506,6 +521,8 @@ export default function Home() {
         </div>
       </div>
 
+      <PelikanPrimaryDeals />
+
       {/* Featured European Cities */}
       <section aria-labelledby="featured-cities" className="py-10 bg-[#F0F4F8]">
         <div className="container">
@@ -523,7 +540,7 @@ export default function Home() {
                     href={internalUrl}
                     rel="noopener"
                     className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
-                    onClick={() => { trackAffiliateClick(city.to, simpleSlug, "featured", internalUrl); trackFunnelAffiliateClick(city.to); }}
+                    onClick={() => { trackAffiliateClick(city.to, simpleSlug, "featured", internalUrl, "internal"); trackFunnelAffiliateClick(city.to); }}
                   >
                     <div className="relative h-48 overflow-hidden">
                       {/* Gold "Nejprodávanější" Badge for top 3 */}
@@ -641,10 +658,14 @@ export default function Home() {
       <HomeTipsWidget />
 
       {/* Personalized Recommendations */}
-      <PersonalizedSection />
+      <Suspense fallback={null}>
+        <PersonalizedSection />
+      </Suspense>
 
       {/* WhatsApp Group Join Banner */}
-      <WhatsAppGroupBanner />
+      <Suspense fallback={null}>
+        <WhatsAppGroupBanner />
+      </Suspense>
 
       {/* Zpáteční levné letenky Grid */}
       <section aria-labelledby="return-flights" className="py-12 bg-[#F5F7FA]">
@@ -830,15 +851,15 @@ export default function Home() {
             <TabsContent value="top" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {topDestinations.map((dest, index) => {
-                  const kiwiUrl = kiwiSearchLink("prague-czech-republic", dest.slug, "top-destinations");
+                  const pelikanUrl = buildPelikanVacationUrl("top-destinations", dest.slug);
                   return (
                     <a
                       key={index}
-                      href={kiwiUrl}
+                      href={pelikanUrl}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener"
                       className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
-                      onClick={() => { trackAffiliateClick(dest.title, dest.slug, "top-tab", kiwiUrl); trackFunnelAffiliateClick(dest.title); }}
+                      onClick={() => { trackAffiliateClick(dest.title, dest.slug, "top-tab", pelikanUrl, "pelikan"); trackFunnelAffiliateClick(dest.title); }}
                     >
                       <div className="relative h-48 overflow-hidden">
                         <img
@@ -875,7 +896,9 @@ export default function Home() {
       </article>
 
       {/* Omio Section - Trains, Buses, Ferries */}
-      <OmioSection />
+      <Suspense fallback={null}>
+        <OmioSection />
+      </Suspense>
 
       {/* Airline Logos Section */}
       <section aria-labelledby="airlines" className="py-12 bg-[#F5F7FA]">
@@ -974,11 +997,11 @@ export default function Home() {
             {/* Quick Links Banner */}
             <div className="bg-[#FFD700] rounded-lg px-6 py-3 mb-8">
               <div className="flex items-center justify-center gap-3 flex-wrap text-xs md:text-sm">
-                <a href="#akce-tydne" className="font-semibold text-[#003087] hover:underline">➡️ Akční nabídka týdne</a>
+                <a href="#top-this-week" className="font-semibold text-[#003087] hover:underline">➡️ Akční nabídka týdne</a>
                 <span className="text-[#003087]">|</span>
-                <a href="#business-class" className="font-semibold text-[#003087] hover:underline">⭐ Business class</a>
+                <a href="https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer-quicklinks&utm_campaign=business-class" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#003087] hover:underline">⭐ Business class</a>
                 <span className="text-[#003087]">|</span>
-                <a href="#prime-lety" className="font-semibold text-[#003087] hover:underline">✈️ Přímé lety</a>
+                <a href="#return-flights" className="font-semibold text-[#003087] hover:underline">✈️ Přímé lety</a>
                 <span className="text-[#003087]">|</span>
                 <a href="#faq" className="font-semibold text-[#003087] hover:underline">💰 Časté dotazy</a>
               </div>
@@ -992,12 +1015,12 @@ export default function Home() {
                 <ul className="space-y-2">
                   <li><a href="https://www.pelikan.cz/cs/akcni-letenky/LP:0_1500,S:PRI?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=1500kc" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Letenky do 1 500 Kč</a></li>
                   <li><a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Dovolená se slevou až 80 %</a></li>
-                  <li><a href="#eurovikendy" className="text-xs text-blue-600 hover:underline">Eurovíkendy</a></li>
-                  <li><a href="#business-class" className="text-xs text-blue-600 hover:underline">Business class</a></li>
-                  <li><a href="#top-akce" className="text-xs text-blue-600 hover:underline">🚀TOP akce</a></li>
-                  <li><a href="#mauricius" className="text-xs text-blue-600 hover:underline">Mauricius</a></li>
-                  <li><a href="#kratke-vylety" className="text-xs text-blue-600 hover:underline">Krátké výlety</a></li>
-                  <li><a href="#maledivy" className="text-xs text-blue-600 hover:underline">Maledivy</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=eurovikendy" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Eurovíkendy</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=business-class" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Business class</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=top-akce" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">🚀TOP akce</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=mauricius" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Mauricius</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=kratke-vylety" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Krátké výlety</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=maledivy" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Maledivy</a></li>
                 </ul>
               </div>
 
@@ -1005,14 +1028,14 @@ export default function Home() {
               <div>
                 <h3 className="text-base font-bold mb-3 text-[#003087]">⭐ Dovolené</h3>
                 <ul className="space-y-2">
-                  <li><a href="#premium-dovolena" className="text-xs text-blue-600 hover:underline">⭐Premium dovolená</a></li>
-                  <li><a href="#dubaj" className="text-xs text-blue-600 hover:underline">Dovolená v Dubaji</a></li>
-                  <li><a href="#poznavaci" className="text-xs text-blue-600 hover:underline">Poznávací zájezdy</a></li>
-                  <li><a href="#kanary" className="text-xs text-blue-600 hover:underline">Kanárské ostrovy</a></li>
-                  <li><a href="#last-minute" className="text-xs text-blue-600 hover:underline">Last minute</a></li>
-                  <li><a href="#nejlepsi-dovolene" className="text-xs text-blue-600 hover:underline">Nejlepší dovolené</a></li>
-                  <li><a href="#wellness" className="text-xs text-blue-600 hover:underline">Wellness</a></li>
-                  <li><a href="#exoticka" className="text-xs text-blue-600 hover:underline">Exotická dovolená</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=premium-dovolena" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">⭐Premium dovolená</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=dubaj" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Dovolená v Dubaji</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=poznavaci-zajezdy" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Poznávací zájezdy</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=kanary" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Kanárské ostrovy</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=last-minute" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Last minute</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=nejlepsi-dovolene" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Nejlepší dovolené</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=wellness" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Wellness</a></li>
+                  <li><a href="https://www.pelikan.cz/cs/pobyty?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=footer&utm_campaign=exoticka-dovolena" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Exotická dovolená</a></li>
                 </ul>
               </div>
 
@@ -1166,25 +1189,41 @@ export default function Home() {
       </footer>
 
       {/* Chatbot Widget */}
-      <ChatbotWidget />
+      {showDeferredEnhancements && (
+        <Suspense fallback={null}>
+          <ChatbotWidget />
+        </Suspense>
+      )}
 
       {/* Social Proof Widget */}
 
       
       {/* Social Proof Notifications */}
-      <SocialProofNotification />
+      {showDeferredEnhancements && (
+        <Suspense fallback={null}>
+          <SocialProofNotification />
+        </Suspense>
+      )}
 
       {/* Price Alert Modal */}
-      <PriceAlertModal
-        isOpen={priceAlertModal.isOpen}
-        onClose={() => setPriceAlertModal(prev => ({ ...prev, isOpen: false }))}
-        destination={priceAlertModal.destination}
-        destinationSlug={priceAlertModal.slug}
-        currentPrice={priceAlertModal.price}
-      />
+      {priceAlertModal.isOpen && (
+        <Suspense fallback={null}>
+          <PriceAlertModal
+            isOpen={priceAlertModal.isOpen}
+            onClose={() => setPriceAlertModal(prev => ({ ...prev, isOpen: false }))}
+            destination={priceAlertModal.destination}
+            destinationSlug={priceAlertModal.slug}
+            currentPrice={priceAlertModal.price}
+          />
+        </Suspense>
+      )}
 
       {/* GDPR Consent Banner */}
-      <GdprConsentBanner />
+      {showDeferredEnhancements && (
+        <Suspense fallback={null}>
+          <GdprConsentBanner />
+        </Suspense>
+      )}
       
     </div>
   );
@@ -1305,6 +1344,7 @@ function HomeFlightMapSection() {
   const { data: cheapFlights, isLoading } = trpc.flights.cheapFromPrague.useQuery(
     { destinations: ["LHR", "BCN", "FCO", "CDG", "AMS", "LIS", "ATH", "DXB", "BKK"] },
     {
+      enabled: expanded,
       staleTime: 60 * 60 * 1000, // 1h client-side cache
       retry: false,
     }
@@ -1403,12 +1443,14 @@ function HomeFlightMapSection() {
         {/* Full map widget — shown when expanded */}
         {expanded && (
           <div className="rounded-2xl overflow-hidden shadow-lg border border-[#003087]/10">
-            <FlightMapWidget
-              origin="PRG"
-              locale="cs"
-              currency="CZK"
-              height={520}
-            />
+            <Suspense fallback={<div className="h-[520px] bg-blue-50 animate-pulse" />}>
+              <FlightMapWidget
+                origin="PRG"
+                locale="cs"
+                currency="CZK"
+                height={520}
+              />
+            </Suspense>
           </div>
         )}
       </div>

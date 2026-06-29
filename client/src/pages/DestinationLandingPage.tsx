@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plane, Calendar, TrendingDown, ExternalLink, Heart, Clock, Star, Hotel } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
-import { bookingSearchLink, kiwiSearchLink } from "@shared/affiliateLinks";
+import { bookingSearchLink, pelikanDeepLink } from "@shared/affiliateLinks";
 import PriceCalendarWidget from "@/components/PriceCalendarWidget";
 
 // Destination metadata for SEO
@@ -17,7 +17,7 @@ const destinationMeta: Record<string, {
   bestTime: string;
   image: string;
   bookingQuery: string; // for Booking.com search
-  iataCode?: string; // IATA airport code for Kiwi.com widget
+  iataCode?: string; // IATA airport code for flight widgets
 }> = {
   barcelona: {
     title: "Barcelona",
@@ -118,6 +118,16 @@ function buildBookingUrl(query: string): string {
   return bookingSearchLink(query, "destination-page");
 }
 
+const pelikanDestinationPaths: Record<string, string> = {
+  barcelona: "/cs/akcni-letenky/praha/barcelona?data[from]=PRG&data[to]=BCN",
+  dubai: "/cs/akcni-letenky/praha/dubaj?data[from]=PRG&data[to]=DXB",
+  london: "/cs/akcni-letenky/praha/londyn?data[from]=PRG&data[to]=LON",
+  "new-york": "/cs/akcni-letenky/praha/new-york?data[from]=PRG&data[to]=NYC",
+  pariz: "/cs/akcni-letenky/praha/pariz?data[from]=PRG&data[to]=PAR",
+  rim: "/cs/akcni-letenky/praha/rim?data[from]=PRG&data[to]=ROM",
+  vietnam: "/cs/akcni-letenky/praha/hanoj?data[from]=PRG&data[to]=HAN",
+};
+
 export default function DestinationLandingPage() {
   const params = useParams();
   const destinationSlug = params.destination || "";
@@ -144,6 +154,15 @@ export default function DestinationLandingPage() {
     image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05",
     bookingQuery: fallbackTitle
   };
+
+  const pelikanDestinationUrl = pelikanDeepLink(
+    pelikanDestinationPaths[destinationSlug] || "/cs/akcni-letenky",
+    {
+      campaign: "destination-landing",
+      channel: "seo-destination",
+      content: destinationSlug || meta.title.toLowerCase().replace(/\s+/g, "-"),
+    }
+  );
 
   // Filter flights for this destination (or show all if no match)
   const flights = allOffers?.filter((o: any) => o.type === "flight") ?? [];
@@ -289,7 +308,7 @@ export default function DestinationLandingPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {/* Kiwi.com Travelpayouts Search Widget - pre-filled with destination */}
+              {/* Pelikan.cz primary fallback CTA for destination pages */}
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-[#003087] rounded-full flex items-center justify-center">
@@ -301,35 +320,36 @@ export default function DestinationLandingPage() {
                   </div>
                 </div>
 
-                {/* Travelpayouts Kiwi.com embed widget (promo_id=3414, marker=155221) */}
-                <div className="w-full overflow-hidden rounded-xl" id={`kiwi-widget-${destinationSlug}`}>
-                  <script
-                    async
-                    data-trs="516867"
-                    data-promo_id="3414"
-                    data-shmarker="155221"
-                    data-locale="cs"
-                    data-currency="CZK"
-                    data-host="www.kiwi.com"
-                    data-origin="PRG"
-                    data-destination={meta.iataCode || ""}
-                    data-width="100%"
-                    data-height="500"
-                    src="https://c189.travelpayouts.com/content?trs=516867&shmarker=155221&promo_id=3414&locale=cs&currency=CZK"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 text-sm">
+                  <div className="rounded-xl bg-blue-50 p-4">
+                    <p className="font-semibold text-[#003087]">Pelikan.cz</p>
+                    <p className="text-gray-600">Primarni affiliate partner</p>
+                  </div>
+                  <div className="rounded-xl bg-blue-50 p-4">
+                    <p className="font-semibold text-[#003087]">Praha - {meta.title}</p>
+                    <p className="text-gray-600">Rychly deeplink na nabidky</p>
+                  </div>
+                  <div className="rounded-xl bg-blue-50 p-4">
+                    <p className="font-semibold text-[#003087]">Bez externiho widgetu</p>
+                    <p className="text-gray-600">Rychlejsi nacteni na mobilu</p>
+                  </div>
                 </div>
 
                 {/* Direct CTA link */}
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <a
-                    href={kiwiSearchLink("letiste-vaclava-havla-praha-praha-cesko", destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'letiste-rim-fiumicino-rim-italie' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'hanoi-vietnam' : destinationSlug, "dest-page")}
+                    href={pelikanDestinationUrl}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
+                    referrerPolicy="no-referrer-when-downgrade"
                     className="flex-1"
                   >
-                    <Button className="w-full bg-[#E91E63] hover:bg-[#C2185B] text-white gap-2 text-base py-6">
+                    <Button
+                      aria-label={`Zobrazit letenky do ${meta.title} na Pelikan.cz`}
+                      className="w-full bg-[#E91E63] hover:bg-[#C2185B] text-white gap-2 text-base py-6"
+                    >
                       <Plane className="w-5 h-5" />
-                      Zobrazit všechny letenky do {meta.title} na Kiwi.com
+                      Zobrazit letenky do {meta.title} na Pelikan.cz
                       <ExternalLink className="w-4 h-4" />
                     </Button>
                   </a>
@@ -346,15 +366,16 @@ export default function DestinationLandingPage() {
                 <div className="text-3xl">🔔</div>
                 <div className="flex-1">
                   <p className="font-semibold text-orange-800">Chcete upozornění na slevy do {meta.title}?</p>
-                  <p className="text-sm text-orange-600">Nastavte si cenový alert na Kiwi.com a dostanete e-mail, jakmile ceny klesnou.</p>
+                  <p className="text-sm text-orange-600">Sledujte aktualni Pelikan nabidky a nechte si poslat nejlepsi tipy e-mailem.</p>
                 </div>
                 <a
-                  href={kiwiSearchLink("letiste-vaclava-havla-praha-praha-cesko", destinationSlug === 'pariz' ? 'paris-france' : destinationSlug === 'rim' ? 'letiste-rim-fiumicino-rim-italie' : destinationSlug === 'london' ? 'london-united-kingdom' : destinationSlug === 'dubai' ? 'dubai-united-arab-emirates' : destinationSlug === 'new-york' ? 'new-york-city-new-york-united-states' : destinationSlug === 'barcelona' ? 'barcelona-spain' : destinationSlug === 'vietnam' ? 'hanoi-vietnam' : destinationSlug, "price-alert")}
+                  href={pelikanDestinationUrl}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
+                  referrerPolicy="no-referrer-when-downgrade"
                 >
                   <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white whitespace-nowrap">
-                    Nastavit alert
+                    Zobrazit nabidky
                   </Button>
                 </a>
               </div>

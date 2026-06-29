@@ -4,8 +4,8 @@ import type { FlightOffer, VacationOffer } from "./pelikanFeed";
 type PelikanOffer = FlightOffer | VacationOffer;
 
 interface CacheEntry {
-  flights: PelikanOffer[];
-  vacations: PelikanOffer[];
+  flights: FlightOffer[];
+  vacations: VacationOffer[];
   lastUpdated: Date;
 }
 
@@ -63,10 +63,12 @@ class PelikanCacheService {
     console.log("[PelikanCache] Starting cache refresh...");
 
     try {
-      const [flights, vacations] = await Promise.all([
+      const [fetchedFlights, fetchedVacations] = await Promise.all([
         fetchFlights(100), // Fetch 100 flights
         fetchVacations(100), // Fetch 100 vacations
       ]);
+      const flights = fetchedFlights ?? [];
+      const vacations = fetchedVacations ?? [];
 
       this.cache = {
         flights,
@@ -85,7 +87,7 @@ class PelikanCacheService {
     }
   }
 
-  async getFlights(): Promise<PelikanOffer[]> {
+  async getFlights(): Promise<FlightOffer[]> {
     // If cache is empty, try to refresh
     if (!this.cache) {
       console.log("[PelikanCache] Cache miss, fetching live data...");
@@ -101,7 +103,7 @@ class PelikanCacheService {
     return this.cache?.flights || [];
   }
 
-  async getVacations(): Promise<PelikanOffer[]> {
+  async getVacations(): Promise<VacationOffer[]> {
     // If cache is empty, try to refresh
     if (!this.cache) {
       console.log("[PelikanCache] Cache miss, fetching live data...");
