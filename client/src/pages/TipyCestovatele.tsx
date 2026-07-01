@@ -8,8 +8,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 import CountdownTimer from "@/components/CountdownTimer";
 import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 
-const KIWI_LINK = "https://www.kiwi.com/cs/?affilid=155221&currency=czk";
+const PELIKAN_LINK = pelikanDeepLink("/cs/akcni-letenky", {
+  campaign: "travel-tips",
+  channel: "tips-page",
+});
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "jak-najit-levne-letenky-triky": <TrendingDown className="w-5 h-5" />,
@@ -137,7 +141,7 @@ export default function TipyCestovatele() {
               </p>
             </div>
             <a
-              href={KIWI_LINK}
+              href={PELIKAN_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:flex items-center gap-2 bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold px-5 py-2.5 rounded-full text-sm shadow-lg transition-all hover:scale-105"
@@ -260,7 +264,7 @@ export default function TipyCestovatele() {
             Využijte tipy z našich článků a najděte nejlevnější letenky na Kiwi.com — porovnání stovek aerolinek na jednom místě.
           </p>
           <a
-            href={KIWI_LINK}
+            href={PELIKAN_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold px-8 py-4 rounded-full text-lg shadow-xl transition-all hover:scale-105"

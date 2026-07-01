@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Sparkles, TrendingDown, ArrowRight, Bell, Eye } from "lucide-react";
-import { kiwiTilesLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import { trpc } from "@/lib/trpc";
 import PriceAlertModal from "./PriceAlertModal";
 import SocialSharePanel from "./SocialSharePanel";
@@ -170,7 +170,11 @@ export default function PersonalizedSection() {
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                       <a
-                        href={kiwiTilesLink("letiste-vaclava-havla-praha-praha-cesko", rec.destinationSlug, "personalized")}
+                        href={pelikanDeepLink("/cs/akcni-letenky", {
+                          campaign: "personalized",
+                          channel: "recommendations",
+                          content: rec.destinationSlug,
+                        })}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 bg-[#003087] hover:bg-[#002060] text-white text-sm font-medium py-2 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-1"

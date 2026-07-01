@@ -13,7 +13,7 @@ import { trackFormInteraction } from "@/lib/abTest";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { trackSearch } from "@/components/MetaPixel";
 import HeroBackgroundSlideshow from "@/components/HeroBackgroundSlideshow";
-import { kiwiDeepLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 
 interface HeroVariantAProps {
   onSearch: (destination: string, passengers: number) => void;
@@ -156,7 +156,10 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
                     </select>
                   </div>
                   <a
-                    href="https://www.pelikan.cz/cs/pobyty/s-pelikanem/?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=hero-tab&utm_campaign=dovolena"
+                    href={pelikanDeepLink("/cs/pobyty/s-pelikanem/", {
+                      campaign: "hero-holiday",
+                      channel: "hero-tab",
+                    })}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="h-12 px-6 bg-[#E91E63] hover:bg-[#C2185B] text-white font-semibold rounded-lg shadow-sm whitespace-nowrap flex items-center gap-2"

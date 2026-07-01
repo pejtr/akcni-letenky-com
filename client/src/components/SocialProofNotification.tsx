@@ -15,7 +15,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
-import { kiwiSearchLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import {
   getAssignedVariant,
   trackImpression,
@@ -77,14 +77,14 @@ export default function SocialProofNotification() {
   const variant = useMemo<SocialProofVariant>(() => getAssignedVariant(), []);
 
   // Track click on notification
-  const handleNotificationClick = (notification: Notification, kiwiUrl: string) => {
+  const handleNotificationClick = (notification: Notification, affiliateUrl: string) => {
     // Track in database
     trackClickMutation.mutate({
       destination: notification.destination,
       destinationSlug: notification.destinationSlug,
       source: "social-proof",
-      affiliatePartner: "kiwi",
-      affiliateUrl: kiwiUrl,
+      affiliatePartner: "pelikan",
+      affiliateUrl,
     });
     // Track for A/B test
     trackABClick(variant.id);
@@ -163,15 +163,19 @@ export default function SocialProofNotification() {
   return (
     <div className={positionClasses}>
       {notifications.map((notification, index) => {
-        const kiwiUrl = kiwiSearchLink("prague-czech-republic", notification.destinationSlug, "social-proof");
+        const affiliateUrl = pelikanDeepLink("/cs/akcni-letenky", {
+          campaign: "social-proof",
+          channel: "notification",
+          content: notification.destinationSlug,
+        });
         
         return (
           <a
             key={notification.id}
-            href={kiwiUrl}
+            href={affiliateUrl}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => handleNotificationClick(notification, kiwiUrl)}
+            onClick={() => handleNotificationClick(notification, affiliateUrl)}
             className={`block bg-white border-2 border-orange-500 rounded-xl shadow-2xl p-4 ${animationClasses} hover:border-orange-600 hover:shadow-3xl transition-all cursor-pointer max-w-sm`}
             style={{
               animationDelay: `${index * 100}ms`,

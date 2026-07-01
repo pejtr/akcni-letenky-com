@@ -7,7 +7,6 @@ import { Plane, Calendar, TrendingDown, ExternalLink, Heart, Clock, Star, Hotel 
 import { Skeleton } from "@/components/ui/skeleton";
 import LiveViewerCounter from "@/components/LiveViewerCounter";
 import { bookingSearchLink, pelikanDeepLink } from "@shared/affiliateLinks";
-import PriceCalendarWidget from "@/components/PriceCalendarWidget";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -384,20 +383,34 @@ export default function DestinationLandingPage() {
         </div>
       </section>
 
-      {/* Price Calendar Widget - Travelpayouts Aviasales */}
+      {/* Pelikan tracked fallback instead of iframe clicks we cannot fully control */}
       <section className="py-12 bg-gradient-to-b from-white to-green-50">
         <div className="container">
-          <PriceCalendarWidget
-            origin="PRG"
-            destination={meta.iataCode || ""}
-            destinationName={meta.title}
-            currency="CZK"
-            locale="cs"
-            period="year"
-            range="7,14"
-            subId="dest-calendar"
-            width="100%"
-          />
+          <div className="rounded-2xl border border-green-100 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-green-700">
+                  Aktualni Pelikan nabidky
+                </p>
+                <h2 className="mt-1 text-2xl font-bold text-gray-900">
+                  Letenky do {meta.title} s overenym affiliate odkazem
+                </h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Klik vede primo na Pelikan.cz s parametrem a_aid=levne-letenky a kampani pro tuto destinaci.
+                </p>
+              </div>
+              <a
+                href={pelikanDestinationUrl}
+                target="_blank"
+                rel="noopener"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#E91E63] px-6 py-3 font-bold text-white transition-colors hover:bg-[#C2185B]"
+              >
+                Zobrazit nabidky na Pelikan.cz
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

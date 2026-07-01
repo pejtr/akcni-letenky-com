@@ -114,7 +114,7 @@ export default function HeatmapVisualization() {
           >
             <option value="/">Homepage</option>
             <option value="/levne-letenky">Levné letenky</option>
-            <option value="/dovolena">Dovolená</option>
+            <option value="/dovolene">Dovolená</option>
             <option value="/wishlist">Wishlist</option>
           </select>
         </div>

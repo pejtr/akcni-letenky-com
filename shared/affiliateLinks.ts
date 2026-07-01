@@ -108,6 +108,11 @@ export function bookingSearchLink(destination: string, subId?: string): string {
   return tpLink(PROGRAMS.BOOKING, bookingUrl, subId);
 }
 
+export function aviasalesAffiliateUrl(pathOrUrl = "https://www.aviasales.com/", subId?: string): string {
+  const aviasalesUrl = new URL(pathOrUrl, "https://www.aviasales.com");
+  return tpLink(PROGRAMS.AVIASALES, aviasalesUrl.toString(), subId);
+}
+
 // ============================================================
 // OTHER PARTNERS
 // ============================================================

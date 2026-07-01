@@ -33,7 +33,6 @@ const SocialProofNotification = lazy(() => import("@/components/SocialProofNotif
 const OmioSection = lazy(() => import("@/components/OmioSection"));
 const PersonalizedSection = lazy(() => import("@/components/PersonalizedSection"));
 const GdprConsentBanner = lazy(() => import("@/components/GdprConsentBanner"));
-const FlightMapWidget = lazy(() => import("@/components/FlightMapWidget"));
 const WhatsAppGroupBanner = lazy(() => import("@/components/WhatsAppGroupBanner"));
 const PriceAlertModal = lazy(() => import("@/components/PriceAlertModal"));
 
@@ -1440,17 +1439,32 @@ function HomeFlightMapSection() {
           </div>
         )}
 
-        {/* Full map widget — shown when expanded */}
+        {/* Tracked Pelikan fallback shown when expanded */}
         {expanded && (
           <div className="rounded-2xl overflow-hidden shadow-lg border border-[#003087]/10">
-            <Suspense fallback={<div className="h-[520px] bg-blue-50 animate-pulse" />}>
-              <FlightMapWidget
-                origin="PRG"
-                locale="cs"
-                currency="CZK"
-                height={520}
-              />
-            </Suspense>
+            <div className="bg-white p-6 md:p-8">
+              <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+                Pelikan nabidky misto neoverenych iframe prokliku
+              </p>
+              <h3 className="mt-2 text-2xl font-black text-[#003087]">
+                Vyberte si aktualni letenky s plne trackovanym affiliate odkazem
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm text-gray-600">
+                Prodejni klik vede primo na Pelikan.cz s parametrem a_aid=levne-letenky, takze neztracime provizi na externim widgetu.
+              </p>
+              <a
+                href={pelikanDeepLink("/cs/akcni-letenky", {
+                  campaign: "homepage-map",
+                  channel: "expanded-panel",
+                  content: "all",
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex items-center justify-center rounded-xl bg-[#E91E63] px-6 py-3 font-bold text-white transition-colors hover:bg-[#C2185B]"
+              >
+                Zobrazit vsechny Pelikan akce
+              </a>
+            </div>
           </div>
         )}
       </div>

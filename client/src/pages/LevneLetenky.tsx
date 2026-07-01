@@ -4,8 +4,7 @@ import { Plane, ArrowRight, Search, Star, TrendingDown, Globe, Zap } from "lucid
 import Navigation from "@/components/Navigation";
 import SocialProofNotification from "@/components/SocialProofNotification";
 import CountdownTimer from "@/components/CountdownTimer";
-import FlightMapWidget from "@/components/FlightMapWidget";
-import { kiwiSearchLink, kiwiAffiliateUrl } from "@shared/affiliateLinks";
+import { aviasalesAffiliateUrl, pelikanDeepLink } from "@shared/affiliateLinks";
 
 // Travelpayouts Kiwi.com widget loader
 function KiwiSearchWidget() {
@@ -69,11 +68,12 @@ export default function LevneLetenky() {
   const [origin, setOrigin] = useState("PRG");
   const [destination, setDestination] = useState("");
 
-  const buildKiwiLink = (dest?: string) => {
-    if (dest) {
-      return kiwiSearchLink("letiste-vaclava-havla-praha-praha-cesko", dest, "letenky-page");
-    }
-    return kiwiAffiliateUrl("https://www.kiwi.com/cs/", "letenky-page");
+  const buildPelikanLink = (dest?: string) => {
+    return pelikanDeepLink("/cs/akcni-letenky", {
+      campaign: "letenky-page",
+      channel: "popular-destinations",
+      content: dest || "all",
+    });
   };
 
   return (
@@ -154,7 +154,7 @@ export default function LevneLetenky() {
               {popularDestinations.map((dest) => (
                 <a
                   key={dest.code}
-                  href={buildKiwiLink(dest.name.toLowerCase())}
+                  href={buildPelikanLink(dest.name.toLowerCase())}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#00A991] transition-all group"
@@ -183,15 +183,30 @@ export default function LevneLetenky() {
             </div>
           </div>
 
-          {/* Aviasales Interactive Map Widget */}
-          <div className="mb-10">
-            <FlightMapWidget
-              origin="PRG"
-              locale="cs"
-              currency="CZK"
-              height={580}
-              subId="letenky-page"
-            />
+          {/* Pelikan primary CTA instead of iframe clicks we cannot fully control */}
+          <div className="mb-10 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+                  Primarni prodejni flow
+                </p>
+                <h2 className="mt-1 text-2xl font-bold text-gray-900">
+                  Aktualni Pelikan akcni letenky
+                </h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Vsechny hlavni prokliky vedou pres a_aid=levne-letenky, aby se neztracela affiliate atribuce.
+                </p>
+              </div>
+              <a
+                href={buildPelikanLink("all")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#E91E63] px-6 py-3 font-bold text-white transition-colors hover:bg-[#C2185B]"
+              >
+                Zobrazit Pelikan nabidky
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
           </div>
 
           {/* Aviasales CTA */}
@@ -202,7 +217,7 @@ export default function LevneLetenky() {
                 <p className="opacity-90">Aviasales porovná stovky aerolinek najednou a najde nejnižší cenu</p>
               </div>
               <a
-                href="https://www.aviasales.com/?marker=155221"
+                href={aviasalesAffiliateUrl("https://www.aviasales.com/", "letenky-page")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-shrink-0 bg-white text-[#FF6B35] font-bold px-6 py-3 rounded-full hover:bg-gray-100 transition-colors flex items-center gap-2"
@@ -253,7 +268,7 @@ export default function LevneLetenky() {
           </p>
           <div className="flex justify-center gap-4 mt-4">
             <Link href="/" className="text-sm opacity-75 hover:opacity-100">Domů</Link>
-            <Link href="/dovolena" className="text-sm opacity-75 hover:opacity-100">Dovolená</Link>
+            <Link href="/dovolene" className="text-sm opacity-75 hover:opacity-100">Dovolená</Link>
             <Link href="/blog" className="text-sm opacity-75 hover:opacity-100">Blog</Link>
           </div>
         </div>

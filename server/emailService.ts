@@ -8,7 +8,7 @@
 
 import { Resend } from "resend";
 import { getDb } from "./db";
-import { kiwiSearchLink } from "../shared/affiliateLinks";
+import { pelikanDeepLink } from "../shared/affiliateLinks";
 import { notificationLog } from "../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -200,7 +200,11 @@ export async function sendPriceDropEmail(params: SendPriceDropEmailParams): Prom
     return { success: false, error: "Email service not configured (RESEND_API_KEY missing)" };
   }
 
-  const searchUrl = kiwiSearchLink("prague-czech-republic", params.destinationSlug, "email-price-drop");
+  const searchUrl = pelikanDeepLink("/cs/akcni-letenky", {
+    campaign: "email-price-drop",
+    channel: "price-alert",
+    content: params.destinationSlug,
+  });
 
   try {
     const htmlContent = generatePriceDropEmailHTML({

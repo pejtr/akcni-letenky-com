@@ -43,7 +43,7 @@ export default function MobileMenu() {
       icon: <Zap className="w-5 h-5" />,
     },
     {
-      href: "/dovolena",
+      href: "/dovolene",
       label: "Dovolená",
       icon: <Palmtree className="w-5 h-5" />,
     },

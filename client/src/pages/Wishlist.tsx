@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { kiwiSearchLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import {
   Heart,
   Trash2,
@@ -235,9 +235,13 @@ export default function Wishlist() {
     return { percentage: Math.abs(change).toFixed(1), isIncrease: change > 0 };
   };
 
-  const getKiwiUrl = (destName: string) => {
+  const getPelikanUrl = (destName: string) => {
     const destSlug = cityToSlug[destName.toLowerCase()] || destName.toLowerCase().replace(/\s+/g, "-");
-    return kiwiSearchLink("prague-czech-republic", destSlug, "wishlist");
+    return pelikanDeepLink("/cs/akcni-letenky", {
+      campaign: "wishlist",
+      channel: "saved-offers",
+      content: destSlug,
+    });
   };
 
   const handleQuickAlert = (item: (typeof wishlistItems)[0]) => {
@@ -456,7 +460,7 @@ export default function Wishlist() {
                               </span>
                             </div>
                             <a
-                              href={getKiwiUrl(item.name)}
+                              href={getPelikanUrl(item.name)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="mt-2 inline-flex items-center gap-1 text-xs text-[#003087] hover:text-[#E91E63] font-medium transition-colors"

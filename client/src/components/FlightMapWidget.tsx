@@ -20,6 +20,7 @@ import {
   CheckCircle,
   RefreshCw,
 } from "lucide-react";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
 
@@ -450,9 +451,11 @@ export default function FlightMapWidget({
               — porovnáme ceny stovek aerolinek za vás.
             </p>
             <a
-              href={`https://tp.media/r?marker=${TRAVELPAYOUTS_MARKER}.map-error&trs=267609&p=3791&u=${encodeURIComponent(
-                "https://www.kiwi.com/cs/search/results/prague-czechia/anywhere/anytime/anytime"
-              )}`}
+              href={pelikanDeepLink("/cs/akcni-letenky", {
+                campaign: "map-error",
+                channel: "flight-map",
+                content: "anywhere",
+              })}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#00B2A9] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#009990] transition-colors shadow-md"

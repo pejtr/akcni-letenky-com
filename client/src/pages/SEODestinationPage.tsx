@@ -14,8 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 // Footer component not available
 import { destinationCountries, destinationCities, type SEODestination } from "../../../shared/seoDestinations";
-import { kiwiAffiliateUrl } from "@shared/affiliateLinks";
-import PriceCalendarWidget from "@/components/PriceCalendarWidget";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 
 export default function SEODestinationPage() {
   const [location] = useLocation();
@@ -250,12 +249,16 @@ export default function SEODestinationPage() {
                       className="w-full"
                     >
                       <a
-                        href={kiwiAffiliateUrl(destination.kiwiUrl, "seo-dest")}
+                        href={pelikanDeepLink(destination.pelikanUrl, {
+                          campaign: "seo-dest",
+                          channel: "seo-page",
+                          content: destination.slug,
+                        })}
                         target="_blank"
                         rel="noopener nofollow"
                         className="flex items-center justify-center gap-2"
                       >
-                        Vyhledat na Kiwi.com
+                        Vyhledat na Pelikan.cz
                         <ExternalLink className="h-4 w-4" />
                       </a>
                     </Button>
@@ -278,20 +281,34 @@ export default function SEODestinationPage() {
         </div>
       </div>
 
-      {/* Price Calendar Widget - full width below grid */}
+      {/* Pelikan tracked CTA - full width below grid */}
       <div className="bg-gradient-to-b from-white to-green-50 border-t border-gray-100">
         <div className="container py-12">
-          <PriceCalendarWidget
-            origin="PRG"
-            destination={destination.iataCode || ""}
-            destinationName={destination.name}
-            currency="CZK"
-            locale="cs"
-            period="year"
-            range="7,14"
-            subId="seo-dest-calendar"
-            width="100%"
-          />
+          <Card>
+            <CardContent className="flex flex-col gap-4 pt-6 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Aktualni nabidky: {destination.name}
+                </h2>
+                <p className="mt-1 text-sm text-gray-600">
+                  Proklik vede primo na Pelikan.cz s affiliate parametrem a_aid=levne-letenky.
+                </p>
+              </div>
+              <a
+                href={pelikanDeepLink(destination.pelikanUrl, {
+                  campaign: "seo-dest-bottom",
+                  channel: "seo-page",
+                  content: destination.slug,
+                })}
+                target="_blank"
+                rel="noopener nofollow"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#E91E63] px-6 py-3 font-bold text-white hover:bg-[#C2185B]"
+              >
+                Zobrazit nabidky
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </CardContent>
+          </Card>
         </div>
       </div>
 

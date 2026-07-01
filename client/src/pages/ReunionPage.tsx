@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { kiwiDeepLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import {
   Plane,
   MapPin,
@@ -32,7 +32,11 @@ const IMAGES = {
   mountain: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/NduVswpGlpgicelP.jpg",
 };
 
-const AFFILIATE_LINK = kiwiDeepLink({ currency: "CZK", lang: "cs", destination: "RUN" }, "reunion");
+const AFFILIATE_LINK = pelikanDeepLink("/cs/akcni-letenky/AT:RUN,S:PRI", {
+  campaign: "reunion",
+  channel: "destination-page",
+  content: "RUN",
+});
 
 const highlights = [
   {

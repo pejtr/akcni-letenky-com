@@ -10,6 +10,7 @@
  */
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Calendar, TrendingDown, Loader2, CheckCircle } from "lucide-react";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
 
@@ -331,9 +332,11 @@ export default function PriceCalendarWidget({
               Zkuste obnovit stránku nebo vyhledejte letenky přímo na Kiwi.com
             </p>
             <a
-              href={`https://tp.media/r?marker=${TRAVELPAYOUTS_MARKER}.calendar-error&trs=267609&p=3791&u=${encodeURIComponent(
-                `https://www.kiwi.com/cs/search/results/prague-czechia/${destination || "anywhere"}/anytime/anytime`
-              )}`}
+              href={pelikanDeepLink("/cs/akcni-letenky", {
+                campaign: "calendar-error",
+                channel: "price-calendar",
+                content: destination || "anywhere",
+              })}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#00B2A9] text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#009990] transition-colors"

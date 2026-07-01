@@ -28,8 +28,9 @@ describe("Réunion Landing Page", () => {
 
   it("should contain affiliate link", () => {
     const content = readFileSync(pagePath, "utf-8");
-    expect(content).toContain("kiwi.com/deep");
-    expect(content).toContain("affilid=akcniletenkyakcniletenky");
+    expect(content).toContain("pelikanDeepLink");
+    expect(content).toContain("/cs/akcni-letenky/AT:RUN,S:PRI");
+    expect(content).toContain("reunion");
     expect(content).toContain("RUN");
   });
 

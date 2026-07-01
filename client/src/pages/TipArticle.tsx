@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 import { generateArticleSchema, generateBreadcrumbSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
 import { trpc } from "@/lib/trpc";
-import { kiwiAffiliateUrl } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 
 export default function TipArticle() {
   const params = useParams<{ slug: string }>();
@@ -152,7 +152,11 @@ export default function TipArticle() {
                 <p className="text-lg font-bold mb-2">Připraveni hledat levné letenky?</p>
                 <p className="text-white/80 text-sm mb-4">Porovnejte stovky aerolinek a najděte nejlepší cenu na Kiwi.com</p>
                 <a
-                  href={kiwiAffiliateUrl("https://www.kiwi.com/cs/")}
+                  href={pelikanDeepLink("/cs/akcni-letenky", {
+                    campaign: "tips-article",
+                    channel: "article-cta",
+                    content: slug,
+                  })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block bg-[#E91E63] text-white font-bold px-8 py-3 rounded-xl hover:bg-[#c2185b] transition-colors"
