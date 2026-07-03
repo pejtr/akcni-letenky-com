@@ -29,7 +29,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 const FEATURED_TIPS = [
   { icon: "💸", title: "Rezervujte v úterý", desc: "Nejnižší ceny letenek se objevují v úterý a středu" },
   { icon: "📅", title: "Flexibilní data", desc: "Posun odletu o 1–2 dny může ušetřit až 2 000 Kč" },
-  { icon: "🔔", title: "Cenové alerty", desc: "Nastavte si upozornění na pokles ceny na Kiwi.com" },
+  { icon: "🔔", title: "Cenové alerty", desc: "Sledujte pokles ceny a aktualni Pelikan nabidky" },
   { icon: "🕵️", title: "Inkognito mód", desc: "Vždy hledejte v anonymním okně prohlížeče" },
   { icon: "✈️", title: "Alternativní letiště", desc: "Z Vídně nebo Bratislavy se někdy letí levněji" },
   { icon: "🧳", title: "Příruční zavazadlo", desc: "Ušetřete stovky Kč tím, že se vejdete do kabiny" },
@@ -256,12 +256,12 @@ export default function TipyCestovatele() {
         </div>
       </section>
 
-      {/* CTA Section — Kiwi.com */}
+      {/* CTA Section - Pelikan.cz */}
       <section className="py-12 bg-gradient-to-r from-[#1a5276] to-[#2980b9]">
         <div className="container text-center text-white">
           <h2 className="text-3xl font-bold mb-3">Připraveni letět levně?</h2>
           <p className="text-lg opacity-85 mb-6 max-w-xl mx-auto">
-            Využijte tipy z našich článků a najděte nejlevnější letenky na Kiwi.com — porovnání stovek aerolinek na jednom místě.
+            Vyuzijte tipy z nasich clanku a najdete aktualni akcni letenky primo v Pelikan nabidkach.
           </p>
           <a
             href={PELIKAN_LINK}

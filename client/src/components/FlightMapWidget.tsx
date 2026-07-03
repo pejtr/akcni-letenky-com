@@ -447,7 +447,7 @@ export default function FlightMapWidget({
               Mapu se nepodařilo načíst
             </h3>
             <p className="text-gray-500 mb-6 max-w-sm">
-              Zkuste obnovit stránku nebo vyhledejte letenky přímo na Kiwi.com
+              Zkuste obnovit stranku nebo vyhledejte letenky primo na Pelikan.cz
               — porovnáme ceny stovek aerolinek za vás.
             </p>
             <a
@@ -461,7 +461,7 @@ export default function FlightMapWidget({
               className="inline-flex items-center gap-2 bg-[#00B2A9] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#009990] transition-colors shadow-md"
             >
               <Plane className="w-4 h-4" />
-              Vyhledat letenky na Kiwi.com
+              Vyhledat letenky na Pelikan.cz
             </a>
           </div>
         )}

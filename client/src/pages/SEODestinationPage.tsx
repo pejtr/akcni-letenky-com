@@ -230,7 +230,7 @@ export default function SEODestinationPage() {
               </CardContent>
             </Card>
 
-            {/* Kiwi.com CTA */}
+            {/* Pelikan CTA */}
             {destination.kiwiUrl && (
               <Card>
                 <CardContent className="pt-6">
@@ -238,7 +238,7 @@ export default function SEODestinationPage() {
                     <div className="text-sm font-semibold text-gray-600 uppercase">
                       Alternativní Nabídka
                     </div>
-                    <h3 className="text-xl font-bold">Kiwi.com</h3>
+                    <h3 className="text-xl font-bold">Pelikan.cz</h3>
                     <p className="text-sm text-gray-600">
                       Jednosměrné lety a flexibilní termíny
                     </p>

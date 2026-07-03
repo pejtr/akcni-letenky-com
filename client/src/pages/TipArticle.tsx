@@ -150,7 +150,7 @@ export default function TipArticle() {
               {/* CTA Banner */}
               <div className="mt-10 p-6 bg-gradient-to-r from-[#1a5276] to-[#2980b9] rounded-2xl text-white text-center">
                 <p className="text-lg font-bold mb-2">Připraveni hledat levné letenky?</p>
-                <p className="text-white/80 text-sm mb-4">Porovnejte stovky aerolinek a najděte nejlepší cenu na Kiwi.com</p>
+                <p className="text-white/80 text-sm mb-4">Vyberte aktualni akcni letenky primo z Pelikan nabidek.</p>
                 <a
                   href={pelikanDeepLink("/cs/akcni-letenky", {
                     campaign: "tips-article",
@@ -161,7 +161,7 @@ export default function TipArticle() {
                   rel="noopener noreferrer"
                   className="inline-block bg-[#E91E63] text-white font-bold px-8 py-3 rounded-xl hover:bg-[#c2185b] transition-colors"
                 >
-                  ✈️ Hledat letenky na Kiwi.com
+                  ✈️ Hledat letenky na Pelikan.cz
                 </a>
               </div>
             </>

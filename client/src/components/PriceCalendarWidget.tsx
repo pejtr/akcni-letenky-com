@@ -329,7 +329,7 @@ export default function PriceCalendarWidget({
             <div className="text-4xl mb-3">📅</div>
             <p className="font-semibold text-gray-700 mb-1">Kalendář se nepodařilo načíst</p>
             <p className="text-sm text-gray-500 mb-4">
-              Zkuste obnovit stránku nebo vyhledejte letenky přímo na Kiwi.com
+              Zkuste obnovit stránku nebo vyhledejte letenky přímo na Pelikan.cz
             </p>
             <a
               href={pelikanDeepLink("/cs/akcni-letenky", {
@@ -341,7 +341,7 @@ export default function PriceCalendarWidget({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#00B2A9] text-white px-5 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#009990] transition-colors"
             >
-              Vyhledat na Kiwi.com →
+              Vyhledat na Pelikan.cz →
             </a>
           </div>
         )}

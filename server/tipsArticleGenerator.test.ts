@@ -131,7 +131,7 @@ describe("tipsArticleGenerator", () => {
       expect(result.slug).toBe("nejlevnejsi-den-na-koupi-letenky");
     });
 
-    it("includes affiliate link in the LLM prompt", async () => {
+    it("includes Pelikan affiliate link in the LLM prompt", async () => {
       mockDb.limit.mockResolvedValue([]);
 
       const mockLLMResponse = {
@@ -142,7 +142,7 @@ describe("tipsArticleGenerator", () => {
                 title: "Test tip",
                 excerpt: "Test excerpt.",
                 metaDescription: "Test meta.",
-                content: "<article><p>Test content with <a href='https://www.kiwi.com/cs/?affilid=155221'>Kiwi.com</a></p></article>",
+                content: "<article><p>Test content with <a href='https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky'>Pelikan.cz</a></p></article>",
               }),
             },
           },
@@ -153,10 +153,11 @@ describe("tipsArticleGenerator", () => {
 
       await generateDailyTipArticle();
 
-      // Check that LLM was called with affiliate marker in prompt
+      // Check that LLM was called with the Pelikan affiliate marker in prompt
       const llmCall = (invokeLLM as any).mock.calls[0][0];
       const userMessage = llmCall.messages.find((m: any) => m.role === "user");
-      expect(userMessage.content).toContain("155221");
+      expect(userMessage.content).toContain("pelikan.cz/cs/akcni-letenky");
+      expect(userMessage.content).toContain("a_aid=levne-letenky");
     });
   });
 
