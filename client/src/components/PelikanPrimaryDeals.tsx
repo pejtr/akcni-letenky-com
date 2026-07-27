@@ -104,17 +104,14 @@ export default function PelikanPrimaryDeals() {
           </div>
         </div>
 
-        <div className="mt-2 md:hidden">
+        <div className="mt-8 text-center">
           <a
-            href={offers[0]?.url}
+            href="https://www.pelikan.cz/cs/akcni-letenky"
             target="_blank"
-            rel="noopener"
-            referrerPolicy="no-referrer-when-downgrade"
-            onClick={() => offers[0] && trackClick(offers[0], "pelikan-primary-sticky-mobile")}
-            className="flex items-center justify-between gap-3 bg-[#E91E63] text-white rounded-full px-5 py-3 font-black shadow-sm"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#003087] hover:bg-[#002060] text-white font-black text-sm md:text-base px-8 py-3.5 rounded-full shadow-md hover:shadow-lg transition-all"
           >
-            <span>Maledivy na Pelikan.cz</span>
-            <ArrowRight className="w-5 h-5" />
+            Zobrazit všechny exkluzivní nabídky na Pelikán.cz <ArrowRight className="w-5 h-5" />
           </a>
         </div>
       </div>
