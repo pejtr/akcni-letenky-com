@@ -59,6 +59,20 @@ export const SOCIAL_PROOF_VARIANTS: SocialProofVariant[] = [
 const STORAGE_KEY = 'social_proof_ab_variant';
 const IMPRESSIONS_KEY = 'social_proof_impressions';
 const CLICKS_KEY = 'social_proof_clicks';
+const SESSION_COUNT_KEY = 'social_proof_session_count';
+export const MAX_NOTIFICATIONS_PER_SESSION = 3;
+
+export function canShowNotification(): boolean {
+  if (typeof window === 'undefined') return true;
+  const count = parseInt(sessionStorage.getItem(SESSION_COUNT_KEY) || '0', 10);
+  return count < MAX_NOTIFICATIONS_PER_SESSION;
+}
+
+export function incrementNotificationCount(): void {
+  if (typeof window === 'undefined') return;
+  const count = parseInt(sessionStorage.getItem(SESSION_COUNT_KEY) || '0', 10);
+  sessionStorage.setItem(SESSION_COUNT_KEY, String(count + 1));
+}
 
 // Get or assign variant for this user
 export function getAssignedVariant(): SocialProofVariant {

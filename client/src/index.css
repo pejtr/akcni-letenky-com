@@ -264,3 +264,118 @@
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
 }
+
+/* Article & Prose Typography Formatting */
+.prose, .travel-tip-article {
+  color: #2c3e50;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+.prose p, .travel-tip-article p {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
+}
+
+.prose h1, .travel-tip-article h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #003087;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.prose h2, .travel-tip-article h2 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #003087;
+  margin-top: 2.25rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e2e8f0;
+  line-height: 1.35;
+}
+
+.prose h3, .travel-tip-article h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a5276;
+  margin-top: 1.75rem;
+  margin-bottom: 0.65rem;
+  line-height: 1.4;
+}
+
+.prose h4, .travel-tip-article h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose ul, .travel-tip-article ul,
+.prose ol, .travel-tip-article ol {
+  margin-top: 1.1rem;
+  margin-bottom: 1.3rem;
+  padding-left: 1.75rem;
+}
+
+.prose ul, .travel-tip-article ul {
+  list-style-type: disc;
+}
+
+.prose ol, .travel-tip-article ol {
+  list-style-type: decimal;
+}
+
+.prose li, .travel-tip-article li {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.7;
+}
+
+.prose blockquote, .travel-tip-article blockquote,
+.prose div[class*="bg-"], .travel-tip-article div[class*="bg-"] {
+  margin-top: 1.6rem;
+  margin-bottom: 1.6rem;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid #E91E63;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  color: #334155;
+}
+
+.prose img, .travel-tip-article img {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.prose a, .travel-tip-article a {
+  color: #E91E63;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover, .travel-tip-article a:hover {
+  color: #c2185b;
+}
+
+.prose strong, .travel-tip-article strong,
+.prose b, .travel-tip-article b {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.prose hr, .travel-tip-article hr {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+  border-color: #e2e8f0;
+}

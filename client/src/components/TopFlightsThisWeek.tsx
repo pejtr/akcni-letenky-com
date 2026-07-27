@@ -1,5 +1,47 @@
 import { trpc } from "@/lib/trpc";
 import { Plane, TrendingUp } from "lucide-react";
+import { Link } from "wouter";
+
+function getInternalDestinationUrl(destName: string): string {
+  if (!destName) return "/levne-letenky";
+  const cleanName = destName.toLowerCase().replace(/^letenky\s+do\s+/i, "").trim();
+  
+  const map: Record<string, string> = {
+    malta: "/malta",
+    "řecko": "/recko",
+    recko: "/recko",
+    barcelona: "/barcelona",
+    kypr: "/kypr",
+    "londýn": "/londyn",
+    london: "/londyn",
+    "paříž": "/pariz",
+    paris: "/pariz",
+    "řím": "/rim",
+    rome: "/rim",
+    "new york": "/new-york",
+    dubaj: "/dubaj",
+    dubai: "/dubaj",
+    bali: "/bali",
+    afrika: "/dovolene",
+    "levná exotika": "/dovolene",
+    exotika: "/dovolene",
+    istanbul: "/letenky-do-istanbul",
+    amsterdam: "/amsterdam",
+    "vídeň": "/viden",
+    "berlín": "/berlin",
+    egypt: "/letenky-do-egypt",
+  };
+  
+  if (map[cleanName]) return map[cleanName];
+  
+  const slug = cleanName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+    
+  return `/${slug}`;
+}
 
 export default function TopFlightsThisWeek() {
   const { data: flights, isLoading } = trpc.pelikan.getFlights.useQuery({
@@ -46,15 +88,14 @@ export default function TopFlightsThisWeek() {
         const isTopThree = index < 3;
         const departure = "departure" in flight ? flight.departure : undefined;
         const airline = "airline" in flight ? flight.airline : undefined;
+        const internalUrl = getInternalDestinationUrl(flight.destination || flight.title);
 
         return (
-          <a
+          <Link
             key={flight.id}
-            href={flight.link}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={internalUrl}
             onClick={() => trackAffiliateClick(flight)}
-            className="group relative rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-[#E91E63] overflow-hidden min-h-[280px]"
+            className="group relative rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-[#E91E63] overflow-hidden min-h-[280px] block cursor-pointer"
           >
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
@@ -125,7 +166,7 @@ export default function TopFlightsThisWeek() {
             </div>
 
             <div className="absolute inset-0 bg-gradient-to-br from-[#E91E63]/5 to-[#FF5722]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-          </a>
+          </Link>
         );
       })}
     </div>

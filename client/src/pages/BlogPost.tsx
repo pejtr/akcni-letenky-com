@@ -2,17 +2,29 @@ import { useEffect } from "react";
 import { Link, useParams } from "wouter";
 import { Calendar, User, ArrowLeft, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import { generateArticleSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
 import { trpc } from "@/lib/trpc";
+import MarkdownContent from "@/components/MarkdownContent";
+import InternalLinkingHub from "@/components/InternalLinkingHub";
+import ArticleSidebar from "@/components/ArticleSidebar";
+
+/** Clean raw HTML wrapper tags like <article> if present */
+function sanitizeArticleHtml(htmlStr: string): string {
+  if (!htmlStr) return "";
+  let clean = htmlStr.trim();
+  clean = clean.replace(/^<article[^>]*>/i, "").replace(/<\/article>$/i, "");
+  return clean;
+}
 
 export default function BlogPost() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug || "";
 
   const { data: article, isLoading, error } = trpc.articles.bySlug.useQuery({ slug });
-  const { data: recentArticles } = trpc.articles.recent.useQuery({ limit: 3 });
 
   // Add Article JSON-LD schema for SEO
   useEffect(() => {
@@ -26,7 +38,7 @@ export default function BlogPost() {
       author: article.author || "Akční Letenky",
       datePublished: (article.publishedAt || article.createdAt).toISOString(),
       dateModified: (article.updatedAt || article.publishedAt || article.createdAt).toISOString(),
-      image: article.featuredImage || "https://akcni-letenky.com/default-article-image.jpg",
+      image: article.featuredImage || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80",
       url: `https://akcni-letenky.com/blog/${article.slug}`,
     });
 
@@ -39,184 +51,162 @@ export default function BlogPost() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">Článek nenalezen</h1>
-          <p className="text-gray-600 mb-8">Omlouváme se, ale tento článek neexistuje nebo byl odstraněn.</p>
-          <Link href="/blog">
-            <Button>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Zpět na blog
-            </Button>
-          </Link>
+      <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex flex-col justify-between">
+        <Navigation />
+        <div className="flex items-center justify-center min-h-[60vh] pt-20">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">Článek nenalezen</h1>
+            <p className="text-gray-600 mb-8">Omlouváme se, ale tento článek neexistuje nebo byl odstraněn.</p>
+            <Link href="/blog">
+              <Button>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Zpět na blog
+              </Button>
+            </Link>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
+  const isRawHtml = article && /<[a-z][\s\S]*>/i.test(article.content);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="Akční Letenky" className="h-10" />
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col justify-between">
+      <div>
+        <Navigation />
+
+        {/* Main Section with Article & Sidebar */}
+        <section className="py-12 pt-28">
+          <div className="container max-w-7xl">
+            {/* Back Button */}
+            <Link href="/blog">
+              <Button variant="ghost" className="mb-6 -ml-2 text-[#1565C0]">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Zpět na blog
+              </Button>
             </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="text-gray-700 hover:text-pink-600 transition-colors">Domů</Link>
-              <Link href="/blog" className="text-gray-700 hover:text-pink-600 transition-colors">Blog</Link>
-              <a href="tel:+420123456789" className="text-gray-700 hover:text-pink-600 transition-colors">
-                📞 +420 123 456 789
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
 
-      {/* Article Content */}
-      <article className="py-12">
-        <div className="container max-w-4xl">
-          {/* Back Button */}
-          <Link href="/blog">
-            <Button variant="ghost" className="mb-6">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Zpět na blog
-            </Button>
-          </Link>
-
-          {isLoading ? (
-            <div>
-              <Skeleton className="h-12 w-3/4 mb-4" />
-              <Skeleton className="h-6 w-1/2 mb-8" />
-              <Skeleton className="h-96 w-full mb-8" />
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-5/6" />
-            </div>
-          ) : article ? (
-            <>
-              {/* Article Header */}
-              <header className="mb-8">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{article.title}</h1>
-                <div className="flex flex-wrap items-center gap-4 text-gray-600">
-                  <span className="flex items-center gap-2">
-                    <User className="w-5 h-5" />
-                    {article.author}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    {article.publishedAt
-                      ? new Date(article.publishedAt).toLocaleDateString("cs-CZ", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "Nepublikováno"}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <Eye className="w-5 h-5" />
-                    {article.viewCount || 0} zobrazení
-                  </span>
-                </div>
-              </header>
-
-              {/* Featured Image */}
-              {article.featuredImage && (
-                <img
-                  src={article.featuredImage}
-                  alt={article.title}
-                  className="w-full h-96 object-cover rounded-lg shadow-lg mb-8"
-                />
-              )}
-
-              {/* Article Content */}
-              <div className="prose prose-lg max-w-none mb-12">
-                {article.content.split("\n\n").map((paragraph, index) => (
-                  <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-
-              {/* Keywords */}
-              {article.keywords && (
-                <div className="mb-8 p-4 bg-pink-50 rounded-lg">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Klíčová slova:</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {article.keywords.split(",").map((keyword, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-white text-pink-600 text-sm rounded-full border border-pink-200"
-                      >
-                        {keyword.trim()}
-                      </span>
-                    ))}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Main Content (8 cols) */}
+              <div className="lg:col-span-8">
+                {isLoading ? (
+                  <div>
+                    <Skeleton className="h-12 w-3/4 mb-4" />
+                    <Skeleton className="h-6 w-1/2 mb-8" />
+                    <Skeleton className="h-96 w-full mb-8 rounded-2xl" />
+                    <Skeleton className="h-4 w-full mb-2" />
+                    <Skeleton className="h-4 w-full mb-2" />
+                    <Skeleton className="h-4 w-5/6" />
                   </div>
-                </div>
-              )}
+                ) : article ? (
+                  <article>
+                    {/* Article Header */}
+                    <header className="mb-8">
+                      <h1 className="text-3xl md:text-4xl font-black text-[#003087] mb-4 leading-tight">
+                        {article.title}
+                      </h1>
+                      <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
+                        <span className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-blue-600" />
+                          {article.author || "Akční Letenky"}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-blue-600" />
+                          {article.publishedAt
+                            ? new Date(article.publishedAt).toLocaleDateString("cs-CZ", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              })
+                            : "Nepublikováno"}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <Eye className="w-4 h-4 text-blue-600" />
+                          {article.viewCount || 0} zobrazení
+                        </span>
+                      </div>
+                    </header>
 
-              {/* Call to Action */}
-              <div className="bg-gradient-to-r from-pink-600 to-pink-500 text-white p-8 rounded-lg text-center mb-12">
-                <h2 className="text-2xl font-bold mb-4">Hledáte levné letenky?</h2>
-                <p className="text-pink-100 mb-6">
-                  Prohlédněte si naše aktuální nabídky a ušetřete až 70% na letenkách do celého světa!
-                </p>
-                <Link href="/">
-                  <Button size="lg" variant="secondary">
-                    Zobrazit akční letenky
-                  </Button>
-                </Link>
-              </div>
-            </>
-          ) : null}
-        </div>
-      </article>
-
-      {/* Related Articles */}
-      {recentArticles && recentArticles.length > 0 && (
-        <section className="py-12 bg-gray-50">
-          <div className="container max-w-6xl">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Další články</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {recentArticles
-                .filter((a) => a.slug !== slug)
-                .slice(0, 3)
-                .map((relatedArticle) => (
-                  <Card key={relatedArticle.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      {relatedArticle.featuredImage && (
+                    {/* Featured Image */}
+                    {article.featuredImage && (
+                      <div className="rounded-2xl overflow-hidden mb-8 shadow-lg max-h-[450px]">
                         <img
-                          src={relatedArticle.featuredImage}
-                          alt={relatedArticle.title}
-                          className="w-full h-40 object-cover rounded-t-lg mb-4"
+                          src={article.featuredImage}
+                          alt={article.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80";
+                          }}
                         />
-                      )}
-                      <CardTitle className="text-lg line-clamp-2">{relatedArticle.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-600 text-sm line-clamp-2">{relatedArticle.excerpt}</p>
-                      <Link href={`/blog/${relatedArticle.slug}`}>
-                        <Button variant="link" className="mt-4 p-0">
-                          Číst více →
+                      </div>
+                    )}
+
+                    {/* Article Content */}
+                    {isRawHtml ? (
+                      <div
+                        className="prose prose-lg max-w-none text-gray-800 leading-relaxed mb-12 prose-headings:text-[#003087] prose-headings:font-black prose-a:text-[#1565C0] prose-a:font-bold prose-img:rounded-2xl prose-img:shadow-md"
+                        dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(article.content) }}
+                      />
+                    ) : (
+                      <MarkdownContent content={article.content} className="mb-12" />
+                    )}
+
+                    {/* Keywords */}
+                    {article.keywords && (
+                      <div className="mb-8 p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                        <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Klíčová slova:</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {article.keywords.split(",").map((keyword, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 bg-white text-blue-600 text-xs font-semibold rounded-full border border-blue-200 shadow-sm"
+                            >
+                              {keyword.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SEO Internal Linking Hub */}
+                    <InternalLinkingHub />
+
+                    {/* Call to Action - Pelikán Link */}
+                    <div className="bg-gradient-to-r from-[#1565C0] to-[#0d47a1] text-white p-8 rounded-3xl text-center mb-8 shadow-xl border border-blue-400/20">
+                      <h2 className="text-2xl md:text-3xl font-black mb-3">Hledáte levné letenky?</h2>
+                      <p className="text-blue-100 mb-6 max-w-xl mx-auto text-sm md:text-base">
+                        Prohlédněte si nejvýhodnější akční nabídky od stovek leteckých společností přehledně na Pelikán.cz!
+                      </p>
+                      <a
+                        href={pelikanDeepLink("/cs/akcni-letenky", {
+                          campaign: "blog-article-cta",
+                          channel: "article-bottom",
+                          content: slug,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button size="lg" className="bg-[#E91E63] hover:bg-[#c2185b] text-white font-bold px-8 py-3.5 rounded-xl shadow-lg text-base">
+                          ✈️ Zobrazit nabídky letenek na Pelikán.cz
                         </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </a>
+                    </div>
+                  </article>
+                ) : null}
+              </div>
+
+              {/* Right Sidebar (4 cols) */}
+              <div className="lg:col-span-4">
+                <ArticleSidebar currentSlug={slug} />
+              </div>
             </div>
           </div>
         </section>
-      )}
+      </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="container">
-          <div className="text-center">
-            <p className="text-gray-400">© 2026 Akční Letenky. Všechna práva vyhrazena.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

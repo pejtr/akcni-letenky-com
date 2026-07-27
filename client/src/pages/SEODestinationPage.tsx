@@ -14,7 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 // Footer component not available
 import { destinationCountries, destinationCities, type SEODestination } from "../../../shared/seoDestinations";
-import { pelikanDeepLink } from "@shared/affiliateLinks";
+import { kiwiAffiliateUrl, pelikanDeepLink } from "@shared/affiliateLinks";
+// ... (code omitted for brevity in replace, let's target exact lines)
 
 export default function SEODestinationPage() {
   const [location] = useLocation();
@@ -230,7 +231,7 @@ export default function SEODestinationPage() {
               </CardContent>
             </Card>
 
-            {/* Pelikan CTA */}
+            {/* Kiwi CTA */}
             {destination.kiwiUrl && (
               <Card>
                 <CardContent className="pt-6">
@@ -238,27 +239,25 @@ export default function SEODestinationPage() {
                     <div className="text-sm font-semibold text-gray-600 uppercase">
                       Alternativní Nabídka
                     </div>
-                    <h3 className="text-xl font-bold">Pelikan.cz</h3>
+                    <h3 className="text-xl font-bold flex items-center justify-center gap-1.5">
+                      🥝 Kiwi.com
+                    </h3>
                     <p className="text-sm text-gray-600">
-                      Jednosměrné lety a flexibilní termíny
+                      Kombinované lety a flexibilní vyhledávání
                     </p>
                     <Button
                       asChild
                       variant="outline"
                       size="lg"
-                      className="w-full"
+                      className="w-full border-green-600 text-green-700 hover:bg-green-50"
                     >
                       <a
-                        href={pelikanDeepLink(destination.pelikanUrl, {
-                          campaign: "seo-dest",
-                          channel: "seo-page",
-                          content: destination.slug,
-                        })}
+                        href={kiwiAffiliateUrl(destination.kiwiUrl, "seo-dest")}
                         target="_blank"
-                        rel="noopener nofollow"
+                        rel="noopener nofollow sponsored"
                         className="flex items-center justify-center gap-2"
                       >
-                        Vyhledat na Pelikan.cz
+                        Vyhledat na Kiwi.com
                         <ExternalLink className="h-4 w-4" />
                       </a>
                     </Button>

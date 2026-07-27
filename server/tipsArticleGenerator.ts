@@ -271,7 +271,7 @@ const TIPS_TOPICS = [
     slug_prefix: "letenky-do-chorvatska-split-dubrovnik",
     title: "Letenky do Chorvatska: Split a Dubrovník od 800 Kč — stojí to za to?",
     keywords: "letenky Chorvatsko Praha, letenky Split cena, letenky Dubrovník Praha, Chorvatsko letadlem vs autem",
-    image: "https://images.unsplash.com/photo-1555990538-c4f1a0e87a22?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1200&q=80",
     prompt_focus: "Porovnej letenky do Chorvatska vs. jízda autem. Ceny Praha → Split vs. Dubrovník vs. Zadar. Aerolinky (Croatia Airlines, Ryanair, Wizz Air). Tipy na kombinaci měst. Kdy je Chorvatsko nejlevnější (květen, září). Trajekty na ostrovy.",
   },
   {

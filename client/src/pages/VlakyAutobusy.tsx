@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Train, Bus, Plane, Leaf, Clock, Euro, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { generateOmioReferralLink, generateOmioRouteLink, trackOmioClick } from "@/lib/omioAffiliate";
+import { generateOmioReferralLink, generateOmioLink, generateOmioRouteLink, trackOmioClick, POPULAR_OMIO_ROUTES } from "@/lib/omioAffiliate";
 import Navigation from "@/components/Navigation";
 
 export default function VlakyAutobusy() {
@@ -11,14 +11,7 @@ export default function VlakyAutobusy() {
     window.open(generateOmioRouteLink(from, to), "_blank", "noopener,noreferrer");
   };
 
-  const popularRoutes = [
-    { from: "Praha", to: "Vídeň", duration: "4h", price: "od 399 Kč", trainIcon: true },
-    { from: "Praha", to: "Berlín", duration: "4.5h", price: "od 599 Kč", trainIcon: true },
-    { from: "Praha", to: "Mnichov", duration: "5.5h", price: "od 799 Kč", trainIcon: true },
-    { from: "Praha", to: "Budapešť", duration: "6.5h", price: "od 899 Kč", trainIcon: true },
-    { from: "Praha", to: "Varšava", duration: "8h", price: "od 699 Kč", busIcon: true },
-    { from: "Praha", to: "Krakov", duration: "7h", price: "od 499 Kč", busIcon: true },
-  ];
+  const popularRoutes = POPULAR_OMIO_ROUTES;
 
   const comparison = [
     {
@@ -139,9 +132,9 @@ export default function VlakyAutobusy() {
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-xl">{route.from} → {route.to}</CardTitle>
-                    {route.trainIcon && <Train className="w-6 h-6 text-blue-600" />}
-                    {route.busIcon && <Bus className="w-6 h-6 text-orange-600" />}
+                    <CardTitle className="text-xl">{route.fromCs} → {route.toCs}</CardTitle>
+                    {route.transportType === "train" && <Train className="w-6 h-6 text-blue-600" />}
+                    {route.transportType === "bus" && <Bus className="w-6 h-6 text-orange-600" />}
                   </div>
                   <CardDescription className="flex items-center gap-4">
                     <span className="flex items-center gap-1">
@@ -153,7 +146,12 @@ export default function VlakyAutobusy() {
                 </CardHeader>
                 <CardContent>
                   <Button
-                    onClick={() => handleOmioSearch(route.from, route.to)}
+                    onClick={() => {
+                      trackOmioClick(route.toCs, route.transportType, "vlaky_autobusy_page");
+                      // We pass the English names and transportType to generate an SEO deep link
+                      const link = generateOmioLink({ from: route.from, to: route.to, transportType: route.transportType });
+                      window.open(link, "_blank", "noopener,noreferrer");
+                    }}
                     className="w-full bg-blue-600 hover:bg-blue-700"
                   >
                     Vyhledat Spojení

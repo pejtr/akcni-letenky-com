@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
-import { Link } from "wouter";
+import Footer from "@/components/Footer";
 import { Calendar, User, ArrowRight, BookOpen, Plane, Lightbulb, TrendingDown, Shield, Star } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -321,16 +321,7 @@ export default function TipyCestovatele() {
         </section>
       )}
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="container text-center">
-          <p className="text-gray-400 text-sm">
-            © 2025 Akční Letenky · <Link href="/blog">Blog</Link> ·{" "}
-            <Link href="/levne-letenky">Letenky</Link> ·{" "}
-            <Link href="/dovolene">Dovolená</Link>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

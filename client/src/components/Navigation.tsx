@@ -34,9 +34,14 @@ export default function Navigation() {
 
         {/* Navigation Links - Čedok style */}
         <nav className="hidden lg:flex items-center gap-0.5 flex-1">
-          <Link href="/levne-letenky">
+          <Link href="/last-minute">
             <a className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-              <Plane className="w-4 h-4" /> Last Minute
+              <Plane className="w-4 h-4 text-orange-500" /> Last Minute
+            </a>
+          </Link>
+          <Link href="/letenky">
+            <a className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
+              ✈️ Letenky
             </a>
           </Link>
           <Link href="/dovolene">
@@ -44,11 +49,14 @@ export default function Navigation() {
               ☀️ Dovolená
             </a>
           </Link>
-          <Link href="/levne-letenky">
-            <a className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-              ✈️ Letenky
-            </a>
-          </Link>
+          <a
+            href="https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap"
+          >
+            🏛️ Eurovíkendy
+          </a>
 
           {/* Aerolinky dropdown */}
           <div className="relative group">
@@ -56,8 +64,8 @@ export default function Navigation() {
               🏢 Aerolinky <ChevronDown className="w-3 h-3" />
             </a>
             <div className="absolute left-0 top-full mt-1 w-52 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100 py-2">
-              {["austrian-airlines","emirates","qatar-airways","ryanair","air-france","lufthansa","turkish-airlines","klm","british-airways","wizz-air","lot"].map((slug) => (
-                <Link key={slug} href={`/letecke-spolecnosti/${slug}`}>
+              {["austrian-airlines", "emirates", "qatar-airways", "ryanair", "air-france", "lufthansa", "turkish-airlines", "klm", "british-airways", "wizz-air", "lot"].map((slug) => (
+                <Link key={slug} href={`/letecka-spolecnost/${slug}`}>
                   <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#1565C0] transition-colors capitalize">
                     {slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
                   </a>

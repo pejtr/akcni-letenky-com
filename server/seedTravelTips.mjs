@@ -14,8 +14,8 @@ if (!DB_URL) {
   process.exit(1);
 }
 
-const KIWI_LINK = "https://www.kiwi.com/cs/?affilid=155221&currency=czk";
-const KIWI_SEARCH = "https://www.kiwi.com/cs/search/results";
+const KIWI_LINK = "https://tp.media/r?marker=155221&trs=267609&p=4114&u=https%3A%2F%2Fwww.kiwi.com%2Fcs%2F";
+const KIWI_SEARCH = "https://tp.media/r?marker=155221&trs=267609&p=4114&u=https%3A%2F%2Fwww.kiwi.com%2Fcs%2Fsearch%2Fresults%2Fprague-czech-republic";
 
 const articles = [
   {

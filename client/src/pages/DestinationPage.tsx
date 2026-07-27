@@ -1,4 +1,6 @@
-import { trpc } from "@/lib/trpc";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import { Link, useParams } from "wouter";
 import { MapPin, Calendar, Plane, ArrowLeft, Star, Clock, Info, Heart, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,26 +57,10 @@ export default function DestinationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="Akční Letenky" className="h-10" />
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/" className="text-gray-700 hover:text-pink-600 transition-colors">Domů</Link>
-              <Link href="/blog" className="text-gray-700 hover:text-pink-600 transition-colors">Blog</Link>
-              <a href="tel:+420123456789" className="text-gray-700 hover:text-pink-600 transition-colors">
-                📞 +420 123 456 789
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       {/* Breadcrumbs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 pt-20">
         <div className="container py-3">
           <nav className="flex items-center gap-2 text-sm text-gray-600">
             <Link href="/" className="hover:text-pink-600">Domů</Link>
@@ -240,36 +226,46 @@ export default function DestinationPage() {
 
                 {/* Right Column - Sidebar */}
                 <div>
-                  {/* Search Widget */}
-                  <Card className="mb-6 sticky top-24">
-                    <CardHeader>
-                      <CardTitle>Hledáte letenky?</CardTitle>
-                      <CardDescription>Najděte nejlepší nabídky do {destination.name}</CardDescription>
+                  {/* Search Widget - Pelikán Affiliate */}
+                  <Card className="mb-6 sticky top-24 border-[#FF6B00]/30 shadow-md">
+                    <CardHeader className="bg-gradient-to-r from-[#FF6B00] to-[#FF8C00] text-white rounded-t-xl">
+                      <CardTitle className="text-xl font-black">✈️ Hledáte letenky do {destination.name}?</CardTitle>
+                      <CardDescription className="text-white/90 text-xs">Porovnejte akční nabídky stovek aerolinek z Prahy na Pelikán.cz</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-6">
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium mb-2">Odkud</label>
+                          <label className="block text-xs font-bold text-gray-700 mb-1">Odkud</label>
                           <input
                             type="text"
-                            defaultValue="Praha"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-2">Kam</label>
-                          <input
-                            type="text"
-                            defaultValue={destination.name}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                            defaultValue="Praha (PRG)"
+                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 font-medium"
                             readOnly
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-2">Kdy</label>
-                          <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                          <label className="block text-xs font-bold text-gray-700 mb-1">Kam</label>
+                          <input
+                            type="text"
+                            defaultValue={`${destination.name} (všechna letiště)`}
+                            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 font-medium"
+                            readOnly
+                          />
                         </div>
-                        <Button className="w-full bg-pink-600 hover:bg-pink-700">Vyhledat letenky</Button>
+                        <a
+                          href={pelikanDeepLink(`/cs/akcni-letenky/praha/${destination.name.toLowerCase()}`, {
+                            campaign: "destination-sidebar-search",
+                            channel: "destination-page",
+                            content: destination.slug,
+                          })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block"
+                        >
+                          <Button className="w-full bg-[#FF6B00] hover:bg-[#E65C00] text-white font-bold py-3 rounded-xl shadow-md text-sm">
+                            Vyhledat letenky na Pelikán.cz →
+                          </Button>
+                        </a>
                       </div>
                     </CardContent>
                   </Card>
@@ -372,14 +368,7 @@ export default function DestinationPage() {
         </>
       ) : null}
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="container">
-          <div className="text-center">
-            <p className="text-gray-400">© 2026 Akční Letenky. Všechna práva vyhrazena.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import Footer from "@/components/Footer";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain } from "lucide-react";
@@ -362,17 +362,7 @@ export default function Dovolene() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#1a5276] text-white py-8">
-        <div className="container text-center">
-          <p className="opacity-75">
-            © 2024 Akční Letenky. Všechna práva vyhrazena.
-          </p>
-          <p className="text-sm opacity-50 mt-2">
-            Nabídky jsou poskytovány partnerem Pelikán.cz
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

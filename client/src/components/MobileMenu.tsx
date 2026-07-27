@@ -33,19 +33,25 @@ export default function MobileMenu() {
 
   const menuItems: { href: string; label: string; icon: React.ReactNode; external?: boolean }[] = [
     {
-      href: "/",
-      label: "Nejlevnější Lety",
-      icon: <Plane className="w-5 h-5" />,
+      href: "/last-minute",
+      label: "Last Minute Akce",
+      icon: <Zap className="w-5 h-5 text-orange-500" />,
     },
     {
-      href: "/levne-letenky",
-      label: "Levné Letenky",
-      icon: <Zap className="w-5 h-5" />,
+      href: "/letenky",
+      label: "Akční Letenky",
+      icon: <Plane className="w-5 h-5 text-[#E91E63]" />,
     },
     {
       href: "/dovolene",
       label: "Dovolená",
       icon: <Palmtree className="w-5 h-5" />,
+    },
+    {
+      href: "https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky",
+      label: "Eurovíkendy",
+      icon: <Building2 className="w-5 h-5 text-indigo-500" />,
+      external: true,
     },
     {
       href: "/aerolinky",

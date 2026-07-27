@@ -15,6 +15,8 @@ import {
   trackSearch as trackMetaSearch
 } from "@/components/MetaPixel";
 
+import { trackAffiliateRedirect } from "@/lib/leadosTracking";
+
 function getSessionId(): string {
   let sid = sessionStorage.getItem("conversion_session_id");
   if (!sid) {
@@ -66,6 +68,7 @@ export function useConversionTracking() {
     },
     trackAffiliateClick: (destination: string, price?: number, provider?: string) => {
       trackEvent("affiliate_click", { destination });
+      trackAffiliateRedirect(provider || destination);
       // Meta Pixel: InitiateCheckout event (user is starting purchase journey)
       if (price) {
         trackInitiateCheckout(destination, price, provider || "pelikan");

@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import InternalLinkingHub from "@/components/InternalLinkingHub";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
@@ -542,6 +543,11 @@ export default function ReunionPage() {
           </div>
         </div>
       </section>
+
+      {/* SEO Internal Linking Hub */}
+      <div className="container max-w-6xl mx-auto px-4 my-8">
+        <InternalLinkingHub />
+      </div>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8">

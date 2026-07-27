@@ -22,6 +22,8 @@ import {
   trackClick as trackABClick,
   getPositionClasses,
   getAnimationClasses,
+  canShowNotification,
+  incrementNotificationCount,
   type SocialProofVariant,
 } from "@/lib/socialProofABTest";
 
@@ -116,10 +118,11 @@ export default function SocialProofNotification() {
 
   // Show notification
   const showNotification = useCallback(() => {
+    if (!canShowNotification()) return;
     const notification = generateNotification();
     setNotifications(prev => [...prev, notification]);
 
-    // Track impression for A/B test
+    incrementNotificationCount();
     trackImpression(variant.id);
 
     // Auto-remove after display duration from variant

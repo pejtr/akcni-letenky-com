@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import MetaPixel from "./components/MetaPixel";
+import { initOnyxJourney } from "./lib/leadosTracking";
 import Home from "./pages/Home";
 
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -40,10 +41,23 @@ const HeatmapTracking = lazy(() =>
 );
 const RevolutPopupABTest = lazy(() => import("./components/RevolutPopupABTest"));
 
+import { useLocation } from "wouter";
+
+function ScrollToTop() {
+  const [pathname] = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+      <ScrollToTop />
       <Switch>
         <Route path={"/"} component={Home} />
         {/* Specific named routes MUST come before catch-all /:destination */}
@@ -60,6 +74,8 @@ function Router() {
         <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/levne-letenky" component={LevneLetenky} />
+        <Route path="/last-minute" component={LevneLetenky} />
+        <Route path="/letenky" component={LevneLetenky} />
         <Route path="/tipy-pro-cestovatele" component={TipyCestovatele} />
         <Route path="/tipy-pro-cestovatele/:slug" component={TipArticle} />
         <Route path="/dovolene" component={Dovolene} />
@@ -96,6 +112,9 @@ function App() {
   const [showDeferredEnhancements, setShowDeferredEnhancements] = useState(false);
 
   useEffect(() => {
+    // LeadOS / Travel Revenue Network initialization (onyx_journey token & affiliate tracking)
+    initOnyxJourney();
+
     const win = window as Window & {
       requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
       cancelIdleCallback?: (id: number) => void;

@@ -2,6 +2,8 @@ import { ArrowRight, Plane, MapPin, Sun, Waves, TreePine, Heart } from "lucide-r
 import Navigation from "@/components/Navigation";
 import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
 
+import InternalLinkingHub from "@/components/InternalLinkingHub";
+
 export default function BaliPage() {
   const { variant: ctaVariant, ctaText } = useABTest({
     name: "cta_button_bali",
@@ -187,6 +189,11 @@ export default function BaliPage() {
           </div>
         </div>
       </section>
+
+      {/* SEO Internal Linking Hub */}
+      <div className="container max-w-6xl my-8">
+        <InternalLinkingHub />
+      </div>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-[#1a5276] to-[#2874A6] text-white">

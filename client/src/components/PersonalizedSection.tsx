@@ -8,11 +8,33 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Sparkles, TrendingDown, ArrowRight, Bell, Eye } from "lucide-react";
-import { pelikanDeepLink } from "@shared/affiliateLinks";
+import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import PriceAlertModal from "./PriceAlertModal";
 import SocialSharePanel from "./SocialSharePanel";
 import { useSharePlacementABTest } from "@/hooks/useSharePlacementABTest";
+
+function getInternalDestinationRoute(destSlug: string, destName: string): string {
+  const slug = (destSlug || "").toLowerCase();
+  const name = (destName || "").toLowerCase();
+
+  if (slug.includes("london") || name.includes("londýn") || name.includes("london")) return "/londyn";
+  if (slug.includes("paris") || name.includes("paříž") || name.includes("paris")) return "/pariz";
+  if (slug.includes("rome") || name.includes("řím") || name.includes("rome")) return "/rim";
+  if (slug.includes("barcelona") || name.includes("barcelona")) return "/barcelona";
+  if (slug.includes("dubai") || name.includes("dubaj") || name.includes("dubai")) return "/dubaj";
+  if (slug.includes("amsterdam") || name.includes("amsterdam")) return "/amsterdam";
+  if (slug.includes("bangkok") || name.includes("bangkok")) return "/letenky-do-bangkok";
+  if (slug.includes("greece") || name.includes("řecko") || name.includes("athens") || name.includes("santorini")) return "/recko";
+  if (slug.includes("malta") || name.includes("malta")) return "/malta";
+  if (slug.includes("cyprus") || name.includes("kypr")) return "/kypr";
+  if (slug.includes("egypt") || name.includes("egypt")) return "/letenky-do-egypt";
+  if (slug.includes("new-york") || name.includes("new york")) return "/new-york";
+
+  const cleanSlug = destSlug
+    .replace(/-united-kingdom|-france|-italy|-spain|-germany|-austria|-united-arab-emirates|-thailand|-portugal|-turkey|-greece|-hungary/g, "");
+  return `/${cleanSlug}`;
+}
 
 function getSessionId(): string {
   const key = "akcni-letenky-session";
@@ -107,95 +129,95 @@ export default function PersonalizedSection() {
               // Simulate discount
               const originalPrice = Math.round(rec.estimatedPrice * 1.25);
               const discountPercent = Math.round(((originalPrice - rec.estimatedPrice) / originalPrice) * 100);
+              const internalRoute = getInternalDestinationRoute(rec.destinationSlug, rec.destination);
 
               return (
                 <div
                   key={rec.destinationSlug}
-                  className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between"
                 >
-                  {/* Image */}
-                  <div className="relative h-40 overflow-hidden">
-                    <img
-                      src={image}
-                      alt={rec.destination}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    {/* Discount badge */}
-                    <div className="absolute top-3 left-3 bg-[#E91E63] text-white text-xs font-bold px-2 py-1 rounded-full">
-                      -{discountPercent}%
-                    </div>
-                    {/* Reason badge */}
-                    {hasHistory && (
-                      <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-                        <Eye className="w-3 h-3 inline mr-1" />
-                        {rec.reason}
+                  <div>
+                    {/* Image */}
+                    <Link href={internalRoute}>
+                      <a className="block relative h-40 overflow-hidden cursor-pointer">
+                        <img
+                          src={image}
+                          alt={rec.destination}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                        {/* Discount badge */}
+                        <div className="absolute top-3 left-3 bg-[#E91E63] text-white text-xs font-bold px-2 py-1 rounded-full">
+                          -{discountPercent}%
+                        </div>
+                        {/* Reason badge */}
+                        {hasHistory && (
+                          <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                            <Eye className="w-3 h-3 inline mr-1" />
+                            {rec.reason}
+                          </div>
+                        )}
+                      </a>
+                    </Link>
+
+                    {/* Content */}
+                    <div className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <Link href={internalRoute}>
+                          <a className="text-lg font-bold text-[#003087] group-hover:text-[#E91E63] transition-colors cursor-pointer">
+                            {rec.destination}
+                          </a>
+                        </Link>
+                        {/* A/B Test: Show share button on card only for variant A */}
+                        {showOnCard && (
+                          <div onClick={() => { trackShareOpen(); trackShareClick("card_inline"); }}>
+                            <SocialSharePanel
+                              destination={rec.destination}
+                              destinationSlug={rec.destinationSlug}
+                              price={rec.estimatedPrice}
+                              compact
+                            />
+                          </div>
+                        )}
                       </div>
-                    )}
+
+                      {/* Price */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-xs text-gray-400 line-through">
+                          {originalPrice.toLocaleString("cs-CZ")} Kč
+                        </span>
+                        <span className="text-xl font-bold text-[#E91E63]">
+                          {rec.estimatedPrice.toLocaleString("cs-CZ")} Kč
+                        </span>
+                        <span className="text-xs text-gray-400">zpát.</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">
+                          <TrendingDown className="w-3 h-3 inline" /> Sleva
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-lg font-bold text-[#003087]">
-                        {rec.destination}
-                      </h3>
-                      {/* A/B Test: Show share button on card only for variant A */}
-                      {showOnCard && (
-                        <div onClick={() => { trackShareOpen(); trackShareClick("card_inline"); }}>
-                          <SocialSharePanel
-                            destination={rec.destination}
-                            destinationSlug={rec.destinationSlug}
-                            price={rec.estimatedPrice}
-                            compact
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Price */}
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xs text-gray-400 line-through">
-                        {originalPrice.toLocaleString("cs-CZ")} Kč
-                      </span>
-                      <span className="text-xl font-bold text-[#E91E63]">
-                        {rec.estimatedPrice.toLocaleString("cs-CZ")} Kč
-                      </span>
-                      <span className="text-xs text-gray-400">zpát.</span>
-                      <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">
-                        <TrendingDown className="w-3 h-3 inline" /> Sleva
-                      </span>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
-                      <a
-                        href={pelikanDeepLink("/cs/akcni-letenky", {
-                          campaign: "personalized",
-                          channel: "recommendations",
-                          content: rec.destinationSlug,
-                        })}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 bg-[#003087] hover:bg-[#002060] text-white text-sm font-medium py-2 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-1"
-                      >
+                  {/* Actions */}
+                  <div className="p-4 pt-0 flex items-center gap-2">
+                    <Link href={internalRoute}>
+                      <a className="flex-1 bg-[#003087] hover:bg-[#002060] text-white text-sm font-medium py-2.5 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-1 cursor-pointer">
                         Zobrazit lety →
                       </a>
-                      <button
-                        onClick={() =>
-                          setAlertModal({
-                            isOpen: true,
-                            destination: rec.destination,
-                            slug: rec.destinationSlug,
-                            price: rec.estimatedPrice,
-                          })
-                        }
-                        className="bg-orange-100 hover:bg-orange-200 text-orange-600 p-2 rounded-lg transition-colors"
-                        title="Hlídat cenu"
-                      >
-                        <Bell className="w-4 h-4" />
-                      </button>
-                    </div>
+                    </Link>
+                    <button
+                      onClick={() =>
+                        setAlertModal({
+                          isOpen: true,
+                          destination: rec.destination,
+                          slug: rec.destinationSlug,
+                          price: rec.estimatedPrice,
+                        })
+                      }
+                      className="bg-orange-100 hover:bg-orange-200 text-orange-600 p-2.5 rounded-lg transition-colors"
+                      title="Hlídat cenu"
+                    >
+                      <Bell className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               );

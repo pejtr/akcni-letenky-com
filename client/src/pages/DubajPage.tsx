@@ -1,6 +1,7 @@
 import { ArrowRight, Plane, MapPin, Sun, Building2, ShoppingBag, Palmtree } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
+import InternalLinkingHub from "@/components/InternalLinkingHub";
 
 export default function DubajPage() {
   const { variant: ctaVariant, ctaText } = useABTest({
@@ -149,6 +150,11 @@ export default function DubajPage() {
           </div>
         </div>
       </section>
+
+      {/* SEO Internal Linking Hub */}
+      <div className="container max-w-6xl my-8">
+        <InternalLinkingHub />
+      </div>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-[#1a5276] to-[#2874A6] text-white">

@@ -14,6 +14,7 @@ import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { trackSearch } from "@/components/MetaPixel";
 import HeroBackgroundSlideshow from "@/components/HeroBackgroundSlideshow";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
+import DestinationAutocomplete from "@/components/DestinationAutocomplete";
 
 interface HeroVariantAProps {
   onSearch: (destination: string, passengers: number) => void;
@@ -86,18 +87,16 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
             <div className="p-5">
               {activeTab === "letenky" && (
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <div className="flex-1 relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                      type="text"
-                      placeholder="Kam letíte? (Praha → ...)"
+                  <div className="flex-1">
+                    <DestinationAutocomplete
                       value={destination}
-                      onChange={(e) => {
-                        setDestination(e.target.value);
+                      onChange={setDestination}
+                      onSelect={(dest) => {
+                        setDestination(dest.name);
                         trackFormInteraction("hero_redesign", "destination");
                       }}
-                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                      className="pl-9 h-12 border-gray-200 text-gray-800"
+                      placeholder="Kam letíte? (např. Paříž, Londýn...)"
+                      inputClassName="border-gray-200 focus:border-[#1565C0] focus:ring-[#1565C0]"
                     />
                   </div>
                   <div className="relative sm:w-36">

@@ -11,7 +11,7 @@ const TRAVELPAYOUTS_MARKER = "155221";
 
 // Travelpayouts program IDs
 const PROGRAMS = {
-  KIWI: "3791",
+  KIWI: "4114",
   BOOKING: "2584",
   AVIASALES: "2688",
   VIATOR: "3610",
@@ -23,19 +23,82 @@ const PROGRAMS = {
   KLOOK: "3615",
 } as const;
 
+/** Helper to append active LeadOS onyx_journey token as subid1 in client environments */
+function appendOnyxSubIdIfClient(url: string): string {
+  if (typeof window !== "undefined") {
+    try {
+      const matchCookie = typeof document !== "undefined" ? document.cookie.match(/(?:^| )onyx_journey_token=([^;]+)/) : null;
+      const token =
+        sessionStorage.getItem("onyx_journey_token") ||
+        (matchCookie ? decodeURIComponent(matchCookie[1]) : null);
+      if (token && url && !url.includes("subid1=")) {
+        const baseUrl = window.location && window.location.origin ? window.location.origin : "https://www.pelikan.cz";
+        const urlObj = new URL(url, baseUrl);
+        urlObj.searchParams.set("subid1", token);
+        return urlObj.toString();
+      }
+    } catch {}
+  }
+  return url;
+}
+
 /**
  * Generate a Travelpayouts tracked affiliate link
  * Format: https://tp.media/r?marker=MARKER&trs=267609&p=PROGRAM_ID&u=ENCODED_URL
  */
 function tpLink(programId: string, targetUrl: string, subId?: string): string {
-  const marker = subId ? `${TRAVELPAYOUTS_MARKER}.${subId}` : TRAVELPAYOUTS_MARKER;
+  const matchCookie = typeof document !== "undefined" ? document.cookie.match(/(?:^| )onyx_journey_token=([^;]+)/) : null;
+  const token = typeof window !== "undefined"
+    ? sessionStorage.getItem("onyx_journey_token") || (matchCookie ? decodeURIComponent(matchCookie[1]) : null)
+    : null;
+  const effectiveSubId = token ? (subId ? `${subId}.${token}` : token) : subId;
+  const marker = effectiveSubId ? `${TRAVELPAYOUTS_MARKER}.${effectiveSubId}` : TRAVELPAYOUTS_MARKER;
   const encoded = encodeURIComponent(targetUrl);
-  return `https://tp.media/r?marker=${marker}&trs=267609&p=${programId}&u=${encoded}`;
+  let res = `https://tp.media/r?marker=${marker}&trs=267609&p=${programId}&u=${encoded}`;
+  if (token && !res.includes("subid1=")) {
+    res += `&subid1=${encodeURIComponent(token)}`;
+  }
+  return res;
 }
 
 // ============================================================
 // KIWI.COM
 // ============================================================
+
+/**
+ * Clean up Kiwi URL (ensure /cs/ lang code, valid origin slug, etc.)
+ */
+function cleanKiwiUrl(url: string): string {
+  let cleaned = url.trim();
+  // Fix language code (/cz/ is invalid on Kiwi.com, must be /cs/)
+  cleaned = cleaned.replace("kiwi.com/cz/", "kiwi.com/cs/");
+  // Fix origin airport slug
+  cleaned = cleaned.replace("letiste-vaclava-havla-praha-praha-cesko", "prague-czech-republic");
+  // Fix generic broken /deep endpoints
+  if (cleaned.includes("kiwi.com/deep")) {
+    const parsed = new URL(cleaned);
+    const from = parsed.searchParams.get("from") || "prague-czech-republic";
+    const to = parsed.searchParams.get("to") || parsed.searchParams.get("destination") || "";
+    cleaned = `https://www.kiwi.com/cs/search/results/${from}/${to}`;
+  }
+  if (!cleaned.startsWith("http")) {
+    cleaned = `https://www.kiwi.com${cleaned.startsWith("/") ? "" : "/"}${cleaned}`;
+  }
+  return cleaned;
+}
+
+/**
+ * Generate Kiwi.com affiliate link wrapped via Travelpayouts (p=4114)
+ */
+export function kiwiAffiliateUrl(rawKiwiUrl: string, subId?: string): string {
+  if (!rawKiwiUrl) return "https://tp.media/r?marker=155221&trs=267609&p=4114&u=https%3A%2F%2Fwww.kiwi.com%2Fcs%2F";
+  // If already a tp.media URL with p=4114, return as is (or update subId if provided)
+  if (rawKiwiUrl.includes("tp.media") && rawKiwiUrl.includes("p=4114")) {
+    return rawKiwiUrl;
+  }
+  const clean = cleanKiwiUrl(rawKiwiUrl);
+  return tpLink(PROGRAMS.KIWI, clean, subId);
+}
 
 /**
  * Generate Kiwi.com deep link with Travelpayouts tracking
@@ -50,16 +113,11 @@ export function kiwiDeepLink(params: {
   destination?: string;
   passengers?: string;
 }, subId?: string): string {
-  const searchParams = new URLSearchParams();
-  if (params.from) searchParams.set("from", params.from);
-  if (params.to) searchParams.set("to", params.to);
-  if (params.currency) searchParams.set("currency", params.currency || "CZK");
-  if (params.lang) searchParams.set("lang", params.lang || "cs");
-  if (params.destination) searchParams.set("destination", params.destination);
-  if (params.passengers) searchParams.set("passengers", params.passengers);
-  
-  const kiwiUrl = `https://www.kiwi.com/deep?${searchParams.toString()}`;
-  return tpLink(PROGRAMS.KIWI, kiwiUrl, subId);
+  const from = params.from || "prague-czech-republic";
+  const to = params.to || params.destination || "";
+  const lang = params.lang || "cs";
+  const targetUrl = `https://www.kiwi.com/${lang}/search/results/${from}/${to}`;
+  return kiwiAffiliateUrl(targetUrl, subId);
 }
 
 /**
@@ -69,28 +127,18 @@ export function kiwiDeepLink(params: {
  * @param subId - optional sub-tracking ID
  */
 export function kiwiSearchLink(origin: string, destination: string, subId?: string): string {
-  const kiwiUrl = `https://www.kiwi.com/cs/search/results/${origin}/${destination}`;
-  return tpLink(PROGRAMS.KIWI, kiwiUrl, subId);
+  const originSlug = origin === "PRG" || origin === "praha" ? "prague-czech-republic" : origin;
+  const kiwiUrl = `https://www.kiwi.com/cs/search/results/${originSlug}/${destination}`;
+  return kiwiAffiliateUrl(kiwiUrl, subId);
 }
 
 /**
  * Generate Kiwi.com tiles search link with Travelpayouts tracking
  */
 export function kiwiTilesLink(origin: string, destination: string, subId?: string): string {
-  const kiwiUrl = `https://www.kiwi.com/cz/search/tiles/${origin}/${destination}/anytime/no-return/`;
-  return tpLink(PROGRAMS.KIWI, kiwiUrl, subId);
-}
-
-/**
- * Wrap ANY raw kiwi.com URL through Travelpayouts affiliate tracking.
- * Use this for legacy kiwiUrl values stored in seoDestinations.ts.
- * @param rawKiwiUrl - raw kiwi.com URL (without affiliate params)
- * @param subId - optional sub-tracking ID
- */
-export function kiwiAffiliateUrl(rawKiwiUrl: string, subId?: string): string {
-  // Already wrapped through tp.media — return as-is
-  if (rawKiwiUrl.includes("tp.media")) return rawKiwiUrl;
-  return tpLink(PROGRAMS.KIWI, rawKiwiUrl, subId);
+  const originSlug = origin === "PRG" || origin === "praha" ? "prague-czech-republic" : origin;
+  const kiwiUrl = `https://www.kiwi.com/cs/search/tiles/${originSlug}/${destination}/anytime/no-return/`;
+  return kiwiAffiliateUrl(kiwiUrl, subId);
 }
 
 // ============================================================
@@ -104,8 +152,8 @@ export function kiwiAffiliateUrl(rawKiwiUrl: string, subId?: string): string {
  */
 export function bookingSearchLink(destination: string, subId?: string): string {
   const encoded = encodeURIComponent(destination);
-  const bookingUrl = `https://www.booking.com/search.html?ss=${encoded}&lang=cs`;
-  return tpLink(PROGRAMS.BOOKING, bookingUrl, subId);
+  // Bypass TravelPayouts wrapper since it returns 'promo not found'
+  return `https://www.booking.com/searchresults.html?ss=${encoded}&lang=cs`;
 }
 
 export function aviasalesAffiliateUrl(pathOrUrl = "https://www.aviasales.com/", subId?: string): string {
@@ -166,7 +214,7 @@ export function pelikanAffiliateUrl(pathOrUrl: string, params: PelikanTrackingPa
   url.searchParams.set("utm_campaign", params.campaign || "grid");
   if (params.channel) url.searchParams.set("utm_channel", params.channel);
   if (params.content) url.searchParams.set("utm_content", params.content);
-  return url.toString();
+  return appendOnyxSubIdIfClient(url.toString());
 }
 
 export function pelikanLink(path: string, campaign?: string): string {
@@ -182,19 +230,7 @@ export function pelikanLink(path: string, campaign?: string): string {
  * to a direct affiliate URL with full UTM tracking.
  */
 export function pelikanDeepLink(pathOrUrl: string, params: PelikanTrackingParams = {}): string {
-  const targetUrl = pelikanAffiliateUrl(pathOrUrl, params);
-  const template =
-    typeof process !== "undefined" ? process.env.PELIKAN_DEEPLINK_TEMPLATE : undefined;
-
-  if (!template) return targetUrl;
-
-  return template
-    .split("{url}").join(targetUrl)
-    .split("{encodedUrl}").join(encodeURIComponent(targetUrl))
-    .split("{aid}").join(encodeURIComponent(PELIKAN_AID))
-    .split("{campaign}").join(encodeURIComponent(params.campaign || "grid"))
-    .split("{channel}").join(encodeURIComponent(params.channel || "direct"))
-    .split("{content}").join(encodeURIComponent(params.content || ""));
+  return pelikanAffiliateUrl(pathOrUrl, params);
 }
 
 // Export constants for use in tests
