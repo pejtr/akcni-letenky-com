@@ -4,52 +4,106 @@ import { trpc } from "@/lib/trpc";
 import { Plane, Palmtree, Lightbulb, BookOpen, ArrowRight, Sparkles, Star } from "lucide-react";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 
-// Top curated Pelikán flights for sidebar
-const TOP_FLIGHTS_SIDEBAR = [
-  {
-    id: "side-fl-1",
-    title: "Paříž z Prahy",
-    price: 1150,
-    imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80",
-    path: "/cs/akcni-letenky/praha/pariz",
-  },
-  {
-    id: "side-fl-2",
-    title: "Londýn z Prahy",
-    price: 790,
-    imageUrl: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80",
-    path: "/cs/akcni-letenky/praha/londyn",
-  },
-  {
-    id: "side-fl-3",
-    title: "Dubaj z Prahy",
-    price: 6990,
-    imageUrl: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80",
-    path: "/cs/akcni-letenky/praha/dubaj",
-  },
-];
+// Top curated Pelikán flights for sidebar (Default + Destination Specific)
+const DESTINATION_FLIGHTS: Record<string, Array<{ id: string; title: string; price: number; imageUrl: string; path: string }>> = {
+  italy: [
+    {
+      id: "side-fl-it-1",
+      title: "Řím z Prahy",
+      price: 890,
+      imageUrl: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&q=80",
+      path: "/cs/akcni-letenky/praha/rim",
+    },
+    {
+      id: "side-fl-it-2",
+      title: "Neapol z Prahy",
+      price: 990,
+      imageUrl: "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&q=80",
+      path: "/cs/akcni-letenky/praha/neapol",
+    },
+    {
+      id: "side-fl-it-3",
+      title: "Cagliari (Sardinie) z Prahy",
+      price: 1290,
+      imageUrl: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&q=80",
+      path: "/cs/akcni-letenky/praha/cagliari",
+    },
+    {
+      id: "side-fl-it-4",
+      title: "Catania (Sicílie) z Prahy",
+      price: 1190,
+      imageUrl: "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?w=400&q=80",
+      path: "/cs/akcni-letenky/praha/catania",
+    },
+  ],
+  default: [
+    {
+      id: "side-fl-1",
+      title: "Paříž z Prahy",
+      price: 1150,
+      imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80",
+      path: "/cs/akcni-letenky/praha/pariz",
+    },
+    {
+      id: "side-fl-2",
+      title: "Londýn z Prahy",
+      price: 790,
+      imageUrl: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80",
+      path: "/cs/akcni-letenky/praha/londyn",
+    },
+    {
+      id: "side-fl-3",
+      title: "Dubaj z Prahy",
+      price: 6990,
+      imageUrl: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80",
+      path: "/cs/akcni-letenky/praha/dubaj",
+    },
+  ],
+};
 
 // Top curated Pelikán vacations for sidebar
-const TOP_VACATIONS_SIDEBAR = [
-  {
-    id: "side-vac-1",
-    title: "Maledivy Resort All Inclusive",
-    price: 32890,
-    imageUrl: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80",
-    path: "https://www.pelikan.cz/cs/pobyt/maledivy-all-inclusive",
-  },
-  {
-    id: "side-vac-2",
-    title: "Řecko Rhodos ★★★★★",
-    price: 15790,
-    imageUrl: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&q=80",
-    path: "https://www.pelikan.cz/cs/pobyt/rhodos-dovolena",
-  },
-];
+const DESTINATION_VACATIONS: Record<string, Array<{ id: string; title: string; price: number; imageUrl: string; path: string }>> = {
+  italy: [
+    {
+      id: "side-vac-it-1",
+      title: "Sardinie Resort All Inclusive",
+      price: 14890,
+      imageUrl: "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&q=80",
+      path: "https://www.pelikan.cz/cs/pobyt/sardinie-dovolena",
+    },
+    {
+      id: "side-vac-it-2",
+      title: "Ischia Wellness & Termální lázně",
+      price: 12490,
+      imageUrl: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80",
+      path: "https://www.pelikan.cz/cs/pobyt/ischia-dovolena",
+    },
+  ],
+  default: [
+    {
+      id: "side-vac-1",
+      title: "Maledivy Resort All Inclusive",
+      price: 32890,
+      imageUrl: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80",
+      path: "https://www.pelikan.cz/cs/pobyt/maledivy-all-inclusive",
+    },
+    {
+      id: "side-vac-2",
+      title: "Řecko Rhodos ★★★★★",
+      price: 15790,
+      imageUrl: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&q=80",
+      path: "https://www.pelikan.cz/cs/pobyt/rhodos-dovolena",
+    },
+  ],
+};
 
 export default function ArticleSidebar({ currentSlug }: { currentSlug?: string }) {
   const { data: recentArticles } = trpc.articles.recent.useQuery({ limit: 4 });
   const trackClick = trpc.affiliate.trackClick.useMutation();
+
+  const isItaly = currentSlug && /italii|rim|rimske|neapol|sardinsk|catania|etnea|coperto|pecorino|gelato|vatikan/i.test(currentSlug);
+  const flightDeals = isItaly ? DESTINATION_FLIGHTS.italy : DESTINATION_FLIGHTS.default;
+  const vacationDeals = isItaly ? DESTINATION_VACATIONS.italy : DESTINATION_VACATIONS.default;
 
   const handleSidebarClick = (destination: string, url: string) => {
     trackClick.mutate({
@@ -73,7 +127,7 @@ export default function ArticleSidebar({ currentSlug }: { currentSlug?: string }
         </div>
 
         <div className="space-y-3">
-          {TOP_FLIGHTS_SIDEBAR.map((fl) => {
+          {flightDeals.map((fl) => {
             const url = pelikanDeepLink(fl.path, { campaign: "sidebar-top-flights", content: fl.id });
             return (
               <a
@@ -121,7 +175,7 @@ export default function ArticleSidebar({ currentSlug }: { currentSlug?: string }
         </div>
 
         <div className="space-y-3">
-          {TOP_VACATIONS_SIDEBAR.map((vac) => {
+          {vacationDeals.map((vac) => {
             const url = pelikanDeepLink(vac.path, { campaign: "sidebar-top-vacations", content: vac.id });
             return (
               <a
