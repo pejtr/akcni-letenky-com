@@ -62,6 +62,7 @@ function Router() {
         <Route path={"/"} component={Home} />
         {/* Specific named routes MUST come before catch-all /:destination */}
         <Route path="/letecka-spolecnost/:slug" component={AirlinePage} />
+        <Route path="/letecke-spolecnosti/:slug" component={AirlinePage} />
         <Route path="/letenky-do-:slug" component={DestinationPage} />
         <Route path="/blog" component={Blog} />
         <Route path="/blog/:slug" component={BlogPost} />

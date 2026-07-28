@@ -35,8 +35,38 @@ const STATIC_PAGES: SitemapUrl[] = [
     priority: 1.0,
   },
   {
+    loc: "/levne-letenky",
+    changefreq: "daily",
+    priority: 0.9,
+  },
+  {
+    loc: "/last-minute",
+    changefreq: "daily",
+    priority: 0.9,
+  },
+  {
+    loc: "/letenky",
+    changefreq: "daily",
+    priority: 0.9,
+  },
+  {
+    loc: "/dovolene",
+    changefreq: "daily",
+    priority: 0.9,
+  },
+  {
     loc: "/blog",
     changefreq: "daily",
+    priority: 0.8,
+  },
+  {
+    loc: "/tipy-pro-cestovatele",
+    changefreq: "daily",
+    priority: 0.8,
+  },
+  {
+    loc: "/aerolinky",
+    changefreq: "weekly",
     priority: 0.8,
   },
   {
