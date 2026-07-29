@@ -29,6 +29,7 @@ import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import { useTicketCountdown } from "@/hooks/useTicketCountdown";
+import SEO from "@/components/SEO";
 import { generateOrganizationSchema, generateBreadcrumbSchema, generateFAQSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
 
 const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
@@ -220,40 +221,13 @@ export default function Home() {
     window.open(pelikanUrl, "_blank");
   };
 
-  // SEO: Set document title, meta description, and structured data
+  // Keep structured data sync (Helmet handles meta tags now)
   useEffect(() => {
-    document.title = "Akční a Last Minute Letenky z Prahy i Kamkoliv od 590 Kč | Akční-Letenky.com";
-
-    // Set meta description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.setAttribute('name', 'description');
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute('content', 'Najděte nejlevnější akční a last minute letenky z Prahy kamkoliv! Porovnejte denně aktualizované slevy až 80% z Letiště Václava Havla do celého světa.');
-
-    // Set meta keywords
-    let metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (!metaKeywords) {
-      metaKeywords = document.createElement('meta');
-      metaKeywords.setAttribute('name', 'keywords');
-      document.head.appendChild(metaKeywords);
-    }
-    metaKeywords.setAttribute('content', 'last minute letenky z prahy, last minute letenky kamkoliv, akční letenky z prahy, levné letenky z prahy kamkoliv, nejlevnější letenky z prahy, akcni letenky, akcniletenky, nejlevnejsi letenky');
-
-    // Add JSON-LD structured data
-    removeAllStructuredData(); // Clean up any existing schemas
-
-    // Organization schema
+    removeAllStructuredData();
     injectStructuredData(generateOrganizationSchema());
-
-    // Breadcrumb schema for homepage
     injectStructuredData(generateBreadcrumbSchema([
       { name: "Domů", url: "/" }
     ]));
-
-    // FAQ schema
     injectStructuredData(generateFAQSchema([
       {
         question: "Kde najdu nejlevnější last minute letenky z Prahy kamkoliv?",
@@ -276,11 +250,7 @@ export default function Home() {
         answer: "Last minute letenky z Prahy se nejvíce vyplatí kupovat 1 až 14 dní před odletem. Dopravci v tomto období doprodávají neobsazená místa v letadlech i charterových letech za výrazně snížené ceny."
       }
     ]))
-
-    return () => {
-      // Cleanup on unmount
-      removeAllStructuredData();
-    };
+    return () => { removeAllStructuredData(); };
   }, []);
 
   // Handle scroll for sticky navigation and bottom banner
@@ -443,6 +413,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO 
+        title="Akční a Last Minute Letenky z Prahy i Kamkoliv od 590 Kč | Akční-Letenky.com"
+        description="Najděte nejlevnější akční a last minute letenky z Prahy kamkoliv! Porovnejte denně aktualizované slevy až 80% z Letiště Václava Havla do celého světa."
+        canonicalUrl="https://www.akcni-letenky.com/"
+        ogType="website"
+      />
       {/* Exit Intent Popup */}
       {showDeferredEnhancements && (
         <Suspense fallback={null}>
