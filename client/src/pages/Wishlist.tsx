@@ -31,6 +31,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { PushNotificationBanner } from "@/components/PushNotificationBanner";
+import SEO from "@/components/SEO";
 
 // Combine all destinations for lookup (only those with price)
 const allDestinations = [...returnFlights, ...cities];
@@ -292,6 +293,7 @@ export default function Wishlist() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO title="Můj seznam přání | Akční Letenky" description="Uložené nabídky letenek a dovolené na jednom místě." canonical="https://www.akcni-letenky.com/wishlist" noindex={true} />
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container py-4">

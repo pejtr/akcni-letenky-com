@@ -6,7 +6,7 @@
  */
 
 import { useLocation } from "wouter";
-import { Helmet } from "react-helmet";
+import SEO from "@/components/SEO";
 import { Plane, TrendingUp, MapPin, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -77,27 +77,16 @@ export default function SEODestinationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Helmet>
-        <title>{destination.title}</title>
-        <meta name="description" content={destination.metaDescription} />
-        <meta name="keywords" content={destination.keywords.join(", ")} />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={destination.title} />
-        <meta property="og:description" content={destination.metaDescription} />
-        <meta property="og:image" content={destination.image} />
-        <meta property="og:type" content="website" />
-        
-        {/* Structured Data */}
-        {placeSchema && (
-          <script type="application/ld+json">
-            {JSON.stringify(placeSchema)}
-          </script>
-        )}
-        <script type="application/ld+json">
-          {JSON.stringify(travelActionSchema)}
-        </script>
-      </Helmet>
+      <SEO
+        title={destination.title}
+        description={destination.metaDescription}
+        keywords={destination.keywords.join(", ")}
+        canonical={`https://www.akcni-letenky.com${location}`}
+        ogTitle={destination.title}
+        ogDescription={destination.metaDescription}
+        ogImage={destination.image}
+        structuredData={[placeSchema, travelActionSchema].filter(Boolean) as any}
+      />
 
       <Navigation />
 

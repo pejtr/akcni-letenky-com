@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { Link } from "wouter";
 import Navigation from "@/components/Navigation";
 import { Plane, Star, MapPin, TrendingUp } from "lucide-react";
@@ -104,6 +105,11 @@ export default function Aerolinky() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+      <SEO
+        title="Letecké společnosti"
+        description="Porovnejte ceny a služby všech hlavních aerolinek. Přehled leteckých společností létajících z České republiky."
+        canonical="https://www.akcni-letenky.com/aerolinky"
+      />
       {/* Navigation */}
       <Navigation />
 

@@ -11,6 +11,7 @@ import { trpc } from "@/lib/trpc";
 import MarkdownContent from "@/components/MarkdownContent";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import SEO from "@/components/SEO";
 
 function sanitizeArticleHtml(htmlStr: string): string {
   if (!htmlStr) return "";
@@ -77,6 +78,7 @@ export default function TipArticle() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+      <SEO title={`${article?.title || "Tip na cestování"} | Akční Letenky`} description={article?.excerpt || "Užitečné tipy a triky pro cestování."} canonical="https://www.akcni-letenky.com/tipy" />
       <div>
         <Navigation />
 

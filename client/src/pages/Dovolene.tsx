@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -217,6 +218,11 @@ export default function Dovolene() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
+      <SEO
+        title="Dovolená | Akční Letenky"
+        description="Levné zájezdy a dovolená. Vyberte si z nabídky nejlepších cestovních kanceláří za skvělé ceny."
+        canonical="https://www.akcni-letenky.com/dovolene"
+      />
       {/* Navigation */}
       <Navigation />
 

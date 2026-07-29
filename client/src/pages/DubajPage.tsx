@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { ArrowRight, Plane, MapPin, Sun, Building2, ShoppingBag, Palmtree } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
@@ -15,6 +16,11 @@ export default function DubajPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEO
+        title="Dubaj | Akční Letenky"
+        description="Levné letenky do Dubaje. Objevte město zítřka – moderní architektura, luxusní nákupy a nekonečná poušť."
+        canonical="https://www.akcni-letenky.com/dubaj"
+      />
       <Navigation />
 
       {/* Hero Section */}

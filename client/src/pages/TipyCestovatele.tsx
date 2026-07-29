@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import CountdownTimer from "@/components/CountdownTimer";
 import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
+import SEO from "@/components/SEO";
 
 const PELIKAN_LINK = pelikanDeepLink("/cs/akcni-letenky", {
   campaign: "travel-tips",
@@ -85,6 +86,7 @@ export default function TipyCestovatele() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+      <SEO title="Tipy cestovatele | Akční Letenky" description="Osobní zkušenosti a rady od zkušených cestovatelů. Inspirujte se před cestou." canonical="https://www.akcni-letenky.com/tipy-cestovatele" />
       <Navigation />
 
       {/* Hero Section */}

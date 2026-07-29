@@ -11,6 +11,7 @@ import { trpc } from "@/lib/trpc";
 import MarkdownContent from "@/components/MarkdownContent";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import SEO from "@/components/SEO";
 
 /** Clean raw HTML wrapper tags like <article> if present */
 function sanitizeArticleHtml(htmlStr: string): string {
@@ -74,6 +75,7 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col justify-between">
+      <SEO title={`${article?.title || "Blog"} | Akční Letenky`} description={article?.excerpt || "Přečtěte si nejnovější články o cestování."} canonical="https://www.akcni-letenky.com/blog" />
       <div>
         <Navigation />
 

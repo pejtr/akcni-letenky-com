@@ -5,6 +5,7 @@ import { ChevronRight, Plane, ArrowLeft, ExternalLink, ShieldCheck } from "lucid
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
+import SEO from "@/components/SEO";
 
 // Sample Pelikán airline deal templates per carrier
 const airlineDealTemplates: Record<string, Array<{ destination: string; from: string; price: number; salePrice: number; discount: number; linkPath: string }>> = {
@@ -252,6 +253,7 @@ export default function AirlinePage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
+      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecti-spolecnosti/${airline?.slug || ""}`} />
       <Navigation />
 
       {/* Breadcrumbs */}

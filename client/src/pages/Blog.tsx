@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { Calendar, User, ArrowRight } from "lucide-react";
@@ -10,6 +11,11 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
+      <SEO
+        title="Blog | Akční Letenky"
+        description="Tipy na levné letenky, cestovatelské rady a inspirace pro vaše cesty. Přečtěte si nejnovější články o cestování."
+        canonical="https://www.akcni-letenky.com/blog"
+      />
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">

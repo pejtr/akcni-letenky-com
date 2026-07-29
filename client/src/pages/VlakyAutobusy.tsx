@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { generateOmioReferralLink, generateOmioLink, generateOmioRouteLink, trackOmioClick, POPULAR_OMIO_ROUTES } from "@/lib/omioAffiliate";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 
 export default function VlakyAutobusy() {
   const handleOmioSearch = (from: string, to: string) => {
@@ -48,6 +49,7 @@ export default function VlakyAutobusy() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <SEO title="Vlaky a autobusy | Akční Letenky" description="Levné jízdenky na vlaky a autobusy po Evropě. Porovnejte ceny a ušetřete." canonical="https://www.akcni-letenky.com/vlaky-autobusy" />
       {/* Navigation */}
       <Navigation />
 

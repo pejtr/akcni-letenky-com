@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import { ArrowRight, Plane, MapPin, Sun, Waves, TreePine, Heart } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
@@ -16,6 +17,11 @@ export default function BaliPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEO
+        title="Bali: Ostrov bohů"
+        description="Levné letenky do Bali. Objevte ráj mezi nebem a zemí – tropické pláže, rýžové terasy a úchvatné chrámy."
+        canonical="https://www.akcni-letenky.com/bali"
+      />
       <Navigation />
 
       {/* Hero Section */}
