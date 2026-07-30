@@ -130,7 +130,7 @@ export default function PriceComparison() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <SEO title="Cenové srovnání dopravy | Akční Letenky" description="Porovnejte ceny letadel, vlaků a autobusů. Zjistěte, který způsob dopravy je nejlevnější." canonical="https://www.akcni-letenky.com/cenove-srovnani" />
+      <SEO title="Porovnání cen dopravy | Akční Letenky" description="Porovnejte ceny letadel, vlaků a autobusů. Zjistěte, který způsob dopravy je nejlevnější." canonical="https://www.akcni-letenky.com/porovnani-cen" />
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">

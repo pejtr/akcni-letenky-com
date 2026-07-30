@@ -88,7 +88,45 @@ export default function SEO({
       <meta name="twitter:description" content={ogDescFinal} />
       <meta name="twitter:image" content={ogImg} />
 
-      {/* Structured Data */}
+      {/* Global Organization schema (every page) */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "TravelAgency",
+          "@id": "https://akcni-letenky.com/#organization",
+          "name": "Akční Letenky",
+          "alternateName": "AkcniLetenky.com",
+          "url": "https://akcni-letenky.com",
+          "logo": "https://akcni-letenky.com/logo.png",
+          "description": "Nejlevnější letenky po celém světě. Najděte si tu nejlepší nabídku pro vaši dovolenou s úsporou až 60%.",
+          "sameAs": [
+            "https://www.facebook.com/akcniletenky",
+            "https://www.instagram.com/akcniletenky"
+          ]
+        })}
+      </script>
+
+      {/* WebSite schema with SearchAction (every page) */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://akcni-letenky.com/#website",
+          "url": "https://akcni-letenky.com",
+          "name": "Akční Letenky",
+          "description": "Nejlevnější letenky z Prahy i ČR. Akční a last minute letenky s úsporou až 80%.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://akcni-letenky.com/levne-letenky?destination={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        })}
+      </script>
+
+      {/* Page-specific structured data */}
       {structuredData?.map((data, i) => (
         <script key={i} type="application/ld+json">
           {JSON.stringify(data)}

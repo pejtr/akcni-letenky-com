@@ -2,6 +2,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 import { Link, useParams } from "wouter";
+import SEO from "@/components/SEO";
 import { MapPin, Calendar, Plane, ArrowLeft, Star, Clock, Info, Heart, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,6 +58,11 @@ export default function DestinationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
+      <SEO 
+        title={destination ? `Letenky do ${destination.name}` : "Destinace"}
+        description={destination?.description || `Levné letenky do destinace po celém světě. Najděte nejlepší ceny a ušetřete.`}
+        canonical={`https://www.akcni-letenky.com/letenky-do-${slug}`}
+      />
       <Navigation />
 
       {/* Breadcrumbs */}

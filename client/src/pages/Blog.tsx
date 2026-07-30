@@ -1,4 +1,5 @@
 import SEO from "@/components/SEO";
+import { generateBreadcrumbSchema } from "@/lib/structuredData";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { Calendar, User, ArrowRight } from "lucide-react";
@@ -15,6 +16,9 @@ export default function Blog() {
         title="Blog | Akční Letenky"
         description="Tipy na levné letenky, cestovatelské rady a inspirace pro vaše cesty. Přečtěte si nejnovější články o cestování."
         canonical="https://www.akcni-letenky.com/blog"
+        structuredData={[
+          generateBreadcrumbSchema([{ name: "Blog", url: "/blog" }])
+        ]}
       />
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">

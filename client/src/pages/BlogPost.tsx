@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, useParams } from "wouter";
 import { Calendar, User, ArrowLeft, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,12 +5,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
-import { generateArticleSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
+import { generateArticleSchema } from "@/lib/structuredData";
+import SEO from "@/components/SEO";
 import { trpc } from "@/lib/trpc";
 import MarkdownContent from "@/components/MarkdownContent";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
 import ArticleSidebar from "@/components/ArticleSidebar";
-import SEO from "@/components/SEO";
 
 /** Clean raw HTML wrapper tags like <article> if present */
 function sanitizeArticleHtml(htmlStr: string): string {
@@ -27,28 +26,7 @@ export default function BlogPost() {
 
   const { data: article, isLoading, error } = trpc.articles.bySlug.useQuery({ slug });
 
-  // Add Article JSON-LD schema for SEO
-  useEffect(() => {
-    if (!article) return;
-
-    removeAllStructuredData();
-
-    const articleSchema = generateArticleSchema({
-      title: article.title,
-      description: article.excerpt || article.content.substring(0, 160),
-      author: article.author || "Akční Letenky",
-      datePublished: (article.publishedAt || article.createdAt).toISOString(),
-      dateModified: (article.updatedAt || article.publishedAt || article.createdAt).toISOString(),
-      image: article.featuredImage || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80",
-      url: `https://akcni-letenky.com/blog/${article.slug}`,
-    });
-
-    injectStructuredData(articleSchema);
-
-    return () => {
-      removeAllStructuredData();
-    };
-  }, [article]);
+  // Structured data is handled by <SEO> component below
 
   if (error) {
     return (
@@ -75,7 +53,31 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col justify-between">
-      <SEO title={`${article?.title || "Blog"} | Akční Letenky`} description={article?.excerpt || "Přečtěte si nejnovější články o cestování."} canonical="https://www.akcni-letenky.com/blog" />
+      <SEO 
+        title={article?.title || "Blog"}
+        description={article?.excerpt || "Přečtěte si nejnovější články o cestování."}
+        canonical={article?.slug ? `https://www.akcni-letenky.com/blog/${article.slug}` : "https://www.akcni-letenky.com/blog"}
+        ogImage={article?.featuredImage || undefined}
+        structuredData={article ? [
+          generateArticleSchema({
+            title: article.title,
+            description: article.excerpt || article.content.substring(0, 160),
+            author: article.author || "Akční Letenky",
+            datePublished: (article.publishedAt || article.createdAt).toISOString(),
+            dateModified: (article.updatedAt || article.publishedAt || article.createdAt).toISOString(),
+            image: article.featuredImage || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80",
+            url: `https://akcni-letenky.com/blog/${article.slug}`,
+          }),
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Blog", "item": "https://akcni-letenky.com/blog" },
+              { "@type": "ListItem", "position": 2, "name": article.title, "item": `https://akcni-letenky.com/blog/${article.slug}` }
+            ]
+          }
+        ] : undefined}
+      />
       <div>
         <Navigation />
 

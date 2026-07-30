@@ -289,9 +289,9 @@ export default function LevneLetenky() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-gray-50 flex flex-col justify-between">
       <SEO 
-        title="Akční Letenky z Prahy i Kamkoliv od 790 Kč | Akční-Letenky.com"
+        title="Levné letenky z Prahy i Kamkoliv od 790 Kč"
         description="Aktuální nabídka levných letenek z Prahy do celého světa. Denně aktualizované ceny od 790 Kč. Porovnejte a ušetřete na svých cestách!"
-        canonicalUrl="https://www.akcni-letenky.com/levne-letenky"
+        canonical="https://www.akcni-letenky.com/levne-letenky"
       />
       <div>
         <Navigation />

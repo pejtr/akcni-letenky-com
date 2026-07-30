@@ -30,7 +30,7 @@ import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import { useTicketCountdown } from "@/hooks/useTicketCountdown";
 import SEO from "@/components/SEO";
-import { generateOrganizationSchema, generateBreadcrumbSchema, generateFAQSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
+import { generateFAQSchema } from "@/lib/structuredData";
 
 const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
 const ChatbotWidget = lazy(() => import("@/components/ChatbotWidget"));
@@ -221,37 +221,7 @@ export default function Home() {
     window.open(pelikanUrl, "_blank");
   };
 
-  // Keep structured data sync (Helmet handles meta tags now)
-  useEffect(() => {
-    removeAllStructuredData();
-    injectStructuredData(generateOrganizationSchema());
-    injectStructuredData(generateBreadcrumbSchema([
-      { name: "Domů", url: "/" }
-    ]));
-    injectStructuredData(generateFAQSchema([
-      {
-        question: "Kde najdu nejlevnější last minute letenky z Prahy kamkoliv?",
-        answer: "Na portálu Akční-Letenky.com denně porovnáváme nejvýhodnější last minute akční nabídky letenek z Prahy (PRG) i ostatních letišť v okolí. Nabídky se slevou až 80% aktualizujeme v reálném čase."
-      },
-      {
-        question: "Jak vyhledat nejlevnější akční letenky kamkoliv?",
-        answer: "Při vyhledávání zvolte jako odletové místo Praha a jako cíl ponechte pole 'Kamkoliv'. Náš srovnávač vám okamžitě zobrazí nejlevnější letenky seřazené od nejnižší ceny bez ohledu na destinaci."
-      },
-      {
-        question: "Jak najít nejlevnější letenky?",
-        answer: "Nejlevnější letenky najdete porovnáním cen napříč aerolinkami. Doporučujeme rezervovat 2-3 měsíce předem, být flexibilní s daty a využívat naše denní akční nabídky. Sledujte také naši FB skupinu s 33 500 členy pro exkluzivní tipy."
-      },
-      {
-        question: "Jsou uvedené ceny konečné?",
-        answer: "Ano, zobrazené ceny jsou obvykle konečné včetně daní a poplatků. Další služby jako zavazadla, výběr sedadla nebo strava mohou být zpoplatněny zvlášť u dopravce nebo agentury."
-      },
-      {
-        question: "Kdy je nejlepší čas na nákup last minute letenek?",
-        answer: "Last minute letenky z Prahy se nejvíce vyplatí kupovat 1 až 14 dní před odletem. Dopravci v tomto období doprodávají neobsazená místa v letadlech i charterových letech za výrazně snížené ceny."
-      }
-    ]))
-    return () => { removeAllStructuredData(); };
-  }, []);
+  // Structured data is handled by <SEO> component above
 
   // Handle scroll for sticky navigation and bottom banner
   useEffect(() => {
@@ -414,10 +384,40 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO 
-        title="Akční a Last Minute Letenky z Prahy i Kamkoliv od 590 Kč | Akční-Letenky.com"
+        title="Akční a Last Minute Letenky z Prahy i Kamkoliv od 590 Kč"
         description="Najděte nejlevnější akční a last minute letenky z Prahy kamkoliv! Porovnejte denně aktualizované slevy až 80% z Letiště Václava Havla do celého světa."
-        canonicalUrl="https://www.akcni-letenky.com/"
-        ogType="website"
+        canonical="https://www.akcni-letenky.com/"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Domů", "item": "https://akcni-letenky.com/" }
+            ]
+          },
+          generateFAQSchema([
+            {
+              question: "Kde najdu nejlevnější last minute letenky z Prahy kamkoliv?",
+              answer: "Na portálu Akční-Letenky.com denně porovnáváme nejvýhodnější last minute akční nabídky letenek z Prahy (PRG) i ostatních letišť v okolí. Nabídky se slevou až 80% aktualizujeme v reálném čase."
+            },
+            {
+              question: "Jak vyhledat nejlevnější akční letenky kamkoliv?",
+              answer: "Při vyhledávání zvolte jako odletové místo Praha a jako cíl ponechte pole 'Kamkoliv'. Náš srovnávač vám okamžitě zobrazí nejlevnější letenky seřazené od nejnižší ceny bez ohledu na destinaci."
+            },
+            {
+              question: "Jak najít nejlevnější letenky?",
+              answer: "Nejlevnější letenky najdete porovnáním cen napříč aerolinkami. Doporučujeme rezervovat 2-3 měsíce předem, být flexibilní s daty a využívat naše denní akční nabídky. Sledujte také naši FB skupinu s 33 500 členy pro exkluzivní tipy."
+            },
+            {
+              question: "Jsou uvedené ceny konečné?",
+              answer: "Ano, zobrazené ceny jsou obvykle konečné včetně daní a poplatků. Další služby jako zavazadla, výběr sedadla nebo strava mohou být zpoplatněny zvlášť u dopravce nebo agentury."
+            },
+            {
+              question: "Kdy je nejlepší čas na nákup last minute letenek?",
+              answer: "Last minute letenky z Prahy se nejvíce vyplatí kupovat 1 až 14 dní před odletem. Dopravci v tomto období doprodávají neobsazená místa v letadlech i charterových letech za výrazně snížené ceny."
+            }
+          ])
+        ]}
       />
       {/* Exit Intent Popup */}
       {showDeferredEnhancements && (
