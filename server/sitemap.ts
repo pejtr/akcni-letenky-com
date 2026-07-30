@@ -24,8 +24,16 @@ interface SitemapUrl {
   priority?: number;
 }
 
-// Base URL - should match your production domain
-const BASE_URL = process.env.VITE_APP_URL || "https://akcni-letenky.com";
+// Base URL - MUST match production domain https://www.akcni-letenky.com for Google Search Console
+const getBaseUrl = (): string => {
+  const envUrl = process.env.VITE_APP_URL || process.env.PUBLIC_URL || "";
+  if (!envUrl || envUrl.includes("railway.app") || envUrl.includes("localhost")) {
+    return "https://www.akcni-letenky.com";
+  }
+  return envUrl.startsWith("http") ? envUrl : `https://${envUrl}`;
+};
+
+const BASE_URL = getBaseUrl();
 
 // Static pages with priorities
 const STATIC_PAGES: SitemapUrl[] = [

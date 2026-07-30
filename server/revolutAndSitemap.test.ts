@@ -42,14 +42,14 @@ describe("Sitemap Generation", () => {
   it("should include homepage with priority 1.0", async () => {
     const sitemap = await generateSitemap();
     
-    expect(sitemap).toContain("<loc>https://akcni-letenky.com/</loc>");
+    expect(sitemap).toContain("<loc>https://www.akcni-letenky.com/</loc>");
     expect(sitemap).toContain("<priority>1.0</priority>");
   });
 
   it("should include blog page", async () => {
     const sitemap = await generateSitemap();
     
-    expect(sitemap).toContain("<loc>https://akcni-letenky.com/blog</loc>");
+    expect(sitemap).toContain("<loc>https://www.akcni-letenky.com/blog</loc>");
     expect(sitemap).toContain("<priority>0.8</priority>");
   });
 
