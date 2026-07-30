@@ -382,7 +382,7 @@ export async function incrementOfferViews(flightId: number): Promise<void> {
 
 // Article Queries
 
-const FALLBACK_ARTICLES = [
+export const FALLBACK_ARTICLES = [
   {
     id: 901,
     title: "Věda potvrzuje: Lidé, kteří více cestují, jsou doslova chytřejší!",
