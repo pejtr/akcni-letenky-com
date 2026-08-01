@@ -31,6 +31,7 @@ const Aerolinky = lazy(() => import("./pages/Aerolinky"));
 const DubajPage = lazy(() => import("./pages/DubajPage"));
 const BaliPage = lazy(() => import("./pages/BaliPage"));
 const NewYorkPage = lazy(() => import("./pages/NewYorkPage"));
+const AdminSocialMedia = lazy(() => import("./pages/AdminSocialMedia"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
 const DestinationLandingPage = lazy(() => import("./pages/DestinationLandingPage"));
 const RevolutABTestDashboard = lazy(() => import("./pages/RevolutABTestDashboard"));
@@ -73,6 +74,7 @@ function Router() {
         <Route path="/admin/ab-test-analytics" component={ABTestAnalyticsDashboard} />
         <Route path="/admin/share-ab-test" component={ShareABTestDashboard} />
         <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
+        <Route path="/admin/social-media" component={AdminSocialMedia} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/levne-letenky" component={LevneLetenky} />
         <Route path="/last-minute" component={LevneLetenky} />

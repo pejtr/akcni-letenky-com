@@ -16,6 +16,7 @@ import { scheduleWishlistRemarketing } from "../wishlistRemarketing";
 import { scheduleWhatsAppDailyMessage } from "../whatsappDailyMessage";
 import { scheduleDailyTipArticle } from "../tipsArticleGenerator";
 import { scheduleMidnightPriceRefresh } from "../travelpayoutsCache";
+import { scheduleDailySocialPostCron } from "../dailySocialPostCron";
 import { generateSitemap, generateRobotsTxt } from "../sitemap";
 import { recordEmailOpened, recordEmailClicked } from "../emailAbTest";
 
@@ -160,6 +161,9 @@ async function startServer() {
 
     // Travelpayouts price cache (fetch on startup + midnight refresh)
     scheduleMidnightPriceRefresh();
+
+    // Social Media daily post generator (Facebook & Instagram)
+    scheduleDailySocialPostCron();
   });
 }
 

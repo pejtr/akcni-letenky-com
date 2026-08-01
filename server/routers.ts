@@ -6,6 +6,14 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { generateAndNotify, getWhatsAppDailyStatus, getLastGeneratedMessage } from "./whatsappDailyMessage";
 import {
+  formatFlightDealPost,
+  formatBlogArticlePost,
+  executeSocialPublishing,
+} from "./socialMediaAutomation";
+import { generateDailySocialPost } from "./dailySocialPostCron";
+import { socialPosts } from "../drizzle/schema";
+import { eq, desc } from "drizzle-orm";
+import {
   getFeaturedFlights,
   getAllFlights,
   getFlightById,
@@ -1712,6 +1720,107 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
       return {
         message: getLastGeneratedMessage(),
         generatedAt: getWhatsAppDailyStatus().lastGeneratedAt,
+      };
+    }),
+  }),
+
+  // ============ Social Media Automation (FB & IG) ============
+  socialMedia: router({
+    getPosts: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      const db = await getDb();
+      if (!db) return [];
+      return await db.select().from(socialPosts).orderBy(desc(socialPosts.id)).limit(50);
+    }),
+
+    createPost: protectedProcedure
+      .input(
+        z.object({
+          platform: z.enum(["facebook", "instagram", "both", "linkedin", "all"]).default("both"),
+          postType: z.enum(["post", "story", "reel", "flight_deal", "blog_article", "custom"]).default("flight_deal"),
+          title: z.string().optional(),
+          caption: z.string(),
+          imageUrl: z.string().optional(),
+          linkUrl: z.string().optional(),
+          hashtags: z.string().optional(),
+          status: z.enum(["draft", "scheduled"]).default("scheduled"),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        const [result] = await db.insert(socialPosts).values({
+          platform: input.platform,
+          postType: input.postType,
+          title: input.title,
+          caption: input.caption,
+          imageUrl: input.imageUrl,
+          linkUrl: input.linkUrl,
+          hashtags: input.hashtags,
+          status: input.status,
+          scheduledAt: new Date(),
+        });
+
+        return { id: Number(result.insertId) };
+      }),
+
+    publishNow: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+        return await executeSocialPublishing(input.id);
+      }),
+
+    generatePreview: protectedProcedure
+      .input(
+        z.object({
+          type: z.enum(["flight_deal", "blog_article"]),
+          targetId: z.number().optional(),
+          slug: z.string().optional(),
+        })
+      )
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+        if (input.type === "flight_deal" && input.targetId) {
+          const flight = await getFlightById(input.targetId);
+          if (flight) return formatFlightDealPost(flight);
+        } else if (input.type === "blog_article" && input.slug) {
+          const article = await getArticleBySlug(input.slug);
+          if (article) return formatBlogArticlePost(article);
+        }
+
+        // Default sample preview
+        return formatFlightDealPost({
+          fromCity: "Praha",
+          toCity: "Dubaj",
+          price: 4990,
+          originalPrice: 12500,
+          discountPercent: 60,
+          airline: "Emirates",
+          remainingSeats: 3,
+          imageUrl: "https://www.akcni-letenky.com/dubai.jpg",
+          affiliateUrl: "https://www.akcni-letenky.com/dubaj",
+        });
+      }),
+
+    triggerDailyPost: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await generateDailySocialPost();
+    }),
+
+    testConnection: protectedProcedure.query(({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      const hasFbPage = !!process.env.FB_PAGE_ID;
+      const hasToken = !!process.env.FB_PAGE_ACCESS_TOKEN;
+      const hasIgUser = !!process.env.IG_USER_ID;
+
+      return {
+        configured: hasFbPage && hasToken && hasIgUser,
+        facebook: hasFbPage && hasToken,
+        instagram: hasIgUser && hasToken,
+        mode: hasFbPage && hasToken ? "LIVE_GRAPH_API" : "DRY_RUN_SIMULATION",
       };
     }),
   }),
