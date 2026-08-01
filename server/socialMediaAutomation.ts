@@ -103,7 +103,11 @@ export function formatFlightDealPost(flight: Partial<Flight>): {
   caption += `${destinationDesc}\n\n`;
   
   const linkUrl = flight.affiliateUrl || `https://www.akcni-letenky.com/letenky`;
-  caption += `🔗 Rezervujte ihned zde: ${linkUrl}\n\n`;
+  const holidayUrl = `https://www.akcni-letenky.com/dovolene?destination=${encodeURIComponent(to)}`;
+
+  caption += `👉 JAK REZERVOVAT:\n`;
+  caption += `✈️ Samostatné akční letenky: ${linkUrl}\n`;
+  caption += `🏨 Kompletní zájezdy & dovolená v ${to}: ${holidayUrl}\n\n`;
   
   const hashtags = DEFAULT_HASHTAGS.join(" ") + ` #${to.replace(/\s+/g, "").toLowerCase()} #letenky${to.replace(/\s+/g, "").toLowerCase()}`;
   caption += hashtags;

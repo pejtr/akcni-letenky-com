@@ -32,6 +32,8 @@ describe("Social Media Post Generator", () => {
     expect(formatted.caption).toContain("#akcniletenky");
     expect(formatted.caption).toContain("Co vás čeká v destinaci Dubaj?");
     expect(formatted.caption).toContain("Burj Khalifa");
+    expect(formatted.caption).toContain("✈️ Samostatné akční letenky: https://pelikan.cz/deal/dubaj");
+    expect(formatted.caption).toContain("🏨 Kompletní zájezdy & dovolená v Dubaj: https://www.akcni-letenky.com/dovolene?destination=Dubaj");
     expect(formatted.linkUrl).toBe("https://pelikan.cz/deal/dubaj");
     expect(formatted.imageUrl).toBe("https://www.akcni-letenky.com/dubai.jpg");
   });
