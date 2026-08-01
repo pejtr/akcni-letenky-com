@@ -30,6 +30,8 @@ describe("Social Media Post Generator", () => {
     expect(formatted.caption).toContain("Ušetříte 60%");
     expect(formatted.caption).toContain("⏰ Rychle! Zbývá pouze 3 volných míst");
     expect(formatted.caption).toContain("#akcniletenky");
+    expect(formatted.caption).toContain("Co vás čeká v destinaci Dubaj?");
+    expect(formatted.caption).toContain("Burj Khalifa");
     expect(formatted.linkUrl).toBe("https://pelikan.cz/deal/dubaj");
     expect(formatted.imageUrl).toBe("https://www.akcni-letenky.com/dubai.jpg");
   });

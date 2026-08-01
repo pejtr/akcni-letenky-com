@@ -33,6 +33,42 @@ export const DEFAULT_HASHTAGS = [
   "#vyhodneletenky",
 ];
 
+// Captivating destination descriptions dictionary for social posts
+export const DESTINATION_DESCRIPTIONS: Record<string, string> = {
+  "Dubaj": "☀️ Objevte město budoucnosti! Čekají vás ikonické mrakodrapy s Burj Khalifa v čele, luxusní nákupy, nekonečné písečné pláže, pouštní safari i futuristické atrakce.",
+  "Bali": "🌴 Ráj na zemi pro milovníky přírody, surfování a relaxu. Prozkoumejte úchvatná terasovitá rýžová políčka, posvátné chrámy, tyrkysový oceán a vyhlášenou gastro scénu.",
+  "New York": "🗽 Město, které nikdy nespí! Projděte se po Times Square, odpočiňte si v Central Parku, užijte si výhled z Empire State Building a zažijte neopakovatelnou atmosféru Wall Street i Broadwaye.",
+  "Řím": "🏛️ Věčné město plné historie, antických památek a neodolatelné atmosféry! Ochutnejte pravou pizzu, pravé gelato a navštivte Koloseum i Vatikán.",
+  "Paříž": "🗼 Město lásky, umění a gastronomie. Projděte se kolem Eiffelovy věže, navštivte klenoty v muzeu Louvre a vychutnejte si čerstvý křupavý croissant s kávou v útulné kavárničce.",
+  "Tokio": "⛩️ Dokonalé spojení futuristických technologií a starobylých tradic! Ochutnejte nejlepší čerstvé sushi, navštivte buddhistické chrámy a zažijte neony osvícenou špičkovou čtvrť Šibuja.",
+  "Londýn": "🏰 Historické srdce Velké Británie! Prohlédněte si ikonický Big Ben, Tower Bridge, červené dvoupodlažní autobusy a světová muzea se vstupem zdarma.",
+  "Barcelona": "🌊 Slunečné město s dechberoucí architekturou Antoniho Gaudího (Sagrada Família), živou pláží Barceloneta, vynikajícími tapas a nespoutanou noční atmosférou.",
+  "Maledivy": "🏝️ Absolutní tropický ráj s vodními vilami nad tyrkysovou lagunou. Bílé korálové pláže, šnorchlování s mantami a želvami a ničím nerušený odpočinek.",
+  "Zanzibar": "🏝️ Exotický ostrov koření v Indickém oceánu. Křídově bílé pláže, azurové moře, historické město Stone Town a safari v Tanzanii na dosah ruky.",
+  "Reúnion": "🌋 Divoký tropický ostrov s činnou sopkou Piton de la Fournaise, dramatickými kaňony, vodopády a bujnou pralesní přírodou pro opravdové dobrodruhy.",
+  "Bangkok": "🛺 Pulzující thajská metropole plná pozlacených chrámů, světoznámého street foodu na každém rohu a divokého nočního života.",
+  "Island": "🌌 Země ohně a ledu! Zažijte polární záři, kouřící gejzíry, mohutné vodopády, černé vulkanické pláže a termální lázně Blue Lagoon.",
+  "Mallorca": "☀️ Nejkrásnější perla Středozemního moře! Tyrkysové zátoky (calas), romantická horská městečka, cyklistické trasy a středomořská kuchyně.",
+  "Istanbul": "🕌 Město na pomezí dvou kontinentů! Obdivujte architekturu Hagia Sophia, procházejte se po Velkém Bazaru a vychutnejte si tradiční turecký čaj při západu slunce nad Bosporem.",
+  "Los Angeles": "🎬 Slunečná Kalifornie, Hollywood a chodník slávy! Projděte se po slavné pláži Santa Monica, navštivte filmová studia a zažijte americký sen.",
+  "Miami": "🌴 Tropický pulzující hotspot Floridy s ikonickými Art Deco budovami na South Beach, latinskoamerickým jídlem a tyrkysovým Atlantikem.",
+  "Cancún": "🇲🇽 Mexická Riviera s karibským tyrkysovým mořem, mayskými pyramidami Chichén Itzá a nezapomenutelným jídlem (tacos, guacamole, tequila).",
+  "Srí Lanka": "🐘 Ostrov čaje, divokých slonů a zelených hor! Projeďte se slavným modrým vlakem mezi čajovými plantážemi a navštivte starobylou skalní pevnost Sigiriya.",
+};
+
+export function getDestinationDescription(city: string): string {
+  if (DESTINATION_DESCRIPTIONS[city]) {
+    return DESTINATION_DESCRIPTIONS[city];
+  }
+  const key = Object.keys(DESTINATION_DESCRIPTIONS).find(
+    (k) => k.toLowerCase() === city.toLowerCase()
+  );
+  if (key) {
+    return DESTINATION_DESCRIPTIONS[key];
+  }
+  return `✨ Objevte kouzlo destinace ${city}! Čeká vás nezapomenutelná atmosféra, místní gastronomické speciality, bohatá kultura a skvělé zážitky. Využijte akční ceny letenek a vyrazte za novým dobrodružstvím!`;
+}
+
 /**
  * Format a Flight Deal into an engaging Social Media Caption for FB & IG
  */
@@ -51,6 +87,7 @@ export function formatFlightDealPost(flight: Partial<Flight>): {
   const airline = flight.airline || "Letecká společnost";
   
   const title = `🔥 AKČNÍ LETENKY: ${from} ↔ ${to} za ${price}!`;
+  const destinationDesc = getDestinationDescription(to);
   
   let caption = `⚡ EXKLUZIVNÍ NABÍDKA LETENEK! ✈️\n\n`;
   caption += `📍 Trasa: ${from} ↔ ${to}\n`;
@@ -62,8 +99,8 @@ export function formatFlightDealPost(flight: Partial<Flight>): {
   if (flight.remainingSeats && flight.remainingSeats <= 5) {
     caption += `⏰ Rychle! Zbývá pouze ${flight.remainingSeats} volných míst za tuto cenu.\n`;
   }
-  caption += `\n✨ Proč navštívit ${to}?\n`;
-  caption += `Užijte si skvělou dovolenou za zlomek běžné ceny. Počet letenek za nejnižší cenu je omezen!\n\n`;
+  caption += `\n✨ Co vás čeká v destinaci ${to}?\n`;
+  caption += `${destinationDesc}\n\n`;
   
   const linkUrl = flight.affiliateUrl || `https://www.akcni-letenky.com/letenky`;
   caption += `🔗 Rezervujte ihned zde: ${linkUrl}\n\n`;
