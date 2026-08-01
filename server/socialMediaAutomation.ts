@@ -263,6 +263,83 @@ export async function publishToInstagram(post: {
 }
 
 /**
+ * Publish Instagram Story with Deal Link via Meta Graph API
+ */
+export async function publishInstagramStory(post: {
+  imageUrl: string;
+  linkUrl: string;
+}): Promise<{ success: boolean; mediaId?: string; error?: string; isSimulated: boolean }> {
+  const igUserId = process.env.IG_USER_ID;
+  const accessToken = process.env.FB_PAGE_ACCESS_TOKEN;
+
+  if (!igUserId || !accessToken) {
+    console.log("[SocialMedia] Instagram API credentials missing. Running Story in DRY-RUN SIMULATION mode.");
+    return {
+      success: true,
+      mediaId: `simulated_ig_story_${Date.now()}`,
+      isSimulated: true,
+    };
+  }
+
+  try {
+    const validImageUrl = post.imageUrl && post.imageUrl.startsWith("http")
+      ? post.imageUrl
+      : "https://www.akcni-letenky.com/hero-coastal.jpg";
+
+    // Step 1: Create IG Story Media Container
+    const containerUrl = `https://graph.facebook.com/v19.0/${igUserId}/media`;
+    const containerRes = await fetch(containerUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        media_type: "STORIES",
+        image_url: validImageUrl,
+        access_token: accessToken,
+      }),
+    });
+
+    const containerData = await containerRes.json();
+
+    if (!containerRes.ok || containerData.error || !containerData.id) {
+      const errorMsg = containerData.error?.message || "Failed to create Instagram Story container";
+      return { success: false, error: errorMsg, isSimulated: false };
+    }
+
+    const creationId = containerData.id;
+
+    // Step 2: Publish IG Story Container
+    const publishUrl = `https://graph.facebook.com/v19.0/${igUserId}/media_publish`;
+    const publishRes = await fetch(publishUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        creation_id: creationId,
+        access_token: accessToken,
+      }),
+    });
+
+    const publishData = await publishRes.json();
+
+    if (!publishRes.ok || publishData.error || !publishData.id) {
+      const errorMsg = publishData.error?.message || "Failed to publish Instagram Story";
+      return { success: false, error: errorMsg, isSimulated: false };
+    }
+
+    return {
+      success: true,
+      mediaId: publishData.id,
+      isSimulated: false,
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.message || "Network error publishing Instagram Story",
+      isSimulated: false,
+    };
+  }
+}
+
+/**
  * Execute full publication flow for a socialPost entry
  */
 export async function executeSocialPublishing(postId: number): Promise<PublishResult> {
@@ -299,10 +376,17 @@ export async function executeSocialPublishing(postId: number): Promise<PublishRe
 
   // Publish to Instagram if target is instagram, both, or all
   if (targetPlatform === "instagram" || targetPlatform === "both" || targetPlatform === "all") {
-    igResult = await publishToInstagram({
-      caption: post.caption,
-      imageUrl: post.imageUrl || "https://www.akcni-letenky.com/hero-coastal.jpg",
-    });
+    if (post.postType === "story") {
+      igResult = await publishInstagramStory({
+        imageUrl: post.imageUrl || "https://www.akcni-letenky.com/hero-coastal.jpg",
+        linkUrl: post.linkUrl || "https://www.akcni-letenky.com",
+      });
+    } else {
+      igResult = await publishToInstagram({
+        caption: post.caption,
+        imageUrl: post.imageUrl || "https://www.akcni-letenky.com/hero-coastal.jpg",
+      });
+    }
   }
 
   const isOverallSuccess = fbResult.success && igResult.success;

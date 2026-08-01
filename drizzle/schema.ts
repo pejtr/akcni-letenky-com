@@ -965,3 +965,31 @@ export const socialSettings = mysqlTable("social_settings", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 export type SocialSetting = typeof socialSettings.$inferSelect;
+
+// ============ Google Indexing API Logs ============
+export const indexingLogs = mysqlTable("indexing_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  url: varchar("url", { length: 1000 }).notNull(),
+  type: mysqlEnum("type", ["URL_UPDATED", "URL_DELETED"]).notNull().default("URL_UPDATED"),
+  status: mysqlEnum("status", ["success", "failed", "simulated"]).notNull().default("success"),
+  apiResponse: text("apiResponse"),
+  errorMessage: text("errorMessage"),
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+});
+export type IndexingLog = typeof indexingLogs.$inferSelect;
+export type InsertIndexingLog = typeof indexingLogs.$inferInsert;
+
+// ============ Web Push Campaigns ============
+export const pushCampaigns = mysqlTable("push_campaigns", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  icon: varchar("icon", { length: 1000 }),
+  url: varchar("url", { length: 1000 }),
+  sentCount: int("sentCount").default(0),
+  failedCount: int("failedCount").default(0),
+  status: mysqlEnum("status", ["sent", "failed", "simulated"]).notNull().default("sent"),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+});
+export type PushCampaign = typeof pushCampaigns.$inferSelect;
+export type InsertPushCampaign = typeof pushCampaigns.$inferInsert;

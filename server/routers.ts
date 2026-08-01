@@ -11,6 +11,18 @@ import {
   executeSocialPublishing,
 } from "./socialMediaAutomation";
 import { generateDailySocialPost } from "./dailySocialPostCron";
+import {
+  submitUrlToGoogleIndexing,
+  notifyGoogleForNewArticle,
+  submitCorePagesToGoogleIndexing,
+  getIndexingLogs,
+} from "./googleIndexingApi";
+import {
+  getVapidPublicKey,
+  subscribeWebPush,
+  sendPushNotificationToAll,
+  getPushStats,
+} from "./webPushNotifications";
 import { socialPosts } from "../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import {
@@ -1822,6 +1834,77 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
         instagram: hasIgUser && hasToken,
         mode: hasFbPage && hasToken ? "LIVE_GRAPH_API" : "DRY_RUN_SIMULATION",
       };
+    }),
+  }),
+
+  // ============ Google Indexing API ============
+  googleIndexing: router({
+    getLogs: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await getIndexingLogs();
+    }),
+
+    submitUrl: protectedProcedure
+      .input(z.object({ url: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+        return await submitUrlToGoogleIndexing(input.url);
+      }),
+
+    submitCorePages: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await submitCorePagesToGoogleIndexing();
+    }),
+
+    testConnection: protectedProcedure.query(({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      const hasEmail = !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+      const hasKey = !!process.env.GOOGLE_PRIVATE_KEY;
+      return {
+        configured: hasEmail && hasKey,
+        mode: hasEmail && hasKey ? "LIVE_GOOGLE_INDEXING_API" : "DRY_RUN_SIMULATION",
+      };
+    }),
+  }),
+
+  // ============ Web Push Notifications ============
+  webPush: router({
+    getVapidPublicKey: publicProcedure.query(() => {
+      return { key: getVapidPublicKey() };
+    }),
+
+    subscribe: publicProcedure
+      .input(
+        z.object({
+          endpoint: z.string(),
+          keys: z.object({
+            p256dh: z.string(),
+            auth: z.string(),
+          }),
+          userAgent: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return await subscribeWebPush(input);
+      }),
+
+    sendNotification: protectedProcedure
+      .input(
+        z.object({
+          title: z.string(),
+          body: z.string(),
+          icon: z.string().optional(),
+          url: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+        return await sendPushNotificationToAll(input);
+      }),
+
+    getStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await getPushStats();
     }),
   }),
 });

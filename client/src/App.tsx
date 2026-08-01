@@ -32,7 +32,9 @@ const DubajPage = lazy(() => import("./pages/DubajPage"));
 const BaliPage = lazy(() => import("./pages/BaliPage"));
 const NewYorkPage = lazy(() => import("./pages/NewYorkPage"));
 const AdminSocialMedia = lazy(() => import("./pages/AdminSocialMedia"));
+const AdminIndexingAndPush = lazy(() => import("./pages/AdminIndexingAndPush"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
+import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
 const DestinationLandingPage = lazy(() => import("./pages/DestinationLandingPage"));
 const RevolutABTestDashboard = lazy(() => import("./pages/RevolutABTestDashboard"));
 const TipyCestovatele = lazy(() => import("./pages/TipyCestovatele"));
@@ -75,6 +77,7 @@ function Router() {
         <Route path="/admin/share-ab-test" component={ShareABTestDashboard} />
         <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
         <Route path="/admin/social-media" component={AdminSocialMedia} />
+        <Route path="/admin/indexing-and-push" component={AdminIndexingAndPush} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/levne-letenky" component={LevneLetenky} />
         <Route path="/last-minute" component={LevneLetenky} />
@@ -147,6 +150,7 @@ function App() {
             </Suspense>
           )}
           <Toaster />
+          <WebPushPermissionBanner />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
