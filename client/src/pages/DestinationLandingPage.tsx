@@ -20,6 +20,10 @@ import AiItineraryGenerator from "@/components/AiItineraryGenerator";
 import FlightCompensationWidget from "@/components/FlightCompensationWidget";
 import EsimWidget from "@/components/EsimWidget";
 import AirportLoungeWidget from "@/components/AirportLoungeWidget";
+import PricePredictionWidget from "@/components/PricePredictionWidget";
+import BaggageCalculatorWidget from "@/components/BaggageCalculatorWidget";
+import EbookDownloadWidget from "@/components/EbookDownloadWidget";
+import ReferralRewardWidget from "@/components/ReferralRewardWidget";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -262,6 +266,10 @@ export default function DestinationLandingPage() {
           <FlightCompensationWidget />
           <EsimWidget destination={meta.title} />
           <AirportLoungeWidget />
+          <PricePredictionWidget destination={meta.title} />
+          <BaggageCalculatorWidget />
+          <EbookDownloadWidget />
+          <ReferralRewardWidget />
         </div>
 
         {/* Pelikán Offer Banner */}

@@ -52,6 +52,20 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/kalkulacka-zavazadel">
+                    <a className="hover:text-amber-400 font-semibold hover:underline transition-colors text-blue-200">
+                      🧳 Kalkulačka zavazadel aerolinek
+                    </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/ebook-zdarma">
+                    <a className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
+                      📘 E-book ZDARMA: Jak na letenky za babku
+                    </a>
+                  </Link>
+                </li>
+                <li>
                   <a href="https://www.pelikan.cz/cs/pobyty/kategorie/101/vsechny?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors flex items-center gap-1">
                     <span>🚀</span> <span>TOP akce</span>
                   </a>

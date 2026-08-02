@@ -35,6 +35,8 @@ const AdminSocialMedia = lazy(() => import("./pages/AdminSocialMedia"));
 const AdminIndexingAndPush = lazy(() => import("./pages/AdminIndexingAndPush"));
 const PriceTrackerPage = lazy(() => import("./pages/PriceTrackerPage"));
 const FlightCompensationPage = lazy(() => import("./pages/FlightCompensationPage"));
+const BaggageCalculatorPage = lazy(() => import("./pages/BaggageCalculatorPage"));
+const EbookDownloadPage = lazy(() => import("./pages/EbookDownloadPage"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
 const LuckyWheelPopup = lazy(() => import("./components/LuckyWheelPopup"));
 import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
@@ -90,6 +92,8 @@ function Router() {
         <Route path="/dovolene" component={Dovolene} />
         <Route path="/hlidac-cen" component={PriceTrackerPage} />
         <Route path="/odskodneni-za-let" component={FlightCompensationPage} />
+        <Route path="/kalkulacka-zavazadel" component={BaggageCalculatorPage} />
+        <Route path="/ebook-zdarma" component={EbookDownloadPage} />
         <Route path="/wishlist" component={Wishlist} />
         <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
         <Route path="/porovnani-cen" component={PriceComparison} />
