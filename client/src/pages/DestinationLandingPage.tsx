@@ -7,6 +7,16 @@ import { Plane, Calendar, TrendingDown, ExternalLink, Star, Hotel } from "lucide
 import { useParams } from "wouter";
 import { bookingSearchLink, pelikanDeepLink } from "@shared/affiliateLinks";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
+import TrustBadgesShield from "@/components/TrustBadgesShield";
+import InstantAlertBar from "@/components/InstantAlertBar";
+import UrgencyTimer from "@/components/UrgencyTimer";
+import FlightHotelPackageCard from "@/components/FlightHotelPackageCard";
+import RevolutCashbackBadge from "@/components/RevolutCashbackBadge";
+import PriceTrackerWidget from "@/components/PriceTrackerWidget";
+import ExperiencesWidget from "@/components/ExperiencesWidget";
+import CarRentalWidget from "@/components/CarRentalWidget";
+import TravelInsuranceWidget from "@/components/TravelInsuranceWidget";
+import AiItineraryGenerator from "@/components/AiItineraryGenerator";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -233,6 +243,20 @@ export default function DestinationLandingPage() {
             </div>
           </section>
         )}
+
+        {/* CRO Suite & Revenue Maximizers */}
+        <div className="container py-4">
+          <TrustBadgesShield />
+          <UrgencyTimer remainingSeats={3} />
+          <FlightHotelPackageCard destination={meta.title} flightPrice={4990} affiliateFlightUrl={pelikanDestinationUrl} />
+          <RevolutCashbackBadge />
+          <InstantAlertBar />
+          <ExperiencesWidget destination={meta.title} />
+          <CarRentalWidget destination={meta.title} />
+          <TravelInsuranceWidget />
+          <PriceTrackerWidget defaultDestination={meta.title} />
+          <AiItineraryGenerator destination={meta.title} />
+        </div>
 
         {/* Pelikán Offer Banner */}
         <section className="py-12 bg-gradient-to-b from-white to-green-50">

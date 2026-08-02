@@ -23,6 +23,12 @@ import {
   sendPushNotificationToAll,
   getPushStats,
 } from "./webPushNotifications";
+import {
+  createPriceTracker,
+  getUserPriceTrackers,
+  deletePriceTracker,
+  checkPriceTrackerAlerts,
+} from "./priceTracker";
 import { socialPosts } from "../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import {
@@ -1905,6 +1911,40 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
     getStats: protectedProcedure.query(async ({ ctx }) => {
       if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
       return await getPushStats();
+    }),
+  }),
+
+  // ============ Price Tracker Router ============
+  priceTracker: router({
+    create: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+          phone: z.string().optional(),
+          type: z.enum(["flight", "holiday", "both"]),
+          destination: z.string(),
+          maxPrice: z.number().positive(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return await createPriceTracker(input);
+      }),
+
+    getByEmail: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .query(async ({ input }) => {
+        return await getUserPriceTrackers(input.email);
+      }),
+
+    delete: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return await deletePriceTracker(input.id);
+      }),
+
+    checkNow: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await checkPriceTrackerAlerts();
     }),
   }),
 });

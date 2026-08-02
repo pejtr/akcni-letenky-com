@@ -993,3 +993,20 @@ export const pushCampaigns = mysqlTable("push_campaigns", {
 });
 export type PushCampaign = typeof pushCampaigns.$inferSelect;
 export type InsertPushCampaign = typeof pushCampaigns.$inferInsert;
+
+// ============ Price Trackers (Hlídač Cen Letenek & Dovolených) ============
+export const priceTrackers = mysqlTable("price_trackers", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  type: mysqlEnum("type", ["flight", "holiday", "both"]).notNull().default("both"),
+  destination: varchar("destination", { length: 255 }).notNull().default("Všechny destinace"),
+  maxPrice: int("maxPrice").notNull(),
+  currentPrice: int("currentPrice"),
+  lowestPriceSeen: int("lowestPriceSeen"),
+  status: mysqlEnum("status", ["active", "triggered", "paused"]).notNull().default("active"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastNotifiedAt: timestamp("lastNotifiedAt"),
+});
+export type PriceTracker = typeof priceTrackers.$inferSelect;
+export type InsertPriceTracker = typeof priceTrackers.$inferInsert;

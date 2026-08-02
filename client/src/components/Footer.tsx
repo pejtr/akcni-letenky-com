@@ -38,6 +38,13 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
+                  <Link href="/hlidac-cen">
+                    <a className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
+                      🔔 Hlídač cen letenek
+                    </a>
+                  </Link>
+                </li>
+                <li>
                   <a href="https://www.pelikan.cz/cs/pobyty/kategorie/101/vsechny?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors flex items-center gap-1">
                     <span>🚀</span> <span>TOP akce</span>
                   </a>

@@ -49,6 +49,11 @@ export default function Navigation() {
               ☀️ Dovolená
             </a>
           </Link>
+          <Link href="/hlidac-cen">
+            <a className="flex items-center gap-1.5 text-sm text-[#1565C0] hover:bg-blue-50 font-bold px-3 py-2 rounded-md transition-colors whitespace-nowrap">
+              🔔 Hlídač cen
+            </a>
+          </Link>
           <a
             href="https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky"
             target="_blank"

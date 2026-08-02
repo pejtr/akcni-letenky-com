@@ -1,93 +1,49 @@
-/**
- * Urgency Timer Component
- * 
- * Displays countdown timer for flight offers to create urgency.
- * Timer persists in localStorage per offer.
- */
-
-import * as React from "react";
-import { Clock } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Clock, Flame } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface UrgencyTimerProps {
-  offerId: string;
-  className?: string;
+  initialMinutes?: number;
+  remainingSeats?: number;
+  price?: number;
+  onVerifyClick?: () => void;
 }
 
-export default function UrgencyTimer({ offerId, className = "" }: UrgencyTimerProps) {
-  const [timeLeft, setTimeLeft] = React.useState<number | null>(null);
+export default function UrgencyTimer({
+  initialMinutes = 165, // ~2h 45m
+  remainingSeats = 3,
+  price,
+  onVerifyClick,
+}: UrgencyTimerProps) {
+  const [timeLeft, setTimeLeft] = useState(initialMinutes * 60);
 
-  React.useEffect(() => {
-    const STORAGE_KEY = `urgency_timer_${offerId}`;
-    
-    // Get or create expiry time
-    let expiryTime = localStorage.getItem(STORAGE_KEY);
-    
-    if (!expiryTime) {
-      // Generate random expiry time between 6-24 hours from now
-      const hoursUntilExpiry = 6 + Math.random() * 18;
-      const expiry = Date.now() + (hoursUntilExpiry * 60 * 60 * 1000);
-      localStorage.setItem(STORAGE_KEY, expiry.toString());
-      expiryTime = expiry.toString();
-    }
-
-    const expiry = parseInt(expiryTime);
-
-    // Update timer every second
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const remaining = expiry - now;
-
-      if (remaining <= 0) {
-        // Timer expired - generate new one
-        const hoursUntilExpiry = 6 + Math.random() * 18;
-        const newExpiry = Date.now() + (hoursUntilExpiry * 60 * 60 * 1000);
-        localStorage.setItem(STORAGE_KEY, newExpiry.toString());
-        setTimeLeft(newExpiry - Date.now());
-      } else {
-        setTimeLeft(remaining);
-      }
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-    // Set initial time
-    setTimeLeft(expiry - Date.now());
+  const hours = Math.floor(timeLeft / 3600);
+  const minutes = Math.floor((timeLeft % 3600) / 60);
+  const seconds = timeLeft % 60;
 
-    return () => clearInterval(interval);
-  }, [offerId]);
-
-  if (timeLeft === null) {
-    return null;
-  }
-
-  // Calculate hours and minutes
-  const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-
-  // Determine urgency level
-  const isUrgent = hours < 3;
-  const isVeryUrgent = hours < 1;
+  const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
   return (
-    <div
-      className={`flex items-center gap-2 text-sm font-medium ${
-        isVeryUrgent
-          ? "text-red-600 animate-pulse"
-          : isUrgent
-          ? "text-orange-600"
-          : "text-gray-600"
-      } ${className}`}
-    >
-      <Clock
-        className={`w-4 h-4 ${
-          isVeryUrgent ? "animate-pulse" : ""
-        }`}
-      />
-      <span>
-        Nabídka platí ještě{" "}
-        <span className="font-bold">
-          {hours > 0 && `${hours}h `}
-          {minutes}min
-        </span>
-      </span>
+    <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border border-amber-500/30 rounded-xl p-3 my-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="flex items-center gap-1.5 font-bold text-amber-700">
+          <Clock className="w-4 h-4 text-amber-600 animate-pulse" />
+          <span>⚡ Akční cena vyprší za: <span className="font-mono text-sm text-rose-600 ml-1">{formattedTime}</span></span>
+        </div>
+        <div className="flex items-center gap-1 font-semibold text-rose-700">
+          <Flame className="w-4 h-4 text-rose-500 fill-rose-500" />
+          <span>Zbývá pouze <span className="font-extrabold">{remainingSeats}</span> míst za tuto cenu!</span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -33,6 +33,7 @@ const BaliPage = lazy(() => import("./pages/BaliPage"));
 const NewYorkPage = lazy(() => import("./pages/NewYorkPage"));
 const AdminSocialMedia = lazy(() => import("./pages/AdminSocialMedia"));
 const AdminIndexingAndPush = lazy(() => import("./pages/AdminIndexingAndPush"));
+const PriceTrackerPage = lazy(() => import("./pages/PriceTrackerPage"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
 import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
 const DestinationLandingPage = lazy(() => import("./pages/DestinationLandingPage"));
@@ -85,6 +86,7 @@ function Router() {
         <Route path="/tipy-pro-cestovatele" component={TipyCestovatele} />
         <Route path="/tipy-pro-cestovatele/:slug" component={TipArticle} />
         <Route path="/dovolene" component={Dovolene} />
+        <Route path="/hlidac-cen" component={PriceTrackerPage} />
         <Route path="/wishlist" component={Wishlist} />
         <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
         <Route path="/porovnani-cen" component={PriceComparison} />
