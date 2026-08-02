@@ -241,7 +241,7 @@ export async function generateSitemap(): Promise<string> {
   const urls = Array.from(urlMap.values());
 
   // Generate XML
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
   .map(
@@ -258,19 +258,28 @@ ${urls
   .join("\n")}
 </urlset>`;
 
+  // Sanitize any domain mismatches or legacy environment variable host overrides
+  xml = xml.replace(/https?:\/\/[^\s"'<>\\]*railway\.app/g, "https://www.akcni-letenky.com");
+  xml = xml.replace(/https?:\/\/akcni-letenky\.com/g, "https://www.akcni-letenky.com");
+
   return xml;
 }
 
 // Generate sitemap_index.xml
 export function generateSitemapIndex(): string {
   const today = new Date().toISOString().split("T")[0];
-  return `<?xml version="1.0" encoding="UTF-8"?>
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${BASE_URL}/sitemap.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>
 </sitemapindex>`;
+
+  xml = xml.replace(/https?:\/\/[^\s"'<>\\]*railway\.app/g, "https://www.akcni-letenky.com");
+  xml = xml.replace(/https?:\/\/akcni-letenky\.com/g, "https://www.akcni-letenky.com");
+
+  return xml;
 }
 
 // Generate robots.txt

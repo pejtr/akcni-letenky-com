@@ -51,7 +51,9 @@ async function startServer() {
   // Sitemap and robots.txt
   app.get("/sitemap.xml", async (req, res) => {
     try {
-      const sitemap = await generateSitemap();
+      let sitemap = await generateSitemap();
+      sitemap = sitemap.replace(/https?:\/\/[^\s"'<>\\]*railway\.app/g, "https://www.akcni-letenky.com");
+      sitemap = sitemap.replace(/https?:\/\/akcni-letenky\.com/g, "https://www.akcni-letenky.com");
       res.header("Content-Type", "application/xml; charset=utf-8");
       res.send(sitemap);
     } catch (error) {
@@ -61,8 +63,10 @@ async function startServer() {
   });
 
   app.get("/sitemap_index.xml", (req, res) => {
+    let indexXml = generateSitemapIndex();
+    indexXml = indexXml.replace(/https?:\/\/[^\s"'<>\\]*railway\.app/g, "https://www.akcni-letenky.com");
     res.header("Content-Type", "application/xml; charset=utf-8");
-    res.send(generateSitemapIndex());
+    res.send(indexXml);
   });
 
   // Redirect legacy WordPress sitemap endpoints to clean sitemap.xml
