@@ -17,7 +17,7 @@ import { scheduleWhatsAppDailyMessage } from "../whatsappDailyMessage";
 import { scheduleDailyTipArticle } from "../tipsArticleGenerator";
 import { scheduleMidnightPriceRefresh } from "../travelpayoutsCache";
 import { scheduleDailySocialPostCron } from "../dailySocialPostCron";
-import { generateSitemap, generateRobotsTxt } from "../sitemap";
+import { generateSitemap, generateSitemapIndex, generateRobotsTxt } from "../sitemap";
 import { recordEmailOpened, recordEmailClicked } from "../emailAbTest";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -52,16 +52,26 @@ async function startServer() {
   app.get("/sitemap.xml", async (req, res) => {
     try {
       const sitemap = await generateSitemap();
-      res.header("Content-Type", "application/xml");
+      res.header("Content-Type", "application/xml; charset=utf-8");
       res.send(sitemap);
     } catch (error) {
       console.error("Error generating sitemap:", error);
       res.status(500).send("Error generating sitemap");
     }
   });
+
+  app.get("/sitemap_index.xml", (req, res) => {
+    res.header("Content-Type", "application/xml; charset=utf-8");
+    res.send(generateSitemapIndex());
+  });
+
+  // Redirect legacy WordPress sitemap endpoints to clean sitemap.xml
+  app.get(["/wpms-sitemap.xml", "/category-sitemap.xml", "/post-sitemap.xml", "/page-sitemap.xml"], (req, res) => {
+    res.redirect(301, "/sitemap.xml");
+  });
   
   app.get("/robots.txt", (req, res) => {
-    res.header("Content-Type", "text/plain");
+    res.header("Content-Type", "text/plain; charset=utf-8");
     res.send(generateRobotsTxt());
   });
   

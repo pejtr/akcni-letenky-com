@@ -5,11 +5,11 @@
  * 
  * Priority hierarchy:
  * - Homepage: 1.0
- * - Main category pages: 0.9
- * - Blog listing: 0.8
- * - Blog articles: 0.6
- * - Destination pages: 0.7
- * - Other pages: 0.5
+ * - Main category & tool pages: 0.9
+ * - Category listing / blog listing: 0.8
+ * - Destination & guide pages: 0.8
+ * - Blog articles: 0.7
+ * - Airline & secondary pages: 0.6
  */
 
 import { getDb, FALLBACK_ARTICLES } from "./db";
@@ -24,7 +24,7 @@ interface SitemapUrl {
   priority?: number;
 }
 
-// Base URL - MUST match production domain https://www.akcni-letenky.com for Google Search Console
+// Base URL - MUST strictly match production domain https://www.akcni-letenky.com for Google Search Console
 const BASE_URL = "https://www.akcni-letenky.com";
 
 // Static pages with priorities
@@ -53,6 +53,26 @@ const STATIC_PAGES: SitemapUrl[] = [
     loc: "/dovolene",
     changefreq: "daily",
     priority: 0.9,
+  },
+  {
+    loc: "/hlidac-cen",
+    changefreq: "daily",
+    priority: 0.9,
+  },
+  {
+    loc: "/odskodneni-za-let",
+    changefreq: "daily",
+    priority: 0.9,
+  },
+  {
+    loc: "/kalkulacka-zavazadel",
+    changefreq: "weekly",
+    priority: 0.8,
+  },
+  {
+    loc: "/ebook-zdarma",
+    changefreq: "weekly",
+    priority: 0.8,
   },
   {
     loc: "/blog",
@@ -86,22 +106,26 @@ const STATIC_PAGES: SitemapUrl[] = [
   },
 ];
 
-// Special destination pages (not in database)
+// Special destination pages
 const SPECIAL_DESTINATIONS = [
   { path: "/dubaj", priority: 0.8 },
+  { path: "/letenky-dubaj", priority: 0.8 },
   { path: "/bali", priority: 0.8 },
+  { path: "/letenky-bali", priority: 0.8 },
   { path: "/new-york", priority: 0.8 },
+  { path: "/letenky-new-york", priority: 0.8 },
   { path: "/reunion", priority: 0.7 },
+  { path: "/letenky-reunion", priority: 0.7 },
   { path: "/letenky-do-1500", priority: 0.7 },
 ];
 
 // Generate sitemap XML
 export async function generateSitemap(): Promise<string> {
-  const urls: SitemapUrl[] = [...STATIC_PAGES];
+  const rawUrls: SitemapUrl[] = [...STATIC_PAGES];
 
   // Add special destination pages
   for (const dest of SPECIAL_DESTINATIONS) {
-    urls.push({
+    rawUrls.push({
       loc: dest.path,
       changefreq: "weekly",
       priority: dest.priority,
@@ -110,7 +134,7 @@ export async function generateSitemap(): Promise<string> {
 
   // Add SEO Country destination pages - priority 0.8
   for (const country of destinationCountries) {
-    urls.push({
+    rawUrls.push({
       loc: `/letenky-do-${country.slug}`,
       lastmod: new Date().toISOString().split("T")[0],
       changefreq: "weekly",
@@ -120,8 +144,14 @@ export async function generateSitemap(): Promise<string> {
 
   // Add SEO City destination pages - priority 0.7
   for (const city of destinationCities) {
-    urls.push({
+    rawUrls.push({
       loc: `/letenky-${city.slug}`,
+      lastmod: new Date().toISOString().split("T")[0],
+      changefreq: "weekly",
+      priority: 0.7,
+    });
+    rawUrls.push({
+      loc: `/${city.slug}`,
       lastmod: new Date().toISOString().split("T")[0],
       changefreq: "weekly",
       priority: 0.7,
@@ -131,16 +161,11 @@ export async function generateSitemap(): Promise<string> {
   // Add Airline pages - priority 0.6
   const airlinePages = [
     "ryanair", "wizz-air", "czech-airlines", "lufthansa", "emirates",
-    "qatar-airways", "turkish-airlines", "klm", "air-france", "british-airways"
+    "qatar-airways", "turkish-airlines", "klm", "air-france", "british-airways", "austrian-airlines", "lot"
   ];
   for (const slug of airlinePages) {
-    urls.push({
+    rawUrls.push({
       loc: `/letecka-spolecnost/${slug}`,
-      changefreq: "weekly",
-      priority: 0.6,
-    });
-    urls.push({
-      loc: `/letecke-spolecnosti/${slug}`,
       changefreq: "weekly",
       priority: 0.6,
     });
@@ -150,11 +175,11 @@ export async function generateSitemap(): Promise<string> {
   try {
     const db = await getDb();
     if (db) {
-      // Blog articles from DB (or FALLBACK_ARTICLES) - priority 0.7
+      // Blog articles from DB - priority 0.7
       const blogArticles = await db.select().from(articles).where(eq(articles.status, "published"));
       if (blogArticles && blogArticles.length > 0) {
         for (const article of blogArticles) {
-          urls.push({
+          rawUrls.push({
             loc: `/blog/${article.slug}`,
             lastmod: article.updatedAt?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
             changefreq: "weekly",
@@ -163,7 +188,7 @@ export async function generateSitemap(): Promise<string> {
         }
       } else {
         for (const article of FALLBACK_ARTICLES) {
-          urls.push({
+          rawUrls.push({
             loc: `/blog/${article.slug}`,
             lastmod: new Date().toISOString().split("T")[0],
             changefreq: "weekly",
@@ -175,7 +200,7 @@ export async function generateSitemap(): Promise<string> {
       // Database destination pages - priority 0.8
       const allDestinations = await db.select().from(destinations);
       for (const dest of allDestinations) {
-        urls.push({
+        rawUrls.push({
           loc: `/letenky-do-${dest.slug}`,
           lastmod: dest.updatedAt?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
           changefreq: "daily",
@@ -185,7 +210,7 @@ export async function generateSitemap(): Promise<string> {
     } else {
       // Fallback articles when DB is offline
       for (const article of FALLBACK_ARTICLES) {
-        urls.push({
+        rawUrls.push({
           loc: `/blog/${article.slug}`,
           lastmod: new Date().toISOString().split("T")[0],
           changefreq: "weekly",
@@ -196,7 +221,7 @@ export async function generateSitemap(): Promise<string> {
   } catch (error) {
     console.error("Error fetching dynamic content for sitemap:", error);
     for (const article of FALLBACK_ARTICLES) {
-      urls.push({
+      rawUrls.push({
         loc: `/blog/${article.slug}`,
         lastmod: new Date().toISOString().split("T")[0],
         changefreq: "weekly",
@@ -204,6 +229,16 @@ export async function generateSitemap(): Promise<string> {
       });
     }
   }
+
+  // Deduplicate URLs by location (keep highest priority if duplicate)
+  const urlMap = new Map<string, SitemapUrl>();
+  for (const item of rawUrls) {
+    const existing = urlMap.get(item.loc);
+    if (!existing || (item.priority || 0) > (existing.priority || 0)) {
+      urlMap.set(item.loc, item);
+    }
+  }
+  const urls = Array.from(urlMap.values());
 
   // Generate XML
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -226,6 +261,18 @@ ${urls
   return xml;
 }
 
+// Generate sitemap_index.xml
+export function generateSitemapIndex(): string {
+  const today = new Date().toISOString().split("T")[0];
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${BASE_URL}/sitemap.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+}
+
 // Generate robots.txt
 export function generateRobotsTxt(): string {
   return `# Robots.txt for Akční Letenky
@@ -236,6 +283,7 @@ Disallow: /api/
 
 # Sitemap
 Sitemap: ${BASE_URL}/sitemap.xml
+Sitemap: ${BASE_URL}/sitemap_index.xml
 
 # Crawl-delay for aggressive bots
 User-agent: AhrefsBot
