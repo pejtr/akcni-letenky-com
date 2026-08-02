@@ -45,6 +45,13 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/odskodneni-za-let">
+                    <a className="hover:text-amber-400 font-bold hover:underline transition-colors text-orange-300">
+                      ✈️ Odškodnění za zpožděný let (až 600 €)
+                    </a>
+                  </Link>
+                </li>
+                <li>
                   <a href="https://www.pelikan.cz/cs/pobyty/kategorie/101/vsechny?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors flex items-center gap-1">
                     <span>🚀</span> <span>TOP akce</span>
                   </a>

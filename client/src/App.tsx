@@ -34,7 +34,9 @@ const NewYorkPage = lazy(() => import("./pages/NewYorkPage"));
 const AdminSocialMedia = lazy(() => import("./pages/AdminSocialMedia"));
 const AdminIndexingAndPush = lazy(() => import("./pages/AdminIndexingAndPush"));
 const PriceTrackerPage = lazy(() => import("./pages/PriceTrackerPage"));
+const FlightCompensationPage = lazy(() => import("./pages/FlightCompensationPage"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
+const LuckyWheelPopup = lazy(() => import("./components/LuckyWheelPopup"));
 import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
 const DestinationLandingPage = lazy(() => import("./pages/DestinationLandingPage"));
 const RevolutABTestDashboard = lazy(() => import("./pages/RevolutABTestDashboard"));
@@ -87,6 +89,7 @@ function Router() {
         <Route path="/tipy-pro-cestovatele/:slug" component={TipArticle} />
         <Route path="/dovolene" component={Dovolene} />
         <Route path="/hlidac-cen" component={PriceTrackerPage} />
+        <Route path="/odskodneni-za-let" component={FlightCompensationPage} />
         <Route path="/wishlist" component={Wishlist} />
         <Route path="/vlaky-autobusy" component={VlakyAutobusy} />
         <Route path="/porovnani-cen" component={PriceComparison} />
@@ -149,6 +152,7 @@ function App() {
             <Suspense fallback={null}>
               <HeatmapTracking />
               <RevolutPopupABTest />
+              <LuckyWheelPopup />
             </Suspense>
           )}
           <Toaster />

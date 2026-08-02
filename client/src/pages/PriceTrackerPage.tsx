@@ -3,11 +3,15 @@ import PriceTrackerWidget from "@/components/PriceTrackerWidget";
 import InstantAlertBar from "@/components/InstantAlertBar";
 import TrustBadgesShield from "@/components/TrustBadgesShield";
 import TravelInsuranceWidget from "@/components/TravelInsuranceWidget";
+import FlightCompensationWidget from "@/components/FlightCompensationWidget";
+import EsimWidget from "@/components/EsimWidget";
+import AirportLoungeWidget from "@/components/AirportLoungeWidget";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingDown, ShieldCheck, Bell, Sparkles, CheckCircle2, Zap } from "lucide-react";
+
 
 export default function PriceTrackerPage() {
   return (
@@ -97,6 +101,9 @@ export default function PriceTrackerPage() {
         </section>
 
         <TravelInsuranceWidget />
+        <FlightCompensationWidget />
+        <EsimWidget destination="Dubaj" />
+        <AirportLoungeWidget />
 
         {/* FAQ */}
         <section className="my-10 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
