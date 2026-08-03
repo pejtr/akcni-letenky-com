@@ -1,0 +1,12 @@
+[providers]
+providers = ["node"]
+
+[build]
+cmds = [
+  "corepack enable",
+  "pnpm install --no-frozen-lockfile",
+  "pnpm run build"
+]
+
+[start]
+cmd = "pnpm start"
