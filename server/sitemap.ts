@@ -8,7 +8,7 @@
  * - Main category & tool pages: 0.9
  * - Category listing / blog listing: 0.8
  * - Destination & guide pages: 0.8
- * - Blog articles: 0.7
+ * - Blog articles: 0.6
  * - Airline & secondary pages: 0.6
  */
 
@@ -175,7 +175,7 @@ export async function generateSitemap(): Promise<string> {
   try {
     const db = await getDb();
     if (db) {
-      // Blog articles from DB - priority 0.7
+      // Blog articles from DB - priority 0.6
       const blogArticles = await db.select().from(articles).where(eq(articles.status, "published"));
       if (blogArticles && blogArticles.length > 0) {
         for (const article of blogArticles) {
@@ -183,7 +183,7 @@ export async function generateSitemap(): Promise<string> {
             loc: `/blog/${article.slug}`,
             lastmod: article.updatedAt?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
             changefreq: "weekly",
-            priority: 0.7,
+            priority: 0.6,
           });
         }
       } else {
@@ -192,7 +192,7 @@ export async function generateSitemap(): Promise<string> {
             loc: `/blog/${article.slug}`,
             lastmod: new Date().toISOString().split("T")[0],
             changefreq: "weekly",
-            priority: 0.7,
+            priority: 0.6,
           });
         }
       }
@@ -214,7 +214,7 @@ export async function generateSitemap(): Promise<string> {
           loc: `/blog/${article.slug}`,
           lastmod: new Date().toISOString().split("T")[0],
           changefreq: "weekly",
-          priority: 0.7,
+          priority: 0.6,
         });
       }
     }
@@ -225,7 +225,7 @@ export async function generateSitemap(): Promise<string> {
         loc: `/blog/${article.slug}`,
         lastmod: new Date().toISOString().split("T")[0],
         changefreq: "weekly",
-        priority: 0.7,
+        priority: 0.6,
       });
     }
   }
