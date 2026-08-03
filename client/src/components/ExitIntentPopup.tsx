@@ -45,7 +45,7 @@ function getPersonalizedHeadline(
         return {
           title: "Ta nabídka na vás stále čeká!",
           subtitle: hasDestinations
-            ? `${topDestination} za ještě lepší cenu – jen dalších 10 minut!`
+            ? `${topDestination} za ještě lepší cenu – exkluzivní nabídka`
             : "Exkluzivní sleva na vybranou destinaci",
           emoji: "🔥",
         };
@@ -53,8 +53,8 @@ function getPersonalizedHeadline(
         return {
           title: "Akční ceny jsou téměř vyprodané!",
           subtitle: hasDestinations
-            ? `Zbývají poslední 3 místa na ${topDestination}`
-            : "Letenky do 1 500 Kč – zbývá jen pár míst",
+            ? `Získejte exkluzivní slevu na ${topDestination}`
+            : "Letenky do 1 500 Kč – získejte slevu",
           emoji: "⚡",
         };
       default:
@@ -66,7 +66,7 @@ function getPersonalizedHeadline(
   if (hasDestinations && topDestination) {
     return {
       title: `Nechcete ${topDestination} za skvělou cenu?`,
-      subtitle: "Máme pro vás exkluzivní slevu, která platí jen 15 minut!",
+      subtitle: "Máme pro vás exkluzivní slevu – rezervujte nyní!",
       emoji: "✈️",
     };
   }

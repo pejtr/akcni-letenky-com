@@ -7,6 +7,8 @@ import { Plane, Calendar, TrendingDown, ExternalLink, Star, Hotel } from "lucide
 import { useParams } from "wouter";
 import { bookingSearchLink, pelikanDeepLink } from "@shared/affiliateLinks";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
+import SEO from "@/components/SEO";
+import { generateBreadcrumbSchema } from "@/lib/structuredData";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -173,6 +175,13 @@ export default function DestinationLandingPage() {
     bookingQuery: grammar.title
   };
 
+  const canonicalUrl = `https://www.akcni-letenky.com/${params.destination || 'letenky-do-' + destinationSlug}`;
+  const breadcrumbItems = [
+    { name: "Domů", url: "/" },
+    { name: "Letenky", url: "/levne-letenky" },
+    { name: `Letenky ${grammar.preposition} ${grammar.genitive}`, url: `/${params.destination || 'letenky-do-' + destinationSlug}` },
+  ];
+
   const pelikanDestinationUrl = pelikanDeepLink(
     pelikanDestinationPaths[destinationSlug] || `/cs/akcni-letenky/praha/${destinationSlug}`,
     {
@@ -185,6 +194,23 @@ export default function DestinationLandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col justify-between">
       <div>
+        <SEO
+          title={`Letenky ${grammar.preposition} ${grammar.genitive} | Akční Letenky`}
+          description={meta.description}
+          canonical={canonicalUrl}
+          ogImage={meta.image}
+          structuredData={[
+            generateBreadcrumbSchema(breadcrumbItems),
+            {
+              "@context": "https://schema.org",
+              "@type": "Place",
+              "name": meta.title,
+              "description": meta.description,
+              "image": meta.image,
+              "url": canonicalUrl
+            }
+          ]}
+        />
         <Navigation />
 
         {/* Hero Section */}

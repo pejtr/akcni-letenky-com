@@ -113,7 +113,7 @@ function CountdownBanner() {
 
   return (
     <div className="bg-red-600 text-white py-2 text-center text-sm font-semibold animate-pulse">
-      Akce končí za {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s — Zbývá posledních 5 míst!
+      Akce končí za {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s — Exkluzivní nabídka!
     </div>
   );
 }

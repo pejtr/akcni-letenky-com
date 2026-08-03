@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
-import CountdownTimer from "@/components/CountdownTimer";
+
 import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 import SEO from "@/components/SEO";
@@ -105,9 +105,7 @@ export default function TipyCestovatele() {
           <p className="text-lg opacity-75 max-w-2xl mx-auto">
             Prověřené tipy, triky a průvodce od zkušených cestovatelů. Ušetřete tisíce korun na každé cestě.
           </p>
-          <div className="mt-6 flex justify-center">
-            <CountdownTimer className="bg-white/20 px-4 py-2 rounded-full" />
-          </div>
+          
         </div>
       </section>
 
