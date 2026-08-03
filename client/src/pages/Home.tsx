@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useABTest } from "@/lib/abTest";
 import HeroVariantA from "@/components/HeroVariantA";
 import HeroVariantB from "@/components/HeroVariantB";
-import UrgencyTimer from "@/components/UrgencyTimer";
 import { ChevronRight, Plane } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
@@ -17,8 +16,6 @@ import OptimizedImage from "@/components/OptimizedImage";
 import MobileMenu from "@/components/MobileMenu";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
 import PelikanPrimaryDeals from "@/components/PelikanPrimaryDeals";
-import LiveViewerCounter from "@/components/LiveViewerCounter";
-import PriceTrendIndicator from "@/components/PriceTrendIndicator";
 import FloatingCta from "@/components/FloatingCta";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -624,18 +621,6 @@ export default function Home() {
                           od {formatPrice(Math.round(city.price * 1.4))}
                         </div>
                       </div>
-                      {/* Live Viewer Counter */}
-                      <div className="flex justify-center mb-2">
-                        <LiveViewerCounter destinationId={`city_${city.to.toLowerCase()}`} />
-                      </div>
-                      {/* Urgency Timer */}
-                      <div className="flex justify-center">
-                        <UrgencyTimer offerId={`city_${city.to.toLowerCase()}`} className="text-xs" />
-                      </div>
-                      {/* Price Trend */}
-                      <div className="flex justify-center mt-1">
-                        <PriceTrendIndicator destinationId={`city_${city.to.toLowerCase()}`} currentPrice={city.price} />
-                      </div>
                     </div>
                   </a>
                   {/* Wishlist Heart Icon */}
@@ -773,13 +758,6 @@ export default function Home() {
                       <span className="text-lg md:text-xl font-bold text-orange-600 whitespace-nowrap">od {formatPrice(dest.price)}</span>
                       <span className="text-xs text-gray-400 line-through">od {formatPrice(Math.round(dest.price * 1.35))}</span>
                     </div>
-
-                    {/* Live Viewer Counter */}
-                    <div className="mt-auto">
-                      <LiveViewerCounter destinationId={`return_${dest.slug}`} />
-                    </div>
-                    {/* Price Trend */}
-                    <PriceTrendIndicator destinationId={`return_${dest.slug}`} currentPrice={dest.price} className="mt-1 justify-center" />
                   </div>
                 </a>
               );

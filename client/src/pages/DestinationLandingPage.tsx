@@ -7,23 +7,6 @@ import { Plane, Calendar, TrendingDown, ExternalLink, Star, Hotel } from "lucide
 import { useParams } from "wouter";
 import { bookingSearchLink, pelikanDeepLink } from "@shared/affiliateLinks";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
-import TrustBadgesShield from "@/components/TrustBadgesShield";
-import InstantAlertBar from "@/components/InstantAlertBar";
-import UrgencyTimer from "@/components/UrgencyTimer";
-import FlightHotelPackageCard from "@/components/FlightHotelPackageCard";
-import RevolutCashbackBadge from "@/components/RevolutCashbackBadge";
-import PriceTrackerWidget from "@/components/PriceTrackerWidget";
-import ExperiencesWidget from "@/components/ExperiencesWidget";
-import CarRentalWidget from "@/components/CarRentalWidget";
-import TravelInsuranceWidget from "@/components/TravelInsuranceWidget";
-import AiItineraryGenerator from "@/components/AiItineraryGenerator";
-import FlightCompensationWidget from "@/components/FlightCompensationWidget";
-import EsimWidget from "@/components/EsimWidget";
-import AirportLoungeWidget from "@/components/AirportLoungeWidget";
-import PricePredictionWidget from "@/components/PricePredictionWidget";
-import BaggageCalculatorWidget from "@/components/BaggageCalculatorWidget";
-import EbookDownloadWidget from "@/components/EbookDownloadWidget";
-import ReferralRewardWidget from "@/components/ReferralRewardWidget";
 
 // Destination metadata for SEO
 const destinationMeta: Record<string, {
@@ -233,46 +216,7 @@ export default function DestinationLandingPage() {
           </div>
         </section>
 
-        {/* Tips Section */}
-        {meta.tips.length > 0 && (
-          <section className="py-8 bg-white border-b">
-            <div className="container">
-              <h2 className="text-2xl font-bold mb-4 text-[#003087]">💡 Tipy pro cestovatele</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {meta.tips.map((tip, index) => (
-                  <Card key={index} className="border-l-4 border-l-[#E91E63] shadow-sm">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-gray-700 font-medium">{tip}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* CRO Suite & Revenue Maximizers */}
-        <div className="container py-4">
-          <TrustBadgesShield />
-          <UrgencyTimer remainingSeats={3} />
-          <FlightHotelPackageCard destination={meta.title} flightPrice={4990} affiliateFlightUrl={pelikanDestinationUrl} />
-          <RevolutCashbackBadge />
-          <InstantAlertBar />
-          <ExperiencesWidget destination={meta.title} />
-          <CarRentalWidget destination={meta.title} />
-          <TravelInsuranceWidget />
-          <PriceTrackerWidget defaultDestination={meta.title} />
-          <AiItineraryGenerator destination={meta.title} />
-          <FlightCompensationWidget />
-          <EsimWidget destination={meta.title} />
-          <AirportLoungeWidget />
-          <PricePredictionWidget destination={meta.title} />
-          <BaggageCalculatorWidget />
-          <EbookDownloadWidget />
-          <ReferralRewardWidget />
-        </div>
-
-        {/* Pelikán Offer Banner */}
+        {/* Pelikán Flight Offers */}
         <section className="py-12 bg-gradient-to-b from-white to-green-50">
           <div className="container">
             <div className="rounded-2xl border border-green-100 bg-white p-6 shadow-sm">

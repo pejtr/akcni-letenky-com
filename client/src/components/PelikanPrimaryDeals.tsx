@@ -6,6 +6,8 @@ export default function PelikanPrimaryDeals() {
   const trackClickMutation = trpc.affiliate.trackClick.useMutation();
   const offers = PRIMARY_PELIKAN_OFFERS.slice(0, 6);
 
+  if (offers.length === 0) return null;
+
   const trackClick = (offer: (typeof offers)[number], source: string) => {
     trackClickMutation.mutate({
       destination: offer.destination,
