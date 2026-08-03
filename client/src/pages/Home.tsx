@@ -24,7 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
 import { useWishlist } from "@/hooks/useWishlist";
-import { Heart, Award, Bell } from "lucide-react";
+import { Heart, Award, Bell, BookOpen, ArrowRight } from "lucide-react";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
@@ -1046,6 +1046,101 @@ export default function Home() {
         </Suspense>
       )}
     </div>
+  );
+}
+
+// ── Tipy pro cestovatele widget ─────────────────────────────────────────
+function HomeTipsWidget() {
+  const { data: recentArticles, isLoading } = trpc.articles.recent.useQuery({ limit: 3 });
+
+  if (isLoading) {
+    return (
+      <section className="py-10 bg-[#F0F4F8]">
+        <div className="container">
+          <div className="flex justify-center mb-8">
+            <div className="bg-gradient-to-r from-[#1a5276] to-[#2980b9] py-3 px-6 rounded-lg shadow-lg">
+              <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                💡 Tipy pro cestovatele
+              </h2>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
+                <div className="h-40 bg-gray-200" />
+                <div className="p-5">
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-3" />
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2" />
+                  <div className="h-4 bg-gray-200 rounded w-5/6" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!recentArticles || recentArticles.length === 0) return null;
+
+  return (
+    <section className="py-10 bg-[#F0F4F8]">
+      <div className="container">
+        <div className="flex justify-center mb-8">
+          <div className="bg-gradient-to-r from-[#1a5276] to-[#2980b9] py-3 px-6 rounded-lg shadow-lg">
+            <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+              💡 Tipy pro cestovatele
+            </h2>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {recentArticles.map((article) => (
+            <a
+              key={article.id}
+              href={`/blog/${article.slug}`}
+              className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+            >
+              {article.featuredImage ? (
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={article.featuredImage}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-[#1a5276] text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                      Tip
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-40 bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center">
+                  <BookOpen className="w-12 h-12 text-sky-400" />
+                </div>
+              )}
+              <div className="p-5">
+                <h3 className="font-bold text-gray-800 text-base leading-snug line-clamp-2 group-hover:text-[#1a5276] transition-colors mb-2">
+                  {article.title}
+                </h3>
+                <p className="text-sm text-gray-500 line-clamp-2">{article.excerpt}</p>
+                <div className="flex items-center gap-2 mt-3 text-xs text-[#1a5276] font-semibold">
+                  Číst více <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+        <div className="flex justify-center mt-8">
+          <a
+            href="/tipy-pro-cestovatele"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#1a5276] bg-white border border-[#1a5276]/20 rounded-lg px-5 py-2.5 hover:bg-[#1a5276]/5 transition-colors"
+          >
+            Všechny tipy <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </section>
   );
 }
 
