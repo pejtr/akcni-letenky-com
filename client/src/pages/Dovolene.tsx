@@ -1,6 +1,6 @@
+import { useState, useMemo } from "react";
 import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
-import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";

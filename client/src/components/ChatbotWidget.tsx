@@ -642,8 +642,8 @@ export default function ChatbotWidget() {
                           const lastDestination = messages
                             .filter(m => m.role === "user")
                             .reverse()
-                            .find(m => /\b(paříž|londýn|barcelona|řím|praha|vídeň|madrid|amsterdam|berlín|dubaj|bangkok|tokio|new york|los angeles|miami|cancún|phuket|bali|maledivy|mauricius|seychely|zanzibar|kapverdy|egypt|turecko|řecko|španělsko|itálie|francie|chorvatsko|bulharsko)\b/i.test(m.content))
-                            ?.content.match(/\b(paříž|londýn|barcelona|řím|praha|vídeň|madrid|amsterdam|berlín|dubaj|bangkok|tokio|new york|los angeles|miami|cancún|phuket|bali|maledivy|mauricius|seychely|zanzibar|kapverdy|egypt|turecko|řecko|španělsko|itálie|francie|chorvatsko|bulharsko)\b/i)?.[0];
+                            .find(m => /\b(paříž|londýn|barcelona|řím|praha|vídeň|madrid|amsterdam|berlín|dubaj|bangkok|tokio|new york|los angeles|miami|cancún|phuket|bali|mauricius|seychely|zanzibar|kapverdy|egypt|turecko|řecko|španělsko|itálie|francie|chorvatsko|bulharsko)\b/i.test(m.content))
+                            ?.content.match(/\b(paříž|londýn|barcelona|řím|praha|vídeň|madrid|amsterdam|berlín|dubaj|bangkok|tokio|new york|los angeles|miami|cancún|phuket|bali|mauricius|seychely|zanzibar|kapverdy|egypt|turecko|řecko|španělsko|itálie|francie|chorvatsko|bulharsko)\b/i)?.[0];
                           
                           const lastBudget = messages
                             .filter(m => m.role === "user")

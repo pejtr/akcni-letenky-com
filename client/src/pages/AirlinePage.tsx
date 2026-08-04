@@ -26,7 +26,7 @@ const airlineDealTemplates: Record<string, Array<{ destination: string; from: st
   emirates: [
     { destination: "Dubaj", from: "Praha (PRG)", price: 8990, salePrice: 5183, discount: 42, linkPath: "/cs/akcni-letenky/praha/dubaj" },
     { destination: "Bangkok", from: "Praha (PRG)", price: 18990, salePrice: 12990, discount: 31, linkPath: "/cs/akcni-letenky/praha/bangkok" },
-    { destination: "Maledivy (Male)", from: "Praha (PRG)", price: 21990, salePrice: 14890, discount: 32, linkPath: "/cs/akcni-letenky/praha/maledivy" },
+    
     { destination: "Bali (Denpasar)", from: "Praha (PRG)", price: 24990, salePrice: 16990, discount: 32, linkPath: "/cs/akcni-letenky/praha/bali" },
   ],
   "qatar-airways": [
@@ -251,9 +251,25 @@ export default function AirlinePage() {
         { destination: "Řím", from: "Praha (PRG)", price: 2190, salePrice: 1090, discount: 50, linkPath: "/cs/akcni-letenky/praha/rim" },
       ]);
 
+  // Structured data for SEO
+  const airlineSchema = {
+    "@context": "https://schema.org",
+    "@type": "Airline",
+    "name": airline.name,
+    "description": airline.description,
+    "logo": `https://www.akcni-letenky.com${airline.logo}`,
+    "url": airline.website,
+    "foundingDate": airline.founded,
+    "iataCode": airline.iataCode,
+    "hubAirport": {
+      "@type": "Airport",
+      "name": airline.hub
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecti-spolecnosti/${airline?.slug || ""}`} />
+      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecti-spolecnosti/${airline?.slug || ""}`} ogImage={airline?.logo || undefined} structuredData={[airlineSchema]} />
       <Navigation />
 
       {/* Breadcrumbs */}

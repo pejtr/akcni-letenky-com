@@ -38,6 +38,7 @@ const FlightCompensationPage = lazy(() => import("./pages/FlightCompensationPage
 const BaggageCalculatorPage = lazy(() => import("./pages/BaggageCalculatorPage"));
 const EbookDownloadPage = lazy(() => import("./pages/EbookDownloadPage"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
+const LoginPage = lazy(() => import("./pages/Login"));
 const LuckyWheelPopup = lazy(() => import("./components/LuckyWheelPopup"));
 import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
 const DestinationLandingPage = lazy(() => import("./pages/DestinationLandingPage"));
@@ -109,6 +110,8 @@ function Router() {
         <Route path="/new-york" component={NewYorkPage} />
         <Route path="/letenky-new-york" component={NewYorkPage} />
         <Route path={"/404"} component={NotFound} />
+        {/* Login page */}
+        <Route path="/prihlaseni" component={LoginPage} />
         {/* Catch-all destination landing pages - MUST be last before NotFound */}
         <Route path="/:destination" component={DestinationLandingPage} />
         {/* Final fallback route */}

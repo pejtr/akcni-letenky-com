@@ -133,7 +133,7 @@ const grammarMap: Record<string, { title: string; preposition: string; genitive:
   malta: { title: "Malta", preposition: "na", genitive: "Malty" },
   kypr: { title: "Kypr", preposition: "na", genitive: "Kypru" },
   egypt: { title: "Egypt", preposition: "do", genitive: "Egypta" },
-  maledivy: { title: "Maledivy", preposition: "na", genitive: "Malediv" },
+  
   bali: { title: "Bali", preposition: "na", genitive: "Bali" },
   istanbul: { title: "Istanbul", preposition: "do", genitive: "Istanbulu" },
   amsterdam: { title: "Amsterdam", preposition: "do", genitive: "Amsterdamu" },

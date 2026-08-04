@@ -80,11 +80,7 @@ export default function Footer() {
                     Krátké výlety
                   </a>
                 </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/maledivy?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Maledivy
-                  </a>
-                </li>
+                
               </ul>
             </div>
 

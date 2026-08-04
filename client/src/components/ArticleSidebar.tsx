@@ -82,13 +82,6 @@ const DESTINATION_VACATIONS: Record<string, Array<{ id: string; title: string; p
   default: [
     {
       id: "side-vac-1",
-      title: "Maledivy Resort All Inclusive",
-      price: 32890,
-      imageUrl: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80",
-      path: "https://www.pelikan.cz/cs/pobyt/maledivy-all-inclusive",
-    },
-    {
-      id: "side-vac-2",
       title: "Řecko Rhodos ★★★★★",
       price: 15790,
       imageUrl: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&q=80",
