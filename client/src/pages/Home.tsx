@@ -389,7 +389,7 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Domů", "item": "https://akcni-letenky.com/" }
+              { "@type": "ListItem", "position": 1, "name": "Domů", "item": "https://www.akcni-letenky.com/" }
             ]
           },
           generateFAQSchema([

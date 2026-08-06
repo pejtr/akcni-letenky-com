@@ -84,13 +84,13 @@ export default function WhatsAppGenerator() {
         if (holiday.returnDate) {
           message += `🔙 Návrat: ${new Date(holiday.returnDate).toLocaleDateString("cs-CZ")}\n`;
         }
-        message += `🔗 https://akcni-letenky.com/letenky-${holiday.toCity.toLowerCase().replace(/\s+/g, "-")}\n\n`;
+        message += `🔗 https://www.akcni-letenky.com/letenky-${holiday.toCity.toLowerCase().replace(/\s+/g, "-")}\n\n`;
       });
     }
 
     message += "━━━━━━━━━━━━━━━━\n";
     message += "⚡ *Rezervujte rychle - nabídky jsou limitované!*\n\n";
-    message += "🌐 https://akcni-letenky.com\n";
+    message += "🌐 https://www.akcni-letenky.com\n";
 
     return message;
   };

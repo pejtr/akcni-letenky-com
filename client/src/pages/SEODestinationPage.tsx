@@ -51,7 +51,7 @@ export default function SEODestinationPage() {
       "latitude": destination.latitude,
       "longitude": destination.longitude
     },
-    "url": `https://akcni-letenky.com${location}`
+    "url": `https://www.akcni-letenky.com${location}`
   } : null;
 
   // Generate Schema.org TravelAction structured data

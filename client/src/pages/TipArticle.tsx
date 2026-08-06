@@ -39,7 +39,7 @@ export default function TipArticle() {
       datePublished: (article.publishedAt || article.createdAt).toISOString(),
       dateModified: (article.updatedAt || article.publishedAt || article.createdAt).toISOString(),
       image: article.featuredImage || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80",
-      url: `https://akcni-letenky.com/tipy-pro-cestovatele/${article.slug}`,
+      url: `https://www.akcni-letenky.com/tipy-pro-cestovatele/${article.slug}`,
     }));
 
     injectStructuredData(generateBreadcrumbSchema([

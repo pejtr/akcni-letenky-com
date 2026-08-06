@@ -66,14 +66,14 @@ export default function BlogPost() {
             datePublished: (article.publishedAt || article.createdAt).toISOString(),
             dateModified: (article.updatedAt || article.publishedAt || article.createdAt).toISOString(),
             image: article.featuredImage || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80",
-            url: `https://akcni-letenky.com/blog/${article.slug}`,
+            url: `https://www.akcni-letenky.com/blog/${article.slug}`,
           }),
           {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Blog", "item": "https://akcni-letenky.com/blog" },
-              { "@type": "ListItem", "position": 2, "name": article.title, "item": `https://akcni-letenky.com/blog/${article.slug}` }
+              { "@type": "ListItem", "position": 1, "name": "Blog", "item": "https://www.akcni-letenky.com/blog" },
+              { "@type": "ListItem", "position": 2, "name": article.title, "item": `https://www.akcni-letenky.com/blog/${article.slug}` }
             ]
           }
         ] : undefined}

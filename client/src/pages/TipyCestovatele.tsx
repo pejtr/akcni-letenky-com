@@ -49,26 +49,27 @@ export default function TipyCestovatele() {
     injectStructuredData({
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "name": "Tipy pro cestovatele | Akční Letenky",
-      "description": "Průvodce levným cestováním: jak najít levné letenky, ušetřit na cestování a cestovat jako profík.",
-      "url": "https://akcni-letenky.com/tipy-pro-cestovatele",
+      "name": "Tipy pro cestovatele",
+      "description": "Tipy, návody a praktické rady pro cestování, letenky a dovolenou.",
+      "url": "https://www.akcni-letenky.com/tipy-pro-cestovatele",
       "publisher": {
         "@type": "Organization",
-        "name": "Akční Letenky",
-        "url": "https://akcni-letenky.com",
+        "name": "Akční Letenky",
+        "url": "https://www.akcni-letenky.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://akcni-letenky.com/logo.png"
+          "url": "https://www.akcni-letenky.com/logo.png"
         }
-      },
-      "inLanguage": "cs",
-      "breadcrumb": {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Akční Letenky", "item": "https://akcni-letenky.com" },
-          { "@type": "ListItem", "position": 2, "name": "Tipy pro cestovatele", "item": "https://akcni-letenky.com/tipy-pro-cestovatele" }
-        ]
       }
+    });
+
+    injectStructuredData({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Akční Letenky", "item": "https://www.akcni-letenky.com" },
+        { "@type": "ListItem", "position": 2, "name": "Tipy pro cestovatele", "item": "https://www.akcni-letenky.com/tipy-pro-cestovatele" }
+      ]
     });
     return () => removeAllStructuredData();
   }, []);
