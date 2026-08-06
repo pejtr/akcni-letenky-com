@@ -45,13 +45,18 @@ async function ensureDbSchema() {
     const db = await getDb();
     if (db) {
       const { sql } = await import("drizzle-orm");
-      await db.execute(sql`ALTER TABLE social_posts ADD COLUMN IF NOT EXISTS title VARCHAR(255)`);
-      console.log("[DB] Schema check: social_posts.title column ensured");
+      const result = await db.execute(sql`SELECT COUNT(*) as cnt FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'social_posts' AND column_name = 'title'`);
+      const rows = result[0] as any;
+      const hasColumn = Array.isArray(rows) ? rows[0]?.cnt > 0 : (rows?.cnt ?? rows?.[0]?.cnt) > 0;
+      if (!hasColumn) {
+        await db.execute(sql`ALTER TABLE social_posts ADD COLUMN title VARCHAR(255)`);
+        console.log("[DB] Schema migration: added social_posts.title column");
+      } else {
+        console.log("[DB] Schema check: social_posts.title column already exists");
+      }
     }
   } catch (e: any) {
-    if (!e?.message?.includes("Duplicate column")) {
-      console.warn("[DB] Schema migration warning:", e?.message);
-    }
+    console.warn("[DB] Schema migration warning:", e?.message);
   }
 }
 
