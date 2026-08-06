@@ -39,7 +39,24 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
+async function ensureDbSchema() {
+  try {
+    const { getDb } = await import("../db");
+    const db = await getDb();
+    if (db) {
+      const { sql } = await import("drizzle-orm");
+      await db.execute(sql`ALTER TABLE social_posts ADD COLUMN IF NOT EXISTS title VARCHAR(255)`);
+      console.log("[DB] Schema check: social_posts.title column ensured");
+    }
+  } catch (e: any) {
+    if (!e?.message?.includes("Duplicate column")) {
+      console.warn("[DB] Schema migration warning:", e?.message);
+    }
+  }
+}
+
 async function startServer() {
+  await ensureDbSchema();
   const app = express();
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
