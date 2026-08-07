@@ -26,6 +26,8 @@ import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import { useTicketCountdown } from "@/hooks/useTicketCountdown";
+import TravelQuizWidget from "@/components/TravelQuizWidget";
+import PelikanSearchWidget from "@/components/PelikanSearchWidget";
 import SEO from "@/components/SEO";
 import { generateFAQSchema } from "@/lib/structuredData";
 
@@ -681,6 +683,16 @@ export default function Home() {
           </div>
 
           <TopFlightsThisWeek />
+
+          {/* Official Pelikan Search Widget */}
+          <PelikanSearchWidget departures="PRG" />
+        </div>
+      </section>
+
+      {/* Travel Quiz Widget - Budget & Style recommendation */}
+      <section className="py-6 bg-white">
+        <div className="container">
+          <TravelQuizWidget />
         </div>
       </section>
 

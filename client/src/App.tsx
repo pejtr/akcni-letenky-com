@@ -8,6 +8,8 @@ import MetaPixel from "./components/MetaPixel";
 import { initOnyxJourney } from "./lib/leadosTracking";
 import Home from "./pages/Home";
 
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
+
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AirlinePage = lazy(() => import("./pages/AirlinePage"));
 const Blog = lazy(() => import("./pages/Blog"));
@@ -38,6 +40,7 @@ const FlightCompensationPage = lazy(() => import("./pages/FlightCompensationPage
 const BaggageCalculatorPage = lazy(() => import("./pages/BaggageCalculatorPage"));
 const EbookDownloadPage = lazy(() => import("./pages/EbookDownloadPage"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
+const AdminUgcContentFactory = lazy(() => import("./pages/AdminUgcContentFactory"));
 const LoginPage = lazy(() => import("./pages/Login"));
 const LuckyWheelPopup = lazy(() => import("./components/LuckyWheelPopup"));
 import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
@@ -84,6 +87,7 @@ function Router() {
         <Route path="/admin/whatsapp-generator" component={WhatsAppGenerator} />
         <Route path="/admin/social-media" component={AdminSocialMedia} />
         <Route path="/admin/indexing-and-push" component={AdminIndexingAndPush} />
+        <Route path="/admin/ugc-factory" component={AdminUgcContentFactory} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/levne-letenky" component={LevneLetenky} />
         <Route path="/last-minute" component={LevneLetenky} />
@@ -133,6 +137,12 @@ function App() {
     // LeadOS / Travel Revenue Network initialization (onyx_journey token & affiliate tracking)
     initOnyxJourney();
 
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      });
+    }
+
     const win = window as Window & {
       requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
       cancelIdleCallback?: (id: number) => void;
@@ -164,6 +174,7 @@ function App() {
           )}
           <Toaster />
           <WebPushPermissionBanner />
+          <PWAInstallPrompt />
           <Router />
         </TooltipProvider>
       </ThemeProvider>

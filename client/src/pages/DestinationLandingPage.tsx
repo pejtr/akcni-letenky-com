@@ -7,6 +7,7 @@ import { Plane, Calendar, TrendingDown, ExternalLink, Star, Hotel } from "lucide
 import { useParams } from "wouter";
 import { bookingSearchLink, pelikanDeepLink } from "@shared/affiliateLinks";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
+import LowFareCalendar from "@/components/LowFareCalendar";
 import SEO from "@/components/SEO";
 import { generateBreadcrumbSchema } from "@/lib/structuredData";
 
@@ -239,6 +240,13 @@ export default function DestinationLandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Low Fare Calendar */}
+        <section className="py-4 bg-slate-900">
+          <div className="container">
+            <LowFareCalendar destinationName={meta.title} destinationSlug={destinationSlug} />
           </div>
         </section>
 

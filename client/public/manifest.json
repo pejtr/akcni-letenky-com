@@ -1,0 +1,21 @@
+{
+  "short_name": "Akční Letenky",
+  "name": "Akční Letenky - Akční a Last Minute Letenky z Prahy",
+  "icons": [
+    {
+      "src": "/logo-akcni-letenky.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo-akcni-letenky.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#e11d48",
+  "display": "standalone",
+  "orientation": "portrait"
+}
