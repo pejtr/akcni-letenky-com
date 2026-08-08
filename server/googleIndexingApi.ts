@@ -1,204 +1,188 @@
-/**
- * Google Indexing API Integration
- * 
- * Automatically sends URL update signals directly to Google Search Engine
- * whenever a new blog article, destination page, or cheap flight deal is published.
- */
-
-import { getDb } from "./db";
-import { indexingLogs } from "../drizzle/schema";
-import { desc } from "drizzle-orm";
-
-const BASE_DOMAIN = "https://www.akcni-letenky.com";
+import crypto from "crypto";
 
 export interface IndexingResult {
   success: boolean;
   url: string;
   type: "URL_UPDATED" | "URL_DELETED";
-  isSimulated: boolean;
-  apiResponse?: string;
-  errorMessage?: string;
+  message: string;
+  timestamp: string;
+}
+
+const inMemoryLogs: IndexingResult[] = [];
+
+/**
+ * Ensures URL is absolute and belongs to https://www.akcni-letenky.com
+ */
+export function sanitizeIndexingUrl(inputUrl: string): string {
+  let url = inputUrl.trim();
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = `https://www.akcni-letenky.com${url.startsWith("/") ? "" : "/"}${url}`;
+  }
+  url = url.replace(/https?:\/\/[^\s"'<>\\]*railway\.app/g, "https://www.akcni-letenky.com");
+  url = url.replace(/https?:\/\/akcni-letenky\.com/g, "https://www.akcni-letenky.com");
+  return url;
 }
 
 /**
- * Submit a URL to Google Indexing API
+ * Generate a JWT token for Google Service Account authentication
  */
-export async function submitUrlToGoogleIndexing(
-  url: string,
+export function createGoogleJwtToken(clientEmail: string, privateKey: string): string {
+  const header = {
+    alg: "RS256",
+    typ: "JWT",
+  };
+
+  const now = Math.floor(Date.now() / 1000);
+  const claimSet = {
+    iss: clientEmail,
+    scope: "https://www.googleapis.com/auth/indexing",
+    aud: "https://oauth2.googleapis.com/token",
+    exp: now + 3600,
+    iat: now,
+  };
+
+  const base64Header = Buffer.from(JSON.stringify(header)).toString("base64url");
+  const base64ClaimSet = Buffer.from(JSON.stringify(claimSet)).toString("base64url");
+  const signatureInput = `${base64Header}.${base64ClaimSet}`;
+
+  // Clean formatted private key
+  const formattedKey = privateKey.replace(/\\n/g, "\n");
+  const signer = crypto.createSign("RSA-SHA256");
+  signer.update(signatureInput);
+  const signature = signer.sign(formattedKey, "base64url");
+
+  return `${signatureInput}.${signature}`;
+}
+
+/**
+ * Submit single URL to Google Indexing API v3
+ */
+export async function requestGoogleIndexing(
+  urlInput: string,
   type: "URL_UPDATED" | "URL_DELETED" = "URL_UPDATED"
 ): Promise<IndexingResult> {
-  const fullUrl = url.startsWith("http") ? url : `${BASE_DOMAIN}${url.startsWith("/") ? "" : "/"}${url}`;
-  
-  const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const url = sanitizeIndexingUrl(urlInput);
+  const timestamp = new Date().toISOString();
+
+  const clientEmail = process.env.GOOGLE_CLIENT_EMAIL || process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
-  // Dry-Run Simulation mode when Google Cloud service account keys not configured
   if (!clientEmail || !privateKey) {
-    console.log(`[GoogleIndexing] Credentials missing. DRY-RUN SIMULATING submission for ${fullUrl}`);
-    
-    await logIndexingResult({
-      url: fullUrl,
-      type,
-      status: "simulated",
-      apiResponse: JSON.stringify({
-        urlNotificationMetadata: {
-          url: fullUrl,
-          latestUpdate: {
-            url: fullUrl,
-            type,
-            notifyTime: new Date().toISOString(),
-          },
-        },
-        mode: "DRY_RUN_SIMULATION",
-      }),
-    });
-
-    return {
+    const res: IndexingResult = {
       success: true,
-      url: fullUrl,
+      url,
       type,
-      isSimulated: true,
-      apiResponse: "Simulated submission recorded",
+      message: "Credentials missing (GOOGLE_CLIENT_EMAIL / GOOGLE_PRIVATE_KEY). Local simulation logged.",
+      timestamp,
     };
+    inMemoryLogs.unshift(res);
+    return res;
   }
 
   try {
-    // Live Google Indexing API Call via OAuth2 Service Account
-    const endpoint = "https://indexing.googleapis.com/v3/urlNotifications:publish";
-    
-    // Construct JWT assertion for Service Account
-    const now = Math.floor(Date.now() / 1000);
-    const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
-    const claimSet = Buffer.from(
-      JSON.stringify({
-        iss: clientEmail,
-        scope: "https://www.googleapis.com/auth/indexing",
-        aud: "https://oauth2.googleapis.com/token",
-        exp: now + 3600,
-        iat: now,
-      })
-    ).toString("base64url");
+    const jwtToken = createGoogleJwtToken(clientEmail, privateKey);
 
-    // Live HTTP Request to Google Indexing API
-    const response = await fetch(endpoint, {
+    // Exchange JWT for OAuth access token
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        assertion: jwtToken,
+      }),
+    });
+
+    if (!tokenRes.ok) {
+      const errText = await tokenRes.text();
+      throw new Error(`OAuth token exchange failed: ${tokenRes.status} ${errText}`);
+    }
+
+    const tokenData = (await tokenRes.json()) as { access_token: string };
+
+    // Call Google Indexing API
+    const apiRes = await fetch("https://indexing.googleapis.com/v3/urlNotifications:publish", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenData.access_token}`,
       },
       body: JSON.stringify({
-        url: fullUrl,
+        url,
         type,
       }),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      const errorMsg = data.error?.message || response.statusText || "Google Indexing API Error";
-      await logIndexingResult({
-        url: fullUrl,
-        type,
-        status: "failed",
-        errorMessage: errorMsg,
-        apiResponse: JSON.stringify(data),
-      });
-      return { success: false, url: fullUrl, type, isSimulated: false, errorMessage: errorMsg };
+    if (!apiRes.ok) {
+      const errText = await apiRes.text();
+      throw new Error(`Google Indexing API publish failed: ${apiRes.status} ${errText}`);
     }
 
-    await logIndexingResult({
-      url: fullUrl,
-      type,
-      status: "success",
-      apiResponse: JSON.stringify(data),
-    });
-
-    return {
+    console.log(`[Google Indexing API] Successfully submitted ${url} (${type})`);
+    const res: IndexingResult = {
       success: true,
-      url: fullUrl,
+      url,
       type,
-      isSimulated: false,
-      apiResponse: JSON.stringify(data),
+      message: "Successfully submitted to Google Indexing API v3.",
+      timestamp,
     };
-  } catch (err: any) {
-    const errorMsg = err.message || "Network error contacting Google Indexing API";
-    await logIndexingResult({
-      url: fullUrl,
+    inMemoryLogs.unshift(res);
+    return res;
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`[Google Indexing API Error] Failed for ${url}:`, msg);
+    const res: IndexingResult = {
+      success: false,
+      url,
       type,
-      status: "failed",
-      errorMessage: errorMsg,
-    });
-    return { success: false, url: fullUrl, type, isSimulated: false, errorMessage: errorMsg };
+      message: `Error: ${msg}`,
+      timestamp,
+    };
+    inMemoryLogs.unshift(res);
+    return res;
   }
 }
 
-/**
- * Notify Google Indexing API for a newly generated blog article
- */
+/** Alias for backward compatibility */
+export const submitUrlToGoogleIndexing = requestGoogleIndexing;
+
+/** Trigger Google Indexing API upon publishing a new article */
 export async function notifyGoogleForNewArticle(slug: string): Promise<IndexingResult> {
-  const url = `${BASE_DOMAIN}/blog/${slug}`;
-  return await submitUrlToGoogleIndexing(url, "URL_UPDATED");
+  const articleUrl = `https://www.akcni-letenky.com/blog/${slug}`;
+  return await requestGoogleIndexing(articleUrl, "URL_UPDATED");
+}
+
+/** Submit core pages in batch */
+export async function submitCorePagesToGoogleIndexing(): Promise<IndexingResult[]> {
+  const coreUrls = [
+    "https://www.akcni-letenky.com/",
+    "https://www.akcni-letenky.com/blog",
+    "https://www.akcni-letenky.com/dovolene",
+    "https://www.akcni-letenky.com/levne-letenky",
+    "https://www.akcni-letenky.com/hlidac-cen",
+    "https://www.akcni-letenky.com/odskodneni-za-let",
+    "https://www.akcni-letenky.com/kalkulacka-zavazadel",
+    "https://www.akcni-letenky.com/ebook-zdarma",
+  ];
+  return await batchGoogleIndexing(coreUrls);
+}
+
+/** Get in-memory logs */
+export async function getIndexingLogs(): Promise<IndexingResult[]> {
+  return inMemoryLogs;
 }
 
 /**
- * Submit all core static pages to Google Indexing API
+ * Submit batch of URLs to Google Indexing API
  */
-export async function submitCorePagesToGoogleIndexing(): Promise<IndexingResult[]> {
-  const corePages = [
-    "/",
-    "/levne-letenky",
-    "/last-minute",
-    "/letenky",
-    "/dovolene",
-    "/blog",
-    "/tipy-pro-cestovatele",
-    "/aerolinky",
-  ];
-
+export async function batchGoogleIndexing(
+  urls: string[],
+  type: "URL_UPDATED" | "URL_DELETED" = "URL_UPDATED"
+): Promise<IndexingResult[]> {
   const results: IndexingResult[] = [];
-  for (const page of corePages) {
-    const res = await submitUrlToGoogleIndexing(page, "URL_UPDATED");
+  for (const rawUrl of urls) {
+    if (!rawUrl.trim()) continue;
+    const res = await requestGoogleIndexing(rawUrl, type);
     results.push(res);
   }
   return results;
-}
-
-/**
- * Log result to database table indexing_logs
- */
-async function logIndexingResult(log: {
-  url: string;
-  type: "URL_UPDATED" | "URL_DELETED";
-  status: "success" | "failed" | "simulated";
-  apiResponse?: string;
-  errorMessage?: string;
-}) {
-  try {
-    const db = await getDb();
-    if (!db) return;
-
-    await db.insert(indexingLogs).values({
-      url: log.url,
-      type: log.type,
-      status: log.status,
-      apiResponse: log.apiResponse,
-      errorMessage: log.errorMessage,
-      submittedAt: new Date(),
-    });
-  } catch (e) {
-    console.error("[GoogleIndexing] Error logging indexing result:", e);
-  }
-}
-
-/**
- * Get recent indexing logs from database
- */
-export async function getIndexingLogs(limit: number = 50) {
-  try {
-    const db = await getDb();
-    if (!db) return [];
-    return await db.select().from(indexingLogs).orderBy(desc(indexingLogs.id)).limit(limit);
-  } catch (e) {
-    console.error("[GoogleIndexing] Error fetching logs:", e);
-    return [];
-  }
 }
