@@ -124,7 +124,7 @@ export default function ReunionPage() {
       <SEO 
         title="Letenky na Réunion od 1 790 Kč | Exotický ostrov v Indickém oceánu | Akční Letenky"
         description="Levné letenky na ostrov Réunion od 1 790 Kč. Sopky, pralesy, vodopády a tyrkysové pláže. Přímé lety z Paříže nebo s přestupem z Prahy."
-        canonicalUrl="https://www.akcni-letenky.com/reunion"
+        canonical="https://www.akcni-letenky.com/reunion"
       />
       {/* Urgency Banner */}
       <CountdownBanner />

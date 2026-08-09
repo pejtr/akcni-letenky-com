@@ -78,7 +78,7 @@ export default function TipArticle() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
-      <SEO title={`${article?.title || "Tip na cestování"} | Akční Letenky`} description={article?.excerpt || "Užitečné tipy a triky pro cestování."} canonical="https://www.akcni-letenky.com/tipy" />
+      <SEO title={`${article?.title || "Tip na cestování"} | Akční Letenky`} description={article?.excerpt || "Užitečné tipy a triky pro cestování."} canonical={`https://www.akcni-letenky.com/tipy-pro-cestovatele/${article?.slug || ""}`} />
       <div>
         <Navigation />
 

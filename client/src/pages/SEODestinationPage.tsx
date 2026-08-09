@@ -71,7 +71,7 @@ export default function SEODestinationPage() {
     "provider": {
       "@type": "Organization",
       "name": "Akční Letenky",
-      "url": "https://akcni-letenky.com"
+      "url": "https://www.akcni-letenky.com"
     }
   };
 

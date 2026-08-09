@@ -109,13 +109,9 @@ const STATIC_PAGES: SitemapUrl[] = [
 // Special destination pages
 const SPECIAL_DESTINATIONS = [
   { path: "/dubaj", priority: 0.8 },
-  { path: "/letenky-dubaj", priority: 0.8 },
   { path: "/bali", priority: 0.8 },
-  { path: "/letenky-bali", priority: 0.8 },
   { path: "/new-york", priority: 0.8 },
-  { path: "/letenky-new-york", priority: 0.8 },
   { path: "/reunion", priority: 0.7 },
-  { path: "/letenky-reunion", priority: 0.7 },
   { path: "/letenky-do-1500", priority: 0.7 },
 ];
 
@@ -142,16 +138,10 @@ export async function generateSitemap(): Promise<string> {
     });
   }
 
-  // Add SEO City destination pages - priority 0.7
+  // Add SEO City destination pages - priority 0.7 (canonical: /letenky-{slug})
   for (const city of destinationCities) {
     rawUrls.push({
       loc: `/letenky-${city.slug}`,
-      lastmod: new Date().toISOString().split("T")[0],
-      changefreq: "weekly",
-      priority: 0.7,
-    });
-    rawUrls.push({
-      loc: `/${city.slug}`,
       lastmod: new Date().toISOString().split("T")[0],
       changefreq: "weekly",
       priority: 0.7,

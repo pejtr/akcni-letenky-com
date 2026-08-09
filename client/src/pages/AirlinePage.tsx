@@ -269,7 +269,7 @@ export default function AirlinePage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecti-spolecnosti/${airline?.slug || ""}`} ogImage={airline?.logo || undefined} structuredData={[airlineSchema]} />
+      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecka-spolecnost/${airline?.slug || ""}`} ogImage={airline?.logo || undefined} structuredData={[airlineSchema]} />
       <Navigation />
 
       {/* Breadcrumbs */}

@@ -26,7 +26,7 @@ export default function Letenky1500() {
       <SEO 
         title="Letenky do 1 500 Kč | Nejlevnější lety po Evropě | Akční Letenky"
         description="Objevte nejlevnější letenky do 1 500 Kč zpáteční. Londýn od 733 Kč, Řím od 712 Kč, Barcelona od 946 Kč. Rezervujte ještě dnes!"
-        canonicalUrl="https://www.akcni-letenky.com/letendy-do-1500-kc"
+        canonical="https://www.akcni-letenky.com/letenky-do-1500"
       />
       {/* Header */}
       <header className="bg-gradient-to-r from-[#FFD700] to-[#FFC107] shadow-md sticky top-0 z-50">

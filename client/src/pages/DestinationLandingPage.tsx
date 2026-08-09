@@ -176,11 +176,12 @@ export default function DestinationLandingPage() {
     bookingQuery: grammar.title
   };
 
-  const canonicalUrl = `https://www.akcni-letenky.com/${params.destination || 'letenky-do-' + destinationSlug}`;
+  const canonicalSlug = `letenky-${destinationSlug}`;
+  const canonicalUrl = `https://www.akcni-letenky.com/${canonicalSlug}`;
   const breadcrumbItems = [
     { name: "Domů", url: "/" },
     { name: "Letenky", url: "/levne-letenky" },
-    { name: `Letenky ${grammar.preposition} ${grammar.genitive}`, url: `/${params.destination || 'letenky-do-' + destinationSlug}` },
+    { name: `Letenky ${grammar.preposition} ${grammar.genitive}`, url: `/${canonicalSlug}` },
   ];
 
   const pelikanDestinationUrl = pelikanDeepLink(
