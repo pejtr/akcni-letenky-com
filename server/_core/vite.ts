@@ -60,7 +60,11 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
+  // Route whitelist: return real 404 for unknown paths BEFORE SPA fallback
+  const { routeWhitelistValidation } = require("./seoMiddleware");
+  app.use(routeWhitelistValidation);
+
+  // fall through to index.html if the file doesn't exist (valid SPA routes only)
   app.use("*", (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });

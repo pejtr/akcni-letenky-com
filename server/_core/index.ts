@@ -67,6 +67,25 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // ============ SEO Middleware (must be BEFORE all routes) ============
+  const {
+    canonicalDomainRedirect,
+    trailingSlashRedirect,
+    legacyUrlHandler,
+    legacyAirlineRedirects,
+    routeWhitelistValidation,
+  } = await import("./seoMiddleware");
+
+  // 1. Non-www → www redirect
+  app.use(canonicalDomainRedirect);
+  // 2. Strip trailing slashes
+  app.use(trailingSlashRedirect);
+  // 3. Block legacy WordPress URLs with 410 Gone
+  app.use(legacyUrlHandler);
+  // 4. Redirect old airline URLs to new format
+  app.use(legacyAirlineRedirects);
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   
