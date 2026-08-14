@@ -165,17 +165,35 @@ export function legacyUrlHandler(req: Request, res: Response, next: NextFunction
 }
 
 /**
- * Middleware: Legacy airline URL redirects
+ * Middleware: Legacy airline URL redirects & broken template fix
  */
 export function legacyAirlineRedirects(req: Request, res: Response, next: NextFunction) {
-  // Strip leading slash and trailing slash
-  const slug = req.path.replace(/^\//, "").replace(/\/$/, "").toLowerCase();
+  let path = req.path.replace(/\/$/, "").toLowerCase();
   
-  const redirect = LEGACY_AIRLINE_REDIRECTS[slug];
-  if (redirect) {
-    return res.redirect(301, redirect);
+  // Handle literal :slug template error
+  if (path.includes(":slug")) {
+    return res.status(410).send("<!DOCTYPE html><html><head><title>410 Gone</title></head><body><h1>410 Gone</h1><p>Neplatná šablona URL.</p></body></html>");
   }
+
+  // Strip leading slash
+  let slug = path.replace(/^\//, "");
   
+  // Check direct slug redirect e.g. "klm-letenky"
+  if (LEGACY_AIRLINE_REDIRECTS[slug]) {
+    return res.redirect(301, LEGACY_AIRLINE_REDIRECTS[slug]);
+  }
+
+  // Check with /letecke-spolecnosti/ or /letecka-spolecnost/ prefix
+  const airlinePrefixMatch = slug.match(/^(?:letecke-spolecnosti|letecka-spolecnost)\/(.+)$/);
+  if (airlinePrefixMatch) {
+    const rawAirline = airlinePrefixMatch[1].replace(/-letenky$/, "");
+    if (VALID_AIRLINE_SLUGS.has(rawAirline)) {
+      if (req.path !== `/letecka-spolecnost/${rawAirline}`) {
+        return res.redirect(301, `/letecka-spolecnost/${rawAirline}`);
+      }
+    }
+  }
+
   next();
 }
 
