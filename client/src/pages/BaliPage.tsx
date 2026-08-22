@@ -1,6 +1,9 @@
+import SEO from "@/components/SEO";
 import { ArrowRight, Plane, MapPin, Sun, Waves, TreePine, Heart } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
+
+import InternalLinkingHub from "@/components/InternalLinkingHub";
 
 export default function BaliPage() {
   const { variant: ctaVariant, ctaText } = useABTest({
@@ -14,6 +17,11 @@ export default function BaliPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEO
+        title="Bali: Ostrov bohů"
+        description="Levné letenky do Bali. Objevte ráj mezi nebem a zemí – tropické pláže, rýžové terasy a úchvatné chrámy."
+        canonical="https://www.akcni-letenky.com/bali"
+      />
       <Navigation />
 
       {/* Hero Section */}
@@ -187,6 +195,11 @@ export default function BaliPage() {
           </div>
         </div>
       </section>
+
+      {/* SEO Internal Linking Hub */}
+      <div className="container max-w-6xl my-8">
+        <InternalLinkingHub />
+      </div>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-[#1a5276] to-[#2874A6] text-white">

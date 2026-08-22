@@ -1,15 +1,20 @@
 import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
-import { Link } from "wouter";
+import Footer from "@/components/Footer";
 import { Calendar, User, ArrowRight, BookOpen, Plane, Lightbulb, TrendingDown, Shield, Star } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
-import CountdownTimer from "@/components/CountdownTimer";
-import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
 
-const KIWI_LINK = "https://www.kiwi.com/cs/?affilid=155221&currency=czk";
+import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
+import SEO from "@/components/SEO";
+
+const PELIKAN_LINK = pelikanDeepLink("/cs/akcni-letenky", {
+  campaign: "travel-tips",
+  channel: "tips-page",
+});
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "jak-najit-levne-letenky-triky": <TrendingDown className="w-5 h-5" />,
@@ -25,7 +30,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 const FEATURED_TIPS = [
   { icon: "💸", title: "Rezervujte v úterý", desc: "Nejnižší ceny letenek se objevují v úterý a středu" },
   { icon: "📅", title: "Flexibilní data", desc: "Posun odletu o 1–2 dny může ušetřit až 2 000 Kč" },
-  { icon: "🔔", title: "Cenové alerty", desc: "Nastavte si upozornění na pokles ceny na Kiwi.com" },
+  { icon: "🔔", title: "Cenové alerty", desc: "Sledujte pokles ceny a aktualni Pelikan nabidky" },
   { icon: "🕵️", title: "Inkognito mód", desc: "Vždy hledejte v anonymním okně prohlížeče" },
   { icon: "✈️", title: "Alternativní letiště", desc: "Z Vídně nebo Bratislavy se někdy letí levněji" },
   { icon: "🧳", title: "Příruční zavazadlo", desc: "Ušetřete stovky Kč tím, že se vejdete do kabiny" },
@@ -44,26 +49,27 @@ export default function TipyCestovatele() {
     injectStructuredData({
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "name": "Tipy pro cestovatele | Akční Letenky",
-      "description": "Průvodce levným cestováním: jak najít levné letenky, ušetřit na cestování a cestovat jako profík.",
-      "url": "https://akcni-letenky.com/tipy-pro-cestovatele",
+      "name": "Tipy pro cestovatele",
+      "description": "Tipy, návody a praktické rady pro cestování, letenky a dovolenou.",
+      "url": "https://www.akcni-letenky.com/tipy-pro-cestovatele",
       "publisher": {
         "@type": "Organization",
-        "name": "Akční Letenky",
-        "url": "https://akcni-letenky.com",
+        "name": "Akční Letenky",
+        "url": "https://www.akcni-letenky.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://akcni-letenky.com/logo.png"
+          "url": "https://www.akcni-letenky.com/logo.png"
         }
-      },
-      "inLanguage": "cs",
-      "breadcrumb": {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Akční Letenky", "item": "https://akcni-letenky.com" },
-          { "@type": "ListItem", "position": 2, "name": "Tipy pro cestovatele", "item": "https://akcni-letenky.com/tipy-pro-cestovatele" }
-        ]
       }
+    });
+
+    injectStructuredData({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Akční Letenky", "item": "https://www.akcni-letenky.com" },
+        { "@type": "ListItem", "position": 2, "name": "Tipy pro cestovatele", "item": "https://www.akcni-letenky.com/tipy-pro-cestovatele" }
+      ]
     });
     return () => removeAllStructuredData();
   }, []);
@@ -81,6 +87,7 @@ export default function TipyCestovatele() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+      <SEO title="Tipy cestovatele | Akční Letenky" description="Osobní zkušenosti a rady od zkušených cestovatelů. Inspirujte se před cestou." canonical="https://www.akcni-letenky.com/tipy-cestovatele" />
       <Navigation />
 
       {/* Hero Section */}
@@ -99,9 +106,7 @@ export default function TipyCestovatele() {
           <p className="text-lg opacity-75 max-w-2xl mx-auto">
             Prověřené tipy, triky a průvodce od zkušených cestovatelů. Ušetřete tisíce korun na každé cestě.
           </p>
-          <div className="mt-6 flex justify-center">
-            <CountdownTimer className="bg-white/20 px-4 py-2 rounded-full" />
-          </div>
+          
         </div>
       </section>
 
@@ -137,7 +142,7 @@ export default function TipyCestovatele() {
               </p>
             </div>
             <a
-              href={KIWI_LINK}
+              href={PELIKAN_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:flex items-center gap-2 bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold px-5 py-2.5 rounded-full text-sm shadow-lg transition-all hover:scale-105"
@@ -252,15 +257,15 @@ export default function TipyCestovatele() {
         </div>
       </section>
 
-      {/* CTA Section — Kiwi.com */}
+      {/* CTA Section - Pelikan.cz */}
       <section className="py-12 bg-gradient-to-r from-[#1a5276] to-[#2980b9]">
         <div className="container text-center text-white">
           <h2 className="text-3xl font-bold mb-3">Připraveni letět levně?</h2>
           <p className="text-lg opacity-85 mb-6 max-w-xl mx-auto">
-            Využijte tipy z našich článků a najděte nejlevnější letenky na Kiwi.com — porovnání stovek aerolinek na jednom místě.
+            Vyuzijte tipy z nasich clanku a najdete aktualni akcni letenky primo v Pelikan nabidkach.
           </p>
           <a
-            href={KIWI_LINK}
+            href={PELIKAN_LINK}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold px-8 py-4 rounded-full text-lg shadow-xl transition-all hover:scale-105"
@@ -317,16 +322,7 @@ export default function TipyCestovatele() {
         </section>
       )}
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="container text-center">
-          <p className="text-gray-400 text-sm">
-            © 2025 Akční Letenky · <Link href="/blog">Blog</Link> ·{" "}
-            <Link href="/levne-letenky">Letenky</Link> ·{" "}
-            <Link href="/dovolene">Dovolená</Link>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

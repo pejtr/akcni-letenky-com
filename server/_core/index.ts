@@ -16,7 +16,8 @@ import { scheduleWishlistRemarketing } from "../wishlistRemarketing";
 import { scheduleWhatsAppDailyMessage } from "../whatsappDailyMessage";
 import { scheduleDailyTipArticle } from "../tipsArticleGenerator";
 import { scheduleMidnightPriceRefresh } from "../travelpayoutsCache";
-import { generateSitemap, generateRobotsTxt } from "../sitemap";
+import { scheduleDailySocialPostCron } from "../dailySocialPostCron";
+import { generateSitemap, generateSitemapIndex, generateRobotsTxt } from "../sitemap";
 import { recordEmailOpened, recordEmailClicked } from "../emailAbTest";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -38,29 +39,84 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
+async function ensureDbSchema() {
+  try {
+    const { getDb } = await import("../db");
+    const db = await getDb();
+    if (db) {
+      const { sql } = await import("drizzle-orm");
+      const result = await db.execute(sql`SELECT COUNT(*) as cnt FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'social_posts' AND column_name = 'title'`);
+      const rows = result[0] as any;
+      const hasColumn = Array.isArray(rows) ? rows[0]?.cnt > 0 : (rows?.cnt ?? rows?.[0]?.cnt) > 0;
+      if (!hasColumn) {
+        await db.execute(sql`ALTER TABLE social_posts ADD COLUMN title VARCHAR(255)`);
+        console.log("[DB] Schema migration: added social_posts.title column");
+      } else {
+        console.log("[DB] Schema check: social_posts.title column already exists");
+      }
+    }
+  } catch (e: any) {
+    console.warn("[DB] Schema migration warning:", e?.message);
+  }
+}
+
 async function startServer() {
+  await ensureDbSchema();
   const app = express();
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // ============ SEO Middleware (must be BEFORE all routes) ============
+  const {
+    canonicalDomainRedirect,
+    trailingSlashRedirect,
+    legacyUrlHandler,
+    legacyAirlineRedirects,
+    routeWhitelistValidation,
+  } = await import("./seoMiddleware");
+
+  // 1. Non-www → www redirect
+  app.use(canonicalDomainRedirect);
+  // 2. Strip trailing slashes
+  app.use(trailingSlashRedirect);
+  // 3. Block legacy WordPress URLs with 410 Gone
+  app.use(legacyUrlHandler);
+  // 4. Redirect old airline URLs to new format
+  app.use(legacyAirlineRedirects);
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   
   // Sitemap and robots.txt
   app.get("/sitemap.xml", async (req, res) => {
     try {
-      const sitemap = await generateSitemap();
-      res.header("Content-Type", "application/xml");
+      let sitemap = await generateSitemap();
+      sitemap = sitemap.replace(/https?:\/\/[^\s"'<>\\]*railway\.app/g, "https://www.akcni-letenky.com");
+      sitemap = sitemap.replace(/https?:\/\/akcni-letenky\.com/g, "https://www.akcni-letenky.com");
+      res.header("Content-Type", "application/xml; charset=utf-8");
       res.send(sitemap);
     } catch (error) {
       console.error("Error generating sitemap:", error);
       res.status(500).send("Error generating sitemap");
     }
   });
+
+  app.get("/sitemap_index.xml", (req, res) => {
+    let indexXml = generateSitemapIndex();
+    indexXml = indexXml.replace(/https?:\/\/[^\s"'<>\\]*railway\.app/g, "https://www.akcni-letenky.com");
+    res.header("Content-Type", "application/xml; charset=utf-8");
+    res.send(indexXml);
+  });
+
+  // Redirect legacy WordPress sitemap endpoints to clean sitemap.xml
+  app.get(["/wpms-sitemap.xml", "/category-sitemap.xml", "/post-sitemap.xml", "/page-sitemap.xml"], (req, res) => {
+    res.redirect(301, "/sitemap.xml");
+  });
   
   app.get("/robots.txt", (req, res) => {
-    res.header("Content-Type", "text/plain");
+    res.header("Content-Type", "text/plain; charset=utf-8");
     res.send(generateRobotsTxt());
   });
   
@@ -160,6 +216,9 @@ async function startServer() {
 
     // Travelpayouts price cache (fetch on startup + midnight refresh)
     scheduleMidnightPriceRefresh();
+
+    // Social Media daily post generator (Facebook & Instagram)
+    scheduleDailySocialPostCron();
   });
 }
 

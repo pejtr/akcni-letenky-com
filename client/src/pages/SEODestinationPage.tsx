@@ -6,7 +6,7 @@
  */
 
 import { useLocation } from "wouter";
-import { Helmet } from "react-helmet";
+import SEO from "@/components/SEO";
 import { Plane, TrendingUp, MapPin, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,8 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
 // Footer component not available
 import { destinationCountries, destinationCities, type SEODestination } from "../../../shared/seoDestinations";
-import { kiwiAffiliateUrl } from "@shared/affiliateLinks";
-import PriceCalendarWidget from "@/components/PriceCalendarWidget";
+import { kiwiAffiliateUrl, pelikanDeepLink } from "@shared/affiliateLinks";
+// ... (code omitted for brevity in replace, let's target exact lines)
 
 export default function SEODestinationPage() {
   const [location] = useLocation();
@@ -51,7 +51,7 @@ export default function SEODestinationPage() {
       "latitude": destination.latitude,
       "longitude": destination.longitude
     },
-    "url": `https://akcni-letenky.com${location}`
+    "url": `https://www.akcni-letenky.com${location}`
   } : null;
 
   // Generate Schema.org TravelAction structured data
@@ -71,33 +71,22 @@ export default function SEODestinationPage() {
     "provider": {
       "@type": "Organization",
       "name": "Akční Letenky",
-      "url": "https://akcni-letenky.com"
+      "url": "https://www.akcni-letenky.com"
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Helmet>
-        <title>{destination.title}</title>
-        <meta name="description" content={destination.metaDescription} />
-        <meta name="keywords" content={destination.keywords.join(", ")} />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={destination.title} />
-        <meta property="og:description" content={destination.metaDescription} />
-        <meta property="og:image" content={destination.image} />
-        <meta property="og:type" content="website" />
-        
-        {/* Structured Data */}
-        {placeSchema && (
-          <script type="application/ld+json">
-            {JSON.stringify(placeSchema)}
-          </script>
-        )}
-        <script type="application/ld+json">
-          {JSON.stringify(travelActionSchema)}
-        </script>
-      </Helmet>
+      <SEO
+        title={destination.title}
+        description={destination.metaDescription}
+        keywords={destination.keywords.join(", ")}
+        canonical={`https://www.akcni-letenky.com${location}`}
+        ogTitle={destination.title}
+        ogDescription={destination.metaDescription}
+        ogImage={destination.image}
+        structuredData={[placeSchema, travelActionSchema].filter(Boolean) as any}
+      />
 
       <Navigation />
 
@@ -231,7 +220,7 @@ export default function SEODestinationPage() {
               </CardContent>
             </Card>
 
-            {/* Kiwi.com CTA */}
+            {/* Kiwi CTA */}
             {destination.kiwiUrl && (
               <Card>
                 <CardContent className="pt-6">
@@ -239,20 +228,22 @@ export default function SEODestinationPage() {
                     <div className="text-sm font-semibold text-gray-600 uppercase">
                       Alternativní Nabídka
                     </div>
-                    <h3 className="text-xl font-bold">Kiwi.com</h3>
+                    <h3 className="text-xl font-bold flex items-center justify-center gap-1.5">
+                      🥝 Kiwi.com
+                    </h3>
                     <p className="text-sm text-gray-600">
-                      Jednosměrné lety a flexibilní termíny
+                      Kombinované lety a flexibilní vyhledávání
                     </p>
                     <Button
                       asChild
                       variant="outline"
                       size="lg"
-                      className="w-full"
+                      className="w-full border-green-600 text-green-700 hover:bg-green-50"
                     >
                       <a
                         href={kiwiAffiliateUrl(destination.kiwiUrl, "seo-dest")}
                         target="_blank"
-                        rel="noopener nofollow"
+                        rel="noopener nofollow sponsored"
                         className="flex items-center justify-center gap-2"
                       >
                         Vyhledat na Kiwi.com
@@ -278,20 +269,34 @@ export default function SEODestinationPage() {
         </div>
       </div>
 
-      {/* Price Calendar Widget - full width below grid */}
+      {/* Pelikan tracked CTA - full width below grid */}
       <div className="bg-gradient-to-b from-white to-green-50 border-t border-gray-100">
         <div className="container py-12">
-          <PriceCalendarWidget
-            origin="PRG"
-            destination={destination.iataCode || ""}
-            destinationName={destination.name}
-            currency="CZK"
-            locale="cs"
-            period="year"
-            range="7,14"
-            subId="seo-dest-calendar"
-            width="100%"
-          />
+          <Card>
+            <CardContent className="flex flex-col gap-4 pt-6 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Aktualni nabidky: {destination.name}
+                </h2>
+                <p className="mt-1 text-sm text-gray-600">
+                  Proklik vede primo na Pelikan.cz s affiliate parametrem a_aid=levne-letenky.
+                </p>
+              </div>
+              <a
+                href={pelikanDeepLink(destination.pelikanUrl, {
+                  campaign: "seo-dest-bottom",
+                  channel: "seo-page",
+                  content: destination.slug,
+                })}
+                target="_blank"
+                rel="noopener nofollow"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#E91E63] px-6 py-3 font-bold text-white hover:bg-[#C2185B]"
+              >
+                Zobrazit nabidky
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </CardContent>
+          </Card>
         </div>
       </div>
 

@@ -1,7 +1,8 @@
 import { Link } from "wouter";
+import InternalLinkingHub from "@/components/InternalLinkingHub";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { kiwiDeepLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import {
   Plane,
   MapPin,
@@ -21,6 +22,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import SEO from "@/components/SEO";
 
 // CDN images
 const IMAGES = {
@@ -32,7 +34,11 @@ const IMAGES = {
   mountain: "https://files.manuscdn.com/user_upload_by_module/session_file/89740521/NduVswpGlpgicelP.jpg",
 };
 
-const AFFILIATE_LINK = kiwiDeepLink({ currency: "CZK", lang: "cs", destination: "RUN" }, "reunion");
+const AFFILIATE_LINK = pelikanDeepLink("/cs/akcni-letenky/AT:RUN,S:PRI", {
+  campaign: "reunion",
+  channel: "destination-page",
+  content: "RUN",
+});
 
 const highlights = [
   {
@@ -107,25 +113,19 @@ function CountdownBanner() {
 
   return (
     <div className="bg-red-600 text-white py-2 text-center text-sm font-semibold animate-pulse">
-      Akce končí za {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s — Zbývá posledních 5 míst!
+      Akce končí za {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s — Exkluzivní nabídka!
     </div>
   );
 }
 
 export default function ReunionPage() {
-  useEffect(() => {
-    document.title = "Letenky na Réunion od 1 790 Kč | Exotický ostrov v Indickém oceánu | Akční Letenky";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) {
-      meta.setAttribute(
-        "content",
-        "Levné letenky na ostrov Réunion od 1 790 Kč. Sopky, pralesy, vodopády a tyrkysové pláže. Přímé lety z Paříže nebo s přestupem z Prahy."
-      );
-    }
-  }, []);
-
   return (
     <div className="min-h-screen bg-white">
+      <SEO 
+        title="Letenky na Réunion od 1 790 Kč | Exotický ostrov v Indickém oceánu | Akční Letenky"
+        description="Levné letenky na ostrov Réunion od 1 790 Kč. Sopky, pralesy, vodopády a tyrkysové pláže. Přímé lety z Paříže nebo s přestupem z Prahy."
+        canonical="https://www.akcni-letenky.com/reunion"
+      />
       {/* Urgency Banner */}
       <CountdownBanner />
 
@@ -538,6 +538,11 @@ export default function ReunionPage() {
           </div>
         </div>
       </section>
+
+      {/* SEO Internal Linking Hub */}
+      <div className="container max-w-6xl mx-auto px-4 my-8">
+        <InternalLinkingHub />
+      </div>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8">

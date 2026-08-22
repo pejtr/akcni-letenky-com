@@ -10,15 +10,15 @@
 
 import * as React from "react";
 import { X, MessageCircle, Plane, Clock, Gift, Sparkles, Tag, ArrowRight } from "lucide-react";
-import { kiwiDeepLink } from "@shared/affiliateLinks";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useViewedDestinations } from "@/hooks/useViewedDestinations";
 import { generateOmioReferralLink, trackOmioClick } from "@/lib/omioAffiliate";
 import { Train } from "lucide-react";
 import { getLastCtaInteraction } from "@/hooks/useCtaAbTest";
 import { trackEvent } from "@/lib/abTest";
 import { trpc } from "@/lib/trpc";
+import SpinWheel from "./SpinWheel";
 
 interface ExitIntentPopupProps {
   whatsappLink?: string;
@@ -36,7 +36,7 @@ function getPersonalizedHeadline(
       case "hero":
         return {
           title: "Počkejte! Vaše vyhledávání není ztraceno",
-          subtitle: hasDestinations 
+          subtitle: hasDestinations
             ? `Máme exkluzivní slevu na ${topDestination} jen pro vás!`
             : "Získejte 15% slevu na první vyhledávání!",
           emoji: "🔍",
@@ -45,7 +45,7 @@ function getPersonalizedHeadline(
         return {
           title: "Ta nabídka na vás stále čeká!",
           subtitle: hasDestinations
-            ? `${topDestination} za ještě lepší cenu – jen dalších 10 minut!`
+            ? `${topDestination} za ještě lepší cenu – exkluzivní nabídka`
             : "Exkluzivní sleva na vybranou destinaci",
           emoji: "🔥",
         };
@@ -53,8 +53,8 @@ function getPersonalizedHeadline(
         return {
           title: "Akční ceny jsou téměř vyprodané!",
           subtitle: hasDestinations
-            ? `Zbývají poslední 3 místa na ${topDestination}`
-            : "Letenky do 1 500 Kč – zbývá jen pár míst",
+            ? `Získejte exkluzivní slevu na ${topDestination}`
+            : "Letenky do 1 500 Kč – získejte slevu",
           emoji: "⚡",
         };
       default:
@@ -66,7 +66,7 @@ function getPersonalizedHeadline(
   if (hasDestinations && topDestination) {
     return {
       title: `Nechcete ${topDestination} za skvělou cenu?`,
-      subtitle: "Máme pro vás exkluzivní slevu, která platí jen 15 minut!",
+      subtitle: "Máme pro vás exkluzivní slevu – rezervujte nyní!",
       emoji: "✈️",
     };
   }
@@ -107,30 +107,25 @@ function CountdownTimer() {
   );
 }
 
-export default function ExitIntentPopup({ 
-  whatsappLink = "https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" 
+export default function ExitIntentPopup({
+  whatsappLink = "https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml"
 }: ExitIntentPopupProps) {
   const [isVisible, setIsVisible] = React.useState(false);
-  const [email, setEmail] = React.useState("");
   const [hasShown, setHasShown] = React.useState(false);
-  const [emailSubmitted, setEmailSubmitted] = React.useState(false);
-  
+
   // Get personalized offers based on browsing history
   const { viewedDestinations, getPersonalizedOffers, getPersonalizedMessage } = useViewedDestinations();
   const personalizedOffers = getPersonalizedOffers();
-  
+
   // Get CTA interaction context
   const lastCta = React.useMemo(() => getLastCtaInteraction(), []);
-  
+
   // Personalized headline
   const topDestination = viewedDestinations.length > 0 ? viewedDestinations[0].name : undefined;
   const headline = React.useMemo(
     () => getPersonalizedHeadline(lastCta, viewedDestinations.length > 0, topDestination),
     [lastCta, viewedDestinations.length, topDestination]
   );
-
-  // Newsletter subscribe mutation
-  const subscribeMutation = trpc.newsletter.subscribe.useMutation();
 
   React.useEffect(() => {
     // Check if already shown in this session
@@ -162,7 +157,7 @@ export default function ExitIntentPopup({
           hasDestinations: viewedDestinations.length > 0,
           lastCta: lastCta?.position || "none",
           topDestination: topDestination || "none",
-        }).catch(() => {});
+        }).catch(() => { });
       }
     };
 
@@ -187,30 +182,14 @@ export default function ExitIntentPopup({
 
   const handleClose = () => {
     setIsVisible(false);
-    trackEvent("exit_intent", "popup_closed", {}).catch(() => {});
-  };
-
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    
-    try {
-      await subscribeMutation.mutateAsync({ email });
-      setEmailSubmitted(true);
-      trackEvent("exit_intent", "email_captured", {
-        hasDestinations: viewedDestinations.length > 0,
-      }).catch(() => {});
-    } catch {
-      // Still show success for UX
-      setEmailSubmitted(true);
-    }
+    trackEvent("exit_intent", "popup_closed", {}).catch(() => { });
   };
 
   const handleOfferClick = (destination: string) => {
     trackEvent("exit_intent", "offer_clicked", {
       destination,
       lastCta: lastCta?.position || "none",
-    }).catch(() => {});
+    }).catch(() => { });
   };
 
   if (!isVisible) {
@@ -220,14 +199,14 @@ export default function ExitIntentPopup({
   return (
     <>
       {/* Overlay */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/60 z-50 animate-in fade-in duration-300"
         onClick={handleClose}
       />
 
       {/* Popup */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div 
+        <div
           className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-in zoom-in-95 duration-300 relative"
           onClick={(e) => e.stopPropagation()}
         >
@@ -247,7 +226,7 @@ export default function ExitIntentPopup({
               <div className="absolute bottom-2 right-4 text-6xl">🌍</div>
               <div className="absolute top-1/2 left-1/4 text-4xl">☀️</div>
             </div>
-            
+
             <div className="relative z-10">
               <span className="text-5xl mb-4 block">{headline.emoji}</span>
               <h2 className="text-2xl md:text-3xl font-bold mb-2">
@@ -284,15 +263,19 @@ export default function ExitIntentPopup({
             {/* Personalized Deals */}
             <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
               <Tag className="w-5 h-5 text-orange-500" />
-              {viewedDestinations.length > 0 
-                ? "Nabídky na základě vašeho prohlížení:" 
+              {viewedDestinations.length > 0
+                ? "Nabídky na základě vašeho prohlížení:"
                 : "Nejlepší nabídky pro vás:"}
             </h3>
             <div className="space-y-3 mb-6">
               {personalizedOffers.map((deal, index) => (
                 <a
                   key={index}
-                  href={kiwiDeepLink({ from: "PRG", to: deal.slug || deal.destination }, "exit-popup")}
+                  href={pelikanDeepLink("/cs/akcni-letenky", {
+                    campaign: "exit-popup",
+                    channel: "exit-intent",
+                    content: deal.slug || deal.destination,
+                  })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-4 p-3 border-2 border-gray-200 rounded-xl hover:border-orange-500 hover:shadow-lg transition-all group relative overflow-hidden"
@@ -302,7 +285,7 @@ export default function ExitIntentPopup({
                   <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
                     {deal.discount}
                   </div>
-                  
+
                   <img
                     src={deal.image}
                     alt={deal.destination}
@@ -354,65 +337,16 @@ export default function ExitIntentPopup({
               </button>
             </div>
 
-            {/* WhatsApp CTA */}
-            <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 mb-5">
-              <div className="flex items-center gap-3 mb-3">
-                <MessageCircle className="w-7 h-7 text-green-600 flex-shrink-0" />
-                <div>
-                  <h4 className="font-bold text-sm">Připojte se k WhatsApp komunitě</h4>
-                  <p className="text-xs text-gray-600">
-                    Exkluzivní nabídky a tipy na cestování
-                  </p>
-                </div>
-              </div>
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block"
-              >
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-5">
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Připojit se k WhatsApp skupině
-                </Button>
-              </a>
-            </div>
 
-            {/* Email Capture */}
+
+            {/* Gamified Email Capture */}
             <div className="border-t pt-5">
-              {emailSubmitted ? (
-                <div className="text-center py-4">
-                  <span className="text-3xl mb-2 block">🎉</span>
-                  <h4 className="font-bold text-green-600 text-lg">Děkujeme!</h4>
-                  <p className="text-sm text-gray-600">Pošleme vám nejlepší nabídky na email se slevou 15%.</p>
-                </div>
-              ) : (
-                <>
-                  <h4 className="font-bold mb-2 text-sm">
-                    💌 Nebo nechte email a dostanete slevu 15% na první objednávku
-                  </h4>
-                  <form onSubmit={handleEmailSubmit} className="flex gap-2">
-                    <Input
-                      type="email"
-                      placeholder="vas@email.cz"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="flex-1"
-                    />
-                    <Button 
-                      type="submit" 
-                      className="bg-orange-500 hover:bg-orange-600 text-white"
-                      disabled={subscribeMutation.isPending}
-                    >
-                      {subscribeMutation.isPending ? "..." : "Získat slevu"}
-                    </Button>
-                  </form>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Žádný spam. Pouze nejlepší nabídky 1-2x týdně.
-                  </p>
-                </>
-              )}
+              <SpinWheel
+                whatsappLink={whatsappLink}
+                onWin={(code) => {
+                  trackEvent("exit_intent", "spin_wheel_won", { code }).catch(() => { });
+                }}
+              />
             </div>
           </div>
         </div>

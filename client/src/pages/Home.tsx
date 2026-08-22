@@ -1,44 +1,42 @@
-import { useMemo, useState, useEffect } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useABTest } from "@/lib/abTest";
 import HeroVariantA from "@/components/HeroVariantA";
 import HeroVariantB from "@/components/HeroVariantB";
-import UrgencyTimer from "@/components/UrgencyTimer";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
-import { ChevronRight, Plane, Search, ArrowUpDown, Mail, CheckCircle2 } from "lucide-react";
+import { ChevronRight, Plane, Search, ArrowUpDown, Mail, CheckCircle2, Heart, Award, Bell, BookOpen, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
-import { kiwiSearchLink, kiwiDeepLink } from "@shared/affiliateLinks";
-import ChatbotWidget from "@/components/ChatbotWidget";
-
+import { pelikanDeepLink } from "@shared/affiliateLinks";
 import NewsletterBar from "@/components/NewsletterBar";
 import FacebookCampaignBanner from "@/components/FacebookCampaignBanner";
-
-import SocialProofNotification from "@/components/SocialProofNotification";
-import OmioSection from "@/components/OmioSection";
+import OptimizedImage from "@/components/OptimizedImage";
 import MobileMenu from "@/components/MobileMenu";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
-import LiveViewerCounter from "@/components/LiveViewerCounter";
-import PersonalizedSection from "@/components/PersonalizedSection";
-import CountdownTimer from "@/components/CountdownTimer";
-import GdprConsentBanner from "@/components/GdprConsentBanner";
-import FlightMapWidget from "@/components/FlightMapWidget";
-import SocialSharePanel from "@/components/SocialSharePanel";
-import WhatsAppGroupBanner from "@/components/WhatsAppGroupBanner";
+import PelikanPrimaryDeals from "@/components/PelikanPrimaryDeals";
+import FloatingCta from "@/components/FloatingCta";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { returnFlights, countries, cities, topDestinations } from "@/data/destinations";
 import { useWishlist } from "@/hooks/useWishlist";
-import { Heart, Award, Bell } from "lucide-react";
-import PriceAlertModal from "@/components/PriceAlertModal";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import { useTicketCountdown } from "@/hooks/useTicketCountdown";
-import { generateOrganizationSchema, generateBreadcrumbSchema, generateFAQSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
+import TravelQuizWidget from "@/components/TravelQuizWidget";
+import PelikanSearchWidget from "@/components/PelikanSearchWidget";
+import SEO from "@/components/SEO";
+import { generateFAQSchema } from "@/lib/structuredData";
 import { filterAndSortOffers, getOfferDestinationOptions, type OfferSort } from "@shared/offerFilters";
+const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
+const ChatbotWidget = lazy(() => import("@/components/ChatbotWidget"));
+const SocialProofNotification = lazy(() => import("@/components/SocialProofNotification"));
+const OmioSection = lazy(() => import("@/components/OmioSection"));
+const PersonalizedSection = lazy(() => import("@/components/PersonalizedSection"));
+const GdprConsentBanner = lazy(() => import("@/components/GdprConsentBanner"));
+const PriceAlertModal = lazy(() => import("@/components/PriceAlertModal"));
 
-// City to Kiwi.com slug mapping
+// City slug mapping for tracking/search attribution
 const cityToSlug: Record<string, string> = {
   "barcelona": "barcelona-spain",
   "londýn": "london-united-kingdom",
@@ -80,11 +78,64 @@ const cityToSlug: Record<string, string> = {
   "prague": "prague-czech-republic",
 };
 
+function FooterNewsletter() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  if (submitted) {
+    return (
+      <div className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-2xl p-6 mb-6 text-center shadow-xl animate-in zoom-in-95 duration-300">
+        <p className="text-lg font-black mb-1">✓ Přihlášeno k odběru! Děkujeme</p>
+        <p className="text-xs opacity-90 mb-4">Brzy vám pošleme první akční letenky na e-mail.</p>
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+          <p className="text-xs font-bold mb-2">🎁 BONUS: Chcete mít nabídky ihned na WhatsAppu?</p>
+          <a
+            href="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd56] text-white font-bold px-6 py-2.5 rounded-full text-xs shadow-md transition-transform hover:scale-105"
+          >
+            <span>Připojit se k WhatsApp skupině →</span>
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gradient-to-r from-[#FFD700] to-[#FFC107] rounded-xl p-5 mb-6">
+      <h3 className="text-base font-bold text-[#003087] mb-1 text-center">📧 Nechte si posílat nejlepší nabídky</h3>
+      <p className="text-xs text-[#003087]/70 text-center mb-3">Připojte se k 12 340+ cestovatelům</p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (email && email.includes("@")) {
+            setSubmitted(true);
+          }
+        }}
+        className="flex gap-2 max-w-md mx-auto"
+      >
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="vas@email.cz"
+          className="flex-1 h-10 px-4 rounded-full border-2 border-white bg-white/90 text-sm placeholder:text-gray-400 focus:outline-none focus:border-[#1565C0]"
+          required
+        />
+        <button type="submit" className="bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold px-5 py-2 rounded-full text-sm whitespace-nowrap transition-colors">
+          Odebírat
+        </button>
+      </form>
+    </div>
+  );
+}
+
 export default function Home() {
   // A/B Test for hero section
   const heroVariant = useABTest("hero_redesign");
   const { toggleWishlist, isInWishlist, wishlistCount } = useWishlist();
-  
+
   // CTA A/B Tests
   const { ctaVariant: featuredCta, trackClick: trackFeaturedClick } = useCtaAbTest("featured_cta");
   const { ctaVariant: footerCta, trackClick: trackFooterClick } = useCtaAbTest("footer_cta");
@@ -96,9 +147,11 @@ export default function Home() {
   useClickTracking(true);
   // Conversion funnel tracking
   const { trackAffiliateClick: trackFunnelAffiliateClick, trackDestinationView: trackFunnelDestView, trackSearch: trackFunnelSearch } = useConversionTracking();
-  
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBottomBanner, setShowBottomBanner] = useState(false);
+  const [stickyBannerDismissed, setStickyBannerDismissed] = useState(false);
+  const [showDeferredEnhancements, setShowDeferredEnhancements] = useState(false);
   const [priceAlertModal, setPriceAlertModal] = useState<{
     isOpen: boolean;
     destination: string;
@@ -109,142 +162,73 @@ export default function Home() {
   // Homepage offer controls
   const [offerDestination, setOfferDestination] = useState("all");
   const [offerSort, setOfferSort] = useState<OfferSort>("featured");
-
   // Footer newsletter form
   const [footerEmail, setFooterEmail] = useState("");
   const [footerNewsletterStatus, setFooterNewsletterStatus] = useState<"idle" | "success" | "error">("idle");
-  
   // Search form state
   const [origin, setOrigin] = useState("prague");
   const [destination, setDestination] = useState("");
   const [departureDate, setDepartureDate] = useState("");
   const [duration, setDuration] = useState("1week");
   const [passengers, setPassengers] = useState("1");
-  
+
   // Affiliate click tracking
   const trackClickMutation = trpc.affiliate.trackClick.useMutation();
   const subscribeFooterMutation = trpc.newsletter.subscribe.useMutation();
-  
+  const buildPelikanSearchUrl = (campaign: string, content?: string) =>
+    pelikanDeepLink("/cs/akcni-letenky", {
+      campaign,
+      channel: "homepage",
+      content,
+    });
+  const buildPelikanVacationUrl = (campaign: string, content?: string) =>
+    pelikanDeepLink("/cs/pobyty", {
+      campaign,
+      channel: "homepage",
+      content,
+    });
   // Helper function to track affiliate clicks
-  const trackAffiliateClick = (dest: string, destSlug: string, source: string, url: string) => {
+  const trackAffiliateClick = (
+    dest: string,
+    destSlug: string,
+    source: string,
+    url: string,
+    partner: "pelikan" | "kiwi" | "internal" = "pelikan"
+  ) => {
     trackClickMutation.mutate({
       destination: dest,
       destinationSlug: destSlug,
       source: source,
-      affiliatePartner: "kiwi",
+      affiliatePartner: partner,
       affiliateUrl: url,
     });
   };
-  
-  // Handle search - redirect to Kiwi.com with affiliate link
+
+  // Handle search - redirect to Pelikan.cz with affiliate tracking
   const handleSearch = () => {
     const destLower = destination.toLowerCase().trim();
-    const destSlug = cityToSlug[destLower] || destLower.replace(/\s+/g, "-");
-    
-    // Parse date from dd.mm.yyyy to yyyy-mm-dd
-    let formattedDate = "";
-    if (departureDate) {
-      const parts = departureDate.split(".");
-      if (parts.length === 3) {
-        formattedDate = `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
-      }
-    }
-    
-    // Build Kiwi.com search URL
-    const origin = "prague-czech-republic"; // Default origin is Prague
-    let rawKiwiUrl = `https://www.kiwi.com/cs/search/results/${origin}/${destSlug}`;
-    
-    if (formattedDate) {
-      rawKiwiUrl += `/${formattedDate}`;
-    }
-    
-    rawKiwiUrl += `?adults=${passengers}`;
-    const kiwiUrl = `https://tp.media/r?marker=155221.search&trs=267609&p=3791&u=${encodeURIComponent(rawKiwiUrl)}`;
-    
+    const destSlug = cityToSlug[destLower] || destLower.replace(/\s+/g, "-") || "all";
+    const pelikanUrl = buildPelikanSearchUrl("homepage-search", `${destSlug}-${duration}-${passengers}`);
+
     // Track the search event (Meta Pixel Search event)
-    trackFunnelSearch(destination, origin);
-    
+    trackFunnelSearch(destination, "prague");
+
     // Track the click
-    trackAffiliateClick(destination, destSlug, "search", kiwiUrl);
+    trackAffiliateClick(destination, destSlug, "search", pelikanUrl, "pelikan");
     trackFunnelAffiliateClick(destination);
-    
+
     // Open in new tab
-    window.open(kiwiUrl, "_blank");
+    window.open(pelikanUrl, "_blank");
   };
-  
-  // SEO: Set document title, meta description, and structured data
-  useEffect(() => {
-    document.title = "Levné Letenky z Prahy od 590 Kč | Sleva až -80% | Akční Letenky 2026";
-    
-    // Set meta description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.setAttribute('name', 'description');
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute('content', 'Najděte nejlevnější akční letenky do celého světa. Porovnejte ceny letenek z Prahy do Londýna, Paříže, Barcelony a dalších destinací. Last minute slevy až 80%.');
-    
-    // Set meta keywords
-    let metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (!metaKeywords) {
-      metaKeywords = document.createElement('meta');
-      metaKeywords.setAttribute('name', 'keywords');
-      document.head.appendChild(metaKeywords);
-    }
-    metaKeywords.setAttribute('content', 'akční letenky, levné letenky, last minute letenky, letenky z prahy, nejlevnější letenky, letenky do evropy, letenky do londýna, letenky do paříže');
-    
-    // Add JSON-LD structured data
-    removeAllStructuredData(); // Clean up any existing schemas
-    
-    // Organization schema
-    injectStructuredData(generateOrganizationSchema());
-    
-    // Breadcrumb schema for homepage
-    injectStructuredData(generateBreadcrumbSchema([
-      { name: "Domů", url: "/" }
-    ]));
-    
-    // FAQ schema
-    injectStructuredData(generateFAQSchema([
-      {
-        question: "Jak najít nejlevnější letenky?",
-        answer: "Nejlevnější letenky najdete porovnáním cen napříč aerolinkami. Doporučujeme rezervovat 2-3 měsíce předem, být flexibilní s daty a využívat naše denní akční nabídky. Sledujte také naši FB skupinu s 33 500 členy pro exkluzivní tipy."
-      },
-      {
-        question: "Jsou uvedené ceny konečné?",
-        answer: "Ano, zobrazené ceny jsou obvykle konečné včetně daní a poplatků. Další služby jako zavazadla, výběr sedadla nebo strava mohou být zpoplatněny zvlášť u dopravce nebo agentury."
-      },
-      {
-        question: "Jak funguje rezervace letenek?",
-        answer: "Po výběru letu vás přesměrujeme na web partnera (Pelikán, Kiwi.com), kde dokončíte rezervaci. Platba probíhá přímo u partnera, který zajistí vystavení letenek a potvrzení."
-      },
-      {
-        question: "Mohu letenku stornovat nebo změnit?",
-        answer: "Podmínky storna a změn závisí na tarifu a aerolince. Levné tarify jsou obvykle nevratné, dražší tarify umožňují změny za poplatek. Doporučujeme cestovní pojištění pro případ nečekaných událostí."
-      },
-      {
-        question: "Kdy je nejlepší čas na nákup letenek?",
-        answer: "Obecně platí: čím dříve, tím levněji. Pro evropské destinace rezervujte 1-2 měsíce předem, pro dálkové lety 3-6 měsíců. Last minute nabídky mohou být výhodné, ale výběr je omezený."
-      },
-      {
-        question: "Jaké dokumenty potřebuji k cestě?",
-        answer: "Pro cesty po EU stačí občanský průkaz. Pro mimoevropské destinace potřebujete platný cestovní pas (minimálně 6 měsíců platnosti). Některé země vyžadují víza - ověřte si požadavky před cestou."
-      }
-    ]))
-    
-    return () => {
-      // Cleanup on unmount
-      removeAllStructuredData();
-    };
-  }, []);
+
+  // Structured data is handled by <SEO> component above
 
   // Handle scroll for sticky navigation and bottom banner
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 50;
       setIsScrolled(scrolled);
-      
+
       // Calculate scroll percentage for bottom banner
       // Once banner appears (after 50% scroll), it stays visible permanently
       if (!showBottomBanner) {
@@ -259,6 +243,37 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [showBottomBanner]);
+
+  // Check if sticky banner was dismissed recently (auto-restore after 30 min)
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem("sticky-banner-dismissed");
+    if (dismissed) {
+      const elapsed = Date.now() - parseInt(dismissed);
+      if (elapsed < 30 * 60 * 1000) {
+        setStickyBannerDismissed(true);
+      }
+    }
+  }, []);
+
+  const dismissStickyBanner = () => {
+    setStickyBannerDismissed(true);
+    sessionStorage.setItem("sticky-banner-dismissed", Date.now().toString());
+  };
+
+  useEffect(() => {
+    const win = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    if (win.requestIdleCallback) {
+      const idleId = win.requestIdleCallback(() => setShowDeferredEnhancements(true), { timeout: 2500 });
+      return () => win.cancelIdleCallback?.(idleId);
+    }
+
+    const timeoutId = window.setTimeout(() => setShowDeferredEnhancements(true), 1500);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("cs-CZ").format(price) + " Kč";
@@ -372,24 +387,70 @@ export default function Home() {
   ];
 
   const handleSearchVariantA = (destination: string, passengers: number) => {
-    // Navigate to search results
-    window.location.href = kiwiDeepLink({ from: "PRG", to: destination, passengers: String(passengers) }, "hero-search-a");
+    const destSlug = destination.toLowerCase().trim().replace(/\s+/g, "-") || "all";
+    window.location.href = buildPelikanSearchUrl("hero-search-a", `${destSlug}-${passengers}`);
   };
 
   const handleSearchVariantB = (from: string, destination: string, duration: string, passengers: number) => {
-    // Navigate to search results
-    window.location.href = kiwiDeepLink({ from, to: destination, passengers: String(passengers) }, "hero-search-b");
+    const destSlug = destination.toLowerCase().trim().replace(/\s+/g, "-") || "all";
+    window.location.href = pelikanDeepLink("/cs/akcni-letenky", {
+      campaign: "hero-search-b",
+      channel: "homepage",
+      content: `${from}-${destSlug}-${duration}-${passengers}`,
+    });
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO 
+        title="Akční a Last Minute Letenky z Prahy i Kamkoliv od 590 Kč"
+        description="Najděte nejlevnější akční a last minute letenky z Prahy kamkoliv! Porovnejte denně aktualizované slevy až 80% z Letiště Václava Havla do celého světa."
+        canonical="https://www.akcni-letenky.com/"
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Domů", "item": "https://www.akcni-letenky.com/" }
+            ]
+          },
+          generateFAQSchema([
+            {
+              question: "Kde najdu nejlevnější last minute letenky z Prahy kamkoliv?",
+              answer: "Na portálu Akční-Letenky.com denně porovnáváme nejvýhodnější last minute akční nabídky letenek z Prahy (PRG) i ostatních letišť v okolí. Nabídky se slevou až 80% aktualizujeme v reálném čase."
+            },
+            {
+              question: "Jak vyhledat nejlevnější akční letenky kamkoliv?",
+              answer: "Při vyhledávání zvolte jako odletové místo Praha a jako cíl ponechte pole 'Kamkoliv'. Náš srovnávač vám okamžitě zobrazí nejlevnější letenky seřazené od nejnižší ceny bez ohledu na destinaci."
+            },
+            {
+              question: "Jak najít nejlevnější letenky?",
+              answer: "Nejlevnější letenky najdete porovnáním cen napříč aerolinkami. Doporučujeme rezervovat 2-3 měsíce předem, být flexibilní s daty a využívat naše denní akční nabídky. Sledujte také naši FB skupinu s 33 500 členy pro exkluzivní tipy."
+            },
+            {
+              question: "Jsou uvedené ceny konečné?",
+              answer: "Ano, zobrazené ceny jsou obvykle konečné včetně daní a poplatků. Další služby jako zavazadla, výběr sedadla nebo strava mohou být zpoplatněny zvlášť u dopravce nebo agentury."
+            },
+            {
+              question: "Kdy je nejlepší čas na nákup last minute letenek?",
+              answer: "Last minute letenky z Prahy se nejvíce vyplatí kupovat 1 až 14 dní před odletem. Dopravci v tomto období doprodávají neobsazená místa v letadlech i charterových letech za výrazně snížené ceny."
+            }
+          ])
+        ]}
+      />
       {/* Exit Intent Popup */}
-      <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
-      
-      {/* Facebook Campaign Banner - shown to FB visitors */}
-      <FacebookCampaignBanner />
-      {/* Newsletter Bar */}
-      <NewsletterBar />
+      {showDeferredEnhancements && (
+        <Suspense fallback={null}>
+          <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
+        </Suspense>
+      )}
+
+      {/* Exit Intent Popup */}
+      {showDeferredEnhancements && (
+        <Suspense fallback={null}>
+          <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
+        </Suspense>
+      )}
       {/* Breadcrumbs with Schema.org */}
       <script type="application/ld+json">
         {JSON.stringify({
@@ -412,7 +473,7 @@ export default function Home() {
       )}>
         <div className="flex items-center justify-center gap-3">
           <span className="font-semibold">🔥 AKCE: PRÁVĚ JSME ZLEVNILI VYBRANÉ LETENKY — SLEVY AŽ 80 %</span>
-          <a href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "promo-banner")} target="_blank" rel="noopener noreferrer"
+          <a href={buildPelikanSearchUrl("promo-banner")} target="_blank" rel="noopener"
             className="bg-white text-[#E91E63] font-bold px-3 py-0.5 rounded-full text-xs hover:bg-gray-100 transition-colors"
             onClick={() => trackStickyClick()}>
             REZERVUJTE TEĎ!
@@ -430,9 +491,9 @@ export default function Home() {
         <div className="container flex items-center justify-between gap-4">
           {/* Logo */}
           <a href="/" className="flex items-center gap-1.5 flex-shrink-0">
-            <img 
-              src="/logo-akcni-letenky.png" 
-              alt="Akční Letenky" 
+            <img
+              src="/logo-akcni-letenky.png"
+              alt="Akční Letenky"
               className="h-9 md:h-10 lg:h-11 w-auto"
             />
           </a>
@@ -482,10 +543,10 @@ export default function Home() {
             </Link>
 
             {/* CTA Button - Čedok style: blue rounded */}
-            <a 
-              href={kiwiDeepLink({ currency: "CZK", lang: "cs" }, "header-cta")} 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <a
+              href={buildPelikanSearchUrl("header-cta")}
+              target="_blank"
+              rel="noopener"
               className="hidden md:flex items-center gap-1.5 bg-[#1565C0] hover:bg-[#0d47a1] text-white px-4 py-2 rounded-full transition-colors whitespace-nowrap font-semibold text-sm shadow-sm"
               onClick={() => trackReservationClick()}
             >
@@ -502,16 +563,6 @@ export default function Home() {
       ) : (
         <HeroVariantB onSearch={handleSearchVariantB} />
       )}
-
-
-
-      {/* Kiwi.com Search Widget */}
-      <section className="py-8 bg-white">
-        <div className="container">
-          <div id="widget-holder" className="max-w-4xl mx-auto"></div>
-        </div>
-      </section>
-
       {/* Blue Info Banner */}
       <div className="bg-gradient-to-r from-[#1976D2] to-[#2196F3] py-4 shadow-md mt-16">
         <div className="container">
@@ -535,6 +586,8 @@ export default function Home() {
         </div>
       </div>
 
+      <PelikanPrimaryDeals />
+
       {/* Featured European Cities */}
       <section aria-labelledby="featured-cities" className="py-10 bg-[#F0F4F8]">
         <div className="container">
@@ -552,7 +605,7 @@ export default function Home() {
                     href={internalUrl}
                     rel="noopener"
                     className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 block group"
-                    onClick={() => { trackAffiliateClick(city.to, simpleSlug, "featured", internalUrl); trackFunnelAffiliateClick(city.to); }}
+                    onClick={() => { trackAffiliateClick(city.to, simpleSlug, "featured", internalUrl, "internal"); trackFunnelAffiliateClick(city.to); }}
                   >
                     <div className="relative h-48 overflow-hidden">
                       {/* Gold "Nejprodávanější" Badge for top 3 */}
@@ -571,7 +624,7 @@ export default function Home() {
                       {/* Airplane overlay on hover */}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <svg className="w-16 h-16 text-white" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
                         </svg>
                       </div>
                     </div>
@@ -589,14 +642,6 @@ export default function Home() {
                         <div className="text-gray-400 line-through text-base">
                           od {formatPrice(Math.round(city.price * 1.4))}
                         </div>
-                      </div>
-                      {/* Live Viewer Counter */}
-                      <div className="flex justify-center mb-2">
-                        <LiveViewerCounter destinationId={`city_${city.to.toLowerCase()}`} />
-                      </div>
-                      {/* Urgency Timer */}
-                      <div className="flex justify-center">
-                        <UrgencyTimer offerId={`city_${city.to.toLowerCase()}`} className="text-xs" />
                       </div>
                     </div>
                   </a>
@@ -645,8 +690,6 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* Nejprodávanější letenky tento týden */}
       <section aria-labelledby="top-this-week" className="py-12 bg-white">
         <div className="container">
@@ -660,6 +703,16 @@ export default function Home() {
           </div>
 
           <TopFlightsThisWeek />
+
+          {/* Official Pelikan Search Widget */}
+          <PelikanSearchWidget departures="PRG" />
+        </div>
+      </section>
+
+      {/* Travel Quiz Widget - Budget & Style recommendation */}
+      <section className="py-6 bg-white">
+        <div className="container">
+          <TravelQuizWidget />
         </div>
       </section>
 
@@ -670,10 +723,9 @@ export default function Home() {
       <HomeTipsWidget />
 
       {/* Personalized Recommendations */}
-      <PersonalizedSection />
-
-      {/* WhatsApp Group Join Banner */}
-      <WhatsAppGroupBanner />
+      <Suspense fallback={null}>
+        <PersonalizedSection />
+      </Suspense>
 
       {/* Zpáteční levné letenky Grid */}
       <section aria-labelledby="return-flights" className="py-12 bg-[#F5F7FA]">
@@ -731,8 +783,7 @@ export default function Home() {
 
           {filteredReturnFlights.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {filteredReturnFlights.map((dest, index) => {
-              // Use pelikanUrl from data if available, otherwise fallback to generic URL
+              {filteredReturnFlights.map((dest, index) => {
               const pelikanUrl = dest.pelikanUrl || `https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=grid&utm_campaign=${dest.slug}`;
               const redirectUrl = `/redirect?url=${encodeURIComponent(pelikanUrl)}&dest=${encodeURIComponent(dest.name)}`;
               const discountPercent = Math.round(26 + (index * 3) % 12);
@@ -747,17 +798,17 @@ export default function Home() {
                   <div className="absolute top-2 right-2 z-10 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
                     -{discountPercent}%
                   </div>
-                  
+
                   {/* Image */}
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
+                    <OptimizedImage
                       src={dest.image}
                       alt={`${dest.name}, ${dest.country}`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       loading="lazy"
                       decoding="async"
                       fetchPriority={index < 4 ? "high" : "low"}
-                      onError={(e) => { (e.target as HTMLImageElement).src = '/destinations/paris.jpg'; }}
+                      fallbackSrc="/destinations/paris.jpg"
                     />
                     {/* CTA overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-orange-600/90 to-orange-500/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1">
@@ -769,28 +820,23 @@ export default function Home() {
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Content */}
                   <div className="p-3 md:p-4 flex-1 flex flex-col">
                     <h3 className="font-bold text-base md:text-lg text-gray-800 group-hover:text-blue-600 transition-colors truncate">
                       {dest.name}
                     </h3>
                     <p className="text-xs text-gray-500 mb-2">{dest.country}</p>
-                    
+
                     {/* Price */}
                     <div className="flex items-baseline gap-2 mb-2">
                       <span className="text-lg md:text-xl font-bold text-orange-600 whitespace-nowrap">od {formatPrice(dest.price)}</span>
                       <span className="text-xs text-gray-400 line-through">od {formatPrice(Math.round(dest.price * 1.35))}</span>
                     </div>
-                    
-                    {/* Live Viewer Counter */}
-                    <div className="mt-auto">
-                      <LiveViewerCounter destinationId={`return_${dest.slug}`} />
-                    </div>
                   </div>
                 </a>
               );
-            })}
+              })}
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
@@ -829,11 +875,13 @@ export default function Home() {
             <TabsContent value="states" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {countries.map((country, index) => {
-                  const seoUrl = `/letenky-do-${country.seoSlug || country.slug}`;
+                  const seoUrl = buildPelikanSearchUrl("homepage-states-tab", country.slug);
                   return (
                     <a
                       key={index}
                       href={seoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
                       onClick={() => { trackAffiliateClick(country.name, country.slug, "states-tab", seoUrl); trackFunnelAffiliateClick(country.name); }}
                     >
@@ -860,11 +908,13 @@ export default function Home() {
             <TabsContent value="cities" className="mt-6">
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {cities.map((city, index) => {
-                  const seoUrl = `/letenky-${city.seoSlug || city.slug}`;
+                  const seoUrl = buildPelikanSearchUrl("homepage-cities-tab", city.slug);
                   return (
                     <a
                       key={index}
                       href={seoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden border border-gray-100 p-3"
                       onClick={() => { trackAffiliateClick(city.name, city.slug, "cities-tab", seoUrl); trackFunnelAffiliateClick(city.name); }}
                     >
@@ -890,23 +940,29 @@ export default function Home() {
             {/* Letecké společnosti Tab */}
             <TabsContent value="airlines" className="mt-6">
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-                {airlines.map((airline, index) => (
-                  <Link
-                    key={index}
-                    href={`/letecka-spolecnost/${airline.slug}`}
-                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all p-5 flex flex-col items-center gap-3 group"
-                  >
-                    <img
-                      src={airline.logo}
-                      alt={`${airline.name} logo`}
-                      className="w-28 h-28 md:w-32 md:h-32 object-contain flex-shrink-0"
-                      loading="lazy"
-                    />
-                    <span className="text-sm md:text-base font-medium text-blue-600 group-hover:underline text-center">
-                      {airline.name}
-                    </span>
-                  </Link>
-                ))}
+                {airlines.map((airline, index) => {
+                  const pelikanUrl = buildPelikanSearchUrl("homepage-airlines-tab", airline.slug);
+                  return (
+                    <a
+                      key={index}
+                      href={pelikanUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all p-5 flex flex-col items-center gap-3 group"
+                      onClick={() => { trackAffiliateClick(airline.name, airline.slug, "airlines-tab", pelikanUrl); trackFunnelAffiliateClick(airline.name); }}
+                    >
+                      <img
+                        src={airline.logo}
+                        alt={`${airline.name} logo`}
+                        className="w-28 h-28 md:w-32 md:h-32 object-contain flex-shrink-0"
+                        loading="lazy"
+                      />
+                      <span className="text-sm md:text-base font-medium text-blue-600 group-hover:underline text-center">
+                        {airline.name}
+                      </span>
+                    </a>
+                  );
+                })}
               </div>
             </TabsContent>
 
@@ -914,15 +970,15 @@ export default function Home() {
             <TabsContent value="top" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {topDestinations.map((dest, index) => {
-                  const kiwiUrl = kiwiSearchLink("prague-czech-republic", dest.slug, "top-destinations");
+                  const pelikanUrl = buildPelikanVacationUrl("top-destinations", dest.slug);
                   return (
                     <a
                       key={index}
-                      href={kiwiUrl}
+                      href={pelikanUrl}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener"
                       className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100"
-                      onClick={() => { trackAffiliateClick(dest.title, dest.slug, "top-tab", kiwiUrl); trackFunnelAffiliateClick(dest.title); }}
+                      onClick={() => { trackAffiliateClick(dest.title, dest.slug, "top-tab", pelikanUrl, "pelikan"); trackFunnelAffiliateClick(dest.title); }}
                     >
                       <div className="relative h-48 overflow-hidden">
                         <img
@@ -959,71 +1015,46 @@ export default function Home() {
       </article>
 
       {/* Omio Section - Trains, Buses, Ferries */}
-      <OmioSection />
-
-      {/* Airline Logos Section */}
-      <section aria-labelledby="airlines" className="py-12 bg-[#F5F7FA]">
-        <div className="container">
-          <h2 id="airlines" className="text-2xl font-bold text-center mb-8">
-            Letecké společnosti
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-            {airlines.map((airline, index) => (
-              <Link
-                key={index}
-                href={`/letecka-spolecnost/${airline.slug}`}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all p-5 flex flex-col items-center gap-3 group"
-              >
-                <img
-                  src={airline.logo}
-                  alt={`${airline.name} logo`}
-                  className="w-28 h-28 md:w-32 md:h-32 object-contain flex-shrink-0"
-                  loading="lazy"
-                />
-                <span className="text-sm md:text-base font-medium text-blue-600 group-hover:underline text-center">
-                  {airline.name}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section with Schema.org FAQPage */}
-      <section aria-labelledby="faq" className="py-12 bg-white">
-        <div className="container max-w-4xl">
-          <h2 id="faq" className="text-2xl font-bold text-center mb-8">
-            Často kladené otázky
-          </h2>
-          <div className="space-y-4">
-            {faqData.map((faq, index) => (
-              <details
-                key={index}
-                className="bg-[#F5F7FA] rounded-lg shadow-sm group"
-              >
-                <summary className="flex items-center justify-between p-5 cursor-pointer list-none font-semibold text-lg hover:bg-gray-100 rounded-lg transition-colors">
-                  <span>{faq.question}</span>
-                  <span className="text-[#E91E63] text-2xl group-open:rotate-45 transition-transform">+</span>
-                </summary>
-                <div className="px-5 pb-5 text-muted-foreground leading-relaxed">
-                  {faq.answer}
-                </div>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Suspense fallback={null}>
+        <OmioSection />
+      </Suspense>
 
       {/* Sticky Bottom Banner - A/B Tested */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#FFD700] py-2 px-3 shadow-lg z-[100] animate-in slide-in-from-bottom" style={{ pointerEvents: 'auto' }}>
-          <div className="container">
-            <p className="text-center text-sm md:text-base font-bold text-black">
+      {showBottomBanner && !stickyBannerDismissed && (
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[#FFD700] to-[#FFC107] py-2 px-3 shadow-xl z-[100] animate-in slide-in-from-bottom border-t-2 border-yellow-400" style={{ pointerEvents: 'auto' }}>
+          <div className="container flex items-center justify-between gap-2">
+            {/* Mobile: single CTA */}
+            <a
+              href={pelikanDeepLink("/cs/akcni-letenky/DF:PED-OSR-BRQ-PRG,S:PRI", { campaign: "sticky-banner", channel: "homepage" })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="md:hidden flex-1 flex items-center justify-center gap-2 text-sm font-extrabold text-[#003087] bg-white rounded-full py-2 px-4 shadow-md hover:bg-gray-50 transition-colors"
+              onClick={() => trackStickyClick()}
+            >
+              <span className="text-[#E91E63]">{stickyCta.emoji}</span>
+              <span>
+                {stickyCta.text.includes("{{") ? (
+                  stickyCta.text.split(/\{\{|\}\}/).map((part, i) =>
+                    i % 2 === 1 ? (
+                      <span key={i} className="text-[#E91E63]">{part === "COUNTDOWN" ? ticketCount : part}</span>
+                    ) : part
+                  )
+                ) : stickyCta.text}
+              </span>
+            </a>
+            {/* Desktop: full set of links */}
+            <p className="hidden md:block text-center text-sm md:text-base font-bold text-black flex-1">
               <span className="text-[#E91E63]">{stickyCta.emoji}</span>{" "}
-              <a href="/levne-letenky" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>
+              <a
+                href={pelikanDeepLink("/cs/akcni-letenky/DF:PED-OSR-BRQ-PRG,S:PRI", { campaign: "sticky-banner", channel: "homepage" })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-700 hover:underline cursor-pointer"
+                onClick={() => trackStickyClick()}
+              >
                 {stickyCta.text.includes("{{") ? (
                   <>
-                    {stickyCta.text.split(/\{\{|\}\}/).map((part, i) => 
+                    {stickyCta.text.split(/\{\{|\}\}/).map((part, i) =>
                       i % 2 === 1 ? (
                         <span key={i} className="text-[#E91E63] font-extrabold price-highlight-pulse">{part === "COUNTDOWN" ? ticketCount : part}</span>
                       ) : part
@@ -1032,28 +1063,23 @@ export default function Home() {
                 ) : stickyCta.text}
               </a> |{" "}
               <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=sticky-banner&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold price-highlight-pulse">80 %</span> – od <span className="text-red-600 font-extrabold">4 990 Kč</span></a> |{" "}
-              <a href="/levne-letenky?kategorie=eurovikendy" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Eurovíkendy</a> |{" "}
-              <a href="/levne-letenky?kategorie=business" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Business class</a>
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Eurovíkendy</a> |{" "}
+              <a href="https://cestovani.pelikan.cz/premium-cestovani?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Business class</a>
             </p>
+            {/* Dismiss button */}
+            <button onClick={dismissStickyBanner} className="flex-shrink-0 p-1.5 rounded-full bg-white/50 hover:bg-white/80 transition-colors" aria-label="Zavřít banner">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
           </div>
         </div>
+      )}
 
       {/* Footer Section */}
       <footer className="bg-[#FF9800] py-16">
         <div className="container">
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-5xl mx-auto">
-            {/* Main Heading */}
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-[#FFD700] rounded-lg flex items-center justify-center">
-                  <span className="text-3xl">✈️</span>
-                </div>
-                <h2 className="text-3xl font-black text-[#003087]">AKČNÍ-LETENKY.com</h2>
-              </div>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Objevte <strong>nejlevnější letenky</strong> a splňte si své cestovatelské sny. Porovnáváme za vás nabídky od desítek leteckých společností, abyste mohli letět chytře a za zlevněné ceny.
-              </p>
-            </div>
+            {/* Newsletter Signup in Footer */}
+            <FooterNewsletter />
 
             {/* Quick Links Banner */}
             <div className="bg-[#FFD700] rounded-lg px-6 py-3 mb-8">
@@ -1255,91 +1281,64 @@ export default function Home() {
               )}
             </div>
 
-            {/* Bottom Yellow Banner */}
+            {/* Bottom Yellow Banner for Business Class */}
             <div className="bg-[#FFD700] rounded-lg px-6 py-3 mt-8 text-center">
-              <p className="text-sm text-[#003087]">
-                <strong>Business class letenky</strong> – Cestujte stylově a pohodlně! ✈️
-              </p>
-            </div>
-          </div>
-
-          {/* Partner Websites */}
-          <div className="border-t border-white/20 pt-6 mt-8">
-            <h3 className="text-center text-white font-semibold mb-4">Naši partneři</h3>
-            <div className="flex items-center justify-center gap-6 flex-wrap">
-              <a 
-                href="https://www.do-italie.cz" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
-              >
-                <img src="/logo-do-italie.png" alt="DO-ITALIE.cz" className="w-8 h-6 object-contain" />
-                <span className="text-white text-sm font-medium">DO-ITALIE.cz</span>
-              </a>
-
-              <a 
-                href="https://www.amarex.cz" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
-              >
-                <img src="/logo-amarex.svg" alt="AMAREX.cz" className="h-6 w-auto object-contain" />
+              <a href="https://www.akcni-letenky.com/levne-letenky?kategorie=business" className="text-sm font-bold text-[#003087] hover:underline flex items-center justify-center gap-1">
+                <span>Business class letenky – Cestujte stylově a pohodlně! ✈️</span>
               </a>
             </div>
-          </div>
-
-          {/* Copyright */}
-          <div className="text-center mt-8 text-white text-sm">
-            <p>© 2026 AKČNÍ-LETENKY.com | Všechna práva vyhrazena</p>
           </div>
         </div>
       </footer>
 
-      {/* Chatbot Widget */}
-      <ChatbotWidget />
-
-      {/* Social Proof Widget */}
-
-      
-      {/* Social Proof Notifications */}
-      <SocialProofNotification />
-
       {/* Price Alert Modal */}
-      <PriceAlertModal
-        isOpen={priceAlertModal.isOpen}
-        onClose={() => setPriceAlertModal(prev => ({ ...prev, isOpen: false }))}
-        destination={priceAlertModal.destination}
-        destinationSlug={priceAlertModal.slug}
-        currentPrice={priceAlertModal.price}
-      />
+      {priceAlertModal.isOpen && (
+        <Suspense fallback={null}>
+          <PriceAlertModal
+            isOpen={priceAlertModal.isOpen}
+            onClose={() => setPriceAlertModal(prev => ({ ...prev, isOpen: false }))}
+            destination={priceAlertModal.destination}
+            destinationSlug={priceAlertModal.slug}
+            currentPrice={priceAlertModal.price}
+          />
+        </Suspense>
+      )}
 
       {/* GDPR Consent Banner */}
-      <GdprConsentBanner />
-      
+      {showDeferredEnhancements && (
+        <Suspense fallback={null}>
+          <GdprConsentBanner />
+        </Suspense>
+      )}
     </div>
   );
 }
 
-// ── Tipy pro cestovatele widget ────────────────────────────────────────────
+// ── Tipy pro cestovatele widget ─────────────────────────────────────────
 function HomeTipsWidget() {
-  const { data: articles, isLoading } = trpc.articles.byCategory.useQuery(
-    { category: "tips", limit: 3 },
-    { staleTime: 30 * 60 * 1000 }
-  );
+  const { data: recentArticles, isLoading } = trpc.articles.recent.useQuery({ limit: 3 });
 
   if (isLoading) {
     return (
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-[#F0F4F8]">
         <div className="container">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="bg-[#E91E63] rounded-xl p-2.5">
-              <span className="text-white text-lg">💡</span>
+          <div className="flex justify-center mb-8">
+            <div className="bg-gradient-to-r from-[#1a5276] to-[#2980b9] py-3 px-6 rounded-lg shadow-lg">
+              <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                💡 Tipy pro cestovatele
+              </h2>
             </div>
-            <h2 className="text-2xl font-black text-[#003087]">Tipy pro cestovatele</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="rounded-2xl bg-gray-100 animate-pulse h-48" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
+                <div className="h-40 bg-gray-200" />
+                <div className="p-5">
+                  <div className="h-5 bg-gray-200 rounded w-3/4 mb-3" />
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2" />
+                  <div className="h-4 bg-gray-200 rounded w-5/6" />
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -1347,73 +1346,63 @@ function HomeTipsWidget() {
     );
   }
 
-  if (!articles || articles.length === 0) return null;
+  if (!recentArticles || recentArticles.length === 0) return null;
 
   return (
-    <section className="py-10 bg-white">
+    <section className="py-10 bg-[#F0F4F8]">
       <div className="container">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#E91E63] rounded-xl p-2.5">
-              <span className="text-white text-lg">💡</span>
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-black text-[#003087]">
-                Tipy pro cestovatele
-              </h2>
-              <p className="text-sm text-gray-500 mt-0.5">
-                Jak ušetřit na letenkách a cestovat chytře
-              </p>
-            </div>
+        <div className="flex justify-center mb-8">
+          <div className="bg-gradient-to-r from-[#1a5276] to-[#2980b9] py-3 px-6 rounded-lg shadow-lg">
+            <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+              💡 Tipy pro cestovatele
+            </h2>
           </div>
-          <Link
-            href="/tipy-pro-cestovatele"
-            className="text-sm font-semibold text-[#E91E63] hover:underline flex items-center gap-1"
-          >
-            Všechny tipy <ChevronRight className="w-4 h-4" />
-          </Link>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {articles.map(article => (
-            <Link key={article.id} href={`/tipy-pro-cestovatele/${article.slug}`}>
-              <div className="group rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer h-full flex flex-col">
-                {article.featuredImage && (
-                  <div className="h-40 overflow-hidden">
-                    <img
-                      src={article.featuredImage}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                )}
-                <div className="p-4 flex flex-col flex-1">
-                  <span className="text-xs font-semibold text-[#E91E63] uppercase tracking-wide mb-2">
-                    Tip pro cestovatele
-                  </span>
-                  <h3 className="font-bold text-[#003087] text-base leading-snug group-hover:text-[#E91E63] transition-colors line-clamp-2">
-                    {article.title}
-                  </h3>
-                  {article.metaDescription && (
-                    <p className="text-sm text-gray-500 mt-2 line-clamp-2 flex-1">
-                      {article.metaDescription}
-                    </p>
-                  )}
-                  <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-[#E91E63]">
-                    Číst dál <ChevronRight className="w-4 h-4" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {recentArticles.map((article) => (
+            <a
+              key={article.id}
+              href={`/blog/${article.slug}`}
+              className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
+            >
+              {article.featuredImage ? (
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={article.featuredImage}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-[#1a5276] text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                      Tip
+                    </span>
                   </div>
                 </div>
+              ) : (
+                <div className="h-40 bg-gradient-to-br from-sky-100 to-blue-200 flex items-center justify-center">
+                  <BookOpen className="w-12 h-12 text-sky-400" />
+                </div>
+              )}
+              <div className="p-5">
+                <h3 className="font-bold text-gray-800 text-base leading-snug line-clamp-2 group-hover:text-[#1a5276] transition-colors mb-2">
+                  {article.title}
+                </h3>
+                <p className="text-sm text-gray-500 line-clamp-2">{article.excerpt}</p>
+                <div className="flex items-center gap-2 mt-3 text-xs text-[#1a5276] font-semibold">
+                  Číst více <ArrowRight className="w-3.5 h-3.5" />
+                </div>
               </div>
-            </Link>
+            </a>
           ))}
         </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/tipy-pro-cestovatele">
-            <Button variant="outline" className="border-[#E91E63] text-[#E91E63] hover:bg-[#E91E63] hover:text-white">
-              Zobrazit všechny tipy pro cestovatele
-            </Button>
-          </Link>
+        <div className="flex justify-center mt-8">
+          <a
+            href="/tipy-pro-cestovatele"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#1a5276] bg-white border border-[#1a5276]/20 rounded-lg px-5 py-2.5 hover:bg-[#1a5276]/5 transition-colors"
+          >
+            Všechny tipy <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </section>
@@ -1431,10 +1420,11 @@ const STATIC_PRICES = [
 function HomeFlightMapSection() {
   const [expanded, setExpanded] = useState(false);
 
-  // Fetch dynamic prices from Travelpayouts API (cached 24h on server)
+  // Fetch dynamic prices from Pelikán API (cached on server)
   const { data: cheapFlights, isLoading } = trpc.flights.cheapFromPrague.useQuery(
     { destinations: ["LHR", "BCN", "FCO", "CDG", "AMS", "LIS", "ATH", "DXB", "BKK"] },
     {
+      enabled: expanded,
       staleTime: 60 * 60 * 1000, // 1h client-side cache
       retry: false,
     }
@@ -1487,7 +1477,7 @@ function HomeFlightMapSection() {
             {/* Blurred placeholder map background */}
             <div className="h-48 bg-gradient-to-br from-[#0a3d7a] via-[#1565c0] to-[#0288d1] flex items-center justify-center relative">
               <div className="absolute inset-0 opacity-20"
-                style={{backgroundImage: "radial-gradient(circle at 30% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 70% 30%, #fff 1px, transparent 1px), radial-gradient(circle at 50% 70%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 60%, #fff 1px, transparent 1px), radial-gradient(circle at 20% 80%, #fff 1px, transparent 1px)", backgroundSize: "200px 200px"}}
+                style={{ backgroundImage: "radial-gradient(circle at 30% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 70% 30%, #fff 1px, transparent 1px), radial-gradient(circle at 50% 70%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 60%, #fff 1px, transparent 1px), radial-gradient(circle at 20% 80%, #fff 1px, transparent 1px)", backgroundSize: "200px 200px" }}
               />
               <div className="text-center z-10">
                 <div className="text-5xl mb-3">🗺️</div>
@@ -1530,15 +1520,32 @@ function HomeFlightMapSection() {
           </div>
         )}
 
-        {/* Full map widget — shown when expanded */}
+        {/* Tracked Pelikan fallback shown when expanded */}
         {expanded && (
           <div className="rounded-2xl overflow-hidden shadow-lg border border-[#003087]/10">
-            <FlightMapWidget
-              origin="PRG"
-              locale="cs"
-              currency="CZK"
-              height={520}
-            />
+            <div className="bg-white p-6 md:p-8">
+              <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">
+                Pelikan nabidky misto neoverenych iframe prokliku
+              </p>
+              <h3 className="mt-2 text-2xl font-black text-[#003087]">
+                Vyberte si aktualni letenky s plne trackovanym affiliate odkazem
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm text-gray-600">
+                Prodejni klik vede primo na Pelikan.cz s parametrem a_aid=levne-letenky, takze neztracime provizi na externim widgetu.
+              </p>
+              <a
+                href={pelikanDeepLink("/cs/akcni-letenky", {
+                  campaign: "homepage-map",
+                  channel: "expanded-panel",
+                  content: "all",
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex items-center justify-center rounded-xl bg-[#E91E63] px-6 py-3 font-bold text-white transition-colors hover:bg-[#C2185B]"
+              >
+                Zobrazit vsechny Pelikan akce
+              </a>
+            </div>
           </div>
         )}
       </div>

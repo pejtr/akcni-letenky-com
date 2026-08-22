@@ -14,6 +14,7 @@ import { trackFormInteraction } from "@/lib/abTest";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { trackSearch } from "@/components/MetaPixel";
 import HeroBackgroundSlideshow from "@/components/HeroBackgroundSlideshow";
+import DestinationAutocomplete from "@/components/DestinationAutocomplete";
 
 interface HeroVariantBProps {
   onSearch: (from: string, destination: string, duration: string, passengers: number) => void;
@@ -89,15 +90,16 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Destinace
                   </label>
-                  <Input
-                    type="text"
-                    placeholder="Kam?"
+                  <DestinationAutocomplete
                     value={destination}
-                    onChange={(e) => {
-                      setDestination(e.target.value);
+                    onChange={setDestination}
+                    onSelect={(dest) => {
+                      setDestination(dest.name);
                       trackFormInteraction("hero_redesign", "destination");
                     }}
-                    className="h-12 border-2 border-gray-300 font-medium"
+                    placeholder="Kam?"
+                    className="flex-1"
+                    inputClassName="h-12 border-2 border-gray-300 font-medium focus:border-[#1565C0] focus:ring-[#1565C0]"
                   />
                 </div>
 

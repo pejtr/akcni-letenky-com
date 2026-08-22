@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { X, Mail, Gift, Sparkles } from "lucide-react";
+import { X, Mail, Gift, Sparkles, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import { useNewsletterABTest } from "@/hooks/useNewsletterABTest";
 
-export default function NewsletterBar() {
+interface NewsletterBarProps {
+  isScrolled?: boolean;
+}
+
+export default function NewsletterBar({ isScrolled = false }: NewsletterBarProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,12 +64,14 @@ export default function NewsletterBar() {
   // Select icon based on variant
   const IconComponent = variant.icon === 'gift' ? Gift : variant.icon === 'sparkles' ? Sparkles : Mail;
 
+  const topClass = isScrolled ? "top-[48px] md:top-[52px]" : "top-[84px] md:top-[88px]";
+
   return (
     <>
       {/* Spacer to prevent content overlap */}
       <div className="h-[48px] md:h-[44px]" />
       {/* Fixed newsletter bar positioned below the header */}
-      <div className={`fixed top-[48px] md:top-[52px] left-0 right-0 bg-gradient-to-r ${variant.bgGradient} text-white shadow-lg z-40 animate-in slide-in-from-top`}>
+      <div className={`fixed ${topClass} left-0 right-0 bg-gradient-to-r ${variant.bgGradient} text-white shadow-lg z-40 transition-all duration-300 animate-in slide-in-from-top`}>
         <div className="container py-2.5">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             {/* Left side - Icon + Text */}
@@ -74,8 +80,11 @@ export default function NewsletterBar() {
                 <IconComponent className="w-5 h-5" />
               </div>
               <div>
-                <p className="font-bold text-sm md:text-base leading-tight">
+                <p className="font-bold text-sm md:text-base leading-tight flex items-center gap-2">
                   {variant.title}
+                  <span className="hidden sm:inline-flex items-center gap-1 bg-white/20 rounded-full px-2 py-0.5 text-[10px] font-normal">
+                    <Users className="w-3 h-3" /> 12 340+ cestovatelů
+                  </span>
                 </p>
                 <p className="text-xs md:text-sm text-white/90 leading-tight">
                   {variant.subtitle}
@@ -85,9 +94,16 @@ export default function NewsletterBar() {
 
             {/* Right side - Form or Success Message */}
             {isSuccess ? (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-                <Mail className="w-5 h-5" />
-                <span className="font-semibold text-sm">✅ Děkujeme! Brzy vám pošleme první nabídky.</span>
+              <div className="flex items-center gap-3 bg-emerald-800/90 backdrop-blur-sm rounded-full px-4 py-2 border border-emerald-400/30">
+                <span className="font-semibold text-xs md:text-sm">✅ Děkujeme! Váš e-mail byl uložen.</span>
+                <a
+                  href="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#25D366] hover:bg-[#1ebd56] text-white font-bold text-xs px-3.5 py-1.5 rounded-full flex items-center gap-1 shadow-md whitespace-nowrap transition-transform hover:scale-105"
+                >
+                  <span>💬 WhatsApp Skupina →</span>
+                </a>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto sm:max-w-md">

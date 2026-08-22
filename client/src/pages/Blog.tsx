@@ -1,3 +1,5 @@
+import SEO from "@/components/SEO";
+import { generateBreadcrumbSchema } from "@/lib/structuredData";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { Calendar, User, ArrowRight } from "lucide-react";
@@ -10,6 +12,14 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
+      <SEO
+        title="Blog | Akční Letenky"
+        description="Tipy na levné letenky, cestovatelské rady a inspirace pro vaše cesty. Přečtěte si nejnovější články o cestování."
+        canonical="https://www.akcni-letenky.com/blog"
+        structuredData={[
+          generateBreadcrumbSchema([{ name: "Blog", url: "/blog" }])
+        ]}
+      />
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
@@ -63,37 +73,49 @@ export default function Blog() {
           ) : articles && articles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map((article) => (
-                <Card key={article.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    {article.featuredImage && (
-                      <img
-                        src={article.featuredImage}
-                        alt={article.title}
-                        className="w-full h-48 object-cover rounded-t-lg mb-4"
-                      />
-                    )}
-                    <CardTitle className="text-xl line-clamp-2">{article.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-4 text-sm">
-                      <span className="flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        {article.author}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {article.publishedAt
-                          ? new Date(article.publishedAt).toLocaleDateString("cs-CZ")
-                          : "Nepublikováno"}
-                      </span>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 line-clamp-3">{article.excerpt}</p>
-                  </CardContent>
-                  <CardFooter>
+                <Card key={article.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                  <div>
                     <Link href={`/blog/${article.slug}`}>
-                      <Button variant="outline" className="group">
-                        Číst více
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      <a className="block cursor-pointer">
+                        {article.featuredImage && (
+                          <div className="h-48 overflow-hidden">
+                            <img
+                              src={article.featuredImage}
+                              alt={article.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <CardHeader className="pt-4">
+                          <CardTitle className="text-xl font-bold group-hover:text-[#E91E63] transition-colors line-clamp-2">
+                            {article.title}
+                          </CardTitle>
+                          <CardDescription className="flex items-center gap-4 text-sm mt-2">
+                            <span className="flex items-center gap-1">
+                              <User className="w-4 h-4" />
+                              {article.author || "Akční Letenky"}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              {article.publishedAt
+                                ? new Date(article.publishedAt).toLocaleDateString("cs-CZ")
+                                : "Aktuální"}
+                            </span>
+                          </CardDescription>
+                        </CardHeader>
+                      </a>
+                    </Link>
+
+                    <CardContent>
+                      <p className="text-gray-600 line-clamp-3 text-sm leading-relaxed">{article.excerpt}</p>
+                    </CardContent>
+                  </div>
+
+                  <CardFooter className="pt-0">
+                    <Link href={`/blog/${article.slug}`}>
+                      <Button variant="outline" className="group/btn w-full border-pink-500 text-pink-600 hover:bg-pink-600 hover:text-white transition-colors">
+                        Číst článek
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                       </Button>
                     </Link>
                   </CardFooter>

@@ -931,18 +931,22 @@ export type InsertRevolutABTestResult = typeof revolutABTestResults.$inferInsert
 // ============ Social Media Scheduler ============
 export const socialPosts = mysqlTable("social_posts", {
   id: int("id").autoincrement().primaryKey(),
-  platform: mysqlEnum("platform", ["instagram", "linkedin", "both"]).notNull().default("both"),
-  postType: mysqlEnum("postType", ["post", "story", "reel"]).notNull().default("post"),
+  platform: mysqlEnum("platform", ["facebook", "instagram", "both", "linkedin", "all"]).notNull().default("both"),
+  postType: mysqlEnum("postType", ["post", "story", "reel", "flight_deal", "blog_article", "custom"]).notNull().default("flight_deal"),
   contentType: mysqlEnum("contentType", ["deal", "tip", "destination", "custom"]).notNull().default("deal"),
   caption: text("caption").notNull(),
+  title: varchar("title", { length: 255 }),
   imageUrl: varchar("imageUrl", { length: 1000 }),
+  linkUrl: varchar("linkUrl", { length: 1000 }),
   imagePrompt: text("imagePrompt"),
   hashtags: text("hashtags"),
   status: mysqlEnum("status", ["draft", "scheduled", "published", "failed", "cancelled"]).notNull().default("draft"),
   scheduledAt: timestamp("scheduledAt"),
   publishedAt: timestamp("publishedAt"),
+  fbPostId: varchar("fbPostId", { length: 150 }),
   igMediaId: varchar("igMediaId", { length: 100 }),
   liPostId: varchar("liPostId", { length: 200 }),
+  fbError: text("fbError"),
   igError: text("igError"),
   liError: text("liError"),
   scheduleCronTaskUid: varchar("scheduleCronTaskUid", { length: 65 }),
@@ -961,3 +965,48 @@ export const socialSettings = mysqlTable("social_settings", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 export type SocialSetting = typeof socialSettings.$inferSelect;
+
+// ============ Google Indexing API Logs ============
+export const indexingLogs = mysqlTable("indexing_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  url: varchar("url", { length: 1000 }).notNull(),
+  type: mysqlEnum("type", ["URL_UPDATED", "URL_DELETED"]).notNull().default("URL_UPDATED"),
+  status: mysqlEnum("status", ["success", "failed", "simulated"]).notNull().default("success"),
+  apiResponse: text("apiResponse"),
+  errorMessage: text("errorMessage"),
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+});
+export type IndexingLog = typeof indexingLogs.$inferSelect;
+export type InsertIndexingLog = typeof indexingLogs.$inferInsert;
+
+// ============ Web Push Campaigns ============
+export const pushCampaigns = mysqlTable("push_campaigns", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  icon: varchar("icon", { length: 1000 }),
+  url: varchar("url", { length: 1000 }),
+  sentCount: int("sentCount").default(0),
+  failedCount: int("failedCount").default(0),
+  status: mysqlEnum("status", ["sent", "failed", "simulated"]).notNull().default("sent"),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+});
+export type PushCampaign = typeof pushCampaigns.$inferSelect;
+export type InsertPushCampaign = typeof pushCampaigns.$inferInsert;
+
+// ============ Price Trackers (Hlídač Cen Letenek & Dovolených) ============
+export const priceTrackers = mysqlTable("price_trackers", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  type: mysqlEnum("type", ["flight", "holiday", "both"]).notNull().default("both"),
+  destination: varchar("destination", { length: 255 }).notNull().default("Všechny destinace"),
+  maxPrice: int("maxPrice").notNull(),
+  currentPrice: int("currentPrice"),
+  lowestPriceSeen: int("lowestPriceSeen"),
+  status: mysqlEnum("status", ["active", "triggered", "paused"]).notNull().default("active"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastNotifiedAt: timestamp("lastNotifiedAt"),
+});
+export type PriceTracker = typeof priceTrackers.$inferSelect;
+export type InsertPriceTracker = typeof priceTrackers.$inferInsert;

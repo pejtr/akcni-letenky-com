@@ -271,7 +271,7 @@ const TIPS_TOPICS = [
     slug_prefix: "letenky-do-chorvatska-split-dubrovnik",
     title: "Letenky do Chorvatska: Split a Dubrovník od 800 Kč — stojí to za to?",
     keywords: "letenky Chorvatsko Praha, letenky Split cena, letenky Dubrovník Praha, Chorvatsko letadlem vs autem",
-    image: "https://images.unsplash.com/photo-1555990538-c4f1a0e87a22?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1200&q=80",
     prompt_focus: "Porovnej letenky do Chorvatska vs. jízda autem. Ceny Praha → Split vs. Dubrovník vs. Zadar. Aerolinky (Croatia Airlines, Ryanair, Wizz Air). Tipy na kombinaci měst. Kdy je Chorvatsko nejlevnější (květen, září). Trajekty na ostrovy.",
   },
   {
@@ -420,7 +420,7 @@ export async function generateDailyTipArticle(): Promise<{
 
     console.log(`[TipsGenerator] Generating tip article: "${topic.title}"`);
 
-    const systemPrompt = `Jsi profesionální cestovní copywriter a SEO expert. Píšeš v češtině přirozeným, přátelským a praktickým stylem. Tvé články jsou konkrétní, plné actionable tipů a optimalizované pro Google vyhledávání. Vždy zahrni relevantní affiliate odkaz na Kiwi.com (https://www.kiwi.com/cs/?affilid=155221&currency=czk) přirozeně do textu.`;
+    const systemPrompt = `Jsi profesionální cestovní copywriter a SEO expert. Píšeš v češtině přirozeným, přátelským a praktickým stylem. Tvé články jsou konkrétní, plné actionable tipů a optimalizované pro Google vyhledávání. Vždy zahrni relevantní affiliate odkaz na Pelikan.cz s parametrem a_aid=levne-letenky přirozeně do textu.`;
 
     const userPrompt = `Napiš kompletní SEO článek pro kategorii "Tipy pro cestovatele" na webu Akční-Letenky.cz.
 
@@ -436,7 +436,7 @@ POŽADAVKY NA FORMÁT (DŮLEŽITÉ):
 - PRVNÍ obrázek v těle článku MUSÍ být jiný než hero image (${topic.image})
 - Přidej zvýrazněné boxy: <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 my-8">
 - Délka: 900-1200 slov
-- Zahrň call-to-action s odkazem na Kiwi.com: <a href="https://www.kiwi.com/cs/?affilid=155221&currency=czk" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">Kiwi.com</a>
+- Zahrň call-to-action s odkazem na Pelikan.cz: <a href="https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=article&utm_campaign=tips" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">Pelikan.cz</a>
 - Zahrň interní odkaz na /tipy-pro-cestovatele a /levne-letenky
 - Konec článku: <div class="bg-green-50 border border-green-200 rounded-xl p-6 my-8"> s CTA
 

@@ -331,7 +331,33 @@ export default function AdminDashboard() {
         {/* Admin Navigation */}
         <div className="mt-8">
           <h2 className="text-lg font-bold mb-4">Další sekce</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Link href="/admin/social-media">
+              <Card className="hover:shadow-md transition-shadow cursor-pointer border-blue-300 bg-blue-50/30">
+                <CardContent className="pt-5 pb-4 flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 rounded-lg text-blue-600 font-bold">
+                    FB/IG
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Sociální sítě (FB & IG)</p>
+                    <p className="text-xs text-muted-foreground">Automatické příspěvky</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/indexing-and-push">
+              <Card className="hover:shadow-md transition-shadow cursor-pointer border-amber-300 bg-amber-50/30">
+                <CardContent className="pt-5 pb-4 flex items-center gap-3">
+                  <div className="p-2 bg-amber-100 rounded-lg text-amber-700 font-bold">
+                    PUSH
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Indexing & Web Push</p>
+                    <p className="text-xs text-muted-foreground">Google API & Notifikace</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
             <Link href="/admin/share-ab-test">
               <Card className="hover:shadow-md transition-shadow cursor-pointer border-blue-200">
                 <CardContent className="pt-5 pb-4 flex items-center gap-3">

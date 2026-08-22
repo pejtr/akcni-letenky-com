@@ -1,7 +1,7 @@
 import { Link } from "wouter";
-import { useEffect } from "react";
 import { Plane, MapPin, TrendingDown, Clock, Star, ArrowRight, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import SEO from "@/components/SEO";
 
 const PELIKAN_LINK = "https://www.pelikan.cz/cs/akcni-letenky/LP:0_1500,S:PRI?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=landing-page&utm_campaign=1500kc";
 
@@ -21,19 +21,13 @@ const benefits = [
 ];
 
 export default function Letenky1500() {
-  useEffect(() => {
-    document.title = "Letenky do 1 500 Kč | Nejlevnější lety po Evropě | Akční Letenky";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) {
-      meta.setAttribute(
-        "content",
-        "Objevte nejlevnější letenky do 1 500 Kč zpáteční. Londýn od 733 Kč, Řím od 712 Kč, Barcelona od 946 Kč. Rezervujte ještě dnes!"
-      );
-    }
-  }, []);
-
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO 
+        title="Letenky do 1 500 Kč | Nejlevnější lety po Evropě | Akční Letenky"
+        description="Objevte nejlevnější letenky do 1 500 Kč zpáteční. Londýn od 733 Kč, Řím od 712 Kč, Barcelona od 946 Kč. Rezervujte ještě dnes!"
+        canonical="https://www.akcni-letenky.com/letenky-do-1500"
+      />
       {/* Header */}
       <header className="bg-gradient-to-r from-[#FFD700] to-[#FFC107] shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-2 flex items-center justify-between">

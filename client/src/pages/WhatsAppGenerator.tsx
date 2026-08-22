@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 
 export default function WhatsAppGenerator() {
   const [selectedFlights, setSelectedFlights] = useState<number[]>([]);
@@ -83,13 +84,13 @@ export default function WhatsAppGenerator() {
         if (holiday.returnDate) {
           message += `🔙 Návrat: ${new Date(holiday.returnDate).toLocaleDateString("cs-CZ")}\n`;
         }
-        message += `🔗 https://akcni-letenky.com/letenky-${holiday.toCity.toLowerCase().replace(/\s+/g, "-")}\n\n`;
+        message += `🔗 https://www.akcni-letenky.com/letenky-${holiday.toCity.toLowerCase().replace(/\s+/g, "-")}\n\n`;
       });
     }
 
     message += "━━━━━━━━━━━━━━━━\n";
     message += "⚡ *Rezervujte rychle - nabídky jsou limitované!*\n\n";
-    message += "🌐 https://akcni-letenky.com\n";
+    message += "🌐 https://www.akcni-letenky.com\n";
 
     return message;
   };
@@ -117,6 +118,7 @@ export default function WhatsAppGenerator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <SEO title="WhatsApp Nabídka | Akční Letenky" description="Sdílejte nabídku letenek přes WhatsApp s přáteli." canonical="https://www.akcni-letenky.com/whatsapp" noindex={true} />
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container py-4">

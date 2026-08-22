@@ -32,8 +32,8 @@ export function generateOrganizationSchema() {
     "@type": "TravelAgency",
     "name": "Akční Letenky",
     "alternateName": "AkcniLetenky.com",
-    "url": "https://akcni-letenky.com",
-    "logo": "https://akcni-letenky.com/logo.png",
+    "url": "https://www.akcni-letenky.com",
+    "logo": "https://www.akcni-letenky.com/logo.png",
     "description": "Nejlevnější letenky po celém světě. Najděte si tu nejlepší nabídku pro vaši dovolenou s úsporou až 60%.",
     "telephone": "+420123456789",
     "email": "info@akcni-letenky.com",
@@ -66,7 +66,7 @@ export function generateBreadcrumbSchema(items: BreadcrumbItem[]) {
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": `https://akcni-letenky.com${item.url}`
+      "item": `https://www.akcni-letenky.com${item.url}`
     }))
   };
 }
@@ -86,7 +86,7 @@ export function generateFAQSchema(faqs: FAQItem[]) {
         "text": faq.answer
       }
     }))
-  };
+  } as const;
 }
 
 /**
@@ -108,7 +108,7 @@ export function generateArticleSchema(article: ArticleData) {
       "name": "Akční Letenky",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://akcni-letenky.com/logo.png"
+        "url": "https://www.akcni-letenky.com/logo.png"
       }
     },
     "datePublished": article.datePublished,

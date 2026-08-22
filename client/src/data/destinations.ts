@@ -84,7 +84,7 @@ export const cities: Destination[] = [
   { name: "Havana", price: 11990, country: "Kuba", image: "https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?w=800&h=600&fit=crop", slug: "havana-cuba", seoSlug: "havana" },
   { name: "Amsterdam", price: 1150, country: "Nizozemsko", image: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=600&fit=crop", slug: "amsterdam-netherlands", seoSlug: "amsterdam" },
   { name: "Malaga", price: 890, country: "Španělsko", image: "https://images.unsplash.com/photo-1562883676-8c7feb83f09b?w=800&h=600&fit=crop", slug: "malaga-spain", seoSlug: "malaga" },
-  { name: "Male", price: 14990, country: "Maledivy", image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&h=600&fit=crop", slug: "male-maldives", seoSlug: "maledivy" },
+  
   { name: "Miláno", price: 890, country: "Itálie", image: "https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=800&h=600&fit=crop", slug: "milan-italy", seoSlug: "milano" },
   { name: "Abu Dhabi", price: 5490, country: "SAE", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop", slug: "abu-dhabi-united-arab-emirates", seoSlug: "abu-dhabi" },
   { name: "Neapol", price: 790, country: "Itálie", image: "https://images.unsplash.com/photo-1543429258-f9e39f3a8e3c?w=800&h=600&fit=crop", slug: "naples-italy", seoSlug: "neapol" },

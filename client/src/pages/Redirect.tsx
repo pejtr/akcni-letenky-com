@@ -1,21 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation } from "wouter";
 import { Plane, ExternalLink } from "lucide-react";
+import { appendOnyxSubId, trackAffiliateRedirect } from "@/lib/leadosTracking";
 
 export default function Redirect() {
   const [, setLocation] = useLocation();
   const [countdown, setCountdown] = useState(3);
+  const trackedRef = useRef(false);
 
   useEffect(() => {
     // Get target URL from query params
     const params = new URLSearchParams(window.location.search);
-    const targetUrl = params.get("url");
+    const rawTargetUrl = params.get("url");
     const destination = params.get("dest") || "prodejce";
 
-    if (!targetUrl) {
+    if (!rawTargetUrl) {
       // If no URL provided, redirect to homepage
       setLocation("/");
       return;
+    }
+
+    const decoded = decodeURIComponent(rawTargetUrl);
+    const finalTargetUrl = appendOnyxSubId(decoded);
+
+    // Track LeadOS affiliate redirect event once
+    if (!trackedRef.current) {
+      trackedRef.current = true;
+      trackAffiliateRedirect(finalTargetUrl);
     }
 
     // Countdown timer
@@ -24,7 +35,7 @@ export default function Redirect() {
         if (prev <= 1) {
           clearInterval(timer);
           // Redirect to target URL
-          window.location.href = decodeURIComponent(targetUrl);
+          window.location.href = finalTargetUrl;
           return 0;
         }
         return prev - 1;

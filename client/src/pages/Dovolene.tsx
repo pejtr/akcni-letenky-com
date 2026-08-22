@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { Link } from "wouter";
+import SEO from "@/components/SEO";
+import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -217,6 +218,11 @@ export default function Dovolene() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
+      <SEO
+        title="Dovolená | Akční Letenky"
+        description="Levné zájezdy a dovolená. Vyberte si z nabídky nejlepších cestovních kanceláří za skvělé ceny."
+        canonical="https://www.akcni-letenky.com/dovolene"
+      />
       {/* Navigation */}
       <Navigation />
 
@@ -362,17 +368,7 @@ export default function Dovolene() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#1a5276] text-white py-8">
-        <div className="container text-center">
-          <p className="opacity-75">
-            © 2024 Akční Letenky. Všechna práva vyhrazena.
-          </p>
-          <p className="text-sm opacity-50 mt-2">
-            Nabídky jsou poskytovány partnerem Pelikán.cz
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

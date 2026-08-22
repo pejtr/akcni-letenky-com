@@ -1,6 +1,8 @@
+import SEO from "@/components/SEO";
 import { ArrowRight, Plane, MapPin, Building, Theater, ShoppingBag, Camera } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useABTest, trackABTestConversion } from "@/hooks/useABTest";
+import InternalLinkingHub from "@/components/InternalLinkingHub";
 
 export default function NewYorkPage() {
   const { variant: ctaVariant, ctaText } = useABTest({
@@ -14,6 +16,11 @@ export default function NewYorkPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <SEO
+        title="New York | Akční Letenky"
+        description="Levné letenky do New Yorku. Zažijte město, které nikdy nespí – socha Svobody, Central Park a Broadway."
+        canonical="https://www.akcni-letenky.com/new-york"
+      />
       <Navigation />
 
       {/* Hero Section */}
@@ -187,6 +194,11 @@ export default function NewYorkPage() {
           </div>
         </div>
       </section>
+
+      {/* SEO Internal Linking Hub */}
+      <div className="container max-w-6xl my-8">
+        <InternalLinkingHub />
+      </div>
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-[#1a5276] to-[#2874A6] text-white">

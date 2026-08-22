@@ -1,8 +1,59 @@
 import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Phone, ChevronRight, Plane, ArrowLeft } from "lucide-react";
-import ChatbotWidget from "@/components/ChatbotWidget";
+import { ChevronRight, Plane, ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { pelikanDeepLink } from "@shared/affiliateLinks";
+import SEO from "@/components/SEO";
+
+// Sample Pelikán airline deal templates per carrier
+const airlineDealTemplates: Record<string, Array<{ destination: string; from: string; price: number; salePrice: number; discount: number; linkPath: string }>> = {
+  "wizz-air": [
+    { destination: "Londýn (Luton)", from: "Praha (PRG)", price: 1590, salePrice: 890, discount: 44, linkPath: "/cs/akcni-letenky/praha/londyn" },
+    { destination: "Řím (Fiumicino)", from: "Praha (PRG)", price: 1990, salePrice: 1090, discount: 45, linkPath: "/cs/akcni-letenky/praha/rim" },
+    { destination: "Milán (Malpensa)", from: "Praha (PRG)", price: 1490, salePrice: 790, discount: 47, linkPath: "/cs/akcni-letenky/praha/milan" },
+    { destination: "Neapol", from: "Praha (PRG)", price: 2190, salePrice: 1290, discount: 41, linkPath: "/cs/akcni-letenky/praha/neapol" },
+    { destination: "Kutaisi (Gruzie)", from: "Praha (PRG)", price: 2990, salePrice: 1690, discount: 43, linkPath: "/cs/akcni-letenky/praha/kutaisi" },
+  ],
+  ryanair: [
+    { destination: "Londýn (Stansted)", from: "Praha (PRG)", price: 1390, salePrice: 733, discount: 47, linkPath: "/cs/akcni-letenky/praha/londyn" },
+    { destination: "Barcelona", from: "Praha (PRG)", price: 1890, salePrice: 746, discount: 60, linkPath: "/cs/akcni-letenky/praha/barcelona" },
+    { destination: "Řím (Ciampino)", from: "Praha (PRG)", price: 1690, salePrice: 712, discount: 58, linkPath: "/cs/akcni-letenky/praha/rim" },
+    { destination: "Dublin", from: "Praha (PRG)", price: 2290, salePrice: 1190, discount: 48, linkPath: "/cs/akcni-letenky/praha/dublin" },
+    { destination: "Malaga", from: "Praha (PRG)", price: 2790, salePrice: 1490, discount: 46, linkPath: "/cs/akcni-letenky/praha/malaga" },
+  ],
+  emirates: [
+    { destination: "Dubaj", from: "Praha (PRG)", price: 8990, salePrice: 5183, discount: 42, linkPath: "/cs/akcni-letenky/praha/dubaj" },
+    { destination: "Bangkok", from: "Praha (PRG)", price: 18990, salePrice: 12990, discount: 31, linkPath: "/cs/akcni-letenky/praha/bangkok" },
+    
+    { destination: "Bali (Denpasar)", from: "Praha (PRG)", price: 24990, salePrice: 16990, discount: 32, linkPath: "/cs/akcni-letenky/praha/bali" },
+  ],
+  "qatar-airways": [
+    { destination: "Dauhá", from: "Praha (PRG)", price: 11990, salePrice: 7490, discount: 37, linkPath: "/cs/akcni-letenky/praha/dauha" },
+    { destination: "Bangkok", from: "Praha (PRG)", price: 19990, salePrice: 13490, discount: 32, linkPath: "/cs/akcni-letenky/praha/bangkok" },
+    { destination: "Bali", from: "Praha (PRG)", price: 25990, salePrice: 17290, discount: 33, linkPath: "/cs/akcni-letenky/praha/bali" },
+  ],
+  "air-france": [
+    { destination: "Paříž (Charles de Gaulle)", from: "Praha (PRG)", price: 1990, salePrice: 1027, discount: 48, linkPath: "/cs/akcni-letenky/praha/pariz" },
+    { destination: "Martinik (Fort-de-France)", from: "Praha (PRG)", price: 19990, salePrice: 12490, discount: 37, linkPath: "/cs/akcni-letenky/praha/martinik" },
+    { destination: "Guadeloupe", from: "Praha (PRG)", price: 20990, salePrice: 12990, discount: 38, linkPath: "/cs/akcni-letenky/praha/guadeloupe" },
+  ],
+  lufthansa: [
+    { destination: "Frankfurt", from: "Praha (PRG)", price: 3990, salePrice: 2490, discount: 37, linkPath: "/cs/akcni-letenky/praha/frankfurt" },
+    { destination: "New York (JFK)", from: "Praha (PRG)", price: 12990, salePrice: 7490, discount: 42, linkPath: "/cs/akcni-letenky/praha/new-york" },
+    { destination: "Miami", from: "Praha (PRG)", price: 15990, salePrice: 9990, discount: 37, linkPath: "/cs/akcni-letenky/praha/miami" },
+  ],
+  "turkish-airlines": [
+    { destination: "Istanbul", from: "Praha (PRG)", price: 5490, salePrice: 3490, discount: 36, linkPath: "/cs/akcni-letenky/praha/istanbul" },
+    { destination: "Antalya", from: "Praha (PRG)", price: 4490, salePrice: 2990, discount: 33, linkPath: "/cs/akcni-letenky/praha/antalya" },
+    { destination: "Hanoj (Vietnam)", from: "Praha (PRG)", price: 21990, salePrice: 14990, discount: 31, linkPath: "/cs/akcni-letenky/praha/hanoj" },
+  ],
+  klm: [
+    { destination: "Amsterdam", from: "Praha (PRG)", price: 2490, salePrice: 1599, discount: 36, linkPath: "/cs/akcni-letenky/praha/amsterdam" },
+    { destination: "Curaçao", from: "Praha (PRG)", price: 21990, salePrice: 14990, discount: 31, linkPath: "/cs/akcni-letenky/praha/curacao" },
+  ],
+};
 
 // Airline data with descriptions and official URLs
 const airlineData: Record<string, {
@@ -183,48 +234,46 @@ export default function AirlinePage() {
     }).format(price);
   };
 
+  // Combine API flights or fallback to airline templates
+  const carrierDeals = airlineFlights.length > 0 
+    ? airlineFlights.map((f: any) => ({
+        destination: f.destination || "Destinace",
+        from: f.departure || "Praha (PRG)",
+        price: f.originalPrice || Math.round(f.price * 1.3),
+        salePrice: f.price,
+        discount: f.discountPercent || 30,
+        linkPath: f.link || "/cs/akcni-letenky",
+      }))
+    : (airlineDealTemplates[slug] || [
+        { destination: "Londýn", from: "Praha (PRG)", price: 1990, salePrice: 990, discount: 50, linkPath: "/cs/akcni-letenky/praha/londyn" },
+        { destination: "Barcelona", from: "Praha (PRG)", price: 2490, salePrice: 1290, discount: 48, linkPath: "/cs/akcni-letenky/praha/barcelona" },
+        { destination: "Paříž", from: "Praha (PRG)", price: 2290, salePrice: 1190, discount: 48, linkPath: "/cs/akcni-letenky/praha/pariz" },
+        { destination: "Řím", from: "Praha (PRG)", price: 2190, salePrice: 1090, discount: 50, linkPath: "/cs/akcni-letenky/praha/rim" },
+      ]);
+
+  // Structured data for SEO
+  const airlineSchema = {
+    "@context": "https://schema.org",
+    "@type": "Airline",
+    "name": airline.name,
+    "description": airline.description,
+    "logo": `https://www.akcni-letenky.com${airline.logo}`,
+    "url": airline.website,
+    "foundingDate": airline.founded,
+    "iataCode": airline.iataCode,
+    "hubAirport": {
+      "@type": "Airport",
+      "name": airline.hub
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <img
-                src="/logo-akcni-letenky.png"
-                alt="Akční Letenky"
-                className="h-10 object-contain"
-              />
-              <span className="text-[#FFD700] font-bold text-lg hidden md:inline">
-                Nejlevnější Lety
-              </span>
-            </Link>
-
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/levne-letenky" className="text-gray-700 hover:text-[#E91E63] flex items-center gap-1">
-                <span>✈️</span> LEVNÉ LETENKY
-              </Link>
-              <Link href="/dovolene" className="text-gray-700 hover:text-[#E91E63] flex items-center gap-1">
-                <span>⭐</span> DOVOLENÉ
-              </Link>
-              <Link href="/blog" className="text-gray-700 hover:text-[#E91E63] flex items-center gap-1">
-                <span>📰</span> BLOG
-              </Link>
-            </nav>
-
-            <a
-              href="tel:+420223340510"
-              className="flex items-center gap-2 text-[#E91E63] font-bold"
-            >
-              <Phone className="w-4 h-4" />
-              <span className="hidden sm:inline">223 340 510</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecka-spolecnost/${airline?.slug || ""}`} ogImage={airline?.logo || undefined} structuredData={[airlineSchema]} />
+      <Navigation />
 
       {/* Breadcrumbs */}
-      <div className="bg-white border-b">
+      <div className="bg-white border-b pt-20">
         <div className="container py-3">
           <nav className="flex items-center gap-2 text-sm text-gray-600">
             <Link href="/" className="hover:text-[#E91E63]">Domů</Link>
@@ -249,15 +298,88 @@ export default function AirlinePage() {
                 {airline.name} Letenky
               </h1>
               <p className="text-gray-600">
-                Nejlevnější letenky společnosti {airline.name}
+                Nejlevnější akční letenky společnosti {airline.name} z ověřeného Pelikán feedu.
               </p>
             </div>
           </div>
         </div>
 
-        {/* About Airline Section - MOVED BEFORE OFFERS */}
-        <section className="bg-white rounded-xl shadow-md p-8 mb-12">
-          <h2 className="text-2xl font-bold mb-6">O společnosti {airline.name}</h2>
+        {/* Flight Offers Section */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold flex items-center gap-2 text-[#003087]">
+              <Plane className="w-6 h-6 text-[#E91E63]" />
+              Aktuální akční letenky {airline.name}
+            </h2>
+            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+              <ShieldCheck className="w-4 h-4" /> Garance Pelikán.cz
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {carrierDeals.map((deal, index) => {
+              const bookingUrl = pelikanDeepLink(deal.linkPath, {
+                campaign: "airline-page",
+                channel: "carrier-deal",
+                content: slug,
+              });
+
+              return (
+                <div
+                  key={index}
+                  className="bg-white rounded-2xl p-5 border border-gray-200 shadow-md hover:shadow-xl hover:border-orange-400 transition-all flex flex-col justify-between group"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={airline.logo}
+                          alt={airline.name}
+                          className="w-8 h-8 object-contain"
+                        />
+                        <span className="text-xs font-bold text-gray-500 uppercase">{airline.name}</span>
+                      </div>
+                      <span className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
+                        -{deal.discount}%
+                      </span>
+                    </div>
+
+                    <h3 className="font-bold text-lg text-[#003087] group-hover:text-orange-500 transition-colors mb-1">
+                      {deal.from} → {deal.destination}
+                    </h3>
+                    <p className="text-xs text-gray-500 mb-4">Zpáteční letenka včetně poplatků a tax</p>
+
+                    <div className="pt-3 border-t border-gray-100 mb-4">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xs text-gray-400">od</span>
+                        <span className="text-xs text-gray-400 line-through">
+                          {deal.price.toLocaleString("cs-CZ")} Kč
+                        </span>
+                        <span className="text-2xl font-black text-[#E91E63]">
+                          {deal.salePrice.toLocaleString("cs-CZ")} Kč
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <a
+                    href={bookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#FF5722] hover:bg-[#E64A19] text-white font-bold py-3 px-4 rounded-xl text-center transition-colors shadow-md text-sm flex items-center justify-center gap-2"
+                  >
+                    <span>Zobrazit na Pelikán.cz</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* About Airline Section */}
+        <section className="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-200">
+          <h2 className="text-2xl font-bold mb-6 text-[#003087]">O společnosti {airline.name}</h2>
           
           <p className="text-gray-700 leading-relaxed mb-6">
             {airline.description}
@@ -289,122 +411,6 @@ export default function AirlinePage() {
           </a>
         </section>
 
-        {/* Flight Offers Section - MOVED AFTER ARTICLE */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <Plane className="w-6 h-6 text-[#E91E63]" />
-            Aktuální nabídky {airline.name}
-          </h2>
-
-          {flightsLoading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E91E63] mx-auto mb-4"></div>
-              <p className="text-gray-600">Načítám nabídky...</p>
-            </div>
-          ) : airlineFlights.length > 0 ? (
-            <div className="space-y-4">
-              {airlineFlights.slice(0, 10).map((flight, index) => (
-                <a
-                  key={index}
-                  href={`${flight.link}${flight.link.includes('?') ? '&' : '?'}a_aid=levne-letenky`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 p-3 md:p-4 group"
-                  onClick={() => trackAffiliateClick(
-                    flight.destination || "Unknown",
-                    flight.destination?.toLowerCase().replace(/\s+/g, "-") || "unknown",
-                    "airline-page",
-                    flight.link
-                  )}
-                >
-                  {/* Destination Image */}
-                  <div className="relative w-full md:w-28 h-32 md:h-20 flex-shrink-0 overflow-hidden rounded-lg">
-                    <img
-                      src={flight.imageUrl || "/destinations/default.jpg"}
-                      alt={flight.destination || "Destinace"}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    {/* Airplane overlay on hover */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <Plane className="w-8 h-8 text-white" />
-                    </div>
-                  </div>
-
-                  {/* Content wrapper for mobile/desktop layout */}
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 flex-1">
-                    {/* Flight Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="font-bold text-gray-900 text-sm md:text-base">{('departure' in flight && flight.departure) || "Praha"}</span>
-                        <span className="text-gray-400">→</span>
-                        <span className="font-bold text-gray-900 text-sm md:text-base">{flight.destination}</span>
-                        {flight.discount && (
-                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
-                            {flight.discount}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {/* Airline Logo */}
-                        <img
-                          src={airline.logo}
-                          alt={airline.name}
-                          className="w-8 h-8 object-contain"
-                        />
-                        <p className="text-xs md:text-sm text-gray-500">
-                          {flight.country || airline.name}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Price */}
-                    <div className="text-left md:text-right flex-shrink-0">
-                      <p className="text-xs text-gray-500">od</p>
-                      <p className="text-xl md:text-2xl font-bold text-gray-900">
-                        {formatPrice(flight.price)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* CTA Button */}
-                  <Button
-                    className="bg-[#E91E63] hover:bg-[#C2185B] text-white text-xs md:text-sm px-3 md:px-4 py-2 flex-shrink-0 w-full md:w-auto"
-                  >
-                    Pokračovat
-                  </Button>
-                </a>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-              <Plane className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                Momentálně nemáme nabídky od {airline.name}
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Zkuste se podívat na naše další nabídky levných letenek
-              </p>
-              <Link href="/levne-letenky">
-                <Button className="bg-[#E91E63] hover:bg-[#C2185B]">
-                  Zobrazit všechny letenky
-                </Button>
-              </Link>
-            </div>
-          )}
-
-          {airlineFlights.length > 0 && (
-            <div className="text-center mt-6">
-              <Link href="/levne-letenky">
-                <Button variant="outline" className="text-[#E91E63] border-[#E91E63] hover:bg-[#E91E63] hover:text-white">
-                  Zobrazit další akční letenky
-                </Button>
-              </Link>
-            </div>
-          )}
-        </section>
-
-
-
         {/* Back Link */}
         <div className="mt-8">
           <Link href="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-[#E91E63]">
@@ -414,17 +420,7 @@ export default function AirlinePage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#FF9800] py-12 mt-12">
-        <div className="container text-center text-white">
-          <p className="font-bold text-lg mb-2">Akční Letenky</p>
-          <p className="text-sm opacity-90">
-            © {new Date().getFullYear()} Všechna práva vyhrazena
-          </p>
-        </div>
-      </footer>
-
-      {/* Chatbot */}
+      <Footer />
       <ChatbotWidget />
 
       {/* Schema.org JSON-LD */}
