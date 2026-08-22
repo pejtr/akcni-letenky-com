@@ -21,7 +21,6 @@ import {
   Thermometer,
   Shield,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import SEO from "@/components/SEO";
 
 // CDN images
@@ -91,29 +90,10 @@ const flightOptions = [
   },
 ];
 
-function CountdownBanner() {
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
-
-  useEffect(() => {
-    function calcTimeLeft() {
-      const now = new Date();
-      const endOfDay = new Date(now);
-      endOfDay.setHours(23, 59, 59, 999);
-      const diff = endOfDay.getTime() - now.getTime();
-      return {
-        hours: Math.floor(diff / (1000 * 60 * 60)),
-        minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((diff % (1000 * 60)) / 1000),
-      };
-    }
-    setTimeLeft(calcTimeLeft());
-    const timer = setInterval(() => setTimeLeft(calcTimeLeft()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
+function PriceNotice() {
   return (
-    <div className="bg-red-600 text-white py-2 text-center text-sm font-semibold animate-pulse">
-      Akce končí za {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s — Exkluzivní nabídka!
+    <div className="bg-slate-100 text-slate-700 py-2 text-center text-sm font-medium border-b border-slate-200">
+      Uvedené ceny jsou orientační a před rezervací se mohou změnit podle dostupnosti.
     </div>
   );
 }
@@ -126,8 +106,8 @@ export default function ReunionPage() {
         description="Levné letenky na ostrov Réunion od 1 790 Kč. Sopky, pralesy, vodopády a tyrkysové pláže. Přímé lety z Paříže nebo s přestupem z Prahy."
         canonical="https://www.akcni-letenky.com/reunion"
       />
-      {/* Urgency Banner */}
-      <CountdownBanner />
+      {/* Transparent price notice */}
+      <PriceNotice />
 
       {/* Header */}
       <header className="bg-gradient-to-r from-[#FFD700] to-[#FFC107] shadow-md sticky top-0 z-50">

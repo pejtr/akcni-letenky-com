@@ -2552,4 +2552,8 @@
 - [x] Remove globally mounted Revolut popup and keep a passive footer partner link
 - [x] Remove duplicate nested-anchor markup causing React DOM nesting warnings
 - [x] Run targeted tests, type-check, and browser verification for homepage and /dovolene
-- [ ] Resolve unrelated legacy full-suite assertions for retired urgency copy, migrated affiliate URL formats, and missing database tables
+- [x] Resolve unrelated legacy full-suite assertions for retired urgency copy, migrated affiliate URL formats, and environment-safe persistence behavior
+## Follow-up UX and Test Alignment — Aug 2026
+- [x] Update the remaining 11 legacy tests for trust-first urgency removal, current affiliate URL formats, and environment-safe persistence behavior
+- [x] Add a smooth loading transition while vacation filters are changing on /dovolene
+- [x] Add a travel-news subscription form beside the Revolut footer link with accessible validation and feedback

@@ -2,7 +2,27 @@
  * Chatbot Tests - High-Converting Sales System
  */
 
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
+
+vi.mock("./_core/llm", () => ({
+  invokeLLM: vi.fn(async ({ response_format }: { response_format?: unknown }) => ({
+    choices: [{
+      message: {
+        content: response_format
+          ? JSON.stringify({
+              destinations: ["Barcelona"],
+              budget: null,
+              travelStyle: "budget",
+              airlines: [],
+              travelDate: null,
+              passengerCount: null,
+            })
+          : "Doporučuji porovnat aktuální ceny a zkontrolovat podmínky zavazadel před rezervací.",
+      },
+    }],
+  })),
+}));
+
 import { processChatbotMessage } from "./chatbot";
 import { getDb } from "./db";
 import { chatbotConversations } from "../drizzle/schema";

@@ -13,9 +13,9 @@ describe("Réunion Landing Page", () => {
     const content = readFileSync(pagePath, "utf-8");
     // Title tag
     expect(content).toContain("Letenky na Réunion");
-    // Meta description
-    expect(content).toContain("meta");
-    expect(content).toContain("description");
+    // Metadata is managed by the shared SEO component.
+    expect(content).toContain('import SEO from "@/components/SEO"');
+    expect(content).toContain("description=");
   });
 
   it("should contain flight pricing information", () => {
@@ -66,10 +66,11 @@ describe("Réunion Landing Page", () => {
     expect(content).toContain("REZERVOVAT LETENKY");
   });
 
-  it("should contain urgency elements", () => {
+  it("should avoid artificial urgency elements", () => {
     const content = readFileSync(pagePath, "utf-8");
-    expect(content).toContain("Akce končí za");
-    expect(content).toContain("Zbývá posledních");
+    expect(content).not.toContain("Akce končí za");
+    expect(content).not.toContain("Zbývá posledních");
+    expect(content).toContain("orientační");
   });
 
   it("should contain social proof", () => {

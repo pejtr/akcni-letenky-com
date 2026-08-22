@@ -115,7 +115,7 @@ describe("LeadOS Travel Revenue Network Integration", () => {
       const targetUrl = "/redirect?url=" + encodeURIComponent("https://www.pelikan.cz/cs/akcni-letenky");
       const decorated = appendOnyxSubId(targetUrl);
 
-      expect(decorated).toContain("subid1=journey_xyz_777");
+      expect(decodeURIComponent(decorated)).toContain("subid1=journey_xyz_777");
     });
   });
 

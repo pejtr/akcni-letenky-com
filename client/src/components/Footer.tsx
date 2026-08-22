@@ -1,6 +1,55 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { Plane, Sun, Heart, ShieldCheck, ExternalLink, Mail, Star, Building2 } from "lucide-react";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
+import { trpc } from "@/lib/trpc";
+
+function FooterNewsletterSignup() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const subscribe = trpc.newsletter.subscribe.useMutation({
+    onSuccess: () => {
+      setStatus("success");
+      setEmail("");
+    },
+    onError: () => setStatus("error"),
+  });
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatus("idle");
+    subscribe.mutate({ email: email.trim() });
+  };
+
+  return (
+    <div className="mt-5 rounded-xl border border-slate-700 bg-slate-800/60 p-4">
+      <h4 className="text-sm font-bold text-white">Cestovatelské novinky</h4>
+      <p className="mt-1 text-xs leading-relaxed text-slate-400">Občas vám pošleme nové akční letenky a praktické tipy. Bez zbytečného spamu.</p>
+      {status === "success" ? (
+        <p className="mt-3 text-sm font-semibold text-emerald-300" role="status">Děkujeme, odběr je aktivní.</p>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-2 sm:flex-row">
+          <label htmlFor="footer-travel-news-email" className="sr-only">E-mail pro cestovatelské novinky</label>
+          <input
+            id="footer-travel-news-email"
+            type="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="vas@email.cz"
+            autoComplete="email"
+            className="min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/30"
+            disabled={subscribe.isPending}
+          />
+          <button type="submit" disabled={subscribe.isPending} className="rounded-lg bg-sky-500 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60">
+            {subscribe.isPending ? "Odesílám…" : "Přihlásit"}
+          </button>
+        </form>
+      )}
+      {status === "error" && <p className="mt-2 text-xs text-rose-300" role="alert">E-mail se nepodařilo uložit. Zkuste to prosím znovu.</p>}
+    </div>
+  );
+}
 
 export default function Footer() {
   return (
@@ -296,8 +345,9 @@ export default function Footer() {
                   Revolut pro cestovatele
                 </a>
               </li>
-            </ul>
-          </div>
+                          </ul>
+              <FooterNewsletterSignup />
+            </div>
 
           {/* Column 4: Partner Pelikán.cz */}
           <div>

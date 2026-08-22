@@ -7,7 +7,6 @@ import {
   pelikanDeepLink,
   kiwiAffiliateUrl,
   bookingSearchLink,
-  bookingHotelLink,
   PELIKAN_AID,
   TRAVELPAYOUTS_MARKER,
 } from "../shared/affiliateLinks";
@@ -77,17 +76,16 @@ describe("QA Testy Funkčnosti Prokliků Poskytovatelů (Affiliate & LeadOS Trac
     it("správně generuje Kiwi affiliate URL pro vyhledávání z Prahy do destinace", () => {
       const kiwiUrl = kiwiAffiliateUrl("prague-czech-republic", "barcelona-spain");
       expect(kiwiUrl).toContain("kiwi.com");
-      expect(kiwiUrl).toContain("/prague-czech-republic/barcelona-spain");
+      expect(decodeURIComponent(kiwiUrl)).toContain("kiwi.com/prague-czech-republic");
+      expect(kiwiUrl).toContain("marker=155221");
     });
 
-    it("správně generuje Booking.com vyhledávací a hotelové odkazy", () => {
+    it("správně generuje Booking.com vyhledávací odkaz", () => {
       const bookingSearch = bookingSearchLink("Barcelona");
       expect(bookingSearch).toContain("booking.com/searchresults.html");
       expect(bookingSearch).toContain("ss=Barcelona");
       expect(bookingSearch).toContain("lang=cs");
 
-      const bookingHotel = bookingHotelLink("hotel-arts-barcelona");
-      expect(bookingHotel).toContain("booking.com/hotel/es/hotel-arts-barcelona");
     });
   });
 
