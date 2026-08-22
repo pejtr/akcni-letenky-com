@@ -22,15 +22,12 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
-import { useTicketCountdown } from "@/hooks/useTicketCountdown";
 import TravelQuizWidget from "@/components/TravelQuizWidget";
 import PelikanSearchWidget from "@/components/PelikanSearchWidget";
 import SEO from "@/components/SEO";
 import { generateFAQSchema } from "@/lib/structuredData";
 import { filterAndSortOffers, getOfferDestinationOptions, type OfferSort } from "@shared/offerFilters";
-const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
 const ChatbotWidget = lazy(() => import("@/components/ChatbotWidget"));
-const SocialProofNotification = lazy(() => import("@/components/SocialProofNotification"));
 const OmioSection = lazy(() => import("@/components/OmioSection"));
 const PersonalizedSection = lazy(() => import("@/components/PersonalizedSection"));
 const GdprConsentBanner = lazy(() => import("@/components/GdprConsentBanner"));
@@ -141,8 +138,6 @@ export default function Home() {
   const { ctaVariant: footerCta, trackClick: trackFooterClick } = useCtaAbTest("footer_cta");
   const { ctaVariant: stickyCta, trackClick: trackStickyClick } = useCtaAbTest("sticky_banner");
   const { ctaVariant: reservationCta, trackClick: trackReservationClick } = useCtaAbTest("reservation_button");
-  // Dynamic ticket countdown for urgency
-  const ticketCount = useTicketCountdown();
   // Click heatmap tracking
   useClickTracking(true);
   // Conversion funnel tracking
@@ -161,6 +156,7 @@ export default function Home() {
 
   // Homepage offer controls
   const [offerDestination, setOfferDestination] = useState("all");
+  const [offerSearch, setOfferSearch] = useState("");
   const [offerSort, setOfferSort] = useState<OfferSort>("featured");
   // Footer newsletter form
   const [footerEmail, setFooterEmail] = useState("");
@@ -221,8 +217,14 @@ export default function Home() {
     window.open(pelikanUrl, "_blank");
   };
 
-  // Structured data is handled by <SEO> component above
+    // Keep the homepage metadata aligned with the current Czech positioning.
+  useEffect(() => {
+    document.title = "Akční Letenky z Prahy – ověřené nabídky a tipy";
+    document.querySelector('meta[name="description"]')?.setAttribute('content', "Porovnejte akční letenky z Prahy, aktuální ceny a praktické tipy pro plánování cest.");
+    document.querySelector('meta[name="keywords"]')?.setAttribute('content', "akční letenky, levné letenky, letenky z Prahy, cestovní tipy");
+  }, []);
 
+  // Structured data is handled by <SEO> component above
   // Handle scroll for sticky navigation and bottom banner
   useEffect(() => {
     const handleScroll = () => {
@@ -289,8 +291,8 @@ export default function Home() {
 
   const offerDestinationOptions = useMemo(() => getOfferDestinationOptions(returnFlights), []);
   const filteredReturnFlights = useMemo(
-    () => filterAndSortOffers(returnFlights, offerDestination, offerSort),
-    [offerDestination, offerSort],
+    () => filterAndSortOffers(returnFlights, offerDestination, offerSort, offerSearch),
+    [offerDestination, offerSearch, offerSort],
   );
 
   const handleFooterNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -438,19 +440,6 @@ export default function Home() {
           ])
         ]}
       />
-      {/* Exit Intent Popup */}
-      {showDeferredEnhancements && (
-        <Suspense fallback={null}>
-          <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
-        </Suspense>
-      )}
-
-      {/* Exit Intent Popup */}
-      {showDeferredEnhancements && (
-        <Suspense fallback={null}>
-          <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
-        </Suspense>
-      )}
       {/* Breadcrumbs with Schema.org */}
       <script type="application/ld+json">
         {JSON.stringify({
@@ -468,15 +457,15 @@ export default function Home() {
       </script>
       {/* Top promo banner - Čedok style */}
       <div className={cn(
-        "fixed top-0 left-0 right-0 z-50 bg-[#E91E63] text-white text-center text-xs py-1.5 px-4 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 bg-[#003087] text-white text-center text-xs py-1.5 px-4 transition-all duration-300",
         isScrolled ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
       )}>
         <div className="flex items-center justify-center gap-3">
-          <span className="font-semibold">🔥 AKCE: PRÁVĚ JSME ZLEVNILI VYBRANÉ LETENKY — SLEVY AŽ 80 %</span>
+          <span className="font-semibold">Nové nabídky letenek a praktické tipy pro plánování cest</span>
           <a href={buildPelikanSearchUrl("promo-banner")} target="_blank" rel="noopener"
-            className="bg-white text-[#E91E63] font-bold px-3 py-0.5 rounded-full text-xs hover:bg-gray-100 transition-colors"
+            className="bg-white text-[#003087] font-bold px-3 py-0.5 rounded-full text-xs hover:bg-gray-100 transition-colors"
             onClick={() => trackStickyClick()}>
-            REZERVUJTE TEĎ!
+            Prohlédnout nabídky
           </a>
         </div>
       </div>
@@ -743,9 +732,20 @@ export default function Home() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-wide text-[#1565C0]">Najděte správnou nabídku</p>
-                <p className="mt-1 text-sm text-gray-500">Filtrujte podle cílové země nebo seřaďte nabídky podle ceny.</p>
+                <p className="mt-1 text-sm text-gray-500">Vyhledejte město nebo stát, případně nabídky seřaďte podle ceny.</p>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[520px]">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(220px,1.2fr)_minmax(150px,0.8fr)_minmax(150px,0.8fr)] lg:min-w-[680px]">
+                <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                  <span className="flex items-center gap-1.5"><Search className="h-4 w-4 text-[#1565C0]" /> Město nebo stát</span>
+                  <input
+                    type="search"
+                    value={offerSearch}
+                    onChange={(event) => setOfferSearch(event.target.value)}
+                    placeholder="Např. Řím nebo Itálie"
+                    className="h-11 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-[#1565C0] focus:ring-2 focus:ring-blue-100"
+                    aria-label="Vyhledat nabídky podle města nebo státu"
+                  />
+                </label>
                 <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
                   <span className="flex items-center gap-1.5"><Search className="h-4 w-4 text-[#1565C0]" /> Cílová destinace</span>
                   <select
@@ -1002,6 +1002,23 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Frequently Asked Questions */}
+      <section id="faq" className="py-12 bg-white">
+        <div className="container max-w-4xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-[#003087]">
+            Časté otázky k akčním letenkám
+          </h2>
+          <Accordion type="single" collapsible className="rounded-2xl border border-gray-200 bg-white px-5">
+            {faqData.map((item, index) => (
+              <AccordionItem key={item.question} value={`faq-${index}`}>
+                <AccordionTrigger className="text-left font-semibold text-[#003087]">{item.question}</AccordionTrigger>
+                <AccordionContent className="text-gray-600 leading-relaxed">{item.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
       {/* Trust Building Section */}
       <article className="py-12 bg-[#F5F7FA]">
         <div className="container max-w-4xl">
@@ -1021,7 +1038,7 @@ export default function Home() {
 
       {/* Sticky Bottom Banner - A/B Tested */}
       {showBottomBanner && !stickyBannerDismissed && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[#FFD700] to-[#FFC107] py-2 px-3 shadow-xl z-[100] animate-in slide-in-from-bottom border-t-2 border-yellow-400" style={{ pointerEvents: 'auto' }}>
+        <div className="fixed bottom-0 left-0 right-0 bg-white py-2 px-3 shadow-lg z-[100] border-t border-blue-200" style={{ pointerEvents: 'auto' }}>
           <div className="container flex items-center justify-between gap-2">
             {/* Mobile: single CTA */}
             <a
@@ -1033,13 +1050,7 @@ export default function Home() {
             >
               <span className="text-[#E91E63]">{stickyCta.emoji}</span>
               <span>
-                {stickyCta.text.includes("{{") ? (
-                  stickyCta.text.split(/\{\{|\}\}/).map((part, i) =>
-                    i % 2 === 1 ? (
-                      <span key={i} className="text-[#E91E63]">{part === "COUNTDOWN" ? ticketCount : part}</span>
-                    ) : part
-                  )
-                ) : stickyCta.text}
+                {stickyCta.text.replace(/\{\{COUNTDOWN\}\}/g, "aktuální ceny")}
               </span>
             </a>
             {/* Desktop: full set of links */}
@@ -1052,17 +1063,9 @@ export default function Home() {
                 className="text-blue-700 hover:underline cursor-pointer"
                 onClick={() => trackStickyClick()}
               >
-                {stickyCta.text.includes("{{") ? (
-                  <>
-                    {stickyCta.text.split(/\{\{|\}\}/).map((part, i) =>
-                      i % 2 === 1 ? (
-                        <span key={i} className="text-[#E91E63] font-extrabold price-highlight-pulse">{part === "COUNTDOWN" ? ticketCount : part}</span>
-                      ) : part
-                    )}
-                  </>
-                ) : stickyCta.text}
+                {stickyCta.text.replace(/\{\{COUNTDOWN\}\}/g, "aktuální ceny")}
               </a> |{" "}
-              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=sticky-banner&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold price-highlight-pulse">80 %</span> – od <span className="text-red-600 font-extrabold">4 990 Kč</span></a> |{" "}
+              <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177/TO:2?a_aid=levne-letenky&sortBy=minPriceSandbox&utm_source=akcni-letenky&utm_medium=sticky-banner&utm_campaign=dovolena-sleva" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Dovolená se slevou až <span className="text-[#E91E63] font-extrabold">80 %</span> – od <span className="text-red-600 font-extrabold">4 990 Kč</span></a> |{" "}
               <a href="https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Eurovíkendy</a> |{" "}
               <a href="https://cestovani.pelikan.cz/premium-cestovani?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline cursor-pointer" onClick={() => trackStickyClick()}>Business class</a>
             </p>

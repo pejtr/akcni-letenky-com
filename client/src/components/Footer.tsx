@@ -38,31 +38,23 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <Link href="/hlidac-cen">
-                    <a className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
-                      🔔 Hlídač cen letenek
-                    </a>
+                  <Link href="/hlidac-cen" className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
+                    🔔 Hlídač cen letenek
                   </Link>
                 </li>
                 <li>
-                  <Link href="/odskodneni-za-let">
-                    <a className="hover:text-amber-400 font-bold hover:underline transition-colors text-orange-300">
-                      ✈️ Odškodnění za zpožděný let (až 600 €)
-                    </a>
+                  <Link href="/odskodneni-za-let" className="hover:text-amber-400 font-bold hover:underline transition-colors text-orange-300">
+                    ✈️ Odškodnění za zpožděný let (až 600 €)
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kalkulacka-zavazadel">
-                    <a className="hover:text-amber-400 font-semibold hover:underline transition-colors text-blue-200">
-                      🧳 Kalkulačka zavazadel aerolinek
-                    </a>
+                  <Link href="/kalkulacka-zavazadel" className="hover:text-amber-400 font-semibold hover:underline transition-colors text-blue-200">
+                    🧳 Kalkulačka zavazadel aerolinek
                   </Link>
                 </li>
                 <li>
-                  <Link href="/ebook-zdarma">
-                    <a className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
-                      📘 E-book ZDARMA: Jak na letenky za babku
-                    </a>
+                  <Link href="/ebook-zdarma" className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
+                    📘 E-book ZDARMA: Jak na letenky za babku
                   </Link>
                 </li>
                 <li>
@@ -298,6 +290,11 @@ export default function Footer() {
                 <Link href="/wishlist" className="hover:text-white hover:underline transition-colors">
                   Uložené oblíbené nabídky
                 </Link>
+              </li>
+              <li>
+                <a href="https://revolut.ngls.net/c/akcniletenky" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition-colors">
+                  Revolut pro cestovatele
+                </a>
               </li>
             </ul>
           </div>

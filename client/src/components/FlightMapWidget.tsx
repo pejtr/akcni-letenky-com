@@ -308,10 +308,8 @@ export default function FlightMapWidget({
             </div>
 
             <div className="flex items-center gap-2">
-              <Link href={selectedDest.internalRoute}>
-                <a className="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-3.5 py-3 rounded-xl transition-colors">
-                  Detail
-                </a>
+              <Link href={selectedDest.internalRoute} className="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-3.5 py-3 rounded-xl transition-colors">
+                Detail
               </Link>
 
               <a

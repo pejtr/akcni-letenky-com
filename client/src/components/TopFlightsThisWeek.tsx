@@ -183,10 +183,8 @@ export default function TopFlightsThisWeek() {
       })}
 
       <div className="col-span-full mt-6 text-center">
-        <Link href="/levne-letenky">
-          <a className="inline-flex items-center gap-2 bg-[#E91E63] hover:bg-[#c2185b] text-white font-black text-base px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-            Zobrazit všechny nabídky letenek <Plane className="w-5 h-5 ml-1" />
-          </a>
+        <Link href="/levne-letenky" className="inline-flex items-center gap-2 bg-[#E91E63] hover:bg-[#c2185b] text-white font-black text-base px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+          Zobrazit všechny nabídky letenek <Plane className="w-5 h-5 ml-1" />
         </Link>
       </div>
     </div>

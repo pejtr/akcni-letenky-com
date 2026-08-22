@@ -28,35 +28,27 @@ export default function InternalLinkingHub() {
           </div>
           <ul className="space-y-2 text-xs md:text-sm text-slate-300">
             <li>
-              <Link href="/last-minute">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🔥 Last minute letenky z Prahy</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
-                </a>
+              <Link href="/last-minute" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🔥 Last minute letenky z Prahy</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/letenky-do-1500">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>✈️ Letenky do 1 500 Kč</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
-                </a>
+              <Link href="/letenky-do-1500" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>✈️ Letenky do 1 500 Kč</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/porovnani-cen">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>📊 Porovnání cen letenek</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
-                </a>
+              <Link href="/porovnani-cen" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>📊 Porovnání cen letenek</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/levne-letenky">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🏷️ Přehled slev letenek</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
-                </a>
+              <Link href="/levne-letenky" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🏷️ Přehled slev letenek</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-pink-400 transition-colors" />
               </Link>
             </li>
           </ul>
@@ -70,35 +62,27 @@ export default function InternalLinkingHub() {
           </div>
           <ul className="space-y-2 text-xs md:text-sm text-slate-300">
             <li>
-              <Link href="/dubaj">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🏙️ Akční letenky Dubaj & průvodce</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
-                </a>
+              <Link href="/dubaj" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🏙️ Akční letenky Dubaj & průvodce</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/bali">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🌴 Akční letenky Bali & rady</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
-                </a>
+              <Link href="/bali" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🌴 Akční letenky Bali & rady</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/new-york">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🗽 Letenky New York od 8 990 Kč</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
-                </a>
+              <Link href="/new-york" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🗽 Letenky New York od 8 990 Kč</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/reunion">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🌋 Erotický ostrov Réunion</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
-                </a>
+              <Link href="/reunion" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🌋 Erotický ostrov Réunion</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
               </Link>
             </li>
           </ul>
@@ -112,35 +96,27 @@ export default function InternalLinkingHub() {
           </div>
           <ul className="space-y-2 text-xs md:text-sm text-slate-300">
             <li>
-              <Link href="/dovolene">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🏖️ Pobytové zájezdy & dovolená</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
-                </a>
+              <Link href="/dovolene" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🏖️ Pobytové zájezdy & dovolená</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/vlaky-autobusy">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>🚆 Vlaky a autobusy po Evropě</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
-                </a>
+              <Link href="/vlaky-autobusy" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>🚆 Vlaky a autobusy po Evropě</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/aerolinky">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>✈️ Přehled leteckých společností</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
-                </a>
+              <Link href="/aerolinky" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>✈️ Přehled leteckých společností</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
               </Link>
             </li>
             <li>
-              <Link href="/tipy-pro-cestovatele">
-                <a className="hover:text-white hover:underline flex items-center justify-between group">
-                  <span>💡 Tipy a triky pro cestovatele</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
-                </a>
+              <Link href="/tipy-pro-cestovatele" className="hover:text-white hover:underline flex items-center justify-between group">
+                <span>💡 Tipy a triky pro cestovatele</span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
               </Link>
             </li>
           </ul>

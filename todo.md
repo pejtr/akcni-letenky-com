@@ -2527,3 +2527,29 @@
 - [x] Přidat newsletter formulář do patičky s validací a odesláním
 - [x] Přidat testy pro filtrování, řazení a newsletter flow (filtrování a řazení pokryto unit testy; newsletter používá existující validovaný endpoint)
 - [x] Ověřit homepage v desktopním viewportu; responzivní mobilní layout připraven
+
+## TypeScript, runtime a vyhledávání nabídek (2026-08-22)
+
+- [ ] Opravit všechny aktuální TypeScript chyby v klientovi a serveru
+- [ ] Doplnit tRPC proceduru webPush.getVapidPublicKey
+- [ ] Opravit nested <a> runtime chybu
+- [ ] Rozšířit filtrování nabídek o textové hledání města nebo státu
+- [ ] Spustit kompletní TypeScript a Vitest validaci
+- [ ] Uložit checkpoint a nahrát změny do GitHubu
+
+- [ ] Odstranit Revolut kartu z popupu a ponechat pouze odkaz v patičce
+
+## Důvěryhodnější komunikace a méně nátlaku (2026-08-22)
+
+- [ ] Odstranit Revolut kartu z popupu a ponechat pouze nenápadný odkaz v patičce
+- [ ] Omezit nebo odstranit neověřené countdowny, blikající urgentní prvky a agresivní scarcity badge
+- [ ] Zachovat pouze urgentní sdělení podložená skutečnými cenami nebo dostupností
+- [ ] Zkontrolovat klíčové CTA a copy na transparentnost a důvěryhodnost
+
+## Merge Stabilization & Trust-First UX — Aug 2026
+- [x] Repair TypeScript contracts and restore webPush.getVapidPublicKey runtime procedure after GitHub merge
+- [x] Add diacritic-insensitive city and country text search to homepage flight offers
+- [x] Remove globally mounted Revolut popup and keep a passive footer partner link
+- [x] Remove duplicate nested-anchor markup causing React DOM nesting warnings
+- [x] Run targeted tests, type-check, and browser verification for homepage and /dovolene
+- [ ] Resolve unrelated legacy full-suite assertions for retired urgency copy, migrated affiliate URL formats, and missing database tables

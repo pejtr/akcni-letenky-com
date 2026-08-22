@@ -1,4 +1,5 @@
 import { useParams, Link } from "wouter";
+import { lazy, Suspense } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Plane, ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
@@ -6,6 +7,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 import SEO from "@/components/SEO";
+
+const ChatbotWidget = lazy(() => import("@/components/ChatbotWidget"));
 
 // Sample Pelikán airline deal templates per carrier
 const airlineDealTemplates: Record<string, Array<{ destination: string; from: string; price: number; salePrice: number; discount: number; linkPath: string }>> = {
@@ -269,7 +272,7 @@ export default function AirlinePage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
-      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecka-spolecnost/${airline?.slug || ""}`} ogImage={airline?.logo || undefined} structuredData={[airlineSchema]} />
+      <SEO title={`${airline?.name || "Letecká společnost"} | Akční Letenky`} description={`Letenky s ${airline?.name || "leteckou společností"}. ${airline?.description || ""}`} canonical={`https://www.akcni-letenky.com/letecka-spolecnost/${slug || ""}`} ogImage={airline?.logo || undefined} structuredData={[airlineSchema]} />
       <Navigation />
 
       {/* Breadcrumbs */}
@@ -421,7 +424,7 @@ export default function AirlinePage() {
       </main>
 
       <Footer />
-      <ChatbotWidget />
+      <Suspense fallback={null}><ChatbotWidget /></Suspense>
 
       {/* Schema.org JSON-LD */}
       <script type="application/ld+json">

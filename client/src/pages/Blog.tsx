@@ -75,8 +75,7 @@ export default function Blog() {
               {articles.map((article) => (
                 <Card key={article.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
                   <div>
-                    <Link href={`/blog/${article.slug}`}>
-                      <a className="block cursor-pointer">
+                    <Link href={`/blog/${article.slug}`} className="block cursor-pointer">
                         {article.featuredImage && (
                           <div className="h-48 overflow-hidden">
                             <img
@@ -103,7 +102,6 @@ export default function Blog() {
                             </span>
                           </CardDescription>
                         </CardHeader>
-                      </a>
                     </Link>
 
                     <CardContent>

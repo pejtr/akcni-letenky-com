@@ -5,7 +5,7 @@
 import { Helmet } from "react-helmet";
 
 export interface StructuredDataItem {
-  "@context": "https://schema.org";
+  "@context": string;
   "@type": string;
   [key: string]: unknown;
 }

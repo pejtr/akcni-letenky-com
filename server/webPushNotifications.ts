@@ -6,7 +6,7 @@
  */
 
 import { getDb } from "./db";
-import { pushSubscriptions, pushCampaigns } from "../drizzle/schema";
+import { pushSubscriptions, pushCampaigns, type PushSubscription } from "../drizzle/schema";
 import { desc, eq } from "drizzle-orm";
 
 export interface PushPayload {
@@ -76,7 +76,7 @@ export async function sendPushNotificationToAll(payload: PushPayload): Promise<P
 
   const isSimulated = !vapidPublicKey || !vapidPrivateKey;
 
-  let subscriptions = [];
+  let subscriptions: PushSubscription[] = [];
   if (db) {
     subscriptions = await db.select().from(pushSubscriptions);
   }
@@ -88,17 +88,21 @@ export async function sendPushNotificationToAll(payload: PushPayload): Promise<P
 
     let campaignId = 1;
     if (db) {
-      const [res] = await db.insert(pushCampaigns).values({
-        title: payload.title,
-        body: payload.body,
-        icon: payload.icon || "https://www.akcni-letenky.com/logo-akcni-letenky.png",
-        url: payload.url || "https://www.akcni-letenky.com",
-        sentCount: subscriberCount,
-        failedCount: 0,
-        status: "simulated",
-        sentAt: new Date(),
-      });
-      campaignId = Number(res.insertId);
+      try {
+        const [res] = await db.insert(pushCampaigns).values({
+          title: payload.title,
+          body: payload.body,
+          icon: payload.icon || "https://www.akcni-letenky.com/logo-akcni-letenky.png",
+          url: payload.url || "https://www.akcni-letenky.com",
+          sentCount: subscriberCount,
+          failedCount: 0,
+          status: "simulated",
+          sentAt: new Date(),
+        });
+        campaignId = Number(res.insertId);
+      } catch (error) {
+        console.warn("[WebPush] Campaign table unavailable; returning simulated result without persistence.", error);
+      }
     }
 
     return {
@@ -126,17 +130,21 @@ export async function sendPushNotificationToAll(payload: PushPayload): Promise<P
 
   let campaignId = 1;
   if (db) {
-    const [res] = await db.insert(pushCampaigns).values({
-      title: payload.title,
-      body: payload.body,
-      icon: payload.icon || "https://www.akcni-letenky.com/logo-akcni-letenky.png",
-      url: payload.url || "https://www.akcni-letenky.com",
-      sentCount,
-      failedCount,
-      status: "sent",
-      sentAt: new Date(),
-    });
-    campaignId = Number(res.insertId);
+    try {
+      const [res] = await db.insert(pushCampaigns).values({
+        title: payload.title,
+        body: payload.body,
+        icon: payload.icon || "https://www.akcni-letenky.com/logo-akcni-letenky.png",
+        url: payload.url || "https://www.akcni-letenky.com",
+        sentCount,
+        failedCount,
+        status: "sent",
+        sentAt: new Date(),
+      });
+      campaignId = Number(res.insertId);
+    } catch (error) {
+      console.warn("[WebPush] Campaign table unavailable; returning push result without persistence.", error);
+    }
   }
 
   return {

@@ -151,10 +151,8 @@ export default function ArticleSidebar({ currentSlug }: { currentSlug?: string }
           })}
         </div>
 
-        <Link href="/letenky">
-          <a className="mt-4 block text-center text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline">
-            Všechny akční letenky →
-          </a>
+        <Link href="/letenky" className="mt-4 block text-center text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline">
+          Všechny akční letenky →
         </Link>
       </div>
 
@@ -199,10 +197,8 @@ export default function ArticleSidebar({ currentSlug }: { currentSlug?: string }
           })}
         </div>
 
-        <Link href="/dovolene">
-          <a className="mt-4 block text-center text-xs font-bold text-orange-600 hover:text-orange-800 hover:underline">
-            Všechny nabízené dovolené →
-          </a>
+        <Link href="/dovolene" className="mt-4 block text-center text-xs font-bold text-orange-600 hover:text-orange-800 hover:underline">
+          Všechny nabízené dovolené →
         </Link>
       </div>
 
@@ -226,10 +222,8 @@ export default function ArticleSidebar({ currentSlug }: { currentSlug?: string }
             <span className="text-yellow-300">✓</span> Triky pro anonymní vyhledávání
           </li>
         </ul>
-        <Link href="/tipy-pro-cestovatele">
-          <a className="block w-full bg-[#E91E63] hover:bg-[#c2185b] text-white text-center font-bold py-2.5 rounded-xl text-xs shadow transition-colors">
-            Zobrazit cestovatelské tipy →
-          </a>
+        <Link href="/tipy-pro-cestovatele" className="block w-full bg-[#E91E63] hover:bg-[#c2185b] text-white text-center font-bold py-2.5 rounded-xl text-xs shadow transition-colors">
+          Zobrazit cestovatelské tipy →
         </Link>
       </div>
 
@@ -248,21 +242,17 @@ export default function ArticleSidebar({ currentSlug }: { currentSlug?: string }
               .filter((a) => a.slug !== currentSlug)
               .slice(0, 3)
               .map((art) => (
-                <Link key={art.id} href={`/blog/${art.slug}`}>
-                  <a className="block p-2 rounded-xl hover:bg-gray-50 transition-colors group">
-                    <h4 className="font-bold text-xs text-gray-800 line-clamp-2 group-hover:text-pink-600 transition-colors mb-1">
-                      {art.title}
-                    </h4>
-                    <p className="text-[11px] text-gray-400 line-clamp-1">{art.excerpt}</p>
-                  </a>
+                <Link key={art.id} href={`/blog/${art.slug}`} className="block p-2 rounded-xl hover:bg-gray-50 transition-colors group">
+                  <h4 className="font-bold text-xs text-gray-800 line-clamp-2 group-hover:text-pink-600 transition-colors mb-1">
+                    {art.title}
+                  </h4>
+                  <p className="text-[11px] text-gray-400 line-clamp-1">{art.excerpt}</p>
                 </Link>
               ))}
           </div>
 
-          <Link href="/blog">
-            <a className="mt-4 block text-center text-xs font-bold text-pink-600 hover:text-pink-800 hover:underline">
-              Více článků na blogu →
-            </a>
+          <Link href="/blog" className="mt-4 block text-center text-xs font-bold text-pink-600 hover:text-pink-800 hover:underline">
+            Více článků na blogu →
           </Link>
         </div>
       )}

@@ -16,6 +16,16 @@ describe("homepage offer controls", () => {
     expect(offers.map((offer) => offer.name)).toEqual(["Londýn", "New York", "Miami", "Řím"]);
   });
 
+  it("searches by city or country without requiring exact diacritics", () => {
+    expect(filterAndSortOffers(offers, "all", "featured", "rim").map((offer) => offer.name)).toEqual(["Řím"]);
+    expect(filterAndSortOffers(offers, "USA", "featured", "new").map((offer) => offer.name)).toEqual(["New York"]);
+  });
+
+  it("combines country filtering with text search", () => {
+    expect(filterAndSortOffers(offers, "USA", "featured", "miami").map((offer) => offer.name)).toEqual(["Miami"]);
+    expect(filterAndSortOffers(offers, "Anglie", "featured", "usa")).toEqual([]);
+  });
+
   it("sorts filtered offers from the lowest to the highest price", () => {
     const sorted = filterAndSortOffers(offers, "all", "price-asc");
 

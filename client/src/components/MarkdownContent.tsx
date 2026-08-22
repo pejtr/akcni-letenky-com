@@ -121,10 +121,8 @@ function parseInlineMarkdown(text: string): React.ReactNode {
 
       if (isInternal) {
         return (
-          <Link key={index} href={href}>
-            <a className="text-[#1565C0] font-semibold underline hover:text-[#0d47a1] transition-colors">
-              {anchorText}
-            </a>
+          <Link key={index} href={href} className="text-[#1565C0] font-semibold underline hover:text-[#0d47a1] transition-colors">
+            {anchorText}
           </Link>
         );
       }

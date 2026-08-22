@@ -26,6 +26,7 @@ import {
   Plus,
 } from "lucide-react";
 import { toast } from "sonner";
+import type { SocialPost } from "../../../drizzle/schema";
 
 export default function AdminSocialMedia() {
   const { user, loading: authLoading } = useAuth();
@@ -47,12 +48,12 @@ export default function AdminSocialMedia() {
   );
 
   // Fetch flight deals & articles for selection
-  const { data: flightsList } = trpc.flights.getAll.useQuery(
+  const { data: flightsList } = trpc.flights.list.useQuery(
     undefined,
     { enabled: user?.role === "admin" }
   );
   
-  const { data: articlesList } = trpc.articles.getAll.useQuery(
+  const { data: articlesList } = trpc.articles.list.useQuery(
     undefined,
     { enabled: user?.role === "admin" }
   );
@@ -474,7 +475,7 @@ export default function AdminSocialMedia() {
                     </tr>
                   </thead>
                   <tbody className="divide-y">
-                    {postsHistory.map((post) => (
+                    {postsHistory.map((post: SocialPost) => (
                       <tr key={post.id} className="hover:bg-gray-50">
                         <td className="py-3 px-4 font-mono font-bold">#{post.id}</td>
                         <td className="py-3 px-4">

@@ -86,12 +86,12 @@ export default function AdminIndexingAndPush() {
       const res = await submitGoogleUrlMutation.mutateAsync({ url: singleUrl });
       if (res.success) {
         toast.success(
-          res.isSimulated
-            ? `URL odeslána v SIMULAČNÍM REŽIMU: ${res.url}`
+          res.message.toLowerCase().includes("simulation")
+            ? `URL zpracována v SIMULAČNÍM REŽIMU: ${res.url}`
             : `URL úspěšně odeslána do Google Indexing API: ${res.url}`
         );
       } else {
-        toast.error(res.errorMessage || "Chyba při odesílání do Google Indexing API");
+        toast.error(res.message || "Chyba při odesílání do Google Indexing API");
       }
       refetchGoogle();
     } catch (e: any) {
@@ -402,19 +402,19 @@ export default function AdminIndexingAndPush() {
                       </thead>
                       <tbody className="divide-y">
                         {googleLogs.map((log) => (
-                          <tr key={log.id} className="hover:bg-gray-50 font-mono text-xs">
-                            <td className="py-2.5 px-3 font-bold">#{log.id}</td>
+                          <tr key={`${log.timestamp}-${log.url}`} className="hover:bg-gray-50 font-mono text-xs">
+                            <td className="py-2.5 px-3 font-bold">—</td>
                             <td className="py-2.5 px-3 text-blue-700 max-w-md truncate">{log.url}</td>
                             <td className="py-2.5 px-3">
                               <Badge variant="outline">{log.type}</Badge>
                             </td>
                             <td className="py-2.5 px-3">
-                              <Badge className={log.status === "success" ? "bg-emerald-100 text-emerald-800" : log.status === "simulated" ? "bg-blue-100 text-blue-800" : "bg-rose-100 text-rose-800"}>
-                                {log.status}
+                              <Badge className={log.success ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}>
+                                {log.success ? "success" : "error"}
                               </Badge>
                             </td>
                             <td className="py-2.5 px-3 text-gray-500">
-                              {new Date(log.submittedAt).toLocaleString("cs-CZ")}
+                              {new Date(log.timestamp).toLocaleString("cs-CZ")}
                             </td>
                           </tr>
                         ))}

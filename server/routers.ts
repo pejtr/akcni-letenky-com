@@ -21,7 +21,7 @@ import {
   getVapidPublicKey,
   subscribeWebPush,
   sendPushNotificationToAll,
-  getPushStats,
+  getPushStats as getWebPushStats,
 } from "./webPushNotifications";
 import {
   createPriceTracker,
@@ -59,6 +59,7 @@ import {
   getClicksBySource,
   getClickTrend,
   getRecentClicks,
+  getDb,
 } from "./db";
 import {
   processChatbotMessage,
@@ -1806,7 +1807,7 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
           if (flight) return formatFlightDealPost(flight);
         } else if (input.type === "blog_article" && input.slug) {
           const article = await getArticleBySlug(input.slug);
-          if (article) return formatBlogArticlePost(article);
+          if (article) return formatBlogArticlePost(article as Parameters<typeof formatBlogArticlePost>[0]);
         }
 
         // Default sample preview
@@ -1910,10 +1911,9 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
 
     getStats: protectedProcedure.query(async ({ ctx }) => {
       if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
-      return await getPushStats();
+            return await getWebPushStats();
     }),
   }),
-
   // ============ Price Tracker Router ============
   priceTracker: router({
     create: publicProcedure

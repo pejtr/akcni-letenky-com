@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import Footer from "@/components/Footer";
 import { Calendar, User, ArrowRight, BookOpen, Plane, Lightbulb, TrendingDown, Shield, Star } from "lucide-react";
