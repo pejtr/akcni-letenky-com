@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useABTest } from "@/lib/abTest";
@@ -6,7 +6,7 @@ import HeroVariantA from "@/components/HeroVariantA";
 import HeroVariantB from "@/components/HeroVariantB";
 import UrgencyTimer from "@/components/UrgencyTimer";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
-import { ChevronRight, Plane } from "lucide-react";
+import { ChevronRight, Plane, Search, ArrowUpDown, Mail, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import { kiwiSearchLink, kiwiDeepLink } from "@shared/affiliateLinks";
@@ -36,6 +36,7 @@ import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import { useTicketCountdown } from "@/hooks/useTicketCountdown";
 import { generateOrganizationSchema, generateBreadcrumbSchema, generateFAQSchema, injectStructuredData, removeAllStructuredData } from "@/lib/structuredData";
+import { filterAndSortOffers, getOfferDestinationOptions, type OfferSort } from "@shared/offerFilters";
 
 // City to Kiwi.com slug mapping
 const cityToSlug: Record<string, string> = {
@@ -104,6 +105,14 @@ export default function Home() {
     slug: string;
     price: number;
   }>({ isOpen: false, destination: "", slug: "", price: 0 });
+
+  // Homepage offer controls
+  const [offerDestination, setOfferDestination] = useState("all");
+  const [offerSort, setOfferSort] = useState<OfferSort>("featured");
+
+  // Footer newsletter form
+  const [footerEmail, setFooterEmail] = useState("");
+  const [footerNewsletterStatus, setFooterNewsletterStatus] = useState<"idle" | "success" | "error">("idle");
   
   // Search form state
   const [origin, setOrigin] = useState("prague");
@@ -114,6 +123,7 @@ export default function Home() {
   
   // Affiliate click tracking
   const trackClickMutation = trpc.affiliate.trackClick.useMutation();
+  const subscribeFooterMutation = trpc.newsletter.subscribe.useMutation();
   
   // Helper function to track affiliate clicks
   const trackAffiliateClick = (dest: string, destSlug: string, source: string, url: string) => {
@@ -261,6 +271,25 @@ export default function Home() {
     country: dest.country,
     image: dest.image
   }));
+
+  const offerDestinationOptions = useMemo(() => getOfferDestinationOptions(returnFlights), []);
+  const filteredReturnFlights = useMemo(
+    () => filterAndSortOffers(returnFlights, offerDestination, offerSort),
+    [offerDestination, offerSort],
+  );
+
+  const handleFooterNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFooterNewsletterStatus("idle");
+
+    try {
+      await subscribeFooterMutation.mutateAsync({ email: footerEmail.trim() });
+      setFooterNewsletterStatus("success");
+      setFooterEmail("");
+    } catch {
+      setFooterNewsletterStatus("error");
+    }
+  };
 
   // Featured European cities with correct images and Pelikan.cz affiliate links
   const featuredCities = [
@@ -658,8 +687,51 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {returnFlights.map((dest, index) => {
+          <div className="mb-8 rounded-2xl border border-blue-100 bg-white p-4 shadow-sm md:p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-[#1565C0]">Najděte správnou nabídku</p>
+                <p className="mt-1 text-sm text-gray-500">Filtrujte podle cílové země nebo seřaďte nabídky podle ceny.</p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[520px]">
+                <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                  <span className="flex items-center gap-1.5"><Search className="h-4 w-4 text-[#1565C0]" /> Cílová destinace</span>
+                  <select
+                    value={offerDestination}
+                    onChange={(event) => setOfferDestination(event.target.value)}
+                    className="h-11 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-800 outline-none transition focus:border-[#1565C0] focus:ring-2 focus:ring-blue-100"
+                    aria-label="Filtrovat nabídky podle cílové destinace"
+                  >
+                    <option value="all">Všechny destinace</option>
+                    {offerDestinationOptions.map((country) => (
+                      <option key={country} value={country}>{country}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+                  <span className="flex items-center gap-1.5"><ArrowUpDown className="h-4 w-4 text-[#1565C0]" /> Řazení nabídek</span>
+                  <select
+                    value={offerSort}
+                    onChange={(event) => setOfferSort(event.target.value as typeof offerSort)}
+                    className="h-11 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-800 outline-none transition focus:border-[#1565C0] focus:ring-2 focus:ring-blue-100"
+                    aria-label="Řadit nabídky letenek"
+                  >
+                    <option value="featured">Doporučené</option>
+                    <option value="price-asc">Cena: od nejnižší</option>
+                    <option value="price-desc">Cena: od nejvyšší</option>
+                    <option value="destination">Destinace: A–Z</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-gray-500" aria-live="polite">
+              Zobrazeno <strong className="text-gray-700">{filteredReturnFlights.length}</strong> z {returnFlights.length} nabídek
+            </p>
+          </div>
+
+          {filteredReturnFlights.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {filteredReturnFlights.map((dest, index) => {
               // Use pelikanUrl from data if available, otherwise fallback to generic URL
               const pelikanUrl = dest.pelikanUrl || `https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=grid&utm_campaign=${dest.slug}`;
               const redirectUrl = `/redirect?url=${encodeURIComponent(pelikanUrl)}&dest=${encodeURIComponent(dest.name)}`;
@@ -719,7 +791,19 @@ export default function Home() {
                 </a>
               );
             })}
-          </div>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center">
+              <p className="font-semibold text-gray-800">Pro tento filtr zatím nemáme žádnou nabídku.</p>
+              <button
+                type="button"
+                onClick={() => setOfferDestination("all")}
+                className="mt-3 text-sm font-semibold text-[#1565C0] underline underline-offset-4 hover:text-[#003087]"
+              >
+                Zobrazit všechny destinace
+              </button>
+            </div>
+          )}
 
           <p className="text-xs text-muted-foreground text-center mt-8 max-w-4xl mx-auto">
             * Uvedené ceny jsou obvykle za zpáteční lety včetně poplatků. Další služby (zavazadla apod.) mohou být zpoplatněny u dopravce/agentury.
@@ -1031,6 +1115,52 @@ export default function Home() {
                 </ul>
               </div>
             </div>
+
+            {/* Footer Newsletter Signup */}
+            <section aria-labelledby="footer-newsletter" className="mb-8 rounded-2xl bg-gradient-to-br from-[#003087] to-[#1565C0] p-6 text-white md:p-8">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                <div className="max-w-xl">
+                  <div className="mb-2 flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-[#FFD700]" />
+                    <h3 id="footer-newsletter" className="text-xl font-bold">Akční letenky přímo do e-mailu</h3>
+                  </div>
+                  <p className="text-sm leading-relaxed text-blue-100">Přihlaste se k odběru a dostávejte upozornění na nové akční letenky a nejvýhodnější ceny.</p>
+                </div>
+                {footerNewsletterStatus === "success" ? (
+                  <div className="flex items-center gap-2 rounded-xl bg-white/15 px-4 py-3 text-sm font-semibold" role="status">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                    Odběr je aktivní. Děkujeme!
+                  </div>
+                ) : (
+                  <form onSubmit={handleFooterNewsletterSubmit} className="w-full lg:max-w-md">
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <label htmlFor="footer-newsletter-email" className="sr-only">E-mail pro odběr newsletteru</label>
+                      <input
+                        id="footer-newsletter-email"
+                        type="email"
+                        value={footerEmail}
+                        onChange={(event) => setFooterEmail(event.target.value)}
+                        placeholder="vas@email.cz"
+                        required
+                        autoComplete="email"
+                        className="h-11 min-w-0 flex-1 rounded-lg border border-white/20 bg-white px-3 text-sm text-gray-900 outline-none placeholder:text-gray-500 focus:border-[#FFD700] focus:ring-2 focus:ring-[#FFD700]"
+                      />
+                      <Button
+                        type="submit"
+                        disabled={subscribeFooterMutation.isPending}
+                        className="h-11 shrink-0 bg-[#FFD700] px-5 font-bold text-[#003087] hover:bg-[#FFC107]"
+                      >
+                        {subscribeFooterMutation.isPending ? "Odesílám…" : "Přihlásit odběr"}
+                      </Button>
+                    </div>
+                    {footerNewsletterStatus === "error" && (
+                      <p className="mt-2 text-sm text-red-200" role="alert">Přihlášení se nepodařilo. Zkontrolujte e-mail a zkuste to znovu.</p>
+                    )}
+                    <p className="mt-2 text-xs text-blue-200">Bez spamu. Odběr můžete kdykoli zrušit.</p>
+                  </form>
+                )}
+              </div>
+            </section>
 
             {/* Separator */}
             <div className="border-t border-gray-200 my-6"></div>
@@ -1376,9 +1506,9 @@ function HomeFlightMapSection() {
             <div className="bg-white px-6 py-3 flex flex-wrap gap-4 text-sm text-gray-600 border-t border-gray-100">
               {isLoading ? (
                 <>
-                  <span className="animate-pulse bg-gray-200 rounded h-4 w-40" />
-                  <span className="animate-pulse bg-gray-200 rounded h-4 w-44" />
-                  <span className="animate-pulse bg-gray-200 rounded h-4 w-36" />
+                  <span className="skeleton-shimmer inline-block rounded h-4 w-40" />
+                  <span className="skeleton-shimmer inline-block rounded h-4 w-44" />
+                  <span className="skeleton-shimmer inline-block rounded h-4 w-36" />
                 </>
               ) : (
                 <>

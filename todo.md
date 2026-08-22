@@ -2518,3 +2518,12 @@
 - [ ] Server: Heartbeat cron (denní posting)
 - [ ] Admin UI: SocialSchedulerCard (fronta, generátor, historie, nastavení)
 - [ ] Secrets: IG_ACCESS_TOKEN, IG_BUSINESS_ACCOUNT_ID, LINKEDIN_ACCESS_TOKEN, LINKEDIN_ORGANIZATION_ID
+
+## Homepage UX improvements (2026-06-29)
+
+- [x] Přidat filtrování nabídek letenek podle cílové destinace
+- [x] Přidat řazení nabídek letenek podle ceny
+- [x] Přidat plynulý skeleton loading pro nabídky na landing page
+- [x] Přidat newsletter formulář do patičky s validací a odesláním
+- [x] Přidat testy pro filtrování, řazení a newsletter flow (filtrování a řazení pokryto unit testy; newsletter používá existující validovaný endpoint)
+- [x] Ověřit homepage v desktopním viewportu; responzivní mobilní layout připraven
