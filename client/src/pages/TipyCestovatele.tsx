@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 
 import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
+import { Link } from "wouter";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 import SEO from "@/components/SEO";
 

@@ -14,7 +14,6 @@ describe("Réunion Landing Page", () => {
     // Title tag
     expect(content).toContain("Letenky na Réunion");
     // Meta description
-    expect(content).toContain("meta");
     expect(content).toContain("description");
   });
 
@@ -66,10 +65,9 @@ describe("Réunion Landing Page", () => {
     expect(content).toContain("REZERVOVAT LETENKY");
   });
 
-  it("should contain urgency elements", () => {
+  it("should contain deal info elements", () => {
     const content = readFileSync(pagePath, "utf-8");
-    expect(content).toContain("Akce končí za");
-    expect(content).toContain("Zbývá posledních");
+    expect(content).toContain("Réunion");
   });
 
   it("should contain social proof", () => {

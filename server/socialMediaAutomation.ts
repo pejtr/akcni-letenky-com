@@ -400,8 +400,8 @@ export async function executeSocialPublishing(postId: number): Promise<PublishRe
     throw new Error(`Social post with ID ${postId} not found`);
   }
 
-  let fbResult = { success: true, postId: undefined as string | undefined, error: undefined as string | undefined, isSimulated: true };
-  let igResult = { success: true, mediaId: undefined as string | undefined, error: undefined as string | undefined, isSimulated: true };
+  let fbResult: any = { success: true, postId: undefined, error: undefined, isSimulated: true };
+  let igResult: any = { success: true, mediaId: undefined, error: undefined, isSimulated: true };
 
   const targetPlatform = post.platform || "both";
 

@@ -7,7 +7,7 @@ export default function TrustBadgesShield() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
         <div className="flex items-center justify-center gap-2 p-1.5">
           <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span className="text-xs font-bold text-gray-800">Garance nejnižší ceny v ČR</span>
+          <span className="text-xs font-bold text-gray-800">Aktuální nabídky z rezervačního systému</span>
         </div>
         <div className="flex items-center justify-center gap-2 p-1.5">
           <Lock className="w-4 h-4 text-blue-600 shrink-0" />

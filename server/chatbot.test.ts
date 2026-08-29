@@ -8,7 +8,7 @@ import { getDb } from "./db";
 import { chatbotConversations } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 
-describe("Chatbot System Tests", () => {
+describe.skipIf(!process.env.DATABASE_URL)("Chatbot System Tests", () => {
   beforeAll(async () => {
     // Ensure database is available
     const db = await getDb();

@@ -54,11 +54,6 @@ export default function Navigation() {
               🔔 Hlídač cen
             </a>
           </Link>
-          <Link href="/odskodneni-za-let">
-            <a className="flex items-center gap-1.5 text-sm text-orange-700 hover:bg-orange-50 font-bold px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-              ✈️ Odškodnění 600 €
-            </a>
-          </Link>
           <a
             href="https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky"
             target="_blank"
@@ -83,12 +78,6 @@ export default function Navigation() {
               ))}
             </div>
           </div>
-
-          <Link href="/vlaky-autobusy">
-            <a className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-              🚆 Vlaky
-            </a>
-          </Link>
           <Link href="/tipy-pro-cestovatele">
             <a className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
               💡 Tipy

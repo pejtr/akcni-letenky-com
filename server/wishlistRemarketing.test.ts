@@ -27,7 +27,6 @@ vi.mock("resend", () => ({
 
 describe("WishlistRemarketing", () => {
   beforeEach(() => {
-    vi.resetModules();
     vi.clearAllMocks();
     process.env.RESEND_API_KEY = "test-key";
   });

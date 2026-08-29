@@ -1010,3 +1010,71 @@ export const priceTrackers = mysqlTable("price_trackers", {
 });
 export type PriceTracker = typeof priceTrackers.$inferSelect;
 export type InsertPriceTracker = typeof priceTrackers.$inferInsert;
+
+/**
+ * Flight Provider Integrations
+ */
+
+export const flightProviderSyncRuns = mysqlTable("flight_provider_sync_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  provider: varchar("provider", { length: 64 }).notNull(),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  finishedAt: timestamp("finishedAt"),
+  httpStatus: int("httpStatus"),
+  durationMs: int("durationMs"),
+  itemsReceived: int("itemsReceived").default(0),
+  itemsValid: int("itemsValid").default(0),
+  itemsInserted: int("itemsInserted").default(0),
+  itemsUpdated: int("itemsUpdated").default(0),
+  itemsUnchanged: int("itemsUnchanged").default(0),
+  itemsInvalid: int("itemsInvalid").default(0),
+  error: text("error"),
+});
+
+export const flightProviderOffers = mysqlTable("flight_provider_offers", {
+  id: varchar("id", { length: 64 }).primaryKey(), // We use naturalKey as primary key
+  provider: varchar("provider", { length: 64 }).notNull(),
+  externalOfferId: varchar("externalOfferId", { length: 255 }).notNull(),
+  origin: varchar("origin", { length: 10 }).notNull(),
+  destination: varchar("destination", { length: 10 }).notNull(),
+  departureDate: timestamp("departureDate"),
+  returnDate: timestamp("returnDate"),
+  price: int("price").notNull(),
+  currency: varchar("currency", { length: 3 }).default("CZK").notNull(),
+  deeplink: text("deeplink").notNull(),
+  sourceUpdatedAt: timestamp("sourceUpdatedAt"),
+  fetchedAt: timestamp("fetchedAt").defaultNow().notNull(),
+  firstSeenAt: timestamp("firstSeenAt").defaultNow().notNull(),
+  lastSeenAt: timestamp("lastSeenAt").defaultNow().notNull(),
+  status: mysqlEnum("status", ["active", "stale", "expired", "invalid"]).default("active").notNull(),
+  rawPayloadHash: varchar("rawPayloadHash", { length: 64 }).notNull(),
+  airline: varchar("airline", { length: 100 }),
+});
+
+export const flightOfferPriceHistory = mysqlTable("flight_offer_price_history", {
+  id: int("id").autoincrement().primaryKey(),
+  offerId: varchar("offerId", { length: 64 }).notNull(), // FK to flightProviderOffers.id (naturalKey)
+  price: int("price").notNull(),
+  currency: varchar("currency", { length: 3 }).default("CZK").notNull(),
+  observedAt: timestamp("observedAt").defaultNow().notNull(),
+  syncRunId: int("syncRunId"), // FK to flightProviderSyncRuns.id
+});
+
+export const flightProviderSyncLocks = mysqlTable("flight_provider_sync_locks", {
+  provider: varchar("provider", { length: 64 }).primaryKey(),
+  lockedBy: varchar("lockedBy", { length: 128 }).notNull(),
+  lockedAt: timestamp("lockedAt").defaultNow().notNull(),
+  leaseExpiresAt: timestamp("leaseExpiresAt").notNull(),
+});
+
+export type FlightProviderSyncRun = typeof flightProviderSyncRuns.$inferSelect;
+export type InsertFlightProviderSyncRun = typeof flightProviderSyncRuns.$inferInsert;
+
+export type FlightProviderOffer = typeof flightProviderOffers.$inferSelect;
+export type InsertFlightProviderOffer = typeof flightProviderOffers.$inferInsert;
+
+export type FlightOfferPriceHistory = typeof flightOfferPriceHistory.$inferSelect;
+export type InsertFlightOfferPriceHistory = typeof flightOfferPriceHistory.$inferInsert;
+
+export type FlightProviderSyncLock = typeof flightProviderSyncLocks.$inferSelect;
+export type InsertFlightProviderSyncLock = typeof flightProviderSyncLocks.$inferInsert;

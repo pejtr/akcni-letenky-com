@@ -15,6 +15,7 @@ import { generateOmioReferralLink, trackOmioClick } from "@/lib/omioAffiliate";
 import { Train, Bus } from "lucide-react";
 import SocialSharePanel from "@/components/SocialSharePanel";
 import { useSharePlacementABTest } from "@/hooks/useSharePlacementABTest";
+import { trpc } from "@/lib/trpc";
 
 export default function DestinationPage() {
   const params = useParams<{ slug: string }>();
@@ -35,8 +36,8 @@ export default function DestinationPage() {
   const { data: flights } = trpc.flights.list.useQuery();
 
   // Filter flights to this destination
-  const destinationFlights = flights?.filter(
-    (flight) => destination && flight.toCity.toLowerCase().includes(destination.name.toLowerCase())
+  const destinationFlights = (flights as any[])?.filter(
+    (flight: any) => destination && flight.toCity.toLowerCase().includes(destination.name.toLowerCase())
   ) || [];
 
   if (error) {
@@ -186,7 +187,7 @@ export default function DestinationPage() {
                     <div className="mb-8">
                       <h2 className="text-2xl font-bold mb-6">Aktuální nabídky letenek</h2>
                       <div className="grid grid-cols-1 gap-4">
-                        {destinationFlights.slice(0, 5).map((flight) => (
+                        {destinationFlights.slice(0, 5).map((flight: any) => (
                           <Card key={flight.id} className="hover:shadow-lg transition-shadow">
                             <CardContent className="p-6">
                               <div className="flex items-center justify-between">
@@ -331,7 +332,7 @@ export default function DestinationPage() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
-                          {articles.slice(0, 3).map((article) => (
+                          {(articles as any[])?.slice(0, 3).map((article: any) => (
                             <Link key={article.id} href={`/blog/${article.slug}`} className="block hover:bg-gray-50 p-2 rounded-lg transition-colors">
                               <h4 className="font-medium text-sm line-clamp-2 mb-1">{article.title}</h4>
                               <p className="text-xs text-gray-500">

@@ -6,6 +6,7 @@ export interface IndexingResult {
   type: "URL_UPDATED" | "URL_DELETED";
   message: string;
   timestamp: string;
+  isSimulated?: boolean;
 }
 
 const inMemoryLogs: IndexingResult[] = [];
@@ -74,6 +75,7 @@ export async function requestGoogleIndexing(
       type,
       message: "Credentials missing (GOOGLE_CLIENT_EMAIL / GOOGLE_PRIVATE_KEY). Local simulation logged.",
       timestamp,
+      isSimulated: true,
     };
     inMemoryLogs.unshift(res);
     return res;

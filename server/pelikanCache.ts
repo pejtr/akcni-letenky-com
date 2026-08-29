@@ -1,5 +1,8 @@
 import { fetchFlights, fetchVacations } from "./pelikanFeed";
 import type { FlightOffer, VacationOffer } from "./pelikanFeed";
+import { getDb } from "./db";
+import { flightProviderOffers } from "../drizzle/schema";
+import { eq, desc } from "drizzle-orm";
 
 type PelikanOffer = FlightOffer | VacationOffer;
 
@@ -88,18 +91,90 @@ class PelikanCacheService {
   }
 
   async getFlights(): Promise<FlightOffer[]> {
-    // If cache is empty, try to refresh
+    const isPelikanDealsEnabled = process.env.PELIKAN_DEALS_ENABLED === "true";
+    
+    // Feature flag kill-switch: if disabled, skip DB provider offers and use safe defaults
+    if (isPelikanDealsEnabled) {
+      const pilotLimit = process.env.PELIKAN_PILOT_LIMIT ? parseInt(process.env.PELIKAN_PILOT_LIMIT, 10) : 10;
+      const db = await getDb();
+      if (db) {
+        // Fetch all active provider offers
+        const activeOffers = await db
+          .select()
+          .from(flightProviderOffers)
+          .where(eq(flightProviderOffers.status, "active"));
+
+        if (activeOffers.length > 0) {
+          // Czech-market origin ranking priorities:
+          const ORIGIN_PRIORITY: Record<string, number> = {
+            PRG: 1, // Prague
+            BRQ: 2, // Brno
+            OSR: 3, // Ostrava
+            VIE: 4, // Vienna (major gateway for CZ travelers)
+            BTS: 5, // Bratislava (major gateway for CZ travelers)
+            KTW: 6, // Katowice (major gateway for North Moravia)
+          };
+
+          // Deterministic pilot selector:
+          // 1. Valid price (> 0) and CZK currency
+          // 2. Allowed hostname (www.pelikan.cz, pelikan.cz)
+          // 3. Ranked by Origin Priority, then Price Ascending, then stable deterministic ID
+          const validOffers = activeOffers.filter((o: any) => {
+            if (!o.price || o.price <= 0 || o.currency !== "CZK") return false;
+            try {
+              const url = new URL(o.deeplink);
+              const host = url.hostname.toLowerCase();
+              return host === "www.pelikan.cz" || host === "pelikan.cz";
+            } catch {
+              return false;
+            }
+          });
+
+          validOffers.sort((a: any, b: any) => {
+            const pA = ORIGIN_PRIORITY[a.origin?.toUpperCase()] || 99;
+            const pB = ORIGIN_PRIORITY[b.origin?.toUpperCase()] || 99;
+            if (pA !== pB) return pA - pB;
+            if (a.price !== b.price) return a.price - b.price;
+            return (a.id || "").localeCompare(b.id || "");
+          });
+
+          const selectedPilotOffers = validOffers.slice(0, pilotLimit);
+
+          if (selectedPilotOffers.length > 0) {
+            return selectedPilotOffers.map((offer: any) => ({
+              id: offer.id,
+              title: `Letenky do ${offer.destination}`,
+              description: `Zpáteční letenka z ${offer.origin} do ${offer.destination}`,
+              link: `/r/flights/${offer.id}`, // opaque internal redirect ID
+              imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80",
+              price: Math.round(offer.price * 1.2),
+              salePrice: offer.price,
+              country: offer.destination,
+              destination: offer.destination,
+              departure: offer.origin,
+              discount: 10,
+              airline: offer.airline || "Neznámá",
+              type: "flight",
+              rating: undefined,
+              source: "pelikan",
+              destinationIata: offer.destination,
+              departureIata: offer.origin,
+            }));
+          }
+        }
+      }
+    }
+
+    // Fallback to in-memory cache if DB is empty or unavailable
     if (!this.cache) {
       console.log("[PelikanCache] Cache miss, fetching live data...");
       try {
         await this.refreshCache();
       } catch (error) {
         console.error("[PelikanCache] Failed to fetch live data:", error);
-        // Fallback to live API
         return await fetchFlights();
       }
     }
-
     return this.cache?.flights || [];
   }
 

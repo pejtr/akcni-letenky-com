@@ -21,8 +21,9 @@ import {
   getVapidPublicKey,
   subscribeWebPush,
   sendPushNotificationToAll,
-  getPushStats,
+  getPushStats as getWebPushStats,
 } from "./webPushNotifications";
+import { getDb } from "./db";
 import {
   createPriceTracker,
   getUserPriceTrackers,
@@ -809,6 +810,8 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
       .input(
         z.object({
           country: z.string().optional(),
+          destination: z.string().optional(),
+          search: z.string().optional(),
           sortBy: z.enum(["price_asc", "price_desc", "default"]).default("default"),
           limit: z.number().default(100),
         }).optional()
@@ -817,9 +820,21 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
         let vacations = await pelikanCache.getVacations();
         
         // Filter by country
-        if (input?.country) {
+        if (input?.country && input.country !== "all") {
           vacations = vacations.filter(v => 
             v.country.toLowerCase().includes(input.country!.toLowerCase())
+          );
+        }
+
+        // Filter by destination or keyword search
+        const term = input?.destination || input?.search;
+        if (term && term.trim()) {
+          const q = term.trim().toLowerCase();
+          vacations = vacations.filter(v => 
+            v.destination?.toLowerCase().includes(q) ||
+            v.country?.toLowerCase().includes(q) ||
+            v.title?.toLowerCase().includes(q) ||
+            v.description?.toLowerCase().includes(q)
           );
         }
         
@@ -1806,7 +1821,7 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
           if (flight) return formatFlightDealPost(flight);
         } else if (input.type === "blog_article" && input.slug) {
           const article = await getArticleBySlug(input.slug);
-          if (article) return formatBlogArticlePost(article);
+          if (article) return formatBlogArticlePost(article as any);
         }
 
         // Default sample preview

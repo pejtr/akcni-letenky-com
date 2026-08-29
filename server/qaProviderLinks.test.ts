@@ -1,4 +1,38 @@
-// @vitest-environment happy-dom
+// Polyfill client environment for node
+const storageMock = () => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => { store[key] = value.toString(); },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { store = {}; },
+  };
+};
+
+let cookies: Record<string, string> = {};
+const documentMock = {
+  get cookie() {
+    return Object.entries(cookies).map(([k, v]) => `${k}=${v}`).join("; ");
+  },
+  set cookie(cookieStr: string) {
+    const [pair] = cookieStr.split(";");
+    const [key, value] = pair.split("=");
+    if (key) {
+      if (!value || cookieStr.includes("expires=Thu, 01 Jan 1970")) {
+        delete cookies[key.trim()];
+      } else {
+        cookies[key.trim()] = value ? value.trim() : "";
+      }
+    }
+  },
+};
+
+(globalThis as any).window = globalThis;
+(globalThis as any).document = documentMock;
+(globalThis as any).sessionStorage = storageMock();
+(globalThis as any).localStorage = storageMock();
+(globalThis as any).location = { origin: "https://www.akcni-letenky.com", pathname: "/" };
+
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import {
@@ -24,11 +58,9 @@ import {
 
 describe("QA Testy Funkčnosti Prokliků Poskytovatelů (Affiliate & LeadOS Tracking)", () => {
   beforeEach(() => {
-    sessionStorage.clear();
-    localStorage.clear();
-    document.cookie = "onyx_journey_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "onyx_visitor_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "onyx_session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    cookies = {};
+    (globalThis as any).sessionStorage.clear();
+    (globalThis as any).localStorage.clear();
     vi.restoreAllMocks();
   });
 
@@ -75,9 +107,9 @@ describe("QA Testy Funkčnosti Prokliků Poskytovatelů (Affiliate & LeadOS Trac
 
   describe("2. Kiwi.com & Booking.com Affiliate Links QA", () => {
     it("správně generuje Kiwi affiliate URL pro vyhledávání z Prahy do destinace", () => {
-      const kiwiUrl = kiwiAffiliateUrl("prague-czech-republic", "barcelona-spain");
-      expect(kiwiUrl).toContain("kiwi.com");
-      expect(kiwiUrl).toContain("/prague-czech-republic/barcelona-spain");
+      const kiwiUrl = kiwiAffiliateUrl("https://www.kiwi.com/cs/search/results/prague-czech-republic/barcelona-spain");
+      expect(decodeURIComponent(kiwiUrl)).toContain("kiwi.com");
+      expect(decodeURIComponent(kiwiUrl)).toContain("/prague-czech-republic/barcelona-spain");
     });
 
     it("správně generuje Booking.com vyhledávací a hotelové odkazy", () => {

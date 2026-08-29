@@ -3,7 +3,7 @@ import { captureEmail, getEmailCaptureStats, exportEmailsToCSV, exportEmailsToMa
 import { getDb } from "./db";
 import { emailCaptures } from "../drizzle/schema";
 
-describe("Email Capture System", () => {
+describe.skipIf(!process.env.DATABASE_URL)("Email Capture System", () => {
   beforeAll(async () => {
     // Clean up test data
     const db = await getDb();

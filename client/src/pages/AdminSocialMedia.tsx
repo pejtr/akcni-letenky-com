@@ -47,13 +47,13 @@ export default function AdminSocialMedia() {
   );
 
   // Fetch flight deals & articles for selection
-  const { data: flightsList } = trpc.flights.getAll.useQuery(
+  const { data: flightsList } = trpc.flights.list.useQuery(
     undefined,
     { enabled: user?.role === "admin" }
   );
   
-  const { data: articlesList } = trpc.articles.getAll.useQuery(
-    undefined,
+  const { data: articlesList } = trpc.articles.list.useQuery(
+    { limit: 50 },
     { enabled: user?.role === "admin" }
   );
 
@@ -260,7 +260,7 @@ export default function AdminSocialMedia() {
                       onChange={(e) => setSelectedFlightId(e.target.value ? Number(e.target.value) : undefined)}
                     >
                       <option value="">-- Automaticky nejvýhodnější nabídka --</option>
-                      {flightsList?.map((f) => (
+                      {(flightsList as any[])?.map((f: any) => (
                         <option key={f.id} value={f.id}>
                           {f.fromCity} ↔ {f.toCity} za {f.price.toLocaleString("cs-CZ")} Kč (-{f.discountPercent}%)
                         </option>
@@ -278,7 +278,7 @@ export default function AdminSocialMedia() {
                       onChange={(e) => setSelectedSlug(e.target.value || undefined)}
                     >
                       <option value="">-- Vyberte článek --</option>
-                      {articlesList?.map((a) => (
+                      {(articlesList as any[])?.map((a: any) => (
                         <option key={a.id} value={a.slug}>
                           {a.title}
                         </option>

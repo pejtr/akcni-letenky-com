@@ -1,7 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { Heart, Plane, MapPin, Clock, ArrowRight, Filter, Sparkles, ShieldCheck, Globe, Star } from "lucide-react";
+import { Heart, Plane, MapPin, Clock, ArrowRight, Filter, Sparkles, ShieldCheck, Globe, Star, Flame, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -206,6 +206,9 @@ export default function LevneLetenky() {
       content: flight.id,
     });
 
+
+
+
     return (
       <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col justify-between group">
         <div className="relative h-48 overflow-hidden">
@@ -249,9 +252,9 @@ export default function LevneLetenky() {
               </span>
             </div>
 
-            <div className="flex items-center gap-1 text-xs text-yellow-500 mb-4">
-              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-              <span className="text-gray-500 font-semibold ml-1">4.8 (Ověřeno Pelikán)</span>
+            <div className="flex items-center gap-1.5 mt-2 mb-2 bg-blue-50 text-blue-700 px-2 py-1.5 rounded-lg border border-blue-100 w-fit">
+              <Clock className="w-4 h-4 text-blue-500" />
+              <span className="text-[11px] font-bold">Cena z promo feedu</span>
             </div>
           </div>
 

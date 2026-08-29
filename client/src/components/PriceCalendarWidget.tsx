@@ -51,7 +51,7 @@ export default function PriceCalendarWidget({
         </div>
 
         <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-          <ShieldCheck className="w-4 h-4" /> Garance nejnižší ceny Pelikán.cz
+          <ShieldCheck className="w-4 h-4" /> Ceny načítány z Pelikán feedu
         </span>
       </div>
 

@@ -156,6 +156,10 @@ export function bookingSearchLink(destination: string, subId?: string): string {
   return `https://www.booking.com/searchresults.html?ss=${encoded}&lang=cs`;
 }
 
+export function bookingHotelLink(hotelSlug: string, _subId?: string): string {
+  return `https://www.booking.com/hotel/es/${hotelSlug}.cs.html`;
+}
+
 export function aviasalesAffiliateUrl(pathOrUrl = "https://www.aviasales.com/", subId?: string): string {
   const aviasalesUrl = new URL(pathOrUrl, "https://www.aviasales.com");
   return tpLink(PROGRAMS.AVIASALES, aviasalesUrl.toString(), subId);
@@ -230,6 +234,16 @@ export function pelikanLink(path: string, campaign?: string): string {
  * to a direct affiliate URL with full UTM tracking.
  */
 export function pelikanDeepLink(pathOrUrl: string, params: PelikanTrackingParams = {}): string {
+  const template = typeof process !== "undefined" ? process.env?.PELIKAN_DEEPLINK_TEMPLATE : undefined;
+  if (template) {
+    const directUrl = pelikanAffiliateUrl(pathOrUrl, params);
+    return template
+      .replace("{encodedUrl}", encodeURIComponent(directUrl))
+      .replace("{aid}", encodeURIComponent(PELIKAN_AID))
+      .replace("{campaign}", encodeURIComponent(params.campaign || "grid"))
+      .replace("{channel}", encodeURIComponent(params.channel || ""))
+      .replace("{content}", encodeURIComponent(params.content || ""));
+  }
   return pelikanAffiliateUrl(pathOrUrl, params);
 }
 

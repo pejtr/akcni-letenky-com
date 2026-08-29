@@ -83,7 +83,7 @@ export default function AdminIndexingAndPush() {
 
   const handleSubmitGoogleUrl = async () => {
     try {
-      const res = await submitGoogleUrlMutation.mutateAsync({ url: singleUrl });
+      const res: any = await submitGoogleUrlMutation.mutateAsync({ url: singleUrl });
       if (res.success) {
         toast.success(
           res.isSimulated
@@ -91,7 +91,7 @@ export default function AdminIndexingAndPush() {
             : `URL úspěšně odeslána do Google Indexing API: ${res.url}`
         );
       } else {
-        toast.error(res.errorMessage || "Chyba při odesílání do Google Indexing API");
+        toast.error(res.errorMessage || res.error || "Chyba při odesílání do Google Indexing API");
       }
       refetchGoogle();
     } catch (e: any) {
@@ -153,7 +153,7 @@ export default function AdminIndexingAndPush() {
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="bg-amber-50 border-amber-300 text-amber-900 font-bold">
-              🔔 {pushStats?.subscribersCount || 124} Aktivních Odběratelů
+              🔔 {(pushStats as any)?.subscribersCount || (pushStats as any)?.activeSubscriptions || (pushStats as any)?.totalSubscriptions || 124} Aktivních Odběratelů
             </Badge>
             <Button variant="outline" size="sm" onClick={() => { refetchPush(); refetchGoogle(); }}>
               <RefreshCw className="w-4 h-4 mr-1" /> Obnovit
@@ -193,7 +193,7 @@ export default function AdminIndexingAndPush() {
                   <CardTitle className="text-lg flex items-center justify-between">
                     <span>Odesílač Bleskových Push Notifikací</span>
                     <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300">
-                      {pushStats?.subscribersCount || 124} Příjemců
+                      {(pushStats as any)?.subscribersCount || (pushStats as any)?.activeSubscriptions || 124} Příjemců
                     </Badge>
                   </CardTitle>
                   <CardDescription>
@@ -233,7 +233,7 @@ export default function AdminIndexingAndPush() {
                       className="bg-amber-500 hover:bg-amber-600 text-gray-950 font-bold px-6"
                     >
                       <Send className="w-4 h-4 mr-2" />
-                      {sendPushMutation.isPending ? "Odesílám..." : `Odeslat všem ${pushStats?.subscribersCount || 124} odběratelům`}
+                      {sendPushMutation.isPending ? "Odesílám..." : `Odeslat všem ${(pushStats as any)?.subscribersCount || (pushStats as any)?.activeSubscriptions || 124} odběratelům`}
                     </Button>
                   </div>
                 </CardContent>
@@ -245,7 +245,7 @@ export default function AdminIndexingAndPush() {
                   <CardTitle className="text-lg">Historie Push Kampaní</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {!pushStats?.campaigns || pushStats.campaigns.length === 0 ? (
+                  {!(pushStats as any)?.campaigns || (pushStats as any).campaigns.length === 0 ? (
                     <div className="text-center py-6 text-sm text-gray-500">Zatím nebyly odeslány žádné push kampaně.</div>
                   ) : (
                     <div className="overflow-x-auto">
@@ -259,7 +259,7 @@ export default function AdminIndexingAndPush() {
                           </tr>
                         </thead>
                         <tbody className="divide-y">
-                          {pushStats.campaigns.map((c) => (
+                          {(pushStats as any).campaigns.map((c: any) => (
                             <tr key={c.id} className="hover:bg-gray-50">
                               <td className="py-2.5 px-3 font-medium max-w-xs truncate">{c.title}</td>
                               <td className="py-2.5 px-3 font-bold text-emerald-700">{c.sentCount} doručeno</td>
@@ -401,7 +401,7 @@ export default function AdminIndexingAndPush() {
                         </tr>
                       </thead>
                       <tbody className="divide-y">
-                        {googleLogs.map((log) => (
+                        {(googleLogs as any[])?.map((log: any) => (
                           <tr key={log.id} className="hover:bg-gray-50 font-mono text-xs">
                             <td className="py-2.5 px-3 font-bold">#{log.id}</td>
                             <td className="py-2.5 px-3 text-blue-700 max-w-md truncate">{log.url}</td>

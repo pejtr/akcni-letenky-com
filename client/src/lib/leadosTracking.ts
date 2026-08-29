@@ -80,7 +80,15 @@ export async function sendLeadOSEvent(eventData: Record<string, any>) {
   if (typeof window === "undefined") return;
   try {
     const payload = {
-      events: [eventData],
+      events: [
+        {
+          timestamp: new Date().toISOString(),
+          visitor_id: getVisitorId(),
+          session_id: getSessionId(),
+          journey_token: getJourneyToken() || "",
+          ...eventData,
+        }
+      ],
     };
 
     fetch(LEADOS_API_ENDPOINT, {
@@ -113,9 +121,6 @@ export function initOnyxJourney() {
 
     sendLeadOSEvent({
       event_name: "cross_domain_arrival",
-      journey_token: onyxJourney,
-      visitor_id: getVisitorId(),
-      session_id: getSessionId(),
       page_url: window.location.href,
     });
   }
@@ -132,10 +137,10 @@ export function appendOnyxSubId(targetUrl: string): string {
   if (!token || !targetUrl) return targetUrl;
 
   try {
-    if (targetUrl.startsWith("/redirect") || targetUrl.startsWith("http")) {
+    if (targetUrl.startsWith("/redirect") || targetUrl.startsWith("/r/flights") || targetUrl.startsWith("http")) {
       const urlObj = new URL(targetUrl, window.location.origin);
 
-      // If it's a internal /redirect link, decorate inner 'url' param if available
+      // If it's an internal redirect link, decorate inner 'url' param if available
       if (urlObj.pathname === "/redirect") {
         const innerUrl = urlObj.searchParams.get("url");
         if (innerUrl) {
@@ -163,16 +168,43 @@ export function appendOnyxSubId(targetUrl: string): string {
 /**
  * Send affiliate_redirect event to LeadOS when user clicks an affiliate link
  */
-export function trackAffiliateRedirect(targetUrl: string) {
-  const token = getJourneyToken();
-
+export function trackAffiliateRedirect(targetUrl: string, metadata: Record<string, any> = {}) {
   sendLeadOSEvent({
     event_name: "affiliate_redirect",
-    journey_token: token || "",
-    visitor_id: getVisitorId(),
-    session_id: getSessionId(),
     page_url: window.location.href,
     target_url: targetUrl,
+    ...metadata,
+  });
+}
+
+/**
+ * Send fare_impression event to LeadOS when flight deal offers are displayed
+ */
+export function trackFareImpression(offer: { id: string; origin?: string; destination?: string; price: number; provider?: string }) {
+  sendLeadOSEvent({
+    event_name: "fare_impression",
+    offer_id: offer.id,
+    origin: offer.origin,
+    destination: offer.destination,
+    price: offer.price,
+    provider: offer.provider || "pelikan",
+    page_url: window.location.href,
+  });
+}
+
+/**
+ * Send fare_click event to LeadOS when a user clicks a flight offer
+ */
+export function trackFareClick(offer: { id: string; origin?: string; destination?: string; price: number; provider?: string; placement?: string }) {
+  sendLeadOSEvent({
+    event_name: "fare_click",
+    offer_id: offer.id,
+    origin: offer.origin,
+    destination: offer.destination,
+    price: offer.price,
+    provider: offer.provider || "pelikan",
+    placement: offer.placement || "deals_card",
+    page_url: window.location.href,
   });
 }
 
@@ -187,6 +219,7 @@ export function isAffiliateUrl(url: string): boolean {
     url.includes("tradedoubler.com") ||
     url.includes("omio.com") ||
     url.includes("aviasales.com") ||
+    url.includes("/r/flights/") ||
     url.includes("/redirect")
   );
 }
@@ -212,7 +245,15 @@ function setupGlobalAffiliateClickListener() {
             anchor.href = decorated;
           }
         }
-        trackAffiliateRedirect(anchor.href);
+        
+        // For /r/flights/ internal redirect routes, the SERVER is the authoritative emitter of affiliate_redirect.
+        // We emit client-side fare_click instead, avoiding double counting.
+        if (href.includes("/r/flights/")) {
+          const parts = href.split("/r/flights/")[1]?.split("?")[0] || "";
+          trackFareClick({ id: parts, price: 0 });
+        } else {
+          trackAffiliateRedirect(anchor.href);
+        }
       }
     },
     { capture: true }

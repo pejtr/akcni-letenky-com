@@ -297,8 +297,6 @@ export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '');
 
-      // Generate random rating between 4.2 and 5.0
-      const rating = parseFloat((Math.random() * (5.0 - 4.2) + 4.2).toFixed(1));
 
       deals.push({
         id: dealId,
@@ -311,7 +309,7 @@ export async function fetchPelikanDeals(limit: number = 100): Promise<any[]> {
         priceBeforeDiscount,
         discount: discountNum,
         save,
-        rating,
+
         image: pickImage(deal),
         destination: deal.country?.[0] || deal.city?.[0] || "",
         type: detectType(deal),

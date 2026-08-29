@@ -46,27 +46,33 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
 
   return (
     <section className="relative text-white overflow-hidden" style={{ paddingTop: "88px" }}>
-      {/* Dynamic Background Slideshow */}
+      {/* Dynamic Background Slideshow & High-Octane Video */}
       <HeroBackgroundSlideshow />
-
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40 z-[1]" />
 
       {/* Content */}
       <div className="container relative z-10 py-16 md:py-24">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto text-center">
+          {/* Live Radar Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-600/30 backdrop-blur-md border border-rose-400/40 text-rose-100 text-xs sm:text-sm font-bold mb-4 shadow-xl shadow-rose-950/40">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-400"></span>
+            </span>
+            <span>LIVE RADAR AKČNÍCH LETENEK</span>
+          </div>
+
           {/* Heading */}
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 text-center drop-shadow-md">
-            Kam chcete na dovolenou?
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] tracking-tight">
+            Nejlevnější akční a last minute letenky
           </h1>
-          <p className="text-lg md:text-xl mb-8 text-white/90 text-center drop-shadow">
-            Porovnejte letenky, zájezdy a tipy na cesty — vše na jednom místě
+          <p className="text-lg md:text-xl mb-8 text-white/95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] font-medium max-w-2xl mx-auto">
+            Porovnejte letenky z Prahy i okolí, zájezdy a tipy na cesty — vše bleskově na jednom místě
           </p>
 
           {/* Search Card */}
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.4)] border border-white/40 overflow-hidden text-left">
             {/* Tabs */}
-            <div className="flex border-b border-gray-100">
+            <div className="flex border-b border-gray-100/80 bg-slate-50/70">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -198,7 +204,7 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
             </span>
             <span className="text-white/40">|</span>
             <span className="flex items-center gap-1.5">
-              <span className="text-green-400 font-bold">✓</span> Nejnižší ceny garantovány
+              <span className="text-green-400 font-bold">✓</span> Aktuální ceny z feedu
             </span>
             <span className="text-white/40">|</span>
             <span className="flex items-center gap-1.5">

@@ -39,31 +39,36 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
 
   return (
     <>
-      {/* Hero Section - Dynamic Slideshow */}
+      {/* Hero Section - Dynamic High-Octane Video & Slideshow */}
       <section 
         className="relative pt-36 pb-32 overflow-hidden"
       >
-        {/* Dynamic Background Slideshow */}
+        {/* Dynamic Background Media */}
         <HeroBackgroundSlideshow />
-        
-        {/* Subtle Overlay for readability */}
-        <div className="absolute inset-0 bg-black/35 z-[1]"></div>
 
         {/* Content */}
         <div className="container relative z-10">
           <div className="max-w-5xl mx-auto">
-            {/* Headline - Simple and Clean */}
+            {/* Headline with Live Radar Badge */}
             <div className="text-center mb-8">
-              <h1 className="text-4xl md:text-5xl font-black text-white drop-shadow-2xl mb-4">
-                Nejlevnější letenky po celém světě
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-600/30 backdrop-blur-md border border-rose-400/40 text-rose-100 text-xs sm:text-sm font-bold mb-4 shadow-xl shadow-rose-950/40">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-400"></span>
+                </span>
+                <span>LIVE RADAR AKČNÍCH LETENEK</span>
+              </div>
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] mb-4 tracking-tight">
+                Nejlevnější akční a last minute letenky
               </h1>
-              <p className="text-xl md:text-2xl text-white/90 drop-shadow-lg">
-                Najděte si tu nejlepší nabídku pro vaši dovolenou
+              <p className="text-xl md:text-2xl text-white/95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] font-medium max-w-3xl mx-auto">
+                Porovnejte letenky z Prahy i okolí, zájezdy a tipy na cesty — vše bleskově na jednom místě
               </p>
             </div>
 
             {/* Enhanced Search Form */}
-            <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
+            <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.4)] border border-white/40 p-6 mb-6">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 {/* Odkud? */}
                 <div>
@@ -163,15 +168,15 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
             <div className="flex flex-wrap justify-center gap-4">
               <div className="bg-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2">
                 <Flame className="w-5 h-5 text-orange-500" />
-                <span className="font-bold text-gray-900">Sle až 60 %</span>
+                <span className="font-bold text-gray-900">Aktuální akce denně</span>
               </div>
               <div className="bg-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-500" />
-                <span className="font-bold text-gray-900">Nejlepší ceny</span>
+                <span className="font-bold text-gray-900">Ceny z promo feedu</span>
               </div>
               <div className="bg-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-500" />
-                <span className="font-bold text-gray-900">Certifikováno</span>
+                <span className="font-bold text-gray-900">Zdroj nabídek: Pelikán</span>
               </div>
             </div>
           </div>

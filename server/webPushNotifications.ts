@@ -76,7 +76,7 @@ export async function sendPushNotificationToAll(payload: PushPayload): Promise<P
 
   const isSimulated = !vapidPublicKey || !vapidPrivateKey;
 
-  let subscriptions = [];
+  let subscriptions: any[] = [];
   if (db) {
     subscriptions = await db.select().from(pushSubscriptions);
   }

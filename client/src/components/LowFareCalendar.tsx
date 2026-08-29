@@ -115,7 +115,7 @@ export default function LowFareCalendar({
             </div>
             <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 inline" />
-              Garantovaná nejnižší cena zpáteční letenky s poplatky a zavazadlem
+              Aktuální cena zpáteční letenky z promo feedu
             </div>
           </div>
         </div>

@@ -8,8 +8,10 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { scheduleDailyArticleGeneration } from "../articleGenerator";
+import { scheduleFlightDealSync } from "../flightDealCron";
 import { schedulePriceCheckCron } from "../priceCheckCron";
 import { scheduleDailyReport } from "../dailyReport";
+import { registerAffiliateRedirects } from "../affiliateRedirect";
 import { scheduleWeeklyReport } from "../weeklyReport";
 import { scheduleFollowupProcessor } from "../emailFollowup";
 import { scheduleWishlistRemarketing } from "../wishlistRemarketing";
@@ -173,6 +175,10 @@ async function startServer() {
       createContext,
     })
   );
+
+  // Register affiliate redirect before static serving
+  registerAffiliateRedirects(app);
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
@@ -192,6 +198,9 @@ async function startServer() {
     
     // Initialize daily article generation scheduler
     scheduleDailyArticleGeneration();
+    
+    // Initialize provider syncing
+    scheduleFlightDealSync();
 
     // Initialize price check cron job (every 6 hours)
     schedulePriceCheckCron();

@@ -90,12 +90,59 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+// Map new provider offers to the legacy Flight shape for frontend compatibility
+function mapProviderOfferToFlight(offer: any): Flight {
+  return {
+    id: 0, // Using 0 as surrogate for string id, or let frontend handle it
+    source: offer.provider,
+    sourceId: offer.externalOfferId,
+    fromCity: offer.origin, // Ideally resolved to city name
+    toCity: offer.destination,
+    departureDate: offer.departureDate || new Date(),
+    returnDate: offer.returnDate || null,
+    price: offer.price,
+    originalPrice: Math.round(offer.price * 1.2), // Mocked for UI compatibility if needed, or null
+    discountPercent: 0,
+    airline: offer.airline || "Neznámá",
+    stops: 0,
+    duration: "Přímý let",
+    rating: 0,
+    imageUrl: null,
+    affiliateUrl: offer.deeplink,
+    isFeatured: 1,
+    remainingSeats: 0,
+    seatsUpdatedAt: new Date(),
+    discountUpdatedAt: new Date(),
+    createdAt: offer.fetchedAt,
+    updatedAt: offer.fetchedAt,
+    // Note: We inject naturalKey in sourceId or affiliateUrl so the frontend can route properly
+    // The UI needs an ID to build affiliate URL.
+  };
+}
+
 // Flight Offers Queries
 
 export async function getFeaturedFlights(): Promise<Flight[]> {
   const db = await getDb();
   if (!db) return [];
 
+  // Try to fetch real offers first
+  const realOffers = await db
+    .select()
+    .from(schema.flightProviderOffers)
+    .where(eq(schema.flightProviderOffers.status, "active"))
+    .orderBy(desc(schema.flightProviderOffers.fetchedAt))
+    .limit(6);
+
+  if (realOffers.length > 0) {
+    return realOffers.map((offer: any) => {
+      const flight = mapProviderOfferToFlight(offer);
+      (flight as any).naturalKey = offer.id;
+      return flight;
+    });
+  }
+
+  // Fallback to legacy mock data if no real data is available yet
   const result = await db
     .select()
     .from(flights)
@@ -109,6 +156,20 @@ export async function getFeaturedFlights(): Promise<Flight[]> {
 export async function getAllFlights(): Promise<Flight[]> {
   const db = await getDb();
   if (!db) return [];
+
+  const realOffers = await db
+    .select()
+    .from(schema.flightProviderOffers)
+    .where(eq(schema.flightProviderOffers.status, "active"))
+    .orderBy(desc(schema.flightProviderOffers.fetchedAt));
+
+  if (realOffers.length > 0) {
+    return realOffers.map((offer: any) => {
+      const flight = mapProviderOfferToFlight(offer);
+      (flight as any).naturalKey = offer.id;
+      return flight;
+    });
+  }
 
   const result = await db
     .select()

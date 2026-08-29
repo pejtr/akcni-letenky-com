@@ -138,7 +138,7 @@ export default function TopFlightsThisWeek() {
                     </div>
                     {flight.discount > 0 && (
                       <span className="inline-block mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">
-                        -{flight.discount}% sleva
+                        Cena z feedu
                       </span>
                     )}
                   </div>

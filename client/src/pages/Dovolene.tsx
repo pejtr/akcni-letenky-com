@@ -1,25 +1,50 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
-import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain } from "lucide-react";
+import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain, Hotel, X, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
+import CrossPromoSlot from "@/components/CrossPromoSlot";
+import { useSearch, Link } from "wouter";
+import { bookingSearchLink } from "@shared/affiliateLinks";
 
 // Domestic countries list
 const DOMESTIC_COUNTRIES = ["Česká republika", "Slovensko", "Rakousko", "Maďarsko", "Polsko"];
 
 export default function Dovolene() {
-  const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc">("default");
-  const [country, setCountry] = useState<string>("");
+  const searchString = useSearch();
+  const searchParams = useMemo(() => new URLSearchParams(searchString), [searchString]);
+  const initialDestination = searchParams.get("destination") || searchParams.get("q") || "";
+  const initialCountry = searchParams.get("country") || "";
 
+  const [sortBy, setSortBy] = useState<"default" | "price_asc" | "price_desc">("default");
+  const [country, setCountry] = useState<string>(initialCountry);
+  const [destinationFilter, setDestinationFilter] = useState<string>(initialDestination);
+
+  // Sync state if URL query changes
+  useEffect(() => {
+    const dest = searchParams.get("destination") || searchParams.get("q") || "";
+    const cntry = searchParams.get("country") || "";
+    setDestinationFilter(dest);
+    if (cntry) setCountry(cntry);
+  }, [searchParams]);
+
+  // Primary query (filtered by destination if specified)
   const { data: vacations, isLoading } = trpc.pelikan.getVacations.useQuery({
     sortBy,
-    country: country || undefined,
+    country: country && country !== "all" ? country : undefined,
+    destination: destinationFilter || undefined,
     limit: 200,
   });
+
+  // Secondary query for fallback (all vacations) if destination filter yields 0 packages
+  const { data: allVacations } = trpc.pelikan.getVacations.useQuery(
+    { sortBy, limit: 100 },
+    { enabled: Boolean(destinationFilter && vacations && vacations.length === 0) }
+  );
 
   // Track affiliate click
   const trackClick = trpc.affiliate.trackClick.useMutation();
@@ -34,48 +59,30 @@ export default function Dovolene() {
     });
   };
 
+  // The active list to display in columns
+  const activeVacations = useMemo(() => {
+    if (vacations && vacations.length > 0) return vacations;
+    if (destinationFilter && allVacations) return allVacations;
+    return vacations || [];
+  }, [vacations, allVacations, destinationFilter]);
+
   // Split vacations into foreign and domestic
   const { foreignVacations, domesticVacations } = useMemo(() => {
-    if (!vacations) return { foreignVacations: [], domesticVacations: [] };
+    if (!activeVacations) return { foreignVacations: [], domesticVacations: [] };
     
-    const foreign = vacations.filter(v => !DOMESTIC_COUNTRIES.includes(v.country));
-    const domestic = vacations.filter(v => DOMESTIC_COUNTRIES.includes(v.country));
+    const foreign = activeVacations.filter(v => !DOMESTIC_COUNTRIES.includes(v.country));
+    const domestic = activeVacations.filter(v => DOMESTIC_COUNTRIES.includes(v.country));
     
     return { foreignVacations: foreign, domesticVacations: domestic };
-  }, [vacations]);
+  }, [activeVacations]);
 
   // Get unique countries for filter
   const countries = vacations
     ? Array.from(new Set(vacations.map((v) => v.country))).filter(Boolean).sort()
     : [];
 
-  // Generate simulated rating between 4.2 and 5.0
-  const getSimulatedRating = (id: string) => {
-    const hash = id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return (4.2 + (hash % 9) * 0.1).toFixed(1);
-  };
-
-  // Generate star rating display
-  const renderStars = (rating: string) => {
-    const numRating = parseFloat(rating);
-    const fullStars = Math.floor(numRating);
-    const hasHalfStar = numRating % 1 >= 0.5;
-    
-    return (
-      <div className="flex items-center gap-1">
-        {Array.from({ length: fullStars }).map((_, i) => (
-          <span key={i} className="text-yellow-500">★</span>
-        ))}
-        {hasHalfStar && <span className="text-yellow-500">★</span>}
-        <span className="font-medium ml-1">{rating}</span>
-      </div>
-    );
-  };
-
   // Vacation card component
   const VacationCard = ({ vacation, compact = false }: { vacation: any; compact?: boolean }) => {
-    const rating = getSimulatedRating(vacation.id);
-    
     return (
       <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-100">
         {compact ? (
@@ -91,11 +98,6 @@ export default function Dovolene() {
                     "https://cdn.pelikan.sk/files/marketing/ga-feed-img/universal.jpg";
                 }}
               />
-              {vacation.discount && (
-                <span className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                  {vacation.discount}
-                </span>
-              )}
               <button className="absolute top-2 left-2 bg-white/90 p-1.5 rounded-full hover:bg-white transition-colors">
                 <Heart className="w-4 h-4 text-gray-400 hover:text-red-500" />
               </button>
@@ -106,7 +108,7 @@ export default function Dovolene() {
                   <MapPin className="w-3 h-3" />
                   {vacation.country}
                 </span>
-                {renderStars(rating)}
+                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Zájezd</span>
               </div>
               <h3 className="font-bold text-gray-900 mb-1 line-clamp-1">
                 {vacation.title}
@@ -166,7 +168,7 @@ export default function Dovolene() {
                   <MapPin className="w-4 h-4 text-green-500" />
                   <span>{vacation.country}{'location' in vacation && vacation.location ? ` • ${vacation.location}` : ''}</span>
                 </div>
-                {renderStars(rating)}
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded">Ověřený balíček</span>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 {vacation.title}
@@ -219,8 +221,8 @@ export default function Dovolene() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       <SEO
-        title="Dovolená | Akční Letenky"
-        description="Levné zájezdy a dovolená. Vyberte si z nabídky nejlepších cestovních kanceláří za skvělé ceny."
+        title={destinationFilter ? `Dovolená ${destinationFilter} | Akční Letenky` : "Dovolená | Akční Letenky"}
+        description={destinationFilter ? `Levné zájezdy a dovolená v destinaci ${destinationFilter}. Porovnejte akční nabídky.` : "Levné zájezdy a dovolená. Vyberte si z nabídky nejlepších cestovních kanceláří za skvělé ceny."}
         canonical="https://www.akcni-letenky.com/dovolene"
       />
       {/* Navigation */}
@@ -230,13 +232,15 @@ export default function Dovolene() {
       <section className="bg-gradient-to-r from-[#FF6B00] to-[#FF8C00] text-white py-12 pt-24">
         <div className="container text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            🏖️ Dovolené a Zájezdy
+            🏖️ {destinationFilter ? `Dovolené a Zájezdy: ${destinationFilter}` : "Dovolené a Zájezdy"}
           </h1>
           <p className="text-xl opacity-90 mb-2">
-            {vacations?.length || 0} aktuálních nabídek dovolených
+            {activeVacations?.length || 0} aktuálních nabídek dovolených
           </p>
           <p className="text-lg opacity-75">
-            Objevte skvělé zájezdy s ubytováním a stravou za výhodné ceny.
+            {destinationFilter
+              ? `Výsledky pro vyhledanou destinaci "${destinationFilter}".`
+              : "Objevte skvělé zájezdy s ubytováním a stravou za výhodné ceny."}
           </p>
         </div>
       </section>
@@ -249,6 +253,20 @@ export default function Dovolene() {
               <Filter className="w-5 h-5 text-gray-500" />
               <span className="font-medium text-gray-700">Filtry:</span>
             </div>
+
+            {destinationFilter && (
+              <div className="flex items-center gap-1.5 bg-orange-100 text-orange-900 border border-orange-300 px-3 py-1.5 rounded-lg text-sm font-semibold">
+                <Search className="w-3.5 h-3.5 text-orange-600" />
+                <span>Destinace: {destinationFilter}</span>
+                <button
+                  onClick={() => setDestinationFilter("")}
+                  className="ml-1 hover:text-red-600 transition-colors"
+                  title="Zrušit filtr destinace"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
 
             <Select value={country} onValueChange={setCountry}>
               <SelectTrigger className="w-[180px]">
@@ -275,22 +293,70 @@ export default function Dovolene() {
               </SelectContent>
             </Select>
 
-            {country && (
+            {(country || destinationFilter) && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setCountry("")}
+                onClick={() => {
+                  setCountry("");
+                  setDestinationFilter("");
+                }}
               >
-                Zrušit filtry
+                Zrušit všechny filtry
               </Button>
             )}
           </div>
         </div>
       </section>
 
-      {/* Two-Column Layout */}
+      {/* Main Content Section */}
       <section className="py-8">
         <div className="container">
+          {/* Destination Solution Card if 0 packages for searched destination */}
+          {destinationFilter && vacations && vacations.length === 0 && (
+            <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-white border-2 border-orange-200 rounded-3xl p-6 md:p-10 mb-10 shadow-lg">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex-1">
+                  <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold mb-3">
+                    <Sparkles className="w-3.5 h-3.5" /> Doporučené řešení pro vás
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">
+                    Hledáte dovolenou v destinaci {destinationFilter}?
+                  </h2>
+                  <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                    Kompletní zájezdový balíček od cestovních kanceláří pro {destinationFilter} je momentálně vyprodán. Můžete si však snadno rezervovat akční letenku a vybrat ověřený hotel samostatně — ušetříte často až 40 %!
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
+                  <Link href={`/letenky-${destinationFilter.toLowerCase().trim().replace(/\s+/g, "-")}`}>
+                    <Button className="bg-[#E91E63] hover:bg-[#D81B60] text-white font-bold px-6 py-6 rounded-xl w-full sm:w-auto flex items-center justify-center gap-2 shadow-lg shadow-pink-500/20">
+                      <Plane className="w-5 h-5" />
+                      Akční letenky: {destinationFilter}
+                    </Button>
+                  </Link>
+                  <a
+                    href={bookingSearchLink(destinationFilter)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="outline" className="border-orange-300 hover:bg-orange-100 text-orange-950 font-bold px-6 py-6 rounded-xl w-full sm:w-auto flex items-center justify-center gap-2">
+                      <Hotel className="w-5 h-5 text-orange-600" />
+                      Hotely na Booking.com
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {destinationFilter && vacations && vacations.length === 0 && (
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-gray-800">
+                Nebo si vyberte z dalších aktuálně dostupných zájezdů a pobytů:
+              </h3>
+            </div>
+          )}
+
           {isLoading ? (
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -330,7 +396,7 @@ export default function Dovolene() {
                 ) : (
                   <div className="text-center py-12 bg-gray-50 rounded-xl">
                     <Plane className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">Žádné zahraniční dovolené</p>
+                    <p className="text-gray-500">Žádné zahraniční dovolené pro vybraný filtr</p>
                   </div>
                 )}
               </div>
@@ -359,12 +425,17 @@ export default function Dovolene() {
                 ) : (
                   <div className="text-center py-12 bg-gray-50 rounded-xl">
                     <Mountain className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">Žádné domácí dovolené</p>
+                    <p className="text-gray-500">Žádné domácí dovolené pro vybraný filtr</p>
                   </div>
                 )}
               </div>
             </div>
           )}
+
+          {/* Travel Revenue Network Cross Promo */}
+          <div className="mt-12">
+            <CrossPromoSlot placement="package_holiday_alternative" context={{ pageType: "dovolene" }} />
+          </div>
         </div>
       </section>
 

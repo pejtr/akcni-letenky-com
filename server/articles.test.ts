@@ -3,7 +3,7 @@ import { appRouter } from "./routers";
 import { getDb } from "./db";
 import { articles, destinations } from "../drizzle/schema";
 
-describe("Articles API", () => {
+describe.skipIf(!process.env.DATABASE_URL)("Articles API", () => {
   beforeAll(async () => {
     // Ensure database is available
     const db = await getDb();
@@ -124,7 +124,7 @@ describe("Articles API", () => {
   });
 });
 
-describe("Destinations API", () => {
+describe.skipIf(!process.env.DATABASE_URL)("Destinations API", () => {
   beforeAll(async () => {
     const db = await getDb();
     expect(db).toBeDefined();

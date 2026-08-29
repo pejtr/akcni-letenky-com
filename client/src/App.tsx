@@ -42,7 +42,7 @@ const EbookDownloadPage = lazy(() => import("./pages/EbookDownloadPage"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
 const AdminUgcContentFactory = lazy(() => import("./pages/AdminUgcContentFactory"));
 const LoginPage = lazy(() => import("./pages/Login"));
-const LuckyWheelPopup = lazy(() => import("./components/LuckyWheelPopup"));
+
 import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
 const DestinationLandingPage = lazy(() => import("./pages/DestinationLandingPage"));
 const RevolutABTestDashboard = lazy(() => import("./pages/RevolutABTestDashboard"));
@@ -169,7 +169,7 @@ function App() {
             <Suspense fallback={null}>
               <HeatmapTracking />
               <RevolutPopupABTest />
-              <LuckyWheelPopup />
+
             </Suspense>
           )}
           <Toaster />

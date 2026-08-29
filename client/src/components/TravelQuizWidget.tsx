@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Compass, DollarSign, Sparkles, ArrowRight, RotateCcw, Plane, Hotel, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 interface QuizOption {
   id: string;
@@ -38,19 +39,19 @@ export default function TravelQuizWidget() {
   const getResults = (): ResultDeal[] => {
     if (budget === "low") {
       return [
-        { destination: "Řím", country: "Itálie", price: 1290, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80", link: "https://www.akcni-letenky.com/dovolene?destination=Rim" },
-        { destination: "Barcelona", country: "Španělsko", price: 1890, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&q=80", link: "https://www.akcni-letenky.com/dovolene?destination=Barcelona" },
+        { destination: "Řím", country: "Itálie", price: 1290, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80", link: "/letenky-rim" },
+        { destination: "Barcelona", country: "Španělsko", price: 1890, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&q=80", link: "/letenky-barcelona" },
       ];
     }
     if (budget === "medium") {
       return [
-        { destination: "Dubaj", country: "SAE", price: 3890, type: "Letenka + 4★ Hotel", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80", link: "https://www.akcni-letenky.com/dovolene?destination=Dubaj" },
-        { destination: "Malta", country: "Středomoří", price: 2990, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1565538420870-da08ff96a207?w=600&q=80", link: "https://www.akcni-letenky.com/dovolene?destination=Malta" },
+        { destination: "Dubaj", country: "SAE", price: 3890, type: "Letenka + 4★ Hotel", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80", link: "/dubaj" },
+        { destination: "Malta", country: "Středomoří", price: 2990, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1565538420870-da08ff96a207?w=600&q=80", link: "/letenky-malta" },
       ];
     }
     return [
-      { destination: "Bali", country: "Indonésie", price: 11990, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80", link: "https://www.akcni-letenky.com/dovolene?destination=Bali" },
-      { destination: "Maledivy", country: "Indický oceán", price: 12890, type: "Letenka + Resort", image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80", link: "https://www.akcni-letenky.com/dovolene?destination=Maledivy" },
+      { destination: "Bali", country: "Indonésie", price: 11990, type: "Zpáteční letenka", image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80", link: "/bali" },
+      { destination: "Maledivy", country: "Indický oceán", price: 12890, type: "Letenka + Resort", image: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80", link: "/letenky-maledivy" },
     ];
   };
 
@@ -185,11 +186,11 @@ export default function TravelQuizWidget() {
                     {res.price.toLocaleString("cs-CZ")} Kč
                   </div>
                 </div>
-                <a href={res.link} target="_blank" rel="noopener noreferrer">
+                <Link href={res.link}>
                   <Button size="sm" className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl">
-                    Rezervovat
+                    Zobrazit akci
                   </Button>
-                </a>
+                </Link>
               </div>
             ))}
           </div>

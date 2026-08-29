@@ -1,4 +1,40 @@
-// @vitest-environment happy-dom
+// Polyfill client environment for node
+const storageMock = () => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => { store[key] = value.toString(); },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { store = {}; },
+  };
+};
+
+let cookies: Record<string, string> = {};
+const documentMock = {
+  get cookie() {
+    return Object.entries(cookies).map(([k, v]) => `${k}=${v}`).join("; ");
+  },
+  set cookie(cookieStr: string) {
+    const [pair] = cookieStr.split(";");
+    const [key, value] = pair.split("=");
+    if (key) {
+      if (!value || cookieStr.includes("expires=Thu, 01 Jan 1970")) {
+        delete cookies[key.trim()];
+      } else {
+        cookies[key.trim()] = value ? value.trim() : "";
+      }
+    }
+  },
+  addEventListener: () => {},
+  removeEventListener: () => {},
+};
+
+(globalThis as any).window = globalThis;
+(globalThis as any).document = documentMock;
+(globalThis as any).sessionStorage = storageMock();
+(globalThis as any).localStorage = storageMock();
+(globalThis as any).location = { origin: "https://www.akcni-letenky.com", pathname: "/" };
+
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   getVisitorId,
@@ -13,12 +49,9 @@ import {
 
 describe("LeadOS Travel Revenue Network Integration", () => {
   beforeEach(() => {
-    // Clear storage and cookies before each test
-    sessionStorage.clear();
-    localStorage.clear();
-    document.cookie = "onyx_journey_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "onyx_visitor_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "onyx_session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    cookies = {};
+    (globalThis as any).sessionStorage.clear();
+    (globalThis as any).localStorage.clear();
     vi.restoreAllMocks();
   });
 
@@ -115,7 +148,7 @@ describe("LeadOS Travel Revenue Network Integration", () => {
       const targetUrl = "/redirect?url=" + encodeURIComponent("https://www.pelikan.cz/cs/akcni-letenky");
       const decorated = appendOnyxSubId(targetUrl);
 
-      expect(decorated).toContain("subid1=journey_xyz_777");
+      expect(decodeURIComponent(decorated)).toContain("subid1=journey_xyz_777");
     });
   });
 

@@ -16,6 +16,7 @@ import OptimizedImage from "@/components/OptimizedImage";
 import MobileMenu from "@/components/MobileMenu";
 import TopFlightsThisWeek from "@/components/TopFlightsThisWeek";
 import PelikanPrimaryDeals from "@/components/PelikanPrimaryDeals";
+import CrossPromoSlot from "@/components/CrossPromoSlot";
 import FloatingCta from "@/components/FloatingCta";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -31,9 +32,8 @@ import PelikanSearchWidget from "@/components/PelikanSearchWidget";
 import SEO from "@/components/SEO";
 import { generateFAQSchema } from "@/lib/structuredData";
 
-const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
+
 const ChatbotWidget = lazy(() => import("@/components/ChatbotWidget"));
-const SocialProofNotification = lazy(() => import("@/components/SocialProofNotification"));
 const OmioSection = lazy(() => import("@/components/OmioSection"));
 const PersonalizedSection = lazy(() => import("@/components/PersonalizedSection"));
 const GdprConsentBanner = lazy(() => import("@/components/GdprConsentBanner"));
@@ -220,7 +220,18 @@ export default function Home() {
     window.open(pelikanUrl, "_blank");
   };
 
-  // Structured data is handled by <SEO> component above
+  // Dynamic meta tags and document title for SEO
+  useEffect(() => {
+    document.title = "Akční Letenky: levné letenky z Prahy a last minute lety | Akcni-letenky.com";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', "Hledejte akční letenky z Prahy, Vídně i Polska od 590 Kč. Porovnáváme ověřené promo tarify aerolinek denně.");
+    }
+    const metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (metaKeywords) {
+      metaKeywords.setAttribute('content', "akční letenky, levné letenky, letenky praha, last minute letenky, nízkonákladové lety");
+    }
+  }, []);
 
   // Handle scroll for sticky navigation and bottom banner
   useEffect(() => {
@@ -383,8 +394,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO 
-        title="Akční a Last Minute Letenky z Prahy i Kamkoliv od 590 Kč"
-        description="Najděte nejlevnější akční a last minute letenky z Prahy kamkoliv! Porovnejte denně aktualizované slevy až 80% z Letiště Václava Havla do celého světa."
+        title="🔥 Nejlevnější Akční a Last Minute Letenky (Slevy až 80%)"
+        description="Dnes aktualizováno! Ulovte ty nejlepší last minute a akční letenky z Prahy i Vídně kamkoliv do světa. Porovnáváme skryté nabídky s garantovanou slevou."
         canonical="https://www.akcni-letenky.com/"
         structuredData={[
           {
@@ -418,19 +429,7 @@ export default function Home() {
           ])
         ]}
       />
-      {/* Exit Intent Popup */}
-      {showDeferredEnhancements && (
-        <Suspense fallback={null}>
-          <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
-        </Suspense>
-      )}
 
-      {/* Exit Intent Popup */}
-      {showDeferredEnhancements && (
-        <Suspense fallback={null}>
-          <ExitIntentPopup whatsappLink="https://chat.whatsapp.com/KG1IqrQclfY6NOgkmgs6ml" />
-        </Suspense>
-      )}
       {/* Breadcrumbs with Schema.org */}
       <script type="application/ld+json">
         {JSON.stringify({
@@ -572,7 +571,7 @@ export default function Home() {
       <section aria-labelledby="featured-cities" className="py-10 bg-[#F0F4F8]">
         <div className="container">
           <h2 id="featured-cities" className="text-2xl md:text-3xl font-bold text-center mb-8 text-[#003087]">
-            Nejlevnější letenky do evropských měst
+            Nejlevnější letenky do evropských metropolí
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredCities.map((city, index) => {
@@ -677,7 +676,7 @@ export default function Home() {
           <div className="flex justify-center mb-8">
             <div className="bg-gradient-to-r from-[#FF5722] to-[#E91E63] py-3 px-6 rounded-lg shadow-lg">
               <h2 id="top-this-week" className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
-                🔥 Nejprodávanější letenky tento týden
+                🔥 Nejlepší last minute letenky tohoto týdne
               </h2>
             </div>
           </div>
@@ -786,7 +785,7 @@ export default function Home() {
       <section aria-labelledby="browse-destinations" className="py-12 bg-white">
         <div className="container">
           <h2 id="browse-destinations" className="text-2xl md:text-3xl font-bold text-center mb-8 text-[#003087]">
-            Procházejte destinace a aerolinky
+            Kamkoliv za teplem: Exotika a dálkové lety
           </h2>
           <Tabs defaultValue="states" className="w-full">
             <TabsList className="flex w-full max-w-3xl mx-auto mb-8 overflow-x-auto gap-1 sm:grid sm:grid-cols-4">
@@ -924,6 +923,11 @@ export default function Home() {
               </div>
             </TabsContent>
           </Tabs>
+
+          {/* Context-aware Cross Promo Slot (Travel Revenue Network) */}
+          <div className="mt-10 max-w-5xl mx-auto">
+            <CrossPromoSlot placement="italy_context" context={{ pageType: "homepage" }} />
+          </div>
         </div>
       </section>
 
@@ -938,6 +942,27 @@ export default function Home() {
           </p>
         </div>
       </article>
+
+      {/* FAQ Section */}
+      <section className="py-12 bg-white" aria-labelledby="faq">
+        <div className="container max-w-4xl">
+          <h2 id="faq" className="text-2xl font-bold text-center mb-8 text-[#003087]">
+            Často kladené otázky k letenkám
+          </h2>
+          <Accordion type="single" collapsible className="w-full space-y-3">
+            {faqData.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`} className="border rounded-xl px-5 bg-[#F8FAFC]">
+                <AccordionTrigger className="text-left font-bold text-gray-900 hover:text-blue-600">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 text-sm leading-relaxed pt-2 pb-4">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
 
       {/* Omio Section - Trains, Buses, Ferries */}
       <Suspense fallback={null}>
