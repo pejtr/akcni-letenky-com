@@ -400,8 +400,8 @@ export async function executeSocialPublishing(postId: number): Promise<PublishRe
     throw new Error(`Social post with ID ${postId} not found`);
   }
 
-  let fbResult: any = { success: true, postId: undefined, error: undefined, isSimulated: true };
-  let igResult: any = { success: true, mediaId: undefined, error: undefined, isSimulated: true };
+  let fbResult: Awaited<ReturnType<typeof publishToFacebook>> = { success: true, postId: undefined, error: undefined, isSimulated: true };
+  let igResult: Awaited<ReturnType<typeof publishToInstagram>> = { success: true, mediaId: undefined, error: undefined, isSimulated: true };
 
   const targetPlatform = post.platform || "both";
 

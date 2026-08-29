@@ -86,7 +86,7 @@ export function generateFAQSchema(faqs: FAQItem[]) {
         "text": faq.answer
       }
     }))
-  };
+  } as const;
 }
 
 /**

@@ -138,8 +138,7 @@ export default function PersonalizedSection() {
                 >
                   <div>
                     {/* Image */}
-                    <Link href={internalRoute}>
-                      <a className="block relative h-40 overflow-hidden cursor-pointer">
+                    <Link href={internalRoute} className="block relative h-40 overflow-hidden cursor-pointer">
                         <img
                           src={image}
                           alt={rec.destination}
@@ -157,16 +156,13 @@ export default function PersonalizedSection() {
                             {rec.reason}
                           </div>
                         )}
-                      </a>
                     </Link>
 
                     {/* Content */}
                     <div className="p-4">
                       <div className="flex items-start justify-between mb-2">
-                        <Link href={internalRoute}>
-                          <a className="text-lg font-bold text-[#003087] group-hover:text-[#E91E63] transition-colors cursor-pointer">
-                            {rec.destination}
-                          </a>
+                        <Link href={internalRoute} className="text-lg font-bold text-[#003087] group-hover:text-[#E91E63] transition-colors cursor-pointer">
+                          {rec.destination}
                         </Link>
                         {/* A/B Test: Show share button on card only for variant A */}
                         {showOnCard && (
@@ -199,10 +195,8 @@ export default function PersonalizedSection() {
 
                   {/* Actions */}
                   <div className="p-4 pt-0 flex items-center gap-2">
-                    <Link href={internalRoute}>
-                      <a className="flex-1 bg-[#003087] hover:bg-[#002060] text-white text-sm font-medium py-2.5 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-1 cursor-pointer">
-                        Zobrazit lety →
-                      </a>
+                    <Link href={internalRoute} className="flex-1 bg-[#003087] hover:bg-[#002060] text-white text-sm font-medium py-2.5 px-3 rounded-lg text-center transition-colors flex items-center justify-center gap-1 cursor-pointer">
+                      Zobrazit lety →
                     </Link>
                     <button
                       onClick={() =>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import Footer from "@/components/Footer";
 import { Calendar, User, ArrowRight, BookOpen, Plane, Lightbulb, TrendingDown, Shield, Star } from "lucide-react";
@@ -8,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navigation from "@/components/Navigation";
 
 import { injectStructuredData, removeAllStructuredData, generateBreadcrumbSchema } from "@/lib/structuredData";
-import { Link } from "wouter";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 import SEO from "@/components/SEO";
 

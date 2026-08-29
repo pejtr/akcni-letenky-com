@@ -51,7 +51,6 @@ const TipArticle = lazy(() => import("./pages/TipArticle"));
 const HeatmapTracking = lazy(() =>
   import("./components/HeatmapTracking").then((mod) => ({ default: mod.HeatmapTracking }))
 );
-const RevolutPopupABTest = lazy(() => import("./components/RevolutPopupABTest"));
 
 import { useLocation } from "wouter";
 
@@ -168,8 +167,6 @@ function App() {
           {showDeferredEnhancements && (
             <Suspense fallback={null}>
               <HeatmapTracking />
-              <RevolutPopupABTest />
-
             </Suspense>
           )}
           <Toaster />

@@ -1,4 +1,5 @@
 import { useParams, Link } from "wouter";
+import { lazy, Suspense } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Plane, ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
@@ -6,6 +7,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 import SEO from "@/components/SEO";
+
+const ChatbotWidget = lazy(() => import("@/components/ChatbotWidget"));
 
 // Sample Pelikán airline deal templates per carrier
 const airlineDealTemplates: Record<string, Array<{ destination: string; from: string; price: number; salePrice: number; discount: number; linkPath: string }>> = {

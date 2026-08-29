@@ -2,6 +2,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { pelikanDeepLink } from "@shared/affiliateLinks";
 import { Link, useParams } from "wouter";
+import { trpc } from "@/lib/trpc";
 import SEO from "@/components/SEO";
 import { MapPin, Calendar, Plane, ArrowLeft, Star, Clock, Info, Heart, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,6 @@ import { generateOmioReferralLink, trackOmioClick } from "@/lib/omioAffiliate";
 import { Train, Bus } from "lucide-react";
 import SocialSharePanel from "@/components/SocialSharePanel";
 import { useSharePlacementABTest } from "@/hooks/useSharePlacementABTest";
-import { trpc } from "@/lib/trpc";
 
 export default function DestinationPage() {
   const params = useParams<{ slug: string }>();

@@ -133,8 +133,7 @@ export default function Aerolinky() {
         <div className="container">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {airlines.map((airline, index) => (
-              <Link key={index} href={`/letecka-spolecnost/${airline.slug}`}>
-                <a className="block bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 group">
+              <Link key={index} href={`/letecka-spolecnost/${airline.slug}`} className="block bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 group">
                   {/* Logo & Name */}
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
@@ -167,7 +166,6 @@ export default function Aerolinky() {
                       <span className="font-semibold">Zobrazit lety →</span>
                     </div>
                   </div>
-                </a>
               </Link>
             ))}
           </div>
@@ -219,10 +217,8 @@ export default function Aerolinky() {
             <p className="text-lg text-[#003087] mb-6">
               Porovnáme ceny všech aerolinek a najdeme tu nejlepší nabídku pro vás
             </p>
-            <Link href="/levne-letenky">
-              <a className="inline-block bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg transition-all hover:scale-105">
-                Vyhledat letenky →
-              </a>
+            <Link href="/levne-letenky" className="inline-block bg-[#E91E63] hover:bg-[#C2185B] text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg transition-all hover:scale-105">
+              Vyhledat letenky →
             </Link>
           </div>
         </div>

@@ -2,7 +2,12 @@
  * Unit Test Suite for Sales Maximizer & Price Tracker Suite
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+
+vi.mock("./db", () => ({
+  getDb: vi.fn(async () => null),
+}));
+
 import { createPriceTracker, checkPriceTrackerAlerts } from "./priceTracker";
 
 describe("Price Tracker & Sales Maximizer Suite", () => {

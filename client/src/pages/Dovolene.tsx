@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
-import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain, Hotel, X, Search, Sparkles } from "lucide-react";
+import { Heart, Palmtree, MapPin, Clock, ArrowRight, Filter, Plane, Mountain, Hotel, X, Search, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,7 +33,7 @@ export default function Dovolene() {
   }, [searchParams]);
 
   // Primary query (filtered by destination if specified)
-  const { data: vacations, isLoading } = trpc.pelikan.getVacations.useQuery({
+  const { data: vacations, isLoading, isFetching } = trpc.pelikan.getVacations.useQuery({
     sortBy,
     country: country && country !== "all" ? country : undefined,
     destination: destinationFilter || undefined,
@@ -359,6 +359,7 @@ export default function Dovolene() {
 
           {isLoading ? (
             <div className="grid md:grid-cols-2 gap-6">
+
               <div className="space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <Skeleton key={i} className="h-64 rounded-xl" />
@@ -371,7 +372,20 @@ export default function Dovolene() {
               </div>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className={`relative grid md:grid-cols-2 gap-8 transition-opacity duration-200 ${isFetching ? "opacity-60" : "opacity-100"}`}>
+              {isFetching && (
+                <div
+                  className="absolute inset-0 z-10 flex items-start justify-center pt-10 rounded-xl bg-white/45 backdrop-blur-[1px] transition-opacity duration-200"
+                  role="status"
+                  aria-live="polite"
+                  aria-label="Aktualizuji nabídky dovolených"
+                >
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#FF6B00] shadow-md">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    Aktualizuji nabídky…
+                  </div>
+                </div>
+              )}
               {/* Left Column - Foreign Destinations */}
               <div>
                 <div className="flex items-center gap-3 mb-6 pb-3 border-b-2 border-[#FF6B00]">

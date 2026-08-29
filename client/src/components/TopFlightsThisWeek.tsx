@@ -66,9 +66,21 @@ export default function TopFlightsThisWeek() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-label="Načítání nejlepších nabídek" aria-busy="true">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-gray-100 rounded-xl h-48 animate-pulse"></div>
+          <div key={`top-flight-skeleton-${i}`} className="relative min-h-[280px] overflow-hidden rounded-xl bg-slate-200 shadow-md">
+            <div className="skeleton-shimmer absolute inset-0" />
+            <div className="relative z-10 flex h-full flex-col justify-end p-6">
+              <div className="mb-3 h-6 w-28 rounded-full bg-white/70" />
+              <div className="mb-3 h-7 w-40 rounded bg-white/70" />
+              <div className="mb-2 h-8 w-32 rounded bg-white/70" />
+              <div className="mb-4 h-4 w-44 rounded bg-white/70" />
+              <div className="flex items-center justify-between border-t border-white/60 pt-3">
+                <div className="h-4 w-36 rounded bg-white/70" />
+                <div className="h-4 w-20 rounded bg-white/70" />
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     );
@@ -171,10 +183,8 @@ export default function TopFlightsThisWeek() {
       })}
 
       <div className="col-span-full mt-6 text-center">
-        <Link href="/levne-letenky">
-          <a className="inline-flex items-center gap-2 bg-[#E91E63] hover:bg-[#c2185b] text-white font-black text-base px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-            Zobrazit všechny nabídky letenek <Plane className="w-5 h-5 ml-1" />
-          </a>
+        <Link href="/levne-letenky" className="inline-flex items-center gap-2 bg-[#E91E63] hover:bg-[#c2185b] text-white font-black text-base px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+          Zobrazit všechny nabídky letenek <Plane className="w-5 h-5 ml-1" />
         </Link>
       </div>
     </div>

@@ -26,6 +26,7 @@ import {
   Plus,
 } from "lucide-react";
 import { toast } from "sonner";
+import type { SocialPost } from "../../../drizzle/schema";
 
 export default function AdminSocialMedia() {
   const { user, loading: authLoading } = useAuth();
@@ -474,7 +475,7 @@ export default function AdminSocialMedia() {
                     </tr>
                   </thead>
                   <tbody className="divide-y">
-                    {postsHistory.map((post) => (
+                    {postsHistory.map((post: SocialPost) => (
                       <tr key={post.id} className="hover:bg-gray-50">
                         <td className="py-3 px-4 font-mono font-bold">#{post.id}</td>
                         <td className="py-3 px-4">

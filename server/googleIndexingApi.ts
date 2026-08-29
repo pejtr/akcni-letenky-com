@@ -126,6 +126,7 @@ export async function requestGoogleIndexing(
       type,
       message: "Successfully submitted to Google Indexing API v3.",
       timestamp,
+      isSimulated: false,
     };
     inMemoryLogs.unshift(res);
     return res;
@@ -138,6 +139,7 @@ export async function requestGoogleIndexing(
       type,
       message: `Error: ${msg}`,
       timestamp,
+      isSimulated: false,
     };
     inMemoryLogs.unshift(res);
     return res;

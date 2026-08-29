@@ -54,9 +54,8 @@ describe("Pelikan affiliate links", () => {
     expect(url.searchParams.get("utm_content")).toBe("tenerife");
   });
 
-  it("supports partner-panel deeplink templates", () => {
-    process.env.PELIKAN_DEEPLINK_TEMPLATE =
-      "https://partners.example/deeplink?target={encodedUrl}&aid={aid}&campaign={campaign}&channel={channel}&content={content}";
+  it("uses the direct Pelikan deeplink contract with full tracking parameters", () => {
+    delete process.env.PELIKAN_DEEPLINK_TEMPLATE;
 
     const result = pelikanDeepLink("/cs/pobyty", {
       campaign: "top-destinations",
@@ -64,15 +63,13 @@ describe("Pelikan affiliate links", () => {
       content: "maledivy",
     });
 
-    const wrapper = new URL(result);
-    const target = new URL(wrapper.searchParams.get("target") || "");
+    const url = new URL(result);
 
-    expect(wrapper.hostname).toBe("partners.example");
-    expect(wrapper.searchParams.get("aid")).toBe("levne-letenky");
-    expect(wrapper.searchParams.get("campaign")).toBe("top-destinations");
-    expect(wrapper.searchParams.get("channel")).toBe("homepage");
-    expect(wrapper.searchParams.get("content")).toBe("maledivy");
-    expect(target.hostname).toBe("www.pelikan.cz");
-    expect(target.searchParams.get("a_aid")).toBe("levne-letenky");
+    expect(url.hostname).toBe("www.pelikan.cz");
+    expect(url.pathname).toBe("/cs/pobyty");
+    expect(url.searchParams.get("a_aid")).toBe("levne-letenky");
+    expect(url.searchParams.get("utm_campaign")).toBe("top-destinations");
+    expect(url.searchParams.get("utm_channel")).toBe("homepage");
+    expect(url.searchParams.get("utm_content")).toBe("maledivy");
   });
 });
