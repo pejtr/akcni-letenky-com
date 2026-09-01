@@ -229,30 +229,29 @@ export default function TopFlightsThisWeek() {
 
                 {/* Price & Conditions */}
                 <div className="mb-3">
+                  <div className="text-[11px] text-slate-300 font-medium mb-0.5">
+                    Orientační cena z partnerského zdroje:
+                  </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-black text-[#FFD700]">
-                      {flight.salePrice ? formatPrice(flight.salePrice) : formatPrice(flight.price || 990)} Kč
+                      od {flight.salePrice ? formatPrice(flight.salePrice) : formatPrice(flight.price || 990)} Kč
                     </span>
-                    <span className="text-xs text-white/80 font-medium">zpáteční vč. poplatků</span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[11px] text-slate-300">
-                    <span className="flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded text-white/90">
-                      <Luggage className="w-3 h-3 text-emerald-400" /> Příruční zavazadlo v ceně
-                    </span>
-                    {airline && (
+                  {airline && (
+                    <div className="flex items-center gap-2 mt-1.5 text-[11px] text-slate-300">
                       <span className="bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded text-white/90">
                         ✈️ {airline}
                       </span>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* CTA Action */}
                 <div className="flex items-center justify-between pt-3 border-t border-white/20 text-xs">
-                  <span className="text-slate-300">Ověřit termíny</span>
+                  <span className="text-slate-300">Dostupnost & podmínky</span>
                   <span className="font-bold text-[#FFD700] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    Zobrazit na Pelikán.cz <ArrowRight className="w-3.5 h-3.5" />
+                    Ověřit aktuální cenu na Pelikán.cz <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </div>

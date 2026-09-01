@@ -240,18 +240,18 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-400 text-sm leading-relaxed">
-              Nezávislý srovnávač a vyhledávač akčních letenek pro české cestovatele. Rezervace a platba probíhá u prověřeného licencovaného partnera Pelikán.cz nebo přímo u aerolinek.
+              Nezávislý agregátor a vyhledávač akčních tipů na letenky pro české cestovatele. Rezervace, platba a zákaznická podpora probíhají přímo u licencovaného prodejce Pelikán.cz nebo u leteckých společností.
             </p>
 
             <div className="space-y-2 pt-2 text-xs text-slate-300">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Oficiální partner: <strong>Pelikán.cz (IATA)</strong></span>
+                <span>Affiliate partner: <strong>Pelikán.cz</strong></span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-sky-400 flex-shrink-0" />
                 <Link href="/kontakt" className="hover:text-white transition-colors underline decoration-slate-600">
-                  info@akcni-letenky.com (Kontakt)
+                  info@akcni-letenky.com (Kontakt & Redakce)
                 </Link>
               </div>
             </div>

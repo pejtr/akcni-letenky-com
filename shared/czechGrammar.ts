@@ -1,109 +1,124 @@
 /**
- * Czech Grammar & Declension Engine for Travel Destinations
- * Handles natural preposition selection ("do" vs "na" vs "v") and proper noun declension.
+ * Czech Destination Declension & Phrase Engine for Travel
+ * 
+ * Rules:
+ * - Cities & regions use preposition "do" + 2. pád (genitiv), e.g. "do Paříže", "do Londýna".
+ * - Islands & archipelagos use preposition "na" + 4. pád (akuzativ), e.g. "na Mallorku", "na Krétu", "na Island".
+ * - For unknown destinations, NEVER guess cases via naive heuristics. Fallback safely to nominative with colon: "Akční letenky: [Název]".
  */
 
-interface DestinationGrammar {
-  genitive: string;      // 2. pád (Letenky do / na ...)
-  locative: string;      // 6. pád (Dovolená v / na ...)
+export interface DestinationGrammarEntry {
+  title: string;
   preposition: "do" | "na";
+  targetForm: string;     // 2. pád (pro "do") nebo 4. pád (pro "na")
+  locativeForm: string;   // 6. pád (pro "v / na")
   locativePreposition: "v" | "ve" | "na";
 }
 
-const DESTINATION_DICTIONARY: Record<string, DestinationGrammar> = {
-  // Cities & Regions (preposition "do")
-  "londyn": { genitive: "Londýna", locative: "Londýně", preposition: "do", locativePreposition: "v" },
-  "london": { genitive: "Londýna", locative: "Londýně", preposition: "do", locativePreposition: "v" },
-  "pariz": { genitive: "Paříže", locative: "Paříži", preposition: "do", locativePreposition: "v" },
-  "paris": { genitive: "Paříže", locative: "Paříži", preposition: "do", locativePreposition: "v" },
-  "rim": { genitive: "Říma", locative: "Římě", preposition: "do", locativePreposition: "v" },
-  "rome": { genitive: "Říma", locative: "Římě", preposition: "do", locativePreposition: "v" },
-  "barcelona": { genitive: "Barcelony", locative: "Barceloně", preposition: "do", locativePreposition: "v" },
-  "dubaj": { genitive: "Dubaje", locative: "Dubaji", preposition: "do", locativePreposition: "v" },
-  "dubai": { genitive: "Dubaje", locative: "Dubaji", preposition: "do", locativePreposition: "v" },
-  "new-york": { genitive: "New Yorku", locative: "New Yorku", preposition: "do", locativePreposition: "v" },
-  "new york": { genitive: "New Yorku", locative: "New Yorku", preposition: "do", locativePreposition: "v" },
-  "milan": { genitive: "Milána", locative: "Miláně", preposition: "do", locativePreposition: "v" },
-  "milano": { genitive: "Milána", locative: "Miláně", preposition: "do", locativePreposition: "v" },
-  "benatky": { genitive: "Benátek", locative: "Benátkách", preposition: "do", locativePreposition: "v" },
-  "venice": { genitive: "Benátek", locative: "Benátkách", preposition: "do", locativePreposition: "v" },
-  "lisabon": { genitive: "Lisabonu", locative: "Lisabonu", preposition: "do", locativePreposition: "v" },
-  "lisbon": { genitive: "Lisabonu", locative: "Lisabonu", preposition: "do", locativePreposition: "v" },
-  "porto": { genitive: "Porta", locative: "Portu", preposition: "do", locativePreposition: "v" },
-  "madrid": { genitive: "Madridu", locative: "Madridu", preposition: "do", locativePreposition: "v" },
-  "amsterdam": { genitive: "Amsterdamu", locative: "Amsterdamu", preposition: "do", locativePreposition: "v" },
-  "berlin": { genitive: "Berlína", locative: "Berlíně", preposition: "do", locativePreposition: "v" },
-  "viden": { genitive: "Vídně", locative: "Vídni", preposition: "do", locativePreposition: "ve" },
-  "vienna": { genitive: "Vídně", locative: "Vídni", preposition: "do", locativePreposition: "ve" },
-  "budapest": { genitive: "Budapešti", locative: "Budapešti", preposition: "do", locativePreposition: "v" },
-  "praha": { genitive: "Prahy", locative: "Praze", preposition: "do", locativePreposition: "v" },
-  "prague": { genitive: "Prahy", locative: "Praze", preposition: "do", locativePreposition: "v" },
-  "tokio": { genitive: "Tokia", locative: "Tokiu", preposition: "do", locativePreposition: "v" },
-  "tokyo": { genitive: "Tokia", locative: "Tokiu", preposition: "do", locativePreposition: "v" },
-  "bangkok": { genitive: "Bangkoku", locative: "Bangkoku", preposition: "do", locativePreposition: "v" },
-  "singapur": { genitive: "Singapuru", locative: "Singapuru", preposition: "do", locativePreposition: "v" },
-  "singapore": { genitive: "Singapuru", locative: "Singapuru", preposition: "do", locativePreposition: "v" },
-  "dublin": { genitive: "Dublinu", locative: "Dublinu", preposition: "do", locativePreposition: "v" },
-  "edinburg": { genitive: "Edinburghu", locative: "Edinburghu", preposition: "do", locativePreposition: "v" },
-  "edinburgh": { genitive: "Edinburghu", locative: "Edinburghu", preposition: "do", locativePreposition: "v" },
-  "oslo": { genitive: "Osla", locative: "Oslu", preposition: "do", locativePreposition: "v" },
-  "stockholm": { genitive: "Stockholmu", locative: "Stockholmu", preposition: "do", locativePreposition: "v" },
-  "kodan": { genitive: "Kodaně", locative: "Kodani", preposition: "do", locativePreposition: "v" },
-  "copenhagen": { genitive: "Kodaně", locative: "Kodani", preposition: "do", locativePreposition: "v" },
-  "ateny": { genitive: "Athén", locative: "Athénách", preposition: "do", locativePreposition: "v" },
-  "athens": { genitive: "Athén", locative: "Athénách", preposition: "do", locativePreposition: "v" },
-  "split": { genitive: "Splitu", locative: "Splitu", preposition: "do", locativePreposition: "ve" },
-  "dubrovnik": { genitive: "Dubrovníku", locative: "Dubrovníku", preposition: "do", locativePreposition: "v" },
-  "zadar": { genitive: "Zadaru", locative: "Zadaru", preposition: "do", locativePreposition: "v" },
-  "pula": { genitive: "Puly", locative: "Pule", preposition: "do", locativePreposition: "v" },
-  "bari": { genitive: "Bari", locative: "Bari", preposition: "do", locativePreposition: "v" },
-  "neapol": { genitive: "Neapole", locative: "Neapoli", preposition: "do", locativePreposition: "v" },
-  "naples": { genitive: "Neapole", locative: "Neapoli", preposition: "do", locativePreposition: "v" },
-  "katavie": { genitive: "Katánie", locative: "Katánii", preposition: "do", locativePreposition: "v" },
-  "catania": { genitive: "Katánie", locative: "Katánii", preposition: "do", locativePreposition: "v" },
-  "palermo": { genitive: "Palerma", locative: "Palermu", preposition: "do", locativePreposition: "v" },
-  "malaga": { genitive: "Málagy", locative: "Málaze", preposition: "do", locativePreposition: "v" },
-  "alicante": { genitive: "Alicante", locative: "Alicante", preposition: "do", locativePreposition: "v" },
-  "valencie": { genitive: "Valencie", locative: "Valencii", preposition: "do", locativePreposition: "ve" },
-  "valencia": { genitive: "Valencie", locative: "Valencii", preposition: "do", locativePreposition: "ve" },
-  "sevilla": { genitive: "Sevilly", locative: "Seville", preposition: "do", locativePreposition: "v" },
-  "nice": { genitive: "Nice", locative: "Nice", preposition: "do", locativePreposition: "v" },
-  "marseille": { genitive: "Marseille", locative: "Marseille", preposition: "do", locativePreposition: "v" },
+const DESTINATION_DICTIONARY: Record<string, DestinationGrammarEntry> = {
+  // --- Města a vnitrozemské státy ("do" + 2. pád / genitiv) ---
+  "londyn": { title: "Londýn", preposition: "do", targetForm: "Londýna", locativeForm: "Londýně", locativePreposition: "v" },
+  "london": { title: "Londýn", preposition: "do", targetForm: "Londýna", locativeForm: "Londýně", locativePreposition: "v" },
+  "pariz": { title: "Paříž", preposition: "do", targetForm: "Paříže", locativeForm: "Paříži", locativePreposition: "v" },
+  "paris": { title: "Paříž", preposition: "do", targetForm: "Paříže", locativeForm: "Paříži", locativePreposition: "v" },
+  "rim": { title: "Řím", preposition: "do", targetForm: "Říma", locativeForm: "Římě", locativePreposition: "v" },
+  "rome": { title: "Řím", preposition: "do", targetForm: "Říma", locativeForm: "Římě", locativePreposition: "v" },
+  "barcelona": { title: "Barcelona", preposition: "do", targetForm: "Barcelony", locativeForm: "Barceloně", locativePreposition: "v" },
+  "dubaj": { title: "Dubaj", preposition: "do", targetForm: "Dubaje", locativeForm: "Dubaji", locativePreposition: "v" },
+  "dubai": { title: "Dubaj", preposition: "do", targetForm: "Dubaje", locativeForm: "Dubaji", locativePreposition: "v" },
+  "new-york": { title: "New York", preposition: "do", targetForm: "New Yorku", locativeForm: "New Yorku", locativePreposition: "v" },
+  "new york": { title: "New York", preposition: "do", targetForm: "New Yorku", locativeForm: "New Yorku", locativePreposition: "v" },
+  "milan": { title: "Milán", preposition: "do", targetForm: "Milána", locativeForm: "Miláně", locativePreposition: "v" },
+  "milano": { title: "Milán", preposition: "do", targetForm: "Milána", locativeForm: "Miláně", locativePreposition: "v" },
+  "benatky": { title: "Benátky", preposition: "do", targetForm: "Benátek", locativeForm: "Benátkách", locativePreposition: "v" },
+  "venice": { title: "Benátky", preposition: "do", targetForm: "Benátek", locativeForm: "Benátkách", locativePreposition: "v" },
+  "lisabon": { title: "Lisabon", preposition: "do", targetForm: "Lisabonu", locativeForm: "Lisabonu", locativePreposition: "v" },
+  "lisbon": { title: "Lisabon", preposition: "do", targetForm: "Lisabonu", locativeForm: "Lisabonu", locativePreposition: "v" },
+  "porto": { title: "Porto", preposition: "do", targetForm: "Porta", locativeForm: "Portu", locativePreposition: "v" },
+  "madrid": { title: "Madrid", preposition: "do", targetForm: "Madridu", locativeForm: "Madridu", locativePreposition: "v" },
+  "amsterdam": { title: "Amsterdam", preposition: "do", targetForm: "Amsterdamu", locativeForm: "Amsterdamu", locativePreposition: "v" },
+  "berlin": { title: "Berlín", preposition: "do", targetForm: "Berlína", locativeForm: "Berlíně", locativePreposition: "v" },
+  "viden": { title: "Vídeň", preposition: "do", targetForm: "Vídně", locativeForm: "Vídni", locativePreposition: "ve" },
+  "vienna": { title: "Vídeň", preposition: "do", targetForm: "Vídně", locativeForm: "Vídni", locativePreposition: "ve" },
+  "budapest": { title: "Budapešť", preposition: "do", targetForm: "Budapešti", locativeForm: "Budapešti", locativePreposition: "v" },
+  "praha": { title: "Praha", preposition: "do", targetForm: "Prahy", locativeForm: "Praze", locativePreposition: "v" },
+  "prague": { title: "Praha", preposition: "do", targetForm: "Prahy", locativeForm: "Praze", locativePreposition: "v" },
+  "tokio": { title: "Tokio", preposition: "do", targetForm: "Tokia", locativeForm: "Tokiu", locativePreposition: "v" },
+  "tokyo": { title: "Tokio", preposition: "do", targetForm: "Tokia", locativeForm: "Tokiu", locativePreposition: "v" },
+  "bangkok": { title: "Bangkok", preposition: "do", targetForm: "Bangkoku", locativeForm: "Bangkoku", locativePreposition: "v" },
+  "singapur": { title: "Singapur", preposition: "do", targetForm: "Singapuru", locativeForm: "Singapuru", locativePreposition: "v" },
+  "singapore": { title: "Singapur", preposition: "do", targetForm: "Singapuru", locativeForm: "Singapuru", locativePreposition: "v" },
+  "dublin": { title: "Dublin", preposition: "do", targetForm: "Dublinu", locativeForm: "Dublinu", locativePreposition: "v" },
+  "edinburg": { title: "Edinburgh", preposition: "do", targetForm: "Edinburghu", locativeForm: "Edinburghu", locativePreposition: "v" },
+  "edinburgh": { title: "Edinburgh", preposition: "do", targetForm: "Edinburghu", locativeForm: "Edinburghu", locativePreposition: "v" },
+  "oslo": { title: "Oslo", preposition: "do", targetForm: "Osla", locativeForm: "Oslu", locativePreposition: "v" },
+  "stockholm": { title: "Stockholm", preposition: "do", targetForm: "Stockholmu", locativeForm: "Stockholmu", locativePreposition: "v" },
+  "kodan": { title: "Kodaň", preposition: "do", targetForm: "Kodaně", locativeForm: "Kodani", locativePreposition: "v" },
+  "copenhagen": { title: "Kodaň", preposition: "do", targetForm: "Kodaně", locativeForm: "Kodani", locativePreposition: "v" },
+  "ateny": { title: "Athény", preposition: "do", targetForm: "Athén", locativeForm: "Athénách", locativePreposition: "v" },
+  "athens": { title: "Athény", preposition: "do", targetForm: "Athén", locativeForm: "Athénách", locativePreposition: "v" },
+  "split": { title: "Split", preposition: "do", targetForm: "Splitu", locativeForm: "Splitu", locativePreposition: "ve" },
+  "dubrovnik": { title: "Dubrovník", preposition: "do", targetForm: "Dubrovníku", locativeForm: "Dubrovníku", locativePreposition: "v" },
+  "zadar": { title: "Zadar", preposition: "do", targetForm: "Zadaru", locativeForm: "Zadaru", locativePreposition: "v" },
+  "pula": { title: "Pula", preposition: "do", targetForm: "Puly", locativeForm: "Pule", locativePreposition: "v" },
+  "bari": { title: "Bari", preposition: "do", targetForm: "Bari", locativeForm: "Bari", locativePreposition: "v" },
+  "neapol": { title: "Neapol", preposition: "do", targetForm: "Neapole", locativeForm: "Neapoli", locativePreposition: "v" },
+  "naples": { title: "Neapol", preposition: "do", targetForm: "Neapole", locativeForm: "Neapoli", locativePreposition: "v" },
+  "catania": { title: "Katánie", preposition: "do", targetForm: "Katánie", locativeForm: "Katánii", locativePreposition: "v" },
+  "katanie": { title: "Katánie", preposition: "do", targetForm: "Katánie", locativeForm: "Katánii", locativePreposition: "v" },
+  "palermo": { title: "Palermo", preposition: "do", targetForm: "Palerma", locativeForm: "Palermu", locativePreposition: "v" },
+  "malaga": { title: "Málaga", preposition: "do", targetForm: "Málagy", locativeForm: "Málaze", locativePreposition: "v" },
+  "alicante": { title: "Alicante", preposition: "do", targetForm: "Alicante", locativeForm: "Alicante", locativePreposition: "v" },
+  "valencie": { title: "Valencie", preposition: "do", targetForm: "Valencie", locativeForm: "Valencii", locativePreposition: "ve" },
+  "valencia": { title: "Valencie", preposition: "do", targetForm: "Valencie", locativeForm: "Valencii", locativePreposition: "ve" },
+  "sevilla": { title: "Sevilla", preposition: "do", targetForm: "Sevilly", locativeForm: "Seville", locativePreposition: "v" },
+  "nice": { title: "Nice", preposition: "do", targetForm: "Nice", locativeForm: "Nice", locativePreposition: "v" },
+  "marseille": { title: "Marseille", preposition: "do", targetForm: "Marseille", locativeForm: "Marseille", locativePreposition: "v" },
+  "vietnam": { title: "Vietnam", preposition: "do", targetForm: "Vietnamu", locativeForm: "Vietnamu", locativePreposition: "ve" },
+  "egypt": { title: "Egypt", preposition: "do", targetForm: "Egypta", locativeForm: "Egyptě", locativePreposition: "v" },
+  "recko": { title: "Řecko", preposition: "do", targetForm: "Řecka", locativeForm: "Řecku", locativePreposition: "v" },
+  "spanelsko": { title: "Španělsko", preposition: "do", targetForm: "Španělska", locativeForm: "Španělsku", locativePreposition: "ve" },
+  "italie": { title: "Itálie", preposition: "do", targetForm: "Itálie", locativeForm: "Itálii", locativePreposition: "v" },
+  "portugalsko": { title: "Portugalsko", preposition: "do", targetForm: "Portugalska", locativeForm: "Portugalsku", locativePreposition: "v" },
+  "francie": { title: "Francie", preposition: "do", targetForm: "Francie", locativeForm: "Francii", locativePreposition: "ve" },
+  "turecko": { title: "Turecko", preposition: "do", targetForm: "Turecka", locativeForm: "Turecku", locativePreposition: "v" },
+  "istanbul": { title: "Istanbul", preposition: "do", targetForm: "Istanbulu", locativeForm: "Istanbulu", locativePreposition: "v" },
 
-  // Islands & Island States (preposition "na")
-  "mallorca": { genitive: "Mallorcu", locative: "Mallorce", preposition: "na", locativePreposition: "na" },
-  "majorka": { genitive: "Mallorcu", locative: "Mallorce", preposition: "na", locativePreposition: "na" },
-  "ibiza": { genitive: "Ibizu", locative: "Ibizu", preposition: "na", locativePreposition: "na" },
-  "menorca": { genitive: "Menorcu", locative: "Menorce", preposition: "na", locativePreposition: "na" },
-  "tenerife": { genitive: "Tenerife", locative: "Tenerife", preposition: "na", locativePreposition: "na" },
-  "gran-canaria": { genitive: "Gran Canarii", locative: "Gran Canarii", preposition: "na", locativePreposition: "na" },
-  "fuerteventura": { genitive: "Fuerteventuru", locative: "Fuerteventuře", preposition: "na", locativePreposition: "na" },
-  "lanzarote": { genitive: "Lanzarote", locative: "Lanzarote", preposition: "na", locativePreposition: "na" },
-  "kanarske-ostrovy": { genitive: "Kanárské ostrovy", locative: "Kanárských ostrovech", preposition: "na", locativePreposition: "na" },
-  "kreta": { genitive: "Krétu", locative: "Krétě", preposition: "na", locativePreposition: "na" },
-  "rhodos": { genitive: "Rhodos", locative: "Rhodosu", preposition: "na", locativePreposition: "na" },
-  "korfu": { genitive: "Korfu", locative: "Korfu", preposition: "na", locativePreposition: "na" },
-  "kos": { genitive: "Kos", locative: "Kosu", preposition: "na", locativePreposition: "na" },
-  "zakynthos": { genitive: "Zakynthos", locative: "Zakynthosu", preposition: "na", locativePreposition: "na" },
-  "santorini": { genitive: "Santorini", locative: "Santorini", preposition: "na", locativePreposition: "na" },
-  "mykonos": { genitive: "Mykonos", locative: "Mykonosu", preposition: "na", locativePreposition: "na" },
-  "kypr": { genitive: "Kypr", locative: "Kypru", preposition: "na", locativePreposition: "na" },
-  "cyprus": { genitive: "Kypr", locative: "Kypru", preposition: "na", locativePreposition: "na" },
-  "malta": { genitive: "Maltu", locative: "Maltě", preposition: "na", locativePreposition: "na" },
-  "madeira": { genitive: "Madeiru", locative: "Madeiře", preposition: "na", locativePreposition: "na" },
-  "azory": { genitive: "Azory", locative: "Azorech", preposition: "na", locativePreposition: "na" },
-  "bali": { genitive: "Bali", locative: "Bali", preposition: "na", locativePreposition: "na" },
-  "maledivy": { genitive: "Maledivy", locative: "Maledivách", preposition: "na", locativePreposition: "na" },
-  "maldives": { genitive: "Maledivy", locative: "Maledivách", preposition: "na", locativePreposition: "na" },
-  "zanzibar": { genitive: "Zanzibar", locative: "Zanzibaru", preposition: "na", locativePreposition: "na" },
-  "reunion": { genitive: "Réunion", locative: "Réunionu", preposition: "na", locativePreposition: "na" },
-  "mauricius": { genitive: "Mauricius", locative: "Mauriciu", preposition: "na", locativePreposition: "na" },
-  "sri-lanka": { genitive: "Srí Lanku", locative: "Srí Lance", preposition: "na", locativePreposition: "na" },
-  "island": { genitive: "Island", locative: "Islandu", preposition: "na", locativePreposition: "na" },
-  "iceland": { genitive: "Island", locative: "Islandu", preposition: "na", locativePreposition: "na" },
-  "sicilie": { genitive: "Sicílii", locative: "Sicílii", preposition: "na", locativePreposition: "na" },
-  "sardinie": { genitive: "Sardínii", locative: "Sardínii", preposition: "na", locativePreposition: "na" },
-  "korsika": { genitive: "Korsiku", locative: "Korsice", preposition: "na", locativePreposition: "na" },
+  // --- Ostrovy a souostroví ("na" + 4. pád / akuzativ) ---
+  "mallorca": { title: "Mallorka", preposition: "na", targetForm: "Mallorku", locativeForm: "Mallorce", locativePreposition: "na" },
+  "mallorka": { title: "Mallorka", preposition: "na", targetForm: "Mallorku", locativeForm: "Mallorce", locativePreposition: "na" },
+  "majorka": { title: "Mallorka", preposition: "na", targetForm: "Mallorku", locativeForm: "Mallorce", locativePreposition: "na" },
+  "ibiza": { title: "Ibiza", preposition: "na", targetForm: "Ibizu", locativeForm: "Isize", locativePreposition: "na" },
+  "menorca": { title: "Menorca", preposition: "na", targetForm: "Menorcu", locativeForm: "Menorce", locativePreposition: "na" },
+  "tenerife": { title: "Tenerife", preposition: "na", targetForm: "Tenerife", locativeForm: "Tenerife", locativePreposition: "na" },
+  "gran-canaria": { title: "Gran Canaria", preposition: "na", targetForm: "Gran Canarii", locativeForm: "Gran Canarii", locativePreposition: "na" },
+  "fuerteventura": { title: "Fuerteventura", preposition: "na", targetForm: "Fuerteventuru", locativeForm: "Fuerteventuře", locativePreposition: "na" },
+  "lanzarote": { title: "Lanzarote", preposition: "na", targetForm: "Lanzarote", locativeForm: "Lanzarote", locativePreposition: "na" },
+  "kanarske-ostrovy": { title: "Kanárské ostrovy", preposition: "na", targetForm: "Kanárské ostrovy", locativeForm: "Kanárských ostrovech", locativePreposition: "na" },
+  "kreta": { title: "Kréta", preposition: "na", targetForm: "Krétu", locativeForm: "Krétě", locativePreposition: "na" },
+  "rhodos": { title: "Rhodos", preposition: "na", targetForm: "Rhodos", locativeForm: "Rhodosu", locativePreposition: "na" },
+  "korfu": { title: "Korfu", preposition: "na", targetForm: "Korfu", locativeForm: "Korfu", locativePreposition: "na" },
+  "kos": { title: "Kos", preposition: "na", targetForm: "Kos", locativeForm: "Kosu", locativePreposition: "na" },
+  "zakynthos": { title: "Zakynthos", preposition: "na", targetForm: "Zakynthos", locativeForm: "Zakynthosu", locativePreposition: "na" },
+  "santorini": { title: "Santorini", preposition: "na", targetForm: "Santorini", locativeForm: "Santorini", locativePreposition: "na" },
+  "mykonos": { title: "Mykonos", preposition: "na", targetForm: "Mykonos", locativeForm: "Mykonosu", locativePreposition: "na" },
+  "kypr": { title: "Kypr", preposition: "na", targetForm: "Kypr", locativeForm: "Kypru", locativePreposition: "na" },
+  "cyprus": { title: "Kypr", preposition: "na", targetForm: "Kypr", locativeForm: "Kypru", locativePreposition: "na" },
+  "malta": { title: "Malta", preposition: "na", targetForm: "Maltu", locativeForm: "Maltě", locativePreposition: "na" },
+  "madeira": { title: "Madeira", preposition: "na", targetForm: "Madeiru", locativeForm: "Madeiře", locativePreposition: "na" },
+  "azory": { title: "Azory", preposition: "na", targetForm: "Azory", locativeForm: "Azorech", locativePreposition: "na" },
+  "bali": { title: "Bali", preposition: "na", targetForm: "Bali", locativeForm: "Bali", locativePreposition: "na" },
+  "maledivy": { title: "Maledivy", preposition: "na", targetForm: "Maledivy", locativeForm: "Maledivách", locativePreposition: "na" },
+  "maldives": { title: "Maledivy", preposition: "na", targetForm: "Maledivy", locativeForm: "Maledivách", locativePreposition: "na" },
+  "zanzibar": { title: "Zanzibar", preposition: "na", targetForm: "Zanzibar", locativeForm: "Zanzibaru", locativePreposition: "na" },
+  "reunion": { title: "Réunion", preposition: "na", targetForm: "Réunion", locativeForm: "Réunionu", locativePreposition: "na" },
+  "mauricius": { title: "Mauricius", preposition: "na", targetForm: "Mauricius", locativeForm: "Mauriciu", locativePreposition: "na" },
+  "sri-lanka": { title: "Srí Lanka", preposition: "na", targetForm: "Srí Lanku", locativeForm: "Srí Lance", locativePreposition: "na" },
+  "island": { title: "Island", preposition: "na", targetForm: "Island", locativeForm: "Islandu", locativePreposition: "na" },
+  "iceland": { title: "Island", preposition: "na", targetForm: "Island", locativeForm: "Islandu", locativePreposition: "na" },
+  "sicilie": { title: "Sicílie", preposition: "na", targetForm: "Sicílii", locativeForm: "Sicílii", locativePreposition: "na" },
+  "sardinie": { title: "Sardínie", preposition: "na", targetForm: "Sardínii", locativeForm: "Sardínii", locativePreposition: "na" },
+  "korsika": { title: "Korsika", preposition: "na", targetForm: "Korsiku", locativeForm: "Korsice", locativePreposition: "na" },
 };
 
 function normalizeKey(str: string): string {
@@ -117,45 +132,45 @@ function normalizeKey(str: string): string {
 }
 
 /**
- * Returns natural Czech phrase for flights to a destination (e.g. "do Londýna", "na Mallorcu")
- * @param destination City or region name (Czech or English)
- * @param includePreposition Whether to prefix with "do " or "na "
+ * Returns exact verified dictionary entry or null if not verified
  */
-export function formatDestinationGenitive(destination: string, includePreposition: boolean = true): string {
-  if (!destination) return "";
+export function getDestinationGrammar(destination: string): DestinationGrammarEntry | null {
+  if (!destination) return null;
   const key = normalizeKey(destination);
-  const found = DESTINATION_DICTIONARY[key];
-
-  if (found) {
-    return includePreposition ? `${found.preposition} ${found.genitive}` : found.genitive;
-  }
-
-  // Heuristic fallbacks for Czech language
-  let name = destination.trim();
-  let prep: "do" | "na" = "do";
-
-  // Island checks
-  if (/ostrov|island|beach|plaz/i.test(name)) {
-    prep = "na";
-  }
-
-  // Declension heuristic
-  if (name.endsWith("a")) {
-    name = name.slice(0, -1) + "y";
-  } else if (name.endsWith("e")) {
-    name = name.slice(0, -1) + "e";
-  } else if (!/[aeiouyáéíóúý]$/i.test(name)) {
-    name = name + "u";
-  }
-
-  return includePreposition ? `${prep} ${name}` : name;
+  return DESTINATION_DICTIONARY[key] || null;
 }
 
 /**
- * Returns natural title for a flight landing page (e.g. "Akční letenky do Paříže", "Levné letenky na Mallorcu")
+ * Returns natural Czech phrase for flights to a destination.
+ * For verified destinations: "do Londýna", "na Mallorku".
+ * For unverified destinations: returns the name in nominative without broken declension.
+ */
+export function formatDestinationGenitive(destination: string, includePreposition: boolean = true): string {
+  if (!destination) return "";
+  const entry = getDestinationGrammar(destination);
+
+  if (entry) {
+    return includePreposition ? `${entry.preposition} ${entry.targetForm}` : entry.targetForm;
+  }
+
+  // Safe fallback: never guess cases with heuristics
+  return destination.trim();
+}
+
+/**
+ * Returns natural title for flight pages with safe fallbacks:
+ * - Verified: "Akční letenky do Paříže od 890 Kč", "Akční letenky na Mallorku od 1 290 Kč"
+ * - Unverified: "Akční letenky: [Název] od [Cena] Kč"
  */
 export function formatFlightPageTitle(destination: string, minPrice?: number): string {
-  const phrase = formatDestinationGenitive(destination, true);
+  if (!destination) return "Akční letenky";
+  const entry = getDestinationGrammar(destination);
   const priceSuffix = minPrice ? ` od ${minPrice.toLocaleString("cs-CZ").replace(/\u00a0/g, " ")} Kč` : "";
-  return `Akční letenky ${phrase}${priceSuffix}`;
+
+  if (entry) {
+    return `Akční letenky ${entry.preposition} ${entry.targetForm}${priceSuffix}`;
+  }
+
+  // Safe fallback for unreviewed foreign names
+  return `Akční letenky: ${destination.trim()}${priceSuffix}`;
 }

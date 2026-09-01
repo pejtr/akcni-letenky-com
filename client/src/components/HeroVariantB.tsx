@@ -167,8 +167,8 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
 
               {/* Transparent note */}
               <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between text-xs text-gray-500">
-                <span>🇨🇿 <strong>České letenky:</strong> Porovnáváme odlety z Prahy, Vídně a Bratislavy</span>
-                <span className="text-gray-400">Rezervace a platba probíhá u licencovaného partnera Pelikán.cz</span>
+                <span>🇨🇿 <strong>Výběr odletů:</strong> Zobrazujeme tipy z Prahy, Vídně a Bratislavy</span>
+                <span className="text-gray-400">Aktuální cenu a dostupnost vždy ověříte u prodejce</span>
               </div>
             </div>
 
@@ -176,15 +176,15 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
             <div className="flex flex-wrap justify-center gap-4">
               <div className="bg-white/90 backdrop-blur-md rounded-full px-5 py-2.5 shadow-md flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-emerald-600" />
-                <span className="font-bold text-xs text-gray-900">Oficiální partner Pelikán.cz (IATA)</span>
+                <span className="font-bold text-xs text-gray-900">Affiliate partner Pelikán.cz</span>
               </div>
               <div className="bg-white/90 backdrop-blur-md rounded-full px-5 py-2.5 shadow-md flex items-center gap-2">
                 <Zap className="w-4 h-4 text-amber-500" />
-                <span className="font-bold text-xs text-gray-900">0 Kč provize pro uživatele</span>
+                <span className="font-bold text-xs text-gray-900">Bez vlastních poplatků za vyhledávání</span>
               </div>
               <div className="bg-white/90 backdrop-blur-md rounded-full px-5 py-2.5 shadow-md flex items-center gap-2">
                 <Flame className="w-4 h-4 text-rose-500" />
-                <span className="font-bold text-xs text-gray-900">Ručně i strojově ověřované tarify</span>
+                <span className="font-bold text-xs text-gray-900">Přímý přechod na rezervační portál</span>
               </div>
             </div>
           </div>

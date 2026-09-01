@@ -221,9 +221,9 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
                   </div>
 
                   {/* Transparent search disclaimer */}
-                  <div className="text-[11px] text-gray-500 pt-1 flex items-center justify-between">
-                    <span>💡 <strong>Tip:</strong> Letenky z Vídně a Bratislavy bývají často až o 40 % levnější.</span>
-                    <span className="text-gray-400 hidden sm:inline">Rezervace probíhá u licencovaného partnera Pelikán.cz</span>
+                  <div className="text-[11px] text-gray-500 pt-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
+                    <span>💡 Zobrazujeme vybrané akční tipy na letenky. Aktuální cenu a podmínky vždy ověříte u prodejce.</span>
+                    <span className="text-gray-400">Rezervace probíhá na Pelikán.cz</span>
                   </div>
                 </div>
               )}
@@ -287,15 +287,15 @@ export default function HeroVariantA({ onSearch }: HeroVariantAProps) {
           {/* Trust badges */}
           <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-white/90 text-sm">
             <span className="flex items-center gap-1.5">
-              <span className="text-emerald-400 font-bold">✓</span> Oficiální partner Pelikán.cz (IATA)
-            </span>
-            <span className="text-white/40">|</span>
-            <span className="flex items-center gap-1.5">
-              <span className="text-emerald-400 font-bold">✓</span> Reálné ceny bez skrytých poplatků
+              <span className="text-emerald-400 font-bold">✓</span> Affiliate partner Pelikán.cz
             </span>
             <span className="text-white/40">|</span>
             <span className="flex items-center gap-1.5">
               <span className="text-emerald-400 font-bold">✓</span> Výběr odletů: Praha, Vídeň, Bratislava
+            </span>
+            <span className="text-white/40">|</span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-emerald-400 font-bold">✓</span> Bez vlastních poplatků za vyhledávání
             </span>
           </div>
         </div>

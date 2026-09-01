@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldCheck, Lock, Star, Zap } from "lucide-react";
+import { ShieldCheck, ExternalLink, Plane, CheckCircle } from "lucide-react";
 
 export default function TrustBadgesShield() {
   return (
@@ -7,19 +7,19 @@ export default function TrustBadgesShield() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
         <div className="flex items-center justify-center gap-2 p-1.5">
           <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span className="text-xs font-bold text-gray-800">Aktuální nabídky z rezervačního systému</span>
+          <span className="text-xs font-bold text-gray-800">Akční tipy z partnerského feedu</span>
         </div>
         <div className="flex items-center justify-center gap-2 p-1.5">
-          <Lock className="w-4 h-4 text-blue-600 shrink-0" />
-          <span className="text-xs font-bold text-gray-800">Oficiální partneři Pelikán & Kiwi</span>
+          <Plane className="w-4 h-4 text-blue-600 shrink-0" />
+          <span className="text-xs font-bold text-gray-800">Affiliate partner Pelikán.cz</span>
         </div>
         <div className="flex items-center justify-center gap-2 p-1.5">
-          <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />
-          <span className="text-xs font-bold text-gray-800">Hodnocení aerolinek 4.8/5</span>
+          <ExternalLink className="w-4 h-4 text-amber-500 shrink-0" />
+          <span className="text-xs font-bold text-gray-800">Přímý přechod na prodejce</span>
         </div>
         <div className="flex items-center justify-center gap-2 p-1.5">
-          <Zap className="w-4 h-4 text-indigo-600 shrink-0" />
-          <span className="text-xs font-bold text-gray-800">Bez skrytých poplatků</span>
+          <CheckCircle className="w-4 h-4 text-indigo-600 shrink-0" />
+          <span className="text-xs font-bold text-gray-800">Bez poplatku za vyhledávání</span>
         </div>
       </div>
     </div>

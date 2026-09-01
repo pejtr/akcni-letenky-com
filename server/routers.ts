@@ -1956,10 +1956,47 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
         return await deletePriceTracker(input.id);
       }),
 
-    checkNow: protectedProcedure.mutation(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") throw new TRPCError({ code: "UNAUTHORIZED" });
-      return await checkPriceTrackerAlerts();
-    }),
+  }),
+  // ============ Contact Form Router ============
+  contact: router({
+    submit: publicProcedure
+      .input(
+        z.object({
+          name: z.string().max(100).optional(),
+          email: z.string().email("Neplatný formát e-mailu").max(255),
+          subject: z.string().max(200),
+          message: z.string().min(5, "Zpráva musí mít alespoň 5 znaků").max(5000),
+          gdprConsent: z.boolean().refine((val) => val === true, {
+            message: "Je vyžadován souhlas se zpracováním osobních údajů.",
+          }),
+          honeypot: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        if (input.honeypot && input.honeypot.trim().length > 0) {
+          return { success: true };
+        }
+
+        console.log(`[ContactForm] Received message from ${input.email} (Name: ${input.name || "N/A"}, Subject: ${input.subject})`);
+
+        if (process.env.RESEND_API_KEY) {
+          try {
+            const { Resend } = await import("resend");
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            await resend.emails.send({
+              from: "Akcni Letenky <info@akcni-letenky.com>",
+              to: process.env.CONTACT_EMAIL || "info@akcni-letenky.com",
+              replyTo: input.email,
+              subject: `[Kontakt] ${input.subject} - od ${input.name || input.email}`,
+              text: `Jméno: ${input.name || "Neuvedeno"}\nE-mail: ${input.email}\nPředmět: ${input.subject}\n\nZpráva:\n${input.message}`,
+            });
+          } catch (err) {
+            console.warn("[ContactForm] Message logged locally, email forwarding skipped:", err);
+          }
+        }
+
+        return { success: true, message: "Zpráva byla úspěšně odeslána redakci." };
+      }),
   }),
 });
 
