@@ -240,17 +240,19 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-400 text-sm leading-relaxed">
-              Váš nejrychlejší vyhledávač akčních letenek a zájezdů. Denně prohledáváme stamiliony letenek od stovek aerolinek a cestovních kanceláří.
+              Nezávislý srovnávač a vyhledávač akčních letenek pro české cestovatele. Rezervace a platba probíhá u prověřeného licencovaného partnera Pelikán.cz nebo přímo u aerolinek.
             </p>
 
             <div className="space-y-2 pt-2 text-xs text-slate-300">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Primární affiliate partner: <strong>Pelikán.cz</strong></span>
+                <span>Oficiální partner: <strong>Pelikán.cz (IATA)</strong></span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span>info@akcni-letenky.com</span>
+                <Link href="/kontakt" className="hover:text-white transition-colors underline decoration-slate-600">
+                  info@akcni-letenky.com (Kontakt)
+                </Link>
               </div>
             </div>
           </div>
@@ -341,13 +343,23 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/o-nas" className="hover:text-white hover:underline transition-colors text-sky-300 font-medium">
+                  ℹ️ O projektu & Jak fungujeme
+                </Link>
+              </li>
+              <li>
+                <Link href="/kontakt" className="hover:text-white hover:underline transition-colors">
+                  ✉️ Kontakt & Redakce
+                </Link>
+              </li>
+              <li>
                 <a href="https://revolut.ngls.net/c/akcniletenky" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition-colors">
                   Revolut pro cestovatele
                 </a>
               </li>
-                          </ul>
-              <FooterNewsletterSignup />
-            </div>
+            </ul>
+            <FooterNewsletterSignup />
+          </div>
 
           {/* Column 4: Partner Pelikán.cz */}
           <div>
@@ -376,6 +388,14 @@ export default function Footer() {
         <div className="pt-8 border-t border-slate-800 text-xs text-slate-500 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p>© {new Date().getFullYear()} AKČNÍ-LETENKY.com. Všechna práva vyhrazena.</p>
           <div className="flex items-center gap-6">
+            <Link href="/o-nas" className="hover:text-slate-300 transition-colors">
+              O nás
+            </Link>
+            <span>•</span>
+            <Link href="/kontakt" className="hover:text-slate-300 transition-colors">
+              Kontakt
+            </Link>
+            <span>•</span>
             <Link href="/tipy-pro-cestovatele" className="hover:text-slate-300 transition-colors">
               Průvodci a články
             </Link>

@@ -16,6 +16,7 @@ import { generateOmioReferralLink, trackOmioClick } from "@/lib/omioAffiliate";
 import { Train, Bus } from "lucide-react";
 import SocialSharePanel from "@/components/SocialSharePanel";
 import { useSharePlacementABTest } from "@/hooks/useSharePlacementABTest";
+import { formatDestinationGenitive } from "@shared/czechGrammar";
 
 export default function DestinationPage() {
   const params = useParams<{ slug: string }>();
@@ -40,6 +41,8 @@ export default function DestinationPage() {
     (flight: any) => destination && flight.toCity.toLowerCase().includes(destination.name.toLowerCase())
   ) || [];
 
+  const genitiveTitle = destination ? formatDestinationGenitive(destination.name, true) : "";
+
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex items-center justify-center">
@@ -60,8 +63,8 @@ export default function DestinationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
       <SEO 
-        title={destination ? `Letenky do ${destination.name}` : "Destinace"}
-        description={destination?.description || `Levné letenky do destinace po celém světě. Najděte nejlepší ceny a ušetřete.`}
+        title={destination ? `Letenky ${genitiveTitle} | Akcni-letenky.com` : "Destinace"}
+        description={destination?.description || `Levné akční letenky ${genitiveTitle}. Najděte nejlepší ceny od ověřených aerolinek.`}
         canonical={`https://www.akcni-letenky.com/letenky-do-${slug}`}
       />
       <Navigation />

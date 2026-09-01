@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plane, Calendar, TrendingDown, ExternalLink, Star, Hotel } from "lucide-react";
 import { useParams } from "wouter";
 import { bookingSearchLink, pelikanDeepLink } from "@shared/affiliateLinks";
+import { formatDestinationGenitive } from "@shared/czechGrammar";
 import InternalLinkingHub from "@/components/InternalLinkingHub";
 import LowFareCalendar from "@/components/LowFareCalendar";
 import SEO from "@/components/SEO";
@@ -157,23 +158,20 @@ export default function DestinationLandingPage() {
 
   const { data: pelikanFlights } = trpc.flights.pelikan.useQuery({ limit: 12 });
 
-  const grammar = grammarMap[destinationSlug] || {
-    title: destinationSlug.charAt(0).toUpperCase() + destinationSlug.slice(1).replace(/-/g, " "),
-    preposition: "do",
-    genitive: destinationSlug.charAt(0).toUpperCase() + destinationSlug.slice(1).replace(/-/g, " "),
-  };
+  const destinationGenitive = formatDestinationGenitive(destinationSlug, true);
+  const destinationTitle = grammarMap[destinationSlug]?.title || destinationSlug.charAt(0).toUpperCase() + destinationSlug.slice(1).replace(/-/g, " ");
 
   const meta = destinationMeta[destinationSlug] || {
-    title: grammar.title,
-    description: `Nejlevnější letenky ${grammar.preposition} ${grammar.genitive}. Porovnejte ceny od desítek aerolinek z Pelikán feedu a rezervujte ihned.`,
+    title: destinationTitle,
+    description: `Nejlevnější akční letenky ${destinationGenitive}. Porovnejte ceny od desítek aerolinek a rezervujte u ověřeného partnera Pelikán.cz.`,
     tips: [
-      `Rezervujte letenky ${grammar.preposition} ${grammar.genitive} s předstihem pro nejlepší ceny`,
+      `Rezervujte letenky ${destinationGenitive} s předstihem pro nejlepší ceny`,
       `Porovnejte akční nabídky od zavedených leteckých společností`,
       `Sledujte aktuální slevy a cenové kalendáře na Pelikán.cz`
     ],
     bestTime: "Celoročně",
     image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
-    bookingQuery: grammar.title
+    bookingQuery: destinationTitle
   };
 
   const canonicalSlug = `letenky-${destinationSlug}`;
@@ -181,7 +179,7 @@ export default function DestinationLandingPage() {
   const breadcrumbItems = [
     { name: "Domů", url: "/" },
     { name: "Letenky", url: "/levne-letenky" },
-    { name: `Letenky ${grammar.preposition} ${grammar.genitive}`, url: `/${canonicalSlug}` },
+    { name: `Letenky ${destinationGenitive}`, url: `/${canonicalSlug}` },
   ];
 
   const pelikanDestinationUrl = pelikanDeepLink(
@@ -197,7 +195,7 @@ export default function DestinationLandingPage() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col justify-between">
       <div>
         <SEO
-          title={`Letenky ${grammar.preposition} ${grammar.genitive} | Akční Letenky`}
+          title={`Letenky ${destinationGenitive} | Akční Letenky`}
           description={meta.description}
           canonical={canonicalUrl}
           ogImage={meta.image}
@@ -225,7 +223,7 @@ export default function DestinationLandingPage() {
           <div className="container text-white">
             <div className="max-w-3xl">
               <h1 className="text-4xl md:text-5xl font-black mb-4">
-                ✈️ Letenky {grammar.preposition} {grammar.genitive}
+                ✈️ Letenky {destinationGenitive}
               </h1>
               <p className="text-xl opacity-90 mb-6 leading-relaxed">
                 {meta.description}
@@ -261,7 +259,7 @@ export default function DestinationLandingPage() {
                     Aktuální Pelikán.cz nabídky
                   </p>
                   <h2 className="mt-1 text-2xl font-bold text-gray-900">
-                    Letenky {grammar.preposition} {grammar.genitive} s ověřeným affiliate odkazem
+                    Akční letenky {destinationGenitive}
                   </h2>
                   <p className="mt-2 text-sm text-gray-600">
                     Klik vede přímo na Pelikán.cz s parametrem a_aid=levne-letenky a garancí nejnižší ceny.

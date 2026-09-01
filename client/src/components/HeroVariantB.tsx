@@ -72,8 +72,8 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 {/* Odkud? */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Kam se chystáte?
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Odletové letiště
                   </label>
                   <select
                     value={from}
@@ -81,19 +81,21 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
                       setFrom(e.target.value);
                       trackFormInteraction("hero_redesign", "from");
                     }}
-                    className="w-full h-12 px-4 border-2 border-gray-300 rounded-lg font-medium"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-lg font-semibold text-gray-800 text-sm bg-white focus:border-[#1565C0] focus:ring-[#1565C0]"
                   >
-                    <option value="Praha">Odkud?</option>
-                    <option value="Praha">Praha</option>
-                    <option value="Brno">Brno</option>
-                    <option value="Ostrava">Ostrava</option>
+                    <option value="Praha">🇨🇿 Praha (PRG)</option>
+                    <option value="Vídeň">🇦🇹 Vídeň (VIE)</option>
+                    <option value="Bratislava">🇸🇰 Bratislava (BTS)</option>
+                    <option value="Brno">🇨🇿 Brno (BRQ)</option>
+                    <option value="Ostrava">🇨🇿 Ostrava (OSR)</option>
+                    <option value="Vše">🌐 Všechna letiště</option>
                   </select>
                 </div>
 
                 {/* Kam? */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Destinace
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Cílová destinace
                   </label>
                   <DestinationAutocomplete
                     value={destination}
@@ -102,16 +104,16 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
                       setDestination(dest.name);
                       trackFormInteraction("hero_redesign", "destination");
                     }}
-                    placeholder="Kam?"
+                    placeholder="Kam letíte? (např. Řím, Paříž)"
                     className="flex-1"
-                    inputClassName="h-12 border-2 border-gray-300 font-medium focus:border-[#1565C0] focus:ring-[#1565C0]"
+                    inputClassName="h-12 border border-gray-300 font-medium focus:border-[#1565C0] focus:ring-[#1565C0]"
                   />
                 </div>
 
                 {/* Délka pobytu */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Délka pobytu
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Termín / Délka
                   </label>
                   <select
                     value={duration}
@@ -119,19 +121,19 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
                       setDuration(e.target.value);
                       trackFormInteraction("hero_redesign", "duration");
                     }}
-                    className="w-full h-12 px-4 border-2 border-gray-300 rounded-lg font-medium"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-lg font-medium text-gray-800 text-sm bg-white"
                   >
+                    <option value="Prodloužený víkend">Prodloužený víkend</option>
                     <option value="1 týden">1 týden</option>
                     <option value="2 týdny">2 týdny</option>
-                    <option value="3 týdny">3 týdny</option>
-                    <option value="1 měsíc">1 měsíc</option>
+                    <option value="Flexibilní">Flexibilní termín</option>
                   </select>
                 </div>
 
                 {/* Počet osob */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Počet osob
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Počet cestujících
                   </label>
                   <select
                     value={passengers}
@@ -139,7 +141,7 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
                       setPassengers(Number(e.target.value));
                       trackFormInteraction("hero_redesign", "passengers");
                     }}
-                    className="w-full h-12 px-4 border-2 border-gray-300 rounded-lg font-medium"
+                    className="w-full h-12 px-3 border border-gray-300 rounded-lg font-medium text-gray-800 text-sm bg-white"
                   >
                     <option value={1}>1 dospělý</option>
                     <option value={2}>2 dospělí</option>
@@ -162,21 +164,27 @@ export default function HeroVariantB({ onSearch }: HeroVariantBProps) {
                   )}
                 </div>
               </div>
+
+              {/* Transparent note */}
+              <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between text-xs text-gray-500">
+                <span>🇨🇿 <strong>České letenky:</strong> Porovnáváme odlety z Prahy, Vídně a Bratislavy</span>
+                <span className="text-gray-400">Rezervace a platba probíhá u licencovaného partnera Pelikán.cz</span>
+              </div>
             </div>
 
             {/* Trust Badges */}
             <div className="flex flex-wrap justify-center gap-4">
-              <div className="bg-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2">
-                <Flame className="w-5 h-5 text-orange-500" />
-                <span className="font-bold text-gray-900">Aktuální akce denně</span>
+              <div className="bg-white/90 backdrop-blur-md rounded-full px-5 py-2.5 shadow-md flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-emerald-600" />
+                <span className="font-bold text-xs text-gray-900">Oficiální partner Pelikán.cz (IATA)</span>
               </div>
-              <div className="bg-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2">
-                <Zap className="w-5 h-5 text-yellow-500" />
-                <span className="font-bold text-gray-900">Ceny z promo feedu</span>
+              <div className="bg-white/90 backdrop-blur-md rounded-full px-5 py-2.5 shadow-md flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-500" />
+                <span className="font-bold text-xs text-gray-900">0 Kč provize pro uživatele</span>
               </div>
-              <div className="bg-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span className="font-bold text-gray-900">Zdroj nabídek: Pelikán</span>
+              <div className="bg-white/90 backdrop-blur-md rounded-full px-5 py-2.5 shadow-md flex items-center gap-2">
+                <Flame className="w-4 h-4 text-rose-500" />
+                <span className="font-bold text-xs text-gray-900">Ručně i strojově ověřované tarify</span>
               </div>
             </div>
           </div>
