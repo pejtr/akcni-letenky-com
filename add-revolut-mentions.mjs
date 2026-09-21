@@ -9,9 +9,15 @@ import { articles } from "./drizzle/schema.js";
 import { eq } from "drizzle-orm";
 
 const DATABASE_URL = process.env.DATABASE_URL;
+const REVOLUT_AFFILIATE_URL = process.env.REVOLUT_AFFILIATE_URL?.trim();
 
 if (!DATABASE_URL) {
   console.error("DATABASE_URL not found in environment");
+  process.exit(1);
+}
+
+if (!REVOLUT_AFFILIATE_URL) {
+  console.error("REVOLUT_AFFILIATE_URL is not configured; refusing to publish Revolut links.");
   process.exit(1);
 }
 
@@ -19,14 +25,13 @@ const connection = await mysql.createConnection(DATABASE_URL);
 const db = drizzle(connection);
 
 // Revolut mention templates for different article categories
+const partnerMention = `\n\n### 💳 Tip pro cestovatele: platby v zahraničí\n\nPodívejte se na [aktuální nabídku Revolut](${REVOLUT_AFFILIATE_URL}) pro cestovatele. Jde o partnerský odkaz; konkrétní podmínky, dostupnost a případná zvýhodnění vždy ověřte přímo na stránce Revolutu.\n\n`;
+
 const revolutMentions = {
-  deals: `\n\n## 💳 Tip pro cestovatele: Ušetřete na směnných kurzech\n\nPři cestování do zahraničí doporučujeme použít [Revolut kartu](https://www.revolut-bonus.cz), která nabízí výhodné směnné kurzy bez skrytých poplatků. Ideální pro výběry z bankomatů i platby v obchodech. **Získejte 500 Kč bonus za registraci.**\n\n`,
-  
-  guides: `\n\n### 💰 Platby v zahraničí bez poplatků\n\nJedním z nejlepších tipů pro cestování je mít správnou platební kartu. [Revolut](https://www.revolut-bonus.cz) nabízí bezplatné směny do 1000 EUR měsíčně s mezibankovním kurzem - ušetříte stovky korun oproti klasickým bankám. **Registrací získáte 500 Kč bonus.**\n\n`,
-  
-  destinations: `\n\n## 🏦 Jak ušetřit na platbách v destinaci\n\nPři cestování do této destinace určitě využijte [Revolut kartu](https://www.revolut-bonus.cz) - ušetříte až 3-5% na směnných kurzech oproti klasickým bankám. Ideální pro výběry hotovosti i platby kartou. **Bonus 500 Kč za registraci.**\n\n`,
-  
-  airlines: `\n\n### 💳 Platba letenek bez poplatků\n\nPři nákupu mezinárodních letenek doporučujeme platit kartou [Revolut](https://www.revolut-bonus.cz), která nabízí výhodné kurzy a žádné poplatky za zahraniční transakce. **Získejte 500 Kč bonus za registraci.**\n\n`
+  deals: partnerMention,
+  guides: partnerMention,
+  destinations: partnerMention,
+  airlines: partnerMention,
 };
 
 async function addRevolutMentions() {
