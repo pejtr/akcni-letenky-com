@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
+import { prerenderSeoHtml } from "./seoPrerender";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -39,7 +40,8 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx?v=${nanoid()}"`
       );
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      const prerendered = prerenderSeoHtml(page, url);
+      res.status(200).set({ "Content-Type": "text/html" }).end(prerendered);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -58,14 +60,26 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Never let express.static serve index.html for arbitrary SPA routes, because
+  // that would leak the homepage canonical into every crawlable URL.
+  app.use(express.static(distPath, { index: false }));
 
   // Route whitelist: return real 404 for unknown paths BEFORE SPA fallback
   const { routeWhitelistValidation } = require("./seoMiddleware");
   app.use(routeWhitelistValidation);
 
-  // fall through to index.html if the file doesn't exist (valid SPA routes only)
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // Fall through to route-aware HTML only for valid SPA routes.
+  let cachedIndexHtml: string | null = null;
+  app.use("*", async (req, res, next) => {
+    try {
+      const indexPath = path.resolve(distPath, "index.html");
+      if (!cachedIndexHtml) {
+        cachedIndexHtml = await fs.promises.readFile(indexPath, "utf-8");
+      }
+      const prerendered = prerenderSeoHtml(cachedIndexHtml, req.originalUrl);
+      res.status(200).set({ "Content-Type": "text/html; charset=utf-8" }).send(prerendered);
+    } catch (error) {
+      next(error);
+    }
   });
 }

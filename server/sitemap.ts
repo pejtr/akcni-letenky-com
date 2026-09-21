@@ -13,7 +13,7 @@
  */
 
 import { getDb, FALLBACK_ARTICLES } from "./db";
-import { articles, destinations } from "../drizzle/schema";
+import { articles } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { destinationCountries, destinationCities } from "../shared/seoDestinations";
 
@@ -33,16 +33,6 @@ const STATIC_PAGES: SitemapUrl[] = [
     loc: "/",
     changefreq: "daily",
     priority: 1.0,
-  },
-  {
-    loc: "/levne-letenky",
-    changefreq: "daily",
-    priority: 0.9,
-  },
-  {
-    loc: "/last-minute",
-    changefreq: "daily",
-    priority: 0.9,
   },
   {
     loc: "/letenky",
@@ -100,8 +90,8 @@ const STATIC_PAGES: SitemapUrl[] = [
     priority: 0.7,
   },
   {
-    loc: "/wishlist",
-    changefreq: "weekly",
+    loc: "/o-nas",
+    changefreq: "monthly",
     priority: 0.5,
   },
 ];
@@ -132,7 +122,6 @@ export async function generateSitemap(): Promise<string> {
   for (const country of destinationCountries) {
     rawUrls.push({
       loc: `/letenky-do-${country.slug}`,
-      lastmod: new Date().toISOString().split("T")[0],
       changefreq: "weekly",
       priority: 0.8,
     });
@@ -142,7 +131,6 @@ export async function generateSitemap(): Promise<string> {
   for (const city of destinationCities) {
     rawUrls.push({
       loc: `/letenky-${city.slug}`,
-      lastmod: new Date().toISOString().split("T")[0],
       changefreq: "weekly",
       priority: 0.7,
     });
@@ -187,16 +175,6 @@ export async function generateSitemap(): Promise<string> {
         }
       }
 
-      // Database destination pages - priority 0.8
-      const allDestinations = await db.select().from(destinations);
-      for (const dest of allDestinations) {
-        rawUrls.push({
-          loc: `/letenky-do-${dest.slug}`,
-          lastmod: dest.updatedAt?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
-          changefreq: "daily",
-          priority: 0.8,
-        });
-      }
     } else {
       // Fallback articles when DB is offline
       for (const article of FALLBACK_ARTICLES) {
@@ -279,10 +257,12 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /redirect
+Disallow: /wishlist
+Disallow: /prihlaseni
 
 # Sitemap
 Sitemap: ${BASE_URL}/sitemap.xml
-Sitemap: ${BASE_URL}/sitemap_index.xml
 
 # Crawl-delay for aggressive bots
 User-agent: AhrefsBot

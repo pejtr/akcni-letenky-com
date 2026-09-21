@@ -88,7 +88,7 @@ export default function TipyCestovatele() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
-      <SEO title="Tipy cestovatele | Akční Letenky" description="Osobní zkušenosti a rady od zkušených cestovatelů. Inspirujte se před cestou." canonical="https://www.akcni-letenky.com/tipy-cestovatele" />
+      <SEO title="Tipy cestovatele | Akční Letenky" description="Osobní zkušenosti a rady od zkušených cestovatelů. Inspirujte se před cestou." canonical="https://www.akcni-letenky.com/tipy-pro-cestovatele" />
       <Navigation />
 
       {/* Hero Section */}

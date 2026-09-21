@@ -39,6 +39,8 @@ const VALID_STATIC_ROUTES = new Set([
   "/new-york",
   "/letenky-new-york",
   "/prihlaseni",
+  "/o-nas",
+  "/kontakt",
   "/404",
 ]);
 
@@ -152,7 +154,7 @@ export function legacyUrlHandler(req: Request, res: Response, next: NextFunction
   
   // 410 for other known legacy paths
   const legacyPaths = ["/privacy-policy", "/zasady-ochrany-osobnich-udaju",
-    "/caste-dotazy", "/kontakt", "/o-nas", "/podminky",
+    "/caste-dotazy", "/podminky",
     "/first-minutes", "/akcni-pobyty", "/linkdomoci", "/tricky-matku"];
   
   for (const lp of legacyPaths) {
@@ -169,6 +171,22 @@ export function legacyUrlHandler(req: Request, res: Response, next: NextFunction
  */
 export function legacyAirlineRedirects(req: Request, res: Response, next: NextFunction) {
   let path = req.path.replace(/\/$/, "").toLowerCase();
+
+  // Consolidate duplicate/alias content into one canonical URL before rendering.
+  const canonicalRedirects: Record<string, string> = {
+    "/levne-letenky": "/letenky",
+    "/last-minute": "/letenky",
+    "/letenky-dubaj": "/dubaj",
+    "/letenky-bali": "/bali",
+    "/letenky-new-york": "/new-york",
+    "/letenky-reunion": "/reunion",
+    "/kontakt": "/o-nas",
+    "/tipy-cestovatele": "/tipy-pro-cestovatele",
+  };
+  const canonicalTarget = canonicalRedirects[path];
+  if (canonicalTarget) {
+    return res.redirect(301, canonicalTarget);
+  }
   
   // Handle literal :slug template error
   if (path.includes(":slug")) {
@@ -223,6 +241,12 @@ export function routeWhitelistValidation(req: Request, res: Response, next: Next
         const slug = path.replace(prefix, "").replace(/\/$/, "");
         if (!VALID_AIRLINE_SLUGS.has(slug)) {
           return res.status(404).send("<!DOCTYPE html><html><head><title>404 Stránka nenalezena</title></head><body><h1>404 Nenalezeno</h1><p>Tato letecká společnost neexistuje.</p><p><a href=\"https://www.akcni-letenky.com/aerolinky\">Zobrazit všechny aerolinky →</a></p></body></html>");
+        }
+      }
+      if (prefix === "/letenky-do-") {
+        const slug = path.slice(prefix.length).replace(/\/$/, "").toLowerCase();
+        if (!VALID_DESTINATION_SLUGS.has(slug)) {
+          return res.status(404).send("<!DOCTYPE html><html lang=\"cs\"><head><meta charset=\"UTF-8\"><title>404 Destinace nenalezena | Akční Letenky</title><meta name=\"robots\" content=\"noindex, nofollow\"></head><body><h1>404</h1><p>Tato destinace není v našem indexovatelném katalogu.</p><p><a href=\"https://www.akcni-letenky.com/letenky\">Zobrazit letenky →</a></p></body></html>");
         }
       }
       return next();
