@@ -106,10 +106,14 @@ export async function testAllSystemLinks(): Promise<{
     { name: "Travelpayouts Flights", url: "https://tp.media/r?p=1234&b=5678" },
     { name: "Omio Trains & Buses", url: "https://www.omio.cz" },
     { name: "Kiwi.com Search", url: "https://www.kiwi.com/cz" },
-    { name: "Revolut Registration", url: "https://revolut.ngls.net/c/akcniletenky" },
     { name: "WhatsApp Channel", url: "https://chat.whatsapp.com/akcniletenky" },
     { name: "Telegram Channel", url: "https://t.me/akcniletenky" },
   ];
+
+  const revolutAffiliateUrl = process.env.REVOLUT_AFFILIATE_URL?.trim();
+  if (revolutAffiliateUrl) {
+    affiliateLinks.push({ name: "Revolut Partner Offer", url: revolutAffiliateUrl });
+  }
 
   for (const aff of affiliateLinks) {
     const isValid = aff.url.startsWith("http://") || aff.url.startsWith("https://");

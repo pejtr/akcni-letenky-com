@@ -35,6 +35,11 @@ export async function generateFlightArticle(params: ArticleGenerationParams): Pr
   // In production, you would search for images using Manus search API
   const featuredImage = `https://source.unsplash.com/800x600/?${encodeURIComponent(destination)},travel`;
 
+  const revolutAffiliateUrl = process.env.REVOLUT_AFFILIATE_URL?.trim() || "";
+  const revolutInstruction = revolutAffiliateUrl
+    ? `- Jak ušetřit na cestě: můžeš uvést transparentně označený partnerský odkaz na Revolut: ${revolutAffiliateUrl}. Neuváděj pevnou výši bonusu, poplatků ani jinou časově proměnlivou výhodu; odkaž čtenáře na aktuální podmínky Revolutu.`
+    : "- Jak ušetřit na cestě: Revolut nezmiňuj, protože není nakonfigurovaný schválený partnerský odkaz.";
+
   // Generate article content using LLM
   const prompt = `Napiš SEO-optimalizovaný článek o akčních letenkách do destinace ${destination}.
 
@@ -53,7 +58,7 @@ POŽADAVKY NA ČLÁNEK:
    - Nejlepší čas na návštěvu
    - Top 5 míst k návštěvě
    - Praktické tipy (ubytování, doprava, jídlo)
-   - Jak ušetřit na cestě (zmínka o Revolut kartě s odkazem na www.revolut-bonus.cz)
+   ${revolutInstruction}
    - Závěr s call-to-action
 
 4. **Formátování**: Markdown s H2/H3 nadpisy, seznamy, tučným textem

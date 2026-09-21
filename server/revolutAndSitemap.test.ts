@@ -16,9 +16,10 @@ describe("Revolut Popup", () => {
     expect(STORAGE_KEY).toBe("revolut_popup_dismissed");
   });
 
-  it("should link to correct Revolut referral URL", () => {
-    const REVOLUT_URL = "https://www.revolut-bonus.cz";
-    expect(REVOLUT_URL).toContain("revolut-bonus.cz");
+  it("should not depend on legacy Revolut referral domains", () => {
+    const configuredUrl = process.env.REVOLUT_AFFILIATE_URL?.trim() || "";
+    expect(configuredUrl).not.toContain("revolut-bonus.cz");
+    expect(configuredUrl).not.toContain("revolut.ngls.net");
   });
 
   it("should track Meta Pixel Lead event on click", () => {
@@ -140,22 +141,17 @@ describe("Robots.txt Generation", () => {
 });
 
 describe("Revolut In-Article Integration", () => {
-  it("should include Revolut mentions in blog articles", () => {
-    const revolutMention = "Revolut";
-    const revolutURL = "www.revolut-bonus.cz";
-    
-    expect(revolutMention).toBe("Revolut");
-    expect(revolutURL).toContain("revolut-bonus.cz");
+  it("should remain disabled until an approved affiliate URL is configured", () => {
+    const configuredUrl = process.env.REVOLUT_AFFILIATE_URL?.trim() || "";
+    if (!configuredUrl) {
+      expect(configuredUrl).toBe("");
+      return;
+    }
+    expect(configuredUrl.startsWith("https://")).toBe(true);
   });
 
-  it("should mention 500 Kč bonus", () => {
-    const bonusAmount = "500 Kč";
-    expect(bonusAmount).toContain("500");
-    expect(bonusAmount).toContain("Kč");
-  });
-
-  it("should emphasize currency exchange benefits", () => {
-    const benefit = "výhodné směnné kurzy";
-    expect(benefit).toContain("směnné kurzy");
+  it("should not encode a fixed promotional reward in the integration contract", () => {
+    const approvedCopy = "Aktuální partnerská nabídka · podmínky ověřte u Revolutu";
+    expect(approvedCopy).not.toContain("500 Kč");
   });
 });

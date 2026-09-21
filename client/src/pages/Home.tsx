@@ -24,6 +24,7 @@ import { useCtaAbTest } from "@/hooks/useCtaAbTest";
 import { useClickTracking } from "@/hooks/useClickTracking";
 import { useConversionTracking } from "@/hooks/useConversionTracking";
 import TravelQuizWidget from "@/components/TravelQuizWidget";
+import RevolutTravelMoneyCard from "@/components/RevolutTravelMoneyCard";
 import PelikanSearchWidget from "@/components/PelikanSearchWidget";
 import SEO from "@/components/SEO";
 import { generateFAQSchema } from "@/lib/structuredData";
@@ -705,6 +706,8 @@ export default function Home() {
           <TravelQuizWidget />
         </div>
       </section>
+
+      <RevolutTravelMoneyCard />
 
       {/* Kam letět z Prahy? - Interaktivní mapa cen letů */}
       <HomeFlightMapSection />

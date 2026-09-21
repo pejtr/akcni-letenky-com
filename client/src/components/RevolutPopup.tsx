@@ -4,12 +4,15 @@ import { cn } from "@/lib/utils";
 
 const POPUP_DELAY_MS = 30000; // 30 seconds
 const STORAGE_KEY = "revolut_popup_dismissed";
+const REVOLUT_AFFILIATE_URL = import.meta.env.VITE_REVOLUT_AFFILIATE_URL?.trim() ?? "";
 
 export function RevolutPopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
+    if (!REVOLUT_AFFILIATE_URL) return;
+
     // Check if popup was already dismissed in this session
     const dismissed = sessionStorage.getItem(STORAGE_KEY);
     if (dismissed) {
@@ -41,12 +44,11 @@ export function RevolutPopup() {
       });
     }
     
-    // Revolut link removed (domain blocked)
-    // window.open("https://www.revolut-bonus.cz", "_blank");
+    window.open(REVOLUT_AFFILIATE_URL, "_blank", "noopener,noreferrer");
     handleClose();
   };
 
-  if (!isVisible) {
+  if (!REVOLUT_AFFILIATE_URL || !isVisible) {
     return null;
   }
 
@@ -86,7 +88,7 @@ export function RevolutPopup() {
           >
             <img
               src="/revolut-banner.png"
-              alt="Revolut nabídka pro cestovatele - 500 Kč bonus za registraci"
+              alt="Aktuální partnerská nabídka Revolut pro cestovatele"
               className="w-full h-auto"
             />
           </button>
@@ -97,7 +99,7 @@ export function RevolutPopup() {
               onClick={handleClick}
               className="w-full bg-white text-blue-600 font-bold py-4 px-6 rounded-lg hover:bg-blue-50 transition-colors text-lg shadow-lg"
             >
-              Získat 500 Kč bonus →
+              Zobrazit aktuální nabídku →
             </button>
           </div>
         </div>

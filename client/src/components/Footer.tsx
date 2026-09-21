@@ -352,11 +352,18 @@ export default function Footer() {
                   ✉️ Kontakt & Redakce
                 </Link>
               </li>
-              <li>
-                <a href="https://revolut.ngls.net/c/akcniletenky" target="_blank" rel="noopener noreferrer" className="hover:text-white hover:underline transition-colors">
-                  Revolut pro cestovatele
-                </a>
-              </li>
+              {import.meta.env.VITE_REVOLUT_AFFILIATE_URL?.trim() ? (
+                <li>
+                  <a
+                    href={import.meta.env.VITE_REVOLUT_AFFILIATE_URL.trim()}
+                    target="_blank"
+                    rel="sponsored noopener noreferrer"
+                    className="hover:text-white hover:underline transition-colors"
+                  >
+                    Revolut pro cestovatele
+                  </a>
+                </li>
+              ) : null}
             </ul>
             <FooterNewsletterSignup />
           </div>
