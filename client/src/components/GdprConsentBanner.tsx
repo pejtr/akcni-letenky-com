@@ -1,255 +1,137 @@
-import { useState, useEffect, useCallback } from "react";
-import { X, Shield, Cookie } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Cookie, Shield, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
+import { OPEN_CONSENT_EVENT, readConsent, saveConsent } from "@/lib/consent";
 
-const CONSENT_KEY = "gdpr_consent";
-const CONSENT_ANALYTICS_KEY = "gdpr_analytics";
-const CONSENT_MARKETING_KEY = "gdpr_marketing";
-
-interface ConsentState {
-  necessary: boolean;
-  analytics: boolean;
-  marketing: boolean;
-  timestamp: number;
-}
-
-/**
- * Loads Facebook Pixel script dynamically after user consent.
- * Replace FB_PIXEL_ID with your actual Pixel ID.
- */
-function loadFacebookPixel() {
-  const pixelId = (window as any).__FB_PIXEL_ID;
-  if (!pixelId || (window as any).fbq) return;
-
-  // Facebook Pixel base code
-  const f = window as any;
-  const b = document;
-  const e = "script";
-  
-  f.fbq = function () {
-    f.fbq.callMethod ? f.fbq.callMethod.apply(f.fbq, arguments) : f.fbq.queue.push(arguments);
-  };
-  if (!f._fbq) f._fbq = f.fbq;
-  f.fbq.push = f.fbq;
-  f.fbq.loaded = true;
-  f.fbq.version = "2.0";
-  f.fbq.queue = [];
-  
-  const n = b.createElement(e) as HTMLScriptElement;
-  n.async = true;
-  n.src = "https://connect.facebook.net/en_US/fbevents.js";
-  const s = b.getElementsByTagName(e)[0];
-  s?.parentNode?.insertBefore(n, s);
-  
-  f.fbq("init", pixelId);
-  f.fbq("track", "PageView");
-}
-
-/**
- * Loads Google Analytics script dynamically after user consent.
- */
-function loadGoogleAnalytics() {
-  const gaId = (window as any).__GA_ID;
-  if (!gaId || (window as any).gtag) return;
-
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
-  document.head.appendChild(script);
-
-  (window as any).dataLayer = (window as any).dataLayer || [];
-  (window as any).gtag = function () {
-    (window as any).dataLayer.push(arguments);
-  };
-  (window as any).gtag("js", new Date());
-  (window as any).gtag("config", gaId);
-}
-
-function getStoredConsent(): ConsentState | null {
-  try {
-    const stored = localStorage.getItem(CONSENT_KEY);
-    if (!stored) return null;
-    return JSON.parse(stored);
-  } catch {
-    return null;
+function loadGoogleAnalytics(measurementId: string) {
+  if (!measurementId || typeof window === "undefined") return;
+  const win = window as Window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
+  if (!win.gtag) {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+    document.head.appendChild(script);
+    win.dataLayer = win.dataLayer || [];
+    win.gtag = (...args: unknown[]) => { win.dataLayer?.push(args); };
+    win.gtag("js", new Date());
   }
+  win.gtag?.("consent", "update", {
+    analytics_storage: "granted",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
+  win.gtag?.("config", measurementId, { anonymize_ip: true });
 }
 
-function storeConsent(consent: ConsentState) {
-  localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
-  localStorage.setItem(CONSENT_ANALYTICS_KEY, consent.analytics ? "true" : "false");
-  localStorage.setItem(CONSENT_MARKETING_KEY, consent.marketing ? "true" : "false");
+function revokeLoadedTracking() {
+  const win = window as Window & {
+    gtag?: (...args: unknown[]) => void;
+    fbq?: (...args: unknown[]) => void;
+  };
+  win.gtag?.("consent", "update", {
+    analytics_storage: "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
+  win.fbq?.("consent", "revoke");
 }
 
 export default function GdprConsentBanner() {
-  const [visible, setVisible] = useState(false);
+  const initial = readConsent();
+  const [visible, setVisible] = useState(!initial);
   const [showDetails, setShowDetails] = useState(false);
-  const [analytics, setAnalytics] = useState(true);
-  const [marketing, setMarketing] = useState(true);
-
-  // Fetch Pixel IDs from admin settings
-  const { data: fbPixelData } = trpc.siteSettings.get.useQuery({ key: "fb_pixel_id" });
-  const { data: googleAdsData } = trpc.siteSettings.get.useQuery({ key: "google_ads_id" });
+  const [analytics, setAnalytics] = useState(initial?.analytics ?? false);
+  const [marketing, setMarketing] = useState(initial?.marketing ?? false);
+  const { data: gaSetting } = trpc.siteSettings.get.useQuery({ key: "google_analytics_id" });
 
   useEffect(() => {
-    // Set pixel IDs on window for the loader functions
-    if (fbPixelData?.value) (window as any).__FB_PIXEL_ID = fbPixelData.value;
-    if (googleAdsData?.value) (window as any).__GA_ID = googleAdsData.value;
-  }, [fbPixelData, googleAdsData]);
+    if (initial?.analytics && gaSetting?.value) loadGoogleAnalytics(gaSetting.value);
+    // initial consent is intentionally evaluated once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gaSetting?.value]);
 
   useEffect(() => {
-    const stored = getStoredConsent();
-    if (stored) {
-      // Already consented — load scripts based on stored preferences
-      if (stored.analytics) loadGoogleAnalytics();
-      if (stored.marketing) loadFacebookPixel();
-      return;
-    }
-    // Show banner after a short delay for better UX
-    const timer = setTimeout(() => setVisible(true), 1500);
-    return () => clearTimeout(timer);
-  }, [fbPixelData, googleAdsData]);
-
-  const handleAcceptAll = useCallback(() => {
-    const consent: ConsentState = {
-      necessary: true,
-      analytics: true,
-      marketing: true,
-      timestamp: Date.now(),
+    const open = () => {
+      const current = readConsent();
+      setAnalytics(current?.analytics ?? false);
+      setMarketing(current?.marketing ?? false);
+      setShowDetails(true);
+      setVisible(true);
     };
-    storeConsent(consent);
-    loadGoogleAnalytics();
-    loadFacebookPixel();
-    setVisible(false);
+    window.addEventListener(OPEN_CONSENT_EVENT, open);
+    return () => window.removeEventListener(OPEN_CONSENT_EVENT, open);
   }, []);
 
-  const handleAcceptSelected = useCallback(() => {
-    const consent: ConsentState = {
-      necessary: true,
-      analytics,
-      marketing,
-      timestamp: Date.now(),
-    };
-    storeConsent(consent);
-    if (analytics) loadGoogleAnalytics();
-    if (marketing) loadFacebookPixel();
+  const acceptAll = useCallback(() => {
+    saveConsent({ analytics: true, marketing: true });
+    if (gaSetting?.value) loadGoogleAnalytics(gaSetting.value);
     setVisible(false);
-  }, [analytics, marketing]);
+  }, [gaSetting?.value]);
 
-  const handleRejectAll = useCallback(() => {
-    const consent: ConsentState = {
-      necessary: true,
-      analytics: false,
-      marketing: false,
-      timestamp: Date.now(),
-    };
-    storeConsent(consent);
+  const acceptSelected = useCallback(() => {
+    saveConsent({ analytics, marketing });
+    if (analytics && gaSetting?.value) loadGoogleAnalytics(gaSetting.value);
+    if (!analytics || !marketing) revokeLoadedTracking();
+    setVisible(false);
+  }, [analytics, marketing, gaSetting?.value]);
+
+  const rejectAll = useCallback(() => {
+    saveConsent({ analytics: false, marketing: false });
+    revokeLoadedTracking();
     setVisible(false);
   }, []);
 
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 animate-in slide-in-from-bottom duration-500">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-        {/* Main banner */}
+    <div className="fixed inset-x-0 bottom-0 z-[9999] p-3 sm:p-4">
+      <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
         <div className="p-5">
           <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <Cookie className="w-5 h-5 text-blue-600" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-50">
+              <Cookie className="h-5 w-5 text-sky-700" />
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-gray-900 text-lg mb-1">
-                Používáme cookies 🍪
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Používáme cookies pro zlepšení vašeho zážitku, analýzu návštěvnosti a personalizaci reklam. 
-                Kliknutím na "Přijmout vše" souhlasíte s použitím všech cookies. Můžete si také vybrat, 
-                které kategorie cookies chcete povolit.
+            <div className="min-w-0 flex-1">
+              <h3 className="text-lg font-black text-slate-950">Nastavení soukromí</h3>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Nezbytné úložiště používáme pro fungování webu. Analytické a marketingové
+                technologie spouštíme až podle vašeho výběru.
               </p>
             </div>
-            <button
-              onClick={handleRejectAll}
-              className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Zavřít"
-            >
-              <X className="w-5 h-5" />
+            <button type="button" onClick={rejectAll} className="shrink-0 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Odmítnout volitelné cookies a zavřít">
+              <X className="h-5 w-5" />
             </button>
           </div>
 
-          {/* Details toggle */}
           {showDetails && (
-            <div className="mt-4 pt-4 border-t space-y-3">
-              <label className="flex items-center gap-3 cursor-not-allowed opacity-70">
-                <input type="checkbox" checked disabled className="w-4 h-4 rounded" />
-                <div>
-                  <span className="font-medium text-sm text-gray-900">Nezbytné cookies</span>
-                  <p className="text-xs text-gray-500">Nutné pro fungování webu. Nelze vypnout.</p>
-                </div>
+            <div className="mt-5 space-y-3 border-t border-slate-200 pt-4">
+              <label className="flex items-start gap-3 opacity-70">
+                <input type="checkbox" checked disabled className="mt-1 h-4 w-4" />
+                <span><span className="block text-sm font-bold text-slate-900">Nezbytné</span><span className="text-xs leading-5 text-slate-500">Základní funkce webu a bezpečnost. Nelze vypnout.</span></span>
               </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={analytics}
-                  onChange={(e) => setAnalytics(e.target.checked)}
-                  className="w-4 h-4 rounded accent-blue-600"
-                />
-                <div>
-                  <span className="font-medium text-sm text-gray-900">Analytické cookies</span>
-                  <p className="text-xs text-gray-500">Pomáhají nám porozumět, jak web používáte (Google Analytics).</p>
-                </div>
+              <label className="flex cursor-pointer items-start gap-3">
+                <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} className="mt-1 h-4 w-4 accent-sky-700" />
+                <span><span className="block text-sm font-bold text-slate-900">Analytika</span><span className="text-xs leading-5 text-slate-500">Měření používání webu, výkonu funnelu a behaviorální analýzy.</span></span>
               </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={marketing}
-                  onChange={(e) => setMarketing(e.target.checked)}
-                  className="w-4 h-4 rounded accent-blue-600"
-                />
-                <div>
-                  <span className="font-medium text-sm text-gray-900">Marketingové cookies</span>
-                  <p className="text-xs text-gray-500">Umožňují personalizované reklamy (Facebook Pixel, Google Ads).</p>
-                </div>
+              <label className="flex cursor-pointer items-start gap-3">
+                <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} className="mt-1 h-4 w-4 accent-sky-700" />
+                <span><span className="block text-sm font-bold text-slate-900">Marketing</span><span className="text-xs leading-5 text-slate-500">Meta Pixel a související reklamní měření.</span></span>
               </label>
             </div>
           )}
 
-          {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-3 mt-4">
-            <Button
-              onClick={handleAcceptAll}
-              className="bg-[#E91E63] hover:bg-[#C2185B] text-white font-semibold px-6"
-            >
-              Přijmout vše
-            </Button>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button onClick={acceptAll} className="bg-[#0f5fc2] font-bold text-white hover:bg-[#0a4f9f]">Přijmout vše</Button>
             {showDetails ? (
-              <Button
-                onClick={handleAcceptSelected}
-                variant="outline"
-                className="font-semibold"
-              >
-                Uložit výběr
-              </Button>
+              <Button onClick={acceptSelected} variant="outline" className="font-bold">Uložit výběr</Button>
             ) : (
-              <Button
-                onClick={() => setShowDetails(true)}
-                variant="outline"
-                className="font-semibold"
-              >
-                Nastavení cookies
-              </Button>
+              <Button onClick={() => setShowDetails(true)} variant="outline" className="font-bold">Upravit nastavení</Button>
             )}
-            <button
-              onClick={handleRejectAll}
-              className="text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
-            >
-              Odmítnout vše
-            </button>
-            <div className="ml-auto flex items-center gap-1 text-xs text-gray-400">
-              <Shield className="w-3 h-3" />
-              GDPR
-            </div>
+            <button type="button" onClick={rejectAll} className="text-sm font-semibold text-slate-500 underline underline-offset-4 hover:text-slate-800">Odmítnout volitelné</button>
+            <div className="ml-auto inline-flex items-center gap-1 text-xs text-slate-400"><Shield className="h-3.5 w-3.5" />Nastavení lze změnit v patičce</div>
           </div>
         </div>
       </div>

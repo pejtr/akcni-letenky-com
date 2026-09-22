@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
   ArrowRight,
@@ -17,6 +17,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { trpc } from "@/lib/trpc";
+import { readConsent, subscribeConsent } from "@/lib/consent";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("cs-CZ").format(value) + " Kč";
@@ -35,30 +36,30 @@ function getSessionId() {
 export default function Home() {
   const [email, setEmail] = useState("");
   const [newsletterState, setNewsletterState] = useState<"idle" | "success" | "error">("idle");
+  const [analyticsAllowed, setAnalyticsAllowed] = useState(readConsent()?.analytics === true);
+  const pageViewTracked = useRef(false);
 
   const flightsQuery = trpc.pelikan.getFlights.useQuery({
     limit: 12,
     sortBy: "price_asc",
   });
-  const subscribe = trpc.newsletter.subscribe.useMutation({
-    onSuccess: () => {
-      setNewsletterState("success");
-      setEmail("");
-    },
-    onError: () => setNewsletterState("error"),
-  });
+  const subscribe = trpc.newsletter.subscribe.useMutation();
   const trackEvent = trpc.conversionFunnel.trackEvent.useMutation();
 
+  useEffect(() => subscribeConsent((preferences) => {
+    setAnalyticsAllowed(preferences?.analytics === true);
+  }), []);
+
   useEffect(() => {
+    if (!analyticsAllowed || pageViewTracked.current) return;
+    pageViewTracked.current = true;
     trackEvent.mutate({
       sessionId: getSessionId(),
-      eventType: "home_v2_view",
+      eventType: "page_visit",
       page: "/",
       metadata: { version: "deal-radar-v2" },
     });
-    // first-party analytics event; intentionally once per mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [analyticsAllowed, trackEvent]);
 
   const deals = useMemo(
     () =>
@@ -75,6 +76,7 @@ export default function Home() {
   );
 
   const record = (eventType: string, metadata?: Record<string, unknown>) => {
+    if (!analyticsAllowed) return;
     trackEvent.mutate({
       sessionId: getSessionId(),
       eventType,
@@ -83,11 +85,17 @@ export default function Home() {
     });
   };
 
-  const handleNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleNewsletter = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setNewsletterState("idle");
-    record("zippy_drop_submit");
-    subscribe.mutate({ email: email.trim() });
+    try {
+      await subscribe.mutateAsync({ email: email.trim() });
+      setNewsletterState("success");
+      setEmail("");
+      record("newsletter_signup", { source: "zippy_drop" });
+    } catch {
+      setNewsletterState("error");
+    }
   };
 
   return (
@@ -135,7 +143,7 @@ export default function Home() {
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <a
                     href="#dnesni-akce"
-                    onClick={() => record("hero_deals_click")}
+                    onClick={() => record("engagement", { action: "hero_deals_click" })}
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-amber-300 px-6 py-3 text-sm font-black text-slate-950 shadow-lg shadow-amber-300/10 transition hover:bg-amber-200"
                   >
                     Dnešní akce
@@ -143,7 +151,7 @@ export default function Home() {
                   </a>
                   <Link
                     href="/letenky"
-                    onClick={() => record("hero_search_click")}
+                    onClick={() => record("search", { action: "hero_search_click" })}
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
                   >
                     <Search className="h-4 w-4" />
@@ -191,7 +199,8 @@ export default function Home() {
                         target="_blank"
                         rel="sponsored noopener noreferrer"
                         onClick={() =>
-                          record("radar_deal_click", {
+                          record("affiliate_click", {
+                            action: "radar_deal_click",
                             dealId: deal.id,
                             destination: deal.destination,
                           })
@@ -308,7 +317,8 @@ export default function Home() {
                       target="_blank"
                       rel="sponsored noopener noreferrer"
                       onClick={() =>
-                        record("deal_card_click", {
+                        record("affiliate_click", {
+                          action: "deal_card_click",
                           dealId: deal.id,
                           destination: deal.destination,
                           price: deal.salePrice,
@@ -365,7 +375,7 @@ export default function Home() {
                     <Link
                       key={item.title}
                       href={item.href}
-                      onClick={() => record("zippy_intent_click", { intent: item.title })}
+                      onClick={() => record("intent_select", { intent: item.title })}
                       className="group rounded-2xl border border-slate-200 bg-[#f8fbff] p-5 transition hover:border-sky-300 hover:bg-sky-50"
                     >
                       <Icon className="h-5 w-5 text-sky-700" />

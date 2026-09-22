@@ -1,264 +1,61 @@
-/**
- * Meta Pixel Tracking Component
- * 
- * Implements Facebook/Instagram conversion tracking with enhanced mobile behavior analytics
- * 
- * Features:
- * - Standard Meta Pixel events (PageView, ViewContent, AddToWishlist, InitiateCheckout, Purchase)
- * - Mobile-specific tracking (device type, screen size, touch events, scroll depth)
- * - Custom events for affiliate clicks and newsletter signups
- * - GDPR-compliant with consent management
- */
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { hasMarketingConsent, readConsent, subscribeConsent } from "@/lib/consent";
 
-// Meta Pixel ID from environment variable
-const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
-
-// Generate unique event ID for deduplication with server-side events
-function generateEventId(): string {
-  return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-}
-
-// Device type detection
+function generateEventId() { return `${Date.now()}_${Math.random().toString(36).slice(2, 11)}`; }
 function getDeviceType(): "mobile" | "tablet" | "desktop" {
   const width = window.innerWidth;
-  if (width < 768) return "mobile";
-  if (width < 1024) return "tablet";
-  return "desktop";
+  return width < 768 ? "mobile" : width < 1024 ? "tablet" : "desktop";
 }
-
-// Check if device supports touch
-function isTouchDevice(): boolean {
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    (navigator as any).msMaxTouchPoints > 0
-  );
-}
-
-// Get viewport dimensions
-function getViewportDimensions() {
-  return {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    devicePixelRatio: window.devicePixelRatio || 1,
-  };
-}
-
-// Initialize Meta Pixel
-function initMetaPixel() {
-  if (typeof window === "undefined" || (window as any).fbq) return;
-  if (!PIXEL_ID) {
-    console.warn("[Meta Pixel] VITE_META_PIXEL_ID not configured");
-    return;
+function initMetaPixel(pixelId: string) {
+  if (typeof window === "undefined" || !pixelId || !hasMarketingConsent()) return;
+  const win = window as any;
+  if (!win.fbq) {
+    const fbq = function () { fbq.callMethod ? fbq.callMethod.apply(fbq, arguments) : fbq.queue.push(arguments); } as any;
+    win.fbq = fbq; if (!win._fbq) win._fbq = fbq; fbq.push = fbq; fbq.loaded = true; fbq.version = "2.0"; fbq.queue = [];
+    const script = document.createElement("script"); script.async = true; script.src = "https://connect.facebook.net/en_US/fbevents.js"; document.head.appendChild(script);
   }
-
-  // Meta Pixel base code
-  (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
-    if (f.fbq) return;
-    n = f.fbq = function () {
-      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-    };
-    if (!f._fbq) f._fbq = n;
-    n.push = n;
-    n.loaded = !0;
-    n.version = "2.0";
-    n.queue = [];
-    t = b.createElement(e);
-    t.async = !0;
-    t.src = v;
-    s = b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t, s);
-  })(
-    window,
-    document,
-    "script",
-    "https://connect.facebook.net/en_US/fbevents.js"
-  );
-
-  const fbq = (window as any).fbq;
-  fbq("init", PIXEL_ID);
-  
-  // Track initial page view with device info
-  const deviceInfo = {
-    device_type: getDeviceType(),
-    is_touch_device: isTouchDevice(),
-    viewport_width: window.innerWidth,
-    viewport_height: window.innerHeight,
-    screen_width: window.screen.width,
-    screen_height: window.screen.height,
-    pixel_ratio: window.devicePixelRatio || 1,
-  };
-  
-  fbq("track", "PageView", deviceInfo);
+  win.fbq("consent", "grant");
+  if (!win.__AKCNI_META_PIXEL_INITIALIZED__) { win.fbq("init", pixelId); win.__AKCNI_META_PIXEL_INITIALIZED__ = true; }
 }
-
-// Track custom event with deduplication
-export function trackMetaEvent(
-  eventName: string,
-  parameters?: Record<string, any>,
-  eventId?: string
-) {
-  if (typeof window === "undefined" || !(window as any).fbq) return eventId;
-  
-  const fbq = (window as any).fbq;
-  const dedupeId = eventId || generateEventId();
-  
-  const enrichedParams = {
-    ...parameters,
-    device_type: getDeviceType(),
-    viewport_width: window.innerWidth,
-  };
-  
-  fbq("track", eventName, enrichedParams, { eventID: dedupeId });
-  return dedupeId;
+export function trackMetaEvent(eventName: string, parameters?: Record<string, unknown>, eventId?: string) {
+  if (typeof window === "undefined" || !hasMarketingConsent() || !(window as any).fbq) return eventId;
+  const id = eventId || generateEventId();
+  (window as any).fbq("track", eventName, { ...parameters, device_type: getDeviceType(), viewport_width: window.innerWidth }, { eventID: id });
+  return id;
 }
-
-// Track custom event (for non-standard events) with deduplication
-export function trackMetaCustomEvent(
-  eventName: string,
-  parameters?: Record<string, any>,
-  eventId?: string
-): string | undefined {
-  if (typeof window === "undefined" || !(window as any).fbq) return eventId;
-  
-  const fbq = (window as any).fbq;
-  const dedupeId = eventId || generateEventId();
-  
-  const enrichedParams = {
-    ...parameters,
-    device_type: getDeviceType(),
-    viewport_width: window.innerWidth,
-  };
-  
-  fbq("trackCustom", eventName, enrichedParams, { eventID: dedupeId });
-  return dedupeId;
+export function trackMetaCustomEvent(eventName: string, parameters?: Record<string, unknown>, eventId?: string) {
+  if (typeof window === "undefined" || !hasMarketingConsent() || !(window as any).fbq) return eventId;
+  const id = eventId || generateEventId();
+  (window as any).fbq("trackCustom", eventName, { ...parameters, device_type: getDeviceType(), viewport_width: window.innerWidth }, { eventID: id });
+  return id;
 }
-
-// Track affiliate click
-export function trackAffiliateClick(
-  destination: string,
-  partner: string,
-  price?: number,
-  eventId?: string
-): string | undefined {
-  return trackMetaCustomEvent("AffiliateClick", {
-    destination,
-    partner,
-    price,
-    currency: "CZK",
-  }, eventId);
-}
-
-// Track newsletter signup
-export function trackNewsletterSignup(variant?: string, eventId?: string): string | undefined {
-  return trackMetaEvent("Lead", {
-    content_name: "Newsletter Signup",
-    variant,
-  }, eventId);
-}
-
-// Track wishlist add
-export function trackWishlistAdd(destination: string, price?: number, eventId?: string): string | undefined {
-  return trackMetaEvent("AddToWishlist", {
-    content_name: destination,
-    value: price,
-    currency: "CZK",
-  }, eventId);
-}
-
-// Track search
-export function trackSearch(query: string, results?: number, eventId?: string): string | undefined {
-  return trackMetaEvent("Search", {
-    search_string: query,
-    num_results: results,
-  }, eventId);
-}
-
-// Track view content (destination page)
-export function trackViewContent(
-  destination: string,
-  price?: number,
-  category?: string,
-  eventId?: string
-): string | undefined {
-  return trackMetaEvent("ViewContent", {
-    content_name: destination,
-    content_category: category,
-    value: price,
-    currency: "CZK",
-  }, eventId);
-}
-
-// Track initiate checkout (when user clicks to book)
-export function trackInitiateCheckout(
-  destination: string,
-  price: number,
-  partner: string,
-  eventId?: string
-): string | undefined {
-  return trackMetaEvent("InitiateCheckout", {
-    content_name: destination,
-    value: price,
-    currency: "CZK",
-    partner,
-  }, eventId);
-}
+export function trackAffiliateClick(destination: string, partner: string, price?: number, eventId?: string) { return trackMetaCustomEvent("AffiliateClick", { destination, partner, price, currency: "CZK" }, eventId); }
+export function trackNewsletterSignup(variant?: string, eventId?: string) { return trackMetaEvent("Lead", { content_name: "Newsletter Signup", variant }, eventId); }
+export function trackWishlistAdd(destination: string, price?: number, eventId?: string) { return trackMetaEvent("AddToWishlist", { content_name: destination, value: price, currency: "CZK" }, eventId); }
+export function trackSearch(query: string, results?: number, eventId?: string) { return trackMetaEvent("Search", { search_string: query, num_results: results }, eventId); }
+export function trackViewContent(destination: string, price?: number, category?: string, eventId?: string) { return trackMetaEvent("ViewContent", { content_name: destination, content_category: category, value: price, currency: "CZK" }, eventId); }
+export function trackInitiateCheckout(destination: string, price: number, partner: string, eventId?: string) { return trackMetaEvent("InitiateCheckout", { content_name: destination, value: price, currency: "CZK", partner }, eventId); }
 
 export default function MetaPixel() {
   const [location] = useLocation();
+  const [allowed, setAllowed] = useState(readConsent()?.marketing === true);
+  const { data: setting } = trpc.siteSettings.get.useQuery({ key: "fb_pixel_id" });
+  const pixelId = setting?.value?.trim() || import.meta.env.VITE_META_PIXEL_ID?.trim() || "";
+
+  useEffect(() => subscribeConsent((prefs) => {
+    setAllowed(prefs?.marketing === true);
+    if (prefs?.marketing !== true && (window as any).fbq) (window as any).fbq("consent", "revoke");
+  }), []);
+
+  useEffect(() => { if (allowed && pixelId) initMetaPixel(pixelId); }, [allowed, pixelId]);
 
   useEffect(() => {
-    // Initialize pixel on mount
-    initMetaPixel();
-
-    // Track scroll depth on mobile
-    let maxScrollDepth = 0;
-    const trackScrollDepth = () => {
-      const scrollPercent = Math.round(
-        (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
-      );
-      
-      if (scrollPercent > maxScrollDepth && scrollPercent % 25 === 0) {
-        maxScrollDepth = scrollPercent;
-        trackMetaCustomEvent("ScrollDepth", {
-          scroll_percent: scrollPercent,
-          page: location,
-        });
-      }
-    };
-
-    // Track orientation changes (mobile)
-    const trackOrientationChange = () => {
-      trackMetaCustomEvent("OrientationChange", {
-        orientation: window.screen.orientation?.type || "unknown",
-        viewport: getViewportDimensions(),
-      });
-    };
-
-    // Add event listeners
-    window.addEventListener("scroll", trackScrollDepth, { passive: true });
-    window.addEventListener("orientationchange", trackOrientationChange);
-
-    return () => {
-      window.removeEventListener("scroll", trackScrollDepth);
-      window.removeEventListener("orientationchange", trackOrientationChange);
-    };
-  }, []);
-
-  // Track page views on route change
-  useEffect(() => {
-    if ((window as any).fbq) {
-      const deviceInfo = {
-        device_type: getDeviceType(),
-        viewport_width: window.innerWidth,
-        page: location,
-      };
-      (window as any).fbq("track", "PageView", deviceInfo);
-    }
-  }, [location]);
+    if (!allowed || !pixelId) return;
+    initMetaPixel(pixelId);
+    (window as any).fbq?.("track", "PageView", { device_type: getDeviceType(), viewport_width: window.innerWidth, page: location });
+  }, [location, allowed, pixelId]);
 
   return null;
 }

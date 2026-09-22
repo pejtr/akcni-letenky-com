@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { Bell, Mail, Plane, ShieldCheck } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { openConsentSettings } from "@/lib/consent";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -109,10 +110,15 @@ export default function Footer() {
 
         <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} Akční-Letenky.com</p>
-          <p>
-            Nabídky mohou obsahovat affiliate odkazy. Při rezervaci může provozovatel získat provizi
-            bez navýšení ceny pro uživatele.
-          </p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p>
+              Nabídky mohou obsahovat affiliate odkazy. Při rezervaci může provozovatel získat provizi
+              bez navýšení ceny pro uživatele.
+            </p>
+            <button type="button" onClick={openConsentSettings} className="font-semibold text-slate-400 underline underline-offset-4 hover:text-white">
+              Nastavení cookies
+            </button>
+          </div>
         </div>
       </div>
     </footer>

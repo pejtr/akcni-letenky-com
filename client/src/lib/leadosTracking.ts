@@ -1,3 +1,4 @@
+import { hasAnalyticsConsent, subscribeConsent } from "@/lib/consent";
 /**
  * LeadOS / Travel Revenue Network Integration for akcni-letenky.com
  * Handles cross-domain journey token capture (onyx_journey) and affiliate attribution tracking.
@@ -27,7 +28,7 @@ function setCookie(name: string, value: string, days = 30) {
 
 /** Get or create persistent visitor ID */
 export function getVisitorId(): string {
-  if (typeof window === "undefined") return "";
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return "";
   let vid = localStorage.getItem(VISITOR_ID_KEY) || getCookie(VISITOR_ID_KEY);
   if (!vid) {
     vid =
@@ -44,7 +45,7 @@ export function getVisitorId(): string {
 
 /** Get or create session ID */
 export function getSessionId(): string {
-  if (typeof window === "undefined") return "";
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return "";
   let sid = sessionStorage.getItem(SESSION_ID_KEY) || getCookie(SESSION_ID_KEY);
   if (!sid) {
     sid = "s_" + Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -58,7 +59,7 @@ export function getSessionId(): string {
 
 /** Get current active journey token */
 export function getJourneyToken(): string | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return null;
   return (
     sessionStorage.getItem(JOURNEY_TOKEN_KEY) ||
     getCookie(JOURNEY_TOKEN_KEY) ||
@@ -68,7 +69,7 @@ export function getJourneyToken(): string | null {
 
 /** Store journey token */
 export function setJourneyToken(token: string) {
-  if (typeof window === "undefined" || !token) return;
+  if (typeof window === "undefined" || !token || !hasAnalyticsConsent()) return;
   try {
     sessionStorage.setItem(JOURNEY_TOKEN_KEY, token);
   } catch {}
@@ -77,7 +78,7 @@ export function setJourneyToken(token: string) {
 
 /** Send event to LeadOS Ingestion API */
 export async function sendLeadOSEvent(eventData: Record<string, any>) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !hasAnalyticsConsent()) return;
   try {
     const payload = {
       events: [
@@ -110,8 +111,20 @@ export async function sendLeadOSEvent(eventData: Record<string, any>) {
 /**
  * 1. Capture incoming onyx_journey token on page load and send cross_domain_arrival event
  */
+let consentListenerAttached = false;
+
 export function initOnyxJourney() {
   if (typeof window === "undefined") return;
+
+  if (!hasAnalyticsConsent()) {
+    if (!consentListenerAttached) {
+      consentListenerAttached = true;
+      subscribeConsent((preferences) => {
+        if (preferences?.analytics) initOnyxJourney();
+      });
+    }
+    return;
+  }
 
   const urlParams = new URLSearchParams(window.location.search);
   const onyxJourney = urlParams.get("onyx_journey");
