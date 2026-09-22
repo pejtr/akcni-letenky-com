@@ -921,7 +921,7 @@ sortBy: z.enum(["price_asc", "price_desc", "popularity", "departure", "default"]
           email: input.email,
           sessionId: `newsletter_${Date.now()}`,
           gdprConsent: true,
-          consentText: "Newsletter subscription via sticky bar",
+          consentText: "Newsletter subscription via Akcni-Letenky.com",
         });
         return { success: true };
       }),

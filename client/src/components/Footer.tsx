@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Plane, Sun, Heart, ShieldCheck, ExternalLink, Mail, Star, Building2 } from "lucide-react";
-import { pelikanDeepLink } from "@shared/affiliateLinks";
+import { Bell, Mail, Plane, ShieldCheck } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
-function FooterNewsletterSignup() {
+export default function Footer() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const subscribe = trpc.newsletter.subscribe.useMutation({
@@ -15,402 +14,105 @@ function FooterNewsletterSignup() {
     onError: () => setStatus("error"),
   });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setStatus("idle");
-    subscribe.mutate({ email: email.trim() });
-  };
-
   return (
-    <div className="mt-5 rounded-xl border border-slate-700 bg-slate-800/60 p-4">
-      <h4 className="text-sm font-bold text-white">Cestovatelské novinky</h4>
-      <p className="mt-1 text-xs leading-relaxed text-slate-400">Občas vám pošleme nové akční letenky a praktické tipy. Bez zbytečného spamu.</p>
-      {status === "success" ? (
-        <p className="mt-3 text-sm font-semibold text-emerald-300" role="status">Děkujeme, odběr je aktivní.</p>
-      ) : (
-        <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-2 sm:flex-row">
-          <label htmlFor="footer-travel-news-email" className="sr-only">E-mail pro cestovatelské novinky</label>
-          <input
-            id="footer-travel-news-email"
-            type="email"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="vas@email.cz"
-            autoComplete="email"
-            className="min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/30"
-            disabled={subscribe.isPending}
-          />
-          <button type="submit" disabled={subscribe.isPending} className="rounded-lg bg-sky-500 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60">
-            {subscribe.isPending ? "Odesílám…" : "Přihlásit"}
-          </button>
-        </form>
-      )}
-      {status === "error" && <p className="mt-2 text-xs text-rose-300" role="alert">E-mail se nepodařilo uložit. Zkuste to prosím znovu.</p>}
-    </div>
-  );
-}
-
-export default function Footer() {
-  return (
-    <footer className="bg-slate-900 text-slate-200 pt-14 pb-8 border-t border-slate-800">
+    <footer className="border-t border-slate-800 bg-[#07111f] py-14 text-slate-300">
       <div className="container">
-
-        {/* 3-Column Pelikán Affiliate Category Links (per user spec) */}
-        <div className="bg-slate-800/60 rounded-2xl p-6 md:p-8 mb-12 border border-slate-700/60">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Column 1: Akční nabídky */}
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-                <span>🌴</span> Akční nabídky
-              </h3>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li>
-                  <a href="https://www.pelikan.cz/cs/akcni-letenky/S:PRI?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Letenky do 1 500 Kč
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/121?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Dovolená se slevou až 80 %
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Eurovíkendy
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/premium-cestovani?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Business class
-                  </a>
-                </li>
-                <li>
-                  <Link href="/hlidac-cen" className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
-                    🔔 Hlídač cen letenek
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/odskodneni-za-let" className="hover:text-amber-400 font-bold hover:underline transition-colors text-orange-300">
-                    ✈️ Odškodnění za zpožděný let (až 600 €)
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kalkulacka-zavazadel" className="hover:text-amber-400 font-semibold hover:underline transition-colors text-blue-200">
-                    🧳 Kalkulačka zavazadel aerolinek
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/ebook-zdarma" className="hover:text-amber-400 font-bold hover:underline transition-colors text-amber-300">
-                    📘 E-book ZDARMA: Jak na letenky za babku
-                  </Link>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/101/vsechny?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors flex items-center gap-1">
-                    <span>🚀</span> <span>TOP akce</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/s-pelikanem?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Mauricius
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyt/nabidka-tydne?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Krátké výlety
-                  </a>
-                </li>
-                
-              </ul>
-            </div>
-
-            {/* Column 2: Dovolené */}
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-                <span>⭐</span> Dovolené
-              </h3>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li>
-                  <a href="https://cestovani.pelikan.cz/premium-formular?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors flex items-center gap-1">
-                    <span>⭐</span> <span>Premium dovolená</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/dubaj-emiraty?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Dovolená v Dubaji
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/150?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Poznávací zájezdy
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/spanelsko?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Kanárské ostrovy
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/last-minute?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Last minute
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/101/vsechny?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Nejlepší dovolené
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/121?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Wellness
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/177?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Exotická dovolená
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Column 3: Hotely & Místa */}
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
-                <span>🏛️</span> Hotely & Místa
-              </h3>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/italie?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Pobyty v Římě
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/s-pelikanem?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Hotely v Česku
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/italie?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Pobyt v Benátkách
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/akcni-letenky/S:SEL?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Dovolená v USA
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/na-slovensku?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Hotely na Slovensku
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.pelikan.cz/cs/pobyty/kategorie/137?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Ostrov Madeira
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/chorvatsko?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    S vlastní dopravou
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cestovani.pelikan.cz/dovolena/malta?a_aid=levne-letenky" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 hover:underline transition-colors">
-                    Ostrov Malta
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-          {/* Column 1: Brand & Contact */}
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-[#FFD700] rounded-xl flex items-center justify-center font-bold text-xl text-[#003087] shadow-md">
-                ✈️
-              </div>
-              <span className="font-black text-2xl tracking-tight text-white">
-                AKČNÍ-LETENKY<span className="text-[#E91E63]">.com</span>
-              </span>
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr_.8fr_1.2fr]">
+          <div>
+            <Link href="/" className="inline-flex items-center">
+              <img src="/logo-akcni-letenky.png" alt="Akční Letenky" className="h-10 w-auto brightness-0 invert" />
             </Link>
-
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Nezávislý agregátor a vyhledávač akčních tipů na letenky pro české cestovatele. Rezervace, platba a zákaznická podpora probíhají přímo u licencovaného prodejce Pelikán.cz nebo u leteckých společností.
+            <p className="mt-5 max-w-sm text-sm leading-6 text-slate-400">
+              Nezávislá discovery vrstva pro akční letenky a cestovatelské tipy. Rezervace,
+              platba a finální podmínky probíhají u konkrétního prodejce.
             </p>
-
-            <div className="space-y-2 pt-2 text-xs text-slate-300">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                <span>Affiliate partner: <strong>Pelikán.cz</strong></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <Link href="/kontakt" className="hover:text-white transition-colors underline decoration-slate-600">
-                  info@akcni-letenky.com (Kontakt & Redakce)
-                </Link>
-              </div>
+            <div className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-emerald-300">
+              <ShieldCheck className="h-4 w-4" />
+              Transparentní partnerský model
             </div>
           </div>
 
-          {/* Column 2: Top Destinace (Internal Links) */}
           <div>
-            <h3 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-              <Plane className="w-4 h-4 text-[#E91E63]" /> Top Destinace
-            </h3>
-            <ul className="space-y-2.5 text-sm text-slate-300">
-              <li>
-                <Link href="/londyn" className="hover:text-white hover:underline transition-colors">
-                  Letenky do Londýna od 733 Kč
-                </Link>
-              </li>
-              <li>
-                <Link href="/barcelona" className="hover:text-white hover:underline transition-colors">
-                  Letenky do Barcelony od 746 Kč
-                </Link>
-              </li>
-              <li>
-                <Link href="/pariz" className="hover:text-white hover:underline transition-colors">
-                  Letenky do Paříže od 1 027 Kč
-                </Link>
-              </li>
-              <li>
-                <Link href="/rim" className="hover:text-white hover:underline transition-colors">
-                  Letenky do Říma od 712 Kč
-                </Link>
-              </li>
-              <li>
-                <Link href="/new-york" className="hover:text-white hover:underline transition-colors">
-                  Letenky do New Yorku od 7 490 Kč
-                </Link>
-              </li>
-              <li>
-                <Link href="/dubaj" className="hover:text-white hover:underline transition-colors">
-                  Letenky do Dubaje od 5 183 Kč
-                </Link>
-              </li>
-              <li>
-                <Link href="/recko" className="hover:text-white hover:underline transition-colors">
-                  Dovolená a letenky v Řecku
-                </Link>
-              </li>
-              <li>
-                <Link href="/malta" className="hover:text-white hover:underline transition-colors">
-                  Letenky na Maltu od 1 290 Kč
-                </Link>
-              </li>
+            <h3 className="text-sm font-black uppercase tracking-[0.12em] text-white">Objevovat</h3>
+            <ul className="mt-4 space-y-3 text-sm">
+              <li><Link href="/letenky" className="hover:text-white">Akční letenky</Link></li>
+              <li><Link href="/dovolene" className="hover:text-white">Dovolené</Link></li>
+              <li><Link href="/aerolinky" className="hover:text-white">Aerolinky</Link></li>
+              <li><Link href="/tipy-pro-cestovatele" className="hover:text-white">Tipy pro cestovatele</Link></li>
             </ul>
           </div>
 
-          {/* Column 3: Služby a nabídka */}
           <div>
-            <h3 className="text-white font-bold text-base mb-4 flex items-center gap-2">
-              <Sun className="w-4 h-4 text-amber-400" /> Služby a nabídka
-            </h3>
-            <ul className="space-y-2.5 text-sm text-slate-300">
+            <h3 className="text-sm font-black uppercase tracking-[0.12em] text-white">Nástroje</h3>
+            <ul className="mt-4 space-y-3 text-sm">
               <li>
-                <Link href="/levne-letenky" className="hover:text-white hover:underline transition-colors">
-                  Last Minute akční letenky
+                <Link href="/hlidac-cen" className="inline-flex items-center gap-2 hover:text-white">
+                  <Bell className="h-4 w-4" /> Hlídač cen
                 </Link>
               </li>
-              <li>
-                <Link href="/dovolene" className="hover:text-white hover:underline transition-colors">
-                  Dovolené se slevou až 80 %
-                </Link>
-              </li>
-              <li>
-                <Link href="/vlaky-autobusy" className="hover:text-white hover:underline transition-colors">
-                  Vlakové a autobusové spoje
-                </Link>
-              </li>
-              <li>
-                <Link href="/tipy-pro-cestovatele" className="hover:text-white hover:underline transition-colors">
-                  Tipy pro cestovatele & průvodci
-                </Link>
-              </li>
-              <li>
-                <Link href="/aerolinky" className="hover:text-white hover:underline transition-colors">
-                  Přehled leteckých společností
-                </Link>
-              </li>
-              <li>
-                <Link href="/wishlist" className="hover:text-white hover:underline transition-colors">
-                  Uložené oblíbené nabídky
-                </Link>
-              </li>
-              <li>
-                <Link href="/o-nas" className="hover:text-white hover:underline transition-colors text-sky-300 font-medium">
-                  ℹ️ O projektu & Jak fungujeme
-                </Link>
-              </li>
-              <li>
-                <Link href="/kontakt" className="hover:text-white hover:underline transition-colors">
-                  ✉️ Kontakt & Redakce
-                </Link>
-              </li>
-              {import.meta.env.VITE_REVOLUT_AFFILIATE_URL?.trim() ? (
-                <li>
-                  <a
-                    href={import.meta.env.VITE_REVOLUT_AFFILIATE_URL.trim()}
-                    target="_blank"
-                    rel="sponsored noopener noreferrer"
-                    className="hover:text-white hover:underline transition-colors"
-                  >
-                    Revolut pro cestovatele
-                  </a>
-                </li>
-              ) : null}
+              <li><Link href="/kalkulacka-zavazadel" className="hover:text-white">Kalkulačka zavazadel</Link></li>
+              <li><Link href="/odskodneni-za-let" className="hover:text-white">Odškodnění za let</Link></li>
+              <li><Link href="/o-nas" className="hover:text-white">O projektu a kontakt</Link></li>
             </ul>
-            <FooterNewsletterSignup />
           </div>
 
-          {/* Column 4: Partner Pelikán.cz */}
           <div>
-            <h3 className="text-white font-bold text-base mb-4">Partner Rezervací</h3>
-            <div className="bg-slate-800/80 rounded-2xl p-4 border border-slate-700 space-y-3">
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Všechny vyhledané letenky a zájezdy rezervujete přímo u prověřeného partnera <strong>Pelikán.cz</strong> s plnou garancí odbavení.
+            <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-5">
+              <div className="inline-flex items-center gap-2 text-sm font-black text-amber-300">
+                <Mail className="h-4 w-4" />
+                ZIPPY DROP
+              </div>
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Nové akční letenky a praktické tipy rovnou do e-mailu.
               </p>
-              <a
-                href={pelikanDeepLink("/cs/akcni-letenky", {
-                  campaign: "global-footer",
-                  channel: "footer-box",
-                })}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full bg-[#E91E63] hover:bg-[#c2185b] text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-colors"
-              >
-                <span>Hledat na Pelikán.cz</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
+
+              {status === "success" ? (
+                <p className="mt-4 rounded-xl bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-200">
+                  Odběr je aktivní.
+                </p>
+              ) : (
+                <form
+                  className="mt-4 space-y-2"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    setStatus("idle");
+                    subscribe.mutate({ email: email.trim() });
+                  }}
+                >
+                  <label htmlFor="footer-zippy-email" className="sr-only">E-mail pro ZIPPY Drop</label>
+                  <input
+                    id="footer-zippy-email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="vas@email.cz"
+                    className="h-11 w-full rounded-xl border border-white/10 bg-slate-950/50 px-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-sky-400"
+                  />
+                  <button
+                    type="submit"
+                    disabled={subscribe.isPending}
+                    className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-500 px-4 text-sm font-black text-white transition hover:bg-sky-400 disabled:opacity-60"
+                  >
+                    <Plane className="h-4 w-4" />
+                    {subscribe.isPending ? "Ukládám…" : "Přihlásit odběr"}
+                  </button>
+                </form>
+              )}
+              {status === "error" && (
+                <p className="mt-2 text-xs text-rose-300">Odběr se nepodařilo uložit. Zkuste to znovu.</p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-slate-800 text-xs text-slate-500 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <p>© {new Date().getFullYear()} AKČNÍ-LETENKY.com. Všechna práva vyhrazena.</p>
-          <div className="flex items-center gap-6">
-            <Link href="/o-nas" className="hover:text-slate-300 transition-colors">
-              O nás
-            </Link>
-            <span>•</span>
-            <Link href="/kontakt" className="hover:text-slate-300 transition-colors">
-              Kontakt
-            </Link>
-            <span>•</span>
-            <Link href="/tipy-pro-cestovatele" className="hover:text-slate-300 transition-colors">
-              Průvodci a články
-            </Link>
-            <span>•</span>
-            <Link href="/wishlist" className="hover:text-slate-300 transition-colors">
-              Hlídač cen
-            </Link>
-          </div>
+        <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} Akční-Letenky.com</p>
+          <p>
+            Nabídky mohou obsahovat affiliate odkazy. Při rezervaci může provozovatel získat provizi
+            bez navýšení ceny pro uživatele.
+          </p>
         </div>
       </div>
     </footer>
