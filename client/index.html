@@ -2,51 +2,12 @@
 <html lang="cs">
 
   <head>
-    <!-- CRITICAL: Error Handler Must Load First -->
-    <script>
-      // Ultra-aggressive error suppression for cross-origin scripts
-      (function() {
-        'use strict';
-        
-        // Capture errors immediately
-        window.addEventListener('error', function(e) {
-          // Suppress ALL cross-origin script errors
-          if (!e.filename || 
-              e.filename === '' || 
-              e.message === 'Script error.' || 
-              (e.lineno === 0 && e.colno === 0)) {
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            e.preventDefault();
-            return true;
-          }
-        }, true); // Use capture phase
-        
-        // Promise rejection handler
-        window.addEventListener('unhandledrejection', function(e) {
-          if (!e.reason || !e.reason.stack || e.reason.message === 'Script error.') {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            return true;
-          }
-        }, true);
-        
-        // Fallback window.onerror
-        window.onerror = function(msg, url, line, col, error) {
-          if (!url || url === '' || msg === 'Script error.' || (line === 0 && col === 0)) {
-            return true; // Suppress
-          }
-          return false;
-        };
-      })();
-    </script>
-    
-    <meta charset="UTF-8" />
+<meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0" />
-    <title>Akční letenky a cestovatelské tipy | Akční-Letenky.com</title>
-    <meta name="description" content="Přehled akčních letenek, dovolených a cestovatelských tipů. Aktuální ceny a dostupnost ověříte u prodejce." />
+    <title>Akční letenky, které stojí za to | Akční-Letenky.com</title>
+    <meta name="description" content="Přehled akčních letenek a cestovatelských tipů. Ceny a dostupnost zobrazujeme z partnerských dat a finálně je ověříte u prodejce." />
     <meta name="keywords" content="last minute letenky z prahy, last minute letenky kamkoliv, akční letenky z prahy, levné letenky z prahy kamkoliv, nejlevnější letenky z prahy, akcni letenky, akcniletenky, levne letenky" />
     <link rel="icon" type="image/png" href="/logo-akcni-letenky.png" />
     
@@ -59,15 +20,7 @@
     <meta name="author" content="Akční Letenky" />
     <meta name="revisit-after" content="1 days" />
     
-    <!-- Preload Critical Resources -->
-    <link rel="preload" href="/london.jpg" as="image" type="image/jpeg" />
-    <link rel="preload" href="/paris.jpg" as="image" type="image/jpeg" />
-    <link rel="preload" href="/rome.jpg" as="image" type="image/jpeg" />
-    <link rel="preload" href="/barcelona.jpg" as="image" type="image/jpeg" />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    
-    <!-- Open Graph / Facebook -->
+<!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.akcni-letenky.com/" />
     <meta property="og:title" content="Akční letenky a cestovatelské tipy | Akční-Letenky.com" />
@@ -107,69 +60,7 @@
       }
     }
     </script>
-<!-- LeadOS Universal Traffic Pixel -->
-    <script>
-    (function() {
-      const PROJECT_KEY = "proj_akcni_letenky"; // project key pro akcni-letenky-com
-      const INGEST_URL = "https://leados.cz/api/ingest";
-
-      // Persistentní Visitor ID & Session ID
-      function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-      }
-      
-      let visitorId = getCookie("los_vid");
-      if (!visitorId) {
-        visitorId = 'v_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-        document.cookie = "los_vid=" + visitorId + "; max-age=63072000; path=/; SameSite=Lax";
-      }
-      
-      let sessionId = sessionStorage.getItem("los_sid");
-      if (!sessionId) {
-        sessionId = 's_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-        sessionStorage.setItem("los_sid", sessionId);
-      }
-
-      // Získání UTM parametrů
-      const urlParams = new URLSearchParams(window.location.search);
-      
-      // Odeslání události
-      function trackEvent(eventName, eventData = {}) {
-        const payload = {
-          eventType: eventName,
-          visitorId: visitorId,
-          sessionId: sessionId,
-          pageUrl: window.location.href,
-          path: window.location.pathname,
-          referrer: document.referrer || null,
-          deviceType: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-          utmSource: urlParams.get('utm_source') || null,
-          utmMedium: urlParams.get('utm_medium') || null,
-          utmCampaign: urlParams.get('utm_campaign') || null,
-          metadata: eventData
-        };
-
-        fetch(INGEST_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-project-key": PROJECT_KEY
-          },
-          body: JSON.stringify(payload),
-          keepalive: true
-        }).catch(err => console.warn("[LeadOS Analytics Error]", err));
-      }
-
-      // Automatické měření zobrazení stránky
-      window.addEventListener("DOMContentLoaded", () => trackEvent("page_view"));
-      
-      // Expozice pro vlastní události (nákup, registraci, proklik)
-      window.losTrack = trackEvent;
-    })();
-    </script>
-  </head>
+</head>
 
   <body>
     <div id="root"></div>
