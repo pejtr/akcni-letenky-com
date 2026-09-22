@@ -166,6 +166,9 @@ function App() {
       >
         <TooltipProvider>
           <MetaPixel />
+          <Suspense fallback={null}>
+            <GdprConsentBanner />
+          </Suspense>
           {showDeferredEnhancements && (
             <Suspense fallback={null}>
               <HeatmapTracking />
