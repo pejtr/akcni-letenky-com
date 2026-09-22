@@ -129,15 +129,16 @@ export default function Home() {
             <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_.9fr]">
               <div className="max-w-3xl">
                 <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-sky-300/25 bg-sky-300/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-sky-200">
-                  <Radar className="h-4 w-4" />
-                  KÁNĚ · deal radar
+                  <Sparkles className="h-4 w-4" />
+                  AKČNÍ ZUZKA · virtuální průvodkyně
                 </div>
                 <h1 className="max-w-[13ch] text-4xl font-black leading-[1.04] tracking-[-0.04em] sm:text-5xl md:text-7xl">
                   Akční letenky, které stojí za to.
                 </h1>
                 <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">
-                  KÁNĚ prochází nabídky. ZIPPY vám ty zajímavé doručí. Vy si vyberete a
-                  konečnou cenu i dostupnost ověříte přímo u prodejce.
+                  Akční Zuzka vám představuje zajímavé nálezy z našeho deal radaru.
+                  ZIPPY je může doručit do e-mailu. Konečnou cenu i dostupnost vždy
+                  ověříte přímo u prodejce.
                 </p>
 
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -175,74 +176,85 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="relative mx-auto w-full max-w-lg">
+              <div id="akcni-zuzka" className="relative mx-auto w-full max-w-lg scroll-mt-24">
                 <div className="absolute -inset-8 rounded-full bg-sky-400/10 blur-3xl" />
-                <div className="relative rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl backdrop-blur-md">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-200">
-                        Live radar
-                      </p>
-                      <p className="mt-1 text-sm text-slate-300">Aktuální výběr z feedu</p>
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-950 shadow-2xl">
+                  <div className="relative h-[540px] overflow-hidden sm:h-[590px]">
+                    <img
+                      src="/brand/akcni-zuzka-promo.webp"
+                      alt="Akční Zuzka, virtuální průvodkyně Akční-Letenky.com"
+                      className="absolute inset-y-0 left-[-4%] h-full w-[185%] max-w-none object-cover object-left"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#071526] via-[#071526]/10 to-transparent" />
+                    <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/65 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-white backdrop-blur">
+                      <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                      Akční Zuzka
                     </div>
-                    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                      online
-                    </span>
-                  </div>
 
-                  <div className="mt-5 space-y-3">
-                    {deals.slice(0, 3).map((deal) => (
-                      <a
-                        key={deal.id}
-                        href={"/go/pelikan/" + encodeURIComponent(deal.id) + "?vertical=flight&placement=home_radar"}
-                        target="_blank"
-                        rel="sponsored noopener noreferrer"
-                        onClick={() =>
-                          record("affiliate_click", {
-                            action: "radar_deal_click",
-                            dealId: deal.id,
-                            destination: deal.destination,
-                          })
-                        }
-                        className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-slate-950/35 p-4 transition hover:border-sky-300/40 hover:bg-slate-950/55"
-                      >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-300/10 text-sky-200">
-                          <Plane className="h-5 w-5" />
+                    <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/15 bg-[#071526]/90 p-5 shadow-xl backdrop-blur-md">
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-[0.14em] text-sky-200">
+                            Zuzka doporučuje
+                          </p>
+                          <p className="mt-1 text-sm text-slate-300">
+                            Aktuální nabídka z partnerského feedu
+                          </p>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-sm font-extrabold text-white">
-                            {deal.departure || "Odlet"} → {deal.destination}
-                          </div>
-                          <div className="mt-1 truncate text-xs text-slate-400">
-                            {deal.country || "Partnerská nabídka"}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-base font-black text-amber-300">
-                            {formatPrice(deal.salePrice)}
-                          </div>
-                          <div className="text-[11px] text-slate-500">ověřit cenu</div>
-                        </div>
-                      </a>
-                    ))}
-
-                    {!flightsQuery.isLoading && deals.length === 0 && (
-                      <div className="rounded-2xl border border-white/10 bg-slate-950/35 p-5 text-sm text-slate-300">
-                        Feed právě nevrací použitelnou nabídku. Můžete pokračovat do přehledu
-                        letenek a vyhledat trasu ručně.
+                        <span className="inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
+                          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                          live
+                        </span>
                       </div>
-                    )}
 
-                    {flightsQuery.isLoading && (
-                      <div className="space-y-3">
-                        {[0, 1, 2].map((item) => (
-                          <div key={item} className="h-20 animate-pulse rounded-2xl bg-white/5" />
-                        ))}
-                      </div>
-                    )}
+                      {deals[0] ? (
+                        <a
+                          href={"/go/pelikan/" + encodeURIComponent(deals[0].id) + "?vertical=flight&placement=home_zuzka_featured"}
+                          target="_blank"
+                          rel="sponsored noopener noreferrer"
+                          onClick={() =>
+                            record("affiliate_click", {
+                              action: "zuzka_featured_click",
+                              dealId: deals[0].id,
+                              destination: deals[0].destination,
+                              price: deals[0].salePrice,
+                            })
+                          }
+                          className="mt-4 flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-sky-300/40 hover:bg-white/[0.1]"
+                        >
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-300/10 text-sky-200">
+                            <Plane className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="truncate text-sm font-black text-white">
+                              {deals[0].departure || "Odlet"} → {deals[0].destination}
+                            </div>
+                            <div className="mt-1 text-xs text-slate-400">
+                              Cena a dostupnost se ověří u partnera
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-black text-amber-300">
+                              {formatPrice(deals[0].salePrice)}
+                            </div>
+                            <div className="text-[11px] font-semibold text-slate-400">ověřit →</div>
+                          </div>
+                        </a>
+                      ) : (
+                        <Link
+                          href="/letenky"
+                          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-bold text-white hover:bg-white/[0.1]"
+                        >
+                          Prohlédnout letenky
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
+                <p className="mt-3 text-center text-xs leading-5 text-slate-400">
+                  Akční Zuzka je virtuální průvodkyně značky Akční-Letenky.com.
+                </p>
               </div>
             </div>
           </div>
@@ -253,8 +265,8 @@ export default function Home() {
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <div className="inline-flex items-center gap-2 text-sm font-extrabold text-sky-700">
-                  <Radar className="h-4 w-4" />
-                  KÁNĚ našlo
+                  <Sparkles className="h-4 w-4" />
+                  Akční Zuzka doporučuje
                 </div>
                 <h2 className="mt-2 text-3xl font-black tracking-[-0.03em] text-slate-950 md:text-4xl">
                   Dnešní výběr letenek
@@ -352,7 +364,7 @@ export default function Home() {
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-amber-900">
                   <Sparkles className="h-4 w-4" />
-                  ZIPPY
+                  ZIPPY · pomocník Akční Zuzky
                 </div>
                 <h2 className="mt-4 text-3xl font-black tracking-[-0.03em] md:text-4xl">
                   Kam chcete zmizet?
@@ -399,7 +411,7 @@ export default function Home() {
                 <div>
                   <div className="inline-flex items-center gap-2 text-sm font-extrabold text-amber-300">
                     <Mail className="h-4 w-4" />
-                    ZIPPY DROP
+                    ZIPPY DROP · od Akční Zuzky
                   </div>
                   <h2 className="mt-3 text-3xl font-black tracking-[-0.03em]">
                     Nechte si zajímavé letenky doručit.
@@ -470,8 +482,8 @@ export default function Home() {
               {[
                 {
                   icon: Radar,
-                  title: "1. KÁNĚ hledá",
-                  copy: "Z partnerských dat vybíráme použitelné nabídky s cenou a destinací.",
+                  title: "1. Systém třídí",
+                  copy: "Z partnerských dat vybíráme použitelné nabídky s cenou, destinací a platným cílem.",
                 },
                 {
                   icon: Search,
