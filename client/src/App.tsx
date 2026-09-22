@@ -42,6 +42,7 @@ const EbookDownloadPage = lazy(() => import("./pages/EbookDownloadPage"));
 const WhatsAppGenerator = lazy(() => import("./pages/WhatsAppGenerator"));
 const AdminUgcContentFactory = lazy(() => import("./pages/AdminUgcContentFactory"));
 const LoginPage = lazy(() => import("./pages/Login"));
+const GdprConsentBanner = lazy(() => import("./components/GdprConsentBanner"));
 
 import WebPushPermissionBanner from "./components/WebPushPermissionBanner";
 const DestinationLandingPage = lazy(() => import("./pages/DestinationLandingPage"));
