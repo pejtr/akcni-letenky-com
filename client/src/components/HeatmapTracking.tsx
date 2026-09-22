@@ -1,91 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { readConsent, subscribeConsent } from "@/lib/consent";
 
-/**
- * HeatmapTracking Component
- * 
- * Dynamically loads heatmap tracking scripts (Hotjar or Microsoft Clarity)
- * based on admin settings and GDPR consent.
- * 
- * Only loads if:
- * 1. User has consented to analytics cookies
- * 2. Admin has configured a tracking ID
- */
 export function HeatmapTracking() {
+  const [allowed, setAllowed] = useState(readConsent()?.analytics === true);
   const { data: hotjarId } = trpc.siteSettings.get.useQuery({ key: "hotjar_id" });
   const { data: clarityId } = trpc.siteSettings.get.useQuery({ key: "clarity_id" });
 
+  useEffect(() => subscribeConsent((prefs) => setAllowed(prefs?.analytics === true)), []);
   useEffect(() => {
-    // Check GDPR consent for analytics
-    const consent = localStorage.getItem("gdpr_consent");
-    if (!consent) return;
-
-    let consentData: { analytics?: boolean } = {};
-    try {
-      consentData = JSON.parse(consent);
-    } catch {
-      return;
-    }
-
-    if (!consentData.analytics) return;
-
-    // Load Hotjar if configured
-    if (hotjarId?.value) {
-      loadHotjar(hotjarId.value);
-    }
-
-    // Load Microsoft Clarity if configured
-    if (clarityId?.value) {
-      loadClarity(clarityId.value);
-    }
-  }, [hotjarId, clarityId]);
-
+    if (!allowed) return;
+    if (hotjarId?.value) loadHotjar(hotjarId.value);
+    if (clarityId?.value) loadClarity(clarityId.value);
+  }, [allowed, hotjarId?.value, clarityId?.value]);
   return null;
 }
-
-/**
- * Load Hotjar tracking script
- */
 function loadHotjar(siteId: string) {
-  if (typeof window === "undefined") return;
-  if ((window as any).hj) return; // Already loaded
-
-  (function (h: any, o: any, t: any, j: any, a?: any, r?: any) {
-    h.hj =
-      h.hj ||
-      function () {
-        (h.hj.q = h.hj.q || []).push(arguments);
-      };
-    h._hjSettings = { hjid: parseInt(siteId), hjsv: 6 };
-    a = o.getElementsByTagName("head")[0];
-    r = o.createElement("script");
-    r.async = 1;
-    r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-    a.appendChild(r);
-  })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
-
-  console.log("[Hotjar] Tracking initialized with site ID:", siteId);
+  if (typeof window === "undefined" || (window as any).hj) return;
+  (function(h:any,o:any,t:any,j:any,a?:any,r?:any){h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};h._hjSettings={hjid:Number.parseInt(siteId,10),hjsv:6};a=o.getElementsByTagName("head")[0];r=o.createElement("script");r.async=1;r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;a.appendChild(r)})(window,document,"https://static.hotjar.com/c/hotjar-",".js?sv=");
 }
-
-/**
- * Load Microsoft Clarity tracking script
- */
 function loadClarity(projectId: string) {
-  if (typeof window === "undefined") return;
-  if ((window as any).clarity) return; // Already loaded
-
-  (function (c: any, l: any, a: any, r: any, i: any, t?: any, y?: any) {
-    c[a] =
-      c[a] ||
-      function () {
-        (c[a].q = c[a].q || []).push(arguments);
-      };
-    t = l.createElement(r);
-    t.async = 1;
-    t.src = "https://www.clarity.ms/tag/" + i;
-    y = l.getElementsByTagName(r)[0];
-    y.parentNode.insertBefore(t, y);
-  })(window, document, "clarity", "script", projectId);
-
-  console.log("[Clarity] Tracking initialized with project ID:", projectId);
+  if (typeof window === "undefined" || (window as any).clarity) return;
+  (function(c:any,l:any,a:any,r:any,i:any,t?:any,y?:any){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+encodeURIComponent(i);y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script",projectId);
 }
