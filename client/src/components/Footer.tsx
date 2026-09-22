@@ -24,8 +24,9 @@ export default function Footer() {
               <img src="/logo-akcni-letenky.png" alt="Akční Letenky" className="h-10 w-auto brightness-0 invert" />
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-6 text-slate-400">
-              Nezávislá discovery vrstva pro akční letenky a cestovatelské tipy. Rezervace,
-              platba a finální podmínky probíhají u konkrétního prodejce.
+              Nezávislá discovery vrstva pro akční letenky a cestovatelské tipy.
+              Akční Zuzka je virtuální průvodkyně značky; rezervace, platba a finální
+              podmínky probíhají u konkrétního prodejce.
             </p>
             <div className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-emerald-300">
               <ShieldCheck className="h-4 w-4" />
@@ -61,10 +62,10 @@ export default function Footer() {
             <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-5">
               <div className="inline-flex items-center gap-2 text-sm font-black text-amber-300">
                 <Mail className="h-4 w-4" />
-                ZIPPY DROP
+                ZIPPY DROP · od Akční Zuzky
               </div>
               <p className="mt-2 text-sm leading-6 text-slate-400">
-                Nové akční letenky a praktické tipy rovnou do e-mailu.
+                Nové akční letenky a praktické tipy od naší virtuální průvodkyně rovnou do e-mailu.
               </p>
 
               {status === "success" ? (
