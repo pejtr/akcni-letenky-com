@@ -81,39 +81,29 @@
     <meta property="twitter:description" content="Přehled akčních letenek, dovolených a cestovatelských tipů. Aktuální ceny a dostupnost ověříte u prodejce." />
     <meta property="twitter:image" content="https://www.akcni-letenky.com/hero-bg.jpg" />
     
-    <!-- Schema.org Structured Data -->
+    <!-- Schema.org baseline for crawlers before hydration -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": "https://www.akcni-letenky.com/#organization",
       "name": "Akční Letenky",
       "url": "https://www.akcni-letenky.com",
-      "logo": "https://www.akcni-letenky.com/logo.png",
-      "description": "Najděte nejlevnější akční letenky do celého světa. Porovnejte ceny letenek z Prahy.",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+420-223-340-510",
-        "contactType": "Customer Service",
-        "areaServed": "CZ",
-        "availableLanguage": ["Czech"]
-      },
-      "sameAs": [
-        "https://www.facebook.com/akcniletenky",
-        "https://www.instagram.com/akcniletenky"
-      ]
+      "logo": "https://www.akcni-letenky.com/logo-akcni-letenky.png",
+      "description": "Nezávislý portál pro objevování akčních letenek a cestovatelských tipů. Rezervace probíhají u partnerských prodejců."
     }
     </script>
-    
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": "https://www.akcni-letenky.com/#website",
       "name": "Akční Letenky",
       "url": "https://www.akcni-letenky.com",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://www.akcni-letenky.com/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
+      "description": "Přehled akčních letenek, dovolených a cestovatelských tipů pro české cestovatele.",
+      "publisher": {
+        "@id": "https://www.akcni-letenky.com/#organization"
       }
     }
     </script>

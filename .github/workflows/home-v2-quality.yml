@@ -1,0 +1,43 @@
+name: Home V2 Quality Gate
+
+on:
+  push:
+    branches:
+      - feat/home-v2-growth-ux
+  pull_request:
+    paths:
+      - "client/**"
+      - "server/**"
+      - "shared/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/home-v2-quality.yml"
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm run check
+
+      - name: Truth / UX regression tests
+        run: pnpm exec vitest run server/homeV2Truth.test.ts server/seoIndexingRecovery.test.ts --maxWorkers=2 --minWorkers=1
+
+      - name: Build
+        run: pnpm run build

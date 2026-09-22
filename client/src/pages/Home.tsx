@@ -40,9 +40,6 @@ export default function Home() {
     limit: 12,
     sortBy: "price_asc",
   });
-  const subscriberCountQuery = trpc.newsletter.subscriberCount.useQuery(undefined, {
-    staleTime: 5 * 60 * 1000,
-  });
   const subscribe = trpc.newsletter.subscribe.useMutation({
     onSuccess: () => {
       setNewsletterState("success");
@@ -92,8 +89,6 @@ export default function Home() {
     record("zippy_drop_submit");
     subscribe.mutate({ email: email.trim() });
   };
-
-  const subscriberCount = subscriberCountQuery.data?.count ?? 0;
 
   return (
     <div className="min-h-screen bg-[#f5f8fc] text-slate-950">
@@ -403,11 +398,6 @@ export default function Home() {
                     Občas pošleme nový výběr akčních letenek a praktické tipy. Bez
                     vymyšlených slev a bez zbytečného spamu.
                   </p>
-                  {subscriberCount > 0 && (
-                    <p className="mt-3 text-xs font-semibold text-slate-400">
-                      Aktuálně evidujeme {subscriberCount.toLocaleString("cs-CZ")} odběrů.
-                    </p>
-                  )}
                 </div>
 
                 <div className="w-full lg:w-[360px]">
