@@ -1,106 +1,132 @@
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import { Heart, Plane, ChevronDown } from "lucide-react";
+import { Bell, Heart, Lightbulb, Menu, Plane, Search, Sun, X } from "lucide-react";
+
+const navItems = [
+  { href: "/#dnesni-akce", label: "Dnešní akce", icon: Plane, anchor: true },
+  { href: "/letenky", label: "Letenky", icon: Search },
+  { href: "/dovolene", label: "Dovolená", icon: Sun },
+  { href: "/hlidac-cen", label: "Hlídač cen", icon: Bell },
+  { href: "/tipy-pro-cestovatele", label: "Tipy", icon: Lightbulb },
+];
 
 export default function Navigation() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const wishlistCount = 0;
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [mobileOpen]);
 
   return (
-    <header
-      role="banner"
-      className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-100 py-2"
-    >
-      <div className="container flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-1.5 hover:opacity-90 transition-opacity flex-shrink-0">
-          <img
-            src="/logo-akcni-letenky.png"
-            alt="Akční Letenky"
-            className="h-9 md:h-10 w-auto"
-          />
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur">
+      <div className="container flex h-[68px] items-center justify-between gap-4">
+        <Link href="/" className="shrink-0" aria-label="Akční Letenky – domů">
+          <img src="/logo-akcni-letenky.png" alt="Akční Letenky" className="h-9 w-auto md:h-10" />
         </Link>
 
-        {/* Navigation Links - Čedok style */}
-        <nav className="hidden lg:flex items-center gap-0.5 flex-1">
-          <Link href="/last-minute" className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-            <Plane className="w-4 h-4 text-orange-500" /> Last Minute
-          </Link>
-          <Link href="/letenky" className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-            ✈️ Letenky
-          </Link>
-          <Link href="/dovolene" className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-            ☀️ Dovolená
-          </Link>
-          <Link href="/hlidac-cen" className="flex items-center gap-1.5 text-sm text-[#1565C0] hover:bg-blue-50 font-bold px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-            🔔 Hlídač cen
-          </Link>
-          <Link href="/odskodneni-za-let" className="flex items-center gap-1.5 text-sm text-orange-700 hover:bg-orange-50 font-bold px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-            ✈️ Odškodnění 600 €
-          </Link>
-          <a
-            href="https://www.pelikan.cz/cs/pobyty/kategorie/104?a_aid=levne-letenky"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap"
-          >
-            🏛️ Eurovíkendy
-          </a>
-
-          {/* Aerolinky dropdown */}
-          <div className="relative group">
-            <a className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap cursor-pointer">
-              🏢 Aerolinky <ChevronDown className="w-3 h-3" />
-            </a>
-            <div className="absolute left-0 top-full mt-1 w-52 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100 py-2">
-              {["austrian-airlines", "emirates", "qatar-airways", "ryanair", "air-france", "lufthansa", "turkish-airlines", "klm", "british-airways", "wizz-air", "lot"].map((slug) => (
-                <Link key={slug} href={`/letecka-spolecnost/${slug}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-[#1565C0] transition-colors capitalize">
-                  {slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <Link href="/vlaky-autobusy" className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-            🚆 Vlaky
-          </Link>
-          <Link href="/tipy-pro-cestovatele" className="flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#1565C0] hover:bg-blue-50 font-medium px-3 py-2 rounded-md transition-colors whitespace-nowrap">
-            💡 Tipy
-          </Link>
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Hlavní navigace">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const classes =
+              "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-sky-50 hover:text-sky-800";
+            return item.anchor ? (
+              <a key={item.href} href={item.href} className={classes}>
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.href} href={item.href} className={classes}>
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* Right Side */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {/* Wishlist */}
-          <Link href="/wishlist" className="relative p-2 text-gray-500 hover:text-[#E91E63] transition-colors" aria-label="Oblíbené">
-            <Heart className="w-5 h-5" />
-            {wishlistCount > 0 && (
-              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                {wishlistCount}
-              </span>
-            )}
-          </Link>
-
-          {/* CTA Button - Čedok blue style */}
-          <a
-            href="https://www.pelikan.cz/cs/akcni-letenky?a_aid=levne-letenky&utm_source=akcni-letenky&utm_medium=header&utm_campaign=cta"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-1.5 bg-[#1565C0] hover:bg-[#0d47a1] text-white font-semibold px-4 py-2 rounded-full text-sm shadow-sm transition-colors whitespace-nowrap"
+        <div className="flex items-center gap-2">
+          <Link
+            href="/wishlist"
+            className="hidden rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 sm:inline-flex"
+            aria-label="Uložené nabídky"
           >
-            <Plane className="w-3.5 h-3.5" />
-            ZAREZERVOVAT TEĎ
-          </a>
+            <Heart className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/letenky"
+            className="hidden min-h-10 items-center gap-2 rounded-xl bg-[#0f5fc2] px-4 py-2 text-sm font-extrabold text-white transition hover:bg-[#0a4f9f] md:inline-flex"
+          >
+            <Search className="h-4 w-4" />
+            Najít let
+          </Link>
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="inline-flex rounded-lg p-2 text-slate-700 hover:bg-slate-100 lg:hidden"
+            aria-label="Otevřít menu"
+            aria-expanded={mobileOpen}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
         </div>
       </div>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          <button
+            className="absolute inset-0 bg-slate-950/45"
+            aria-label="Zavřít menu"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="absolute right-0 top-0 h-full w-[min(88vw,360px)] bg-white p-5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+              <span className="text-sm font-black uppercase tracking-[0.12em] text-slate-900">Menu</span>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
+                aria-label="Zavřít menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <nav className="mt-4 space-y-1" aria-label="Mobilní navigace">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const content = (
+                  <>
+                    <Icon className="h-5 w-5 text-sky-700" />
+                    <span>{item.label}</span>
+                  </>
+                );
+                const classes =
+                  "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 transition hover:bg-sky-50";
+                return item.anchor ? (
+                  <a key={item.href} href={item.href} className={classes} onClick={() => setMobileOpen(false)}>
+                    {content}
+                  </a>
+                ) : (
+                  <Link key={item.href} href={item.href} className={classes} onClick={() => setMobileOpen(false)}>
+                    {content}
+                  </Link>
+                );
+              })}
+            </nav>
+            <Link
+              href="/letenky"
+              onClick={() => setMobileOpen(false)}
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0f5fc2] px-5 py-3 text-sm font-black text-white"
+            >
+              <Search className="h-4 w-4" />
+              Najít konkrétní let
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

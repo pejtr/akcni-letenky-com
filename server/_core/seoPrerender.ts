@@ -18,8 +18,8 @@ type RouteSeo = {
 
 const STATIC_SEO: Record<string, Omit<RouteSeo, "canonicalPath">> = {
   "/": {
-    title: "Akční letenky a cestovatelské tipy | Akční-Letenky.com",
-    description: "Přehled akčních letenek, dovolených a cestovatelských tipů. Aktuální ceny a dostupnost ověříte u prodejce.",
+    title: "Akční letenky, které stojí za to | Akční-Letenky.com",
+    description: "Přehled akčních letenek a cestovatelských tipů. Ceny a dostupnost zobrazujeme z partnerských dat a finálně je ověříte u prodejce.",
   },
   "/letenky": {
     title: "Akční letenky z Prahy, Vídně a Bratislavy | Akční-Letenky.com",
