@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Bell, Mail, Plane, ShieldCheck } from "lucide-react";
+import { Bell, ExternalLink, Mail, Plane, ShieldCheck } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { openConsentSettings } from "@/lib/consent";
 
@@ -107,6 +107,27 @@ export default function Footer() {
               )}
             </div>
           </div>
+        </div>
+
+        <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-sky-300">Partner tip</p>
+              <p className="mt-2 text-sm font-bold text-white">Řešíte někdy větší výdaj?</p>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
+                Podívejte se na aktuální možnosti financování přímo u Zonky. Konkrétní podmínky vždy stanovuje Zonky.
+              </p>
+            </div>
+            <a
+              href="https://www.zonky.cz/pujcka-od-zonky/?a_box=w5xssm4v&a_cha=akcni_letenky_footer"
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-sky-400/30 bg-sky-400/10 px-5 py-3 text-sm font-black text-sky-200 transition hover:bg-sky-400/20"
+            >
+              Aktuální nabídka Zonky <ExternalLink className="h-4 w-4" />
+            </a>
+          </div>
+          <p className="mt-3 text-[11px] text-slate-500">Partnerský odkaz</p>
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
