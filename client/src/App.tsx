@@ -8,7 +8,7 @@ import MetaPixel from "./components/MetaPixel";
 import { initOnyxJourney } from "./lib/leadosTracking";
 import Home from "./pages/Home";
 
-import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";\nimport ZonkyContextualNudge from "./components/ZonkyContextualNudge";
 
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AirlinePage = lazy(() => import("./pages/AirlinePage"));
