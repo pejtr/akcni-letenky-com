@@ -16,6 +16,7 @@ import {
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import OmniContextAd from "@/components/OmniContextAd";
 import { trpc } from "@/lib/trpc";
 import { readConsent, subscribeConsent } from "@/lib/consent";
 
@@ -260,6 +261,14 @@ export default function Home() {
           </div>
         </section>
 
+        <section aria-label="Doporučení z naší sítě" className="border-b border-slate-200 bg-white">
+          <OmniContextAd
+            placement="home_after_hero"
+            context={{ topic: "travel", intent: "inspiration", route: "/" }}
+            variant="billboard"
+          />
+        </section>
+
         <section id="dnesni-akce" className="scroll-mt-24 py-16 md:py-20">
           <div className="container">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -355,6 +364,17 @@ export default function Home() {
                 nezobrazujeme.
               </div>
             )}
+          </div>
+        </section>
+
+        <section aria-label="Kontextové doporučení" className="pb-16 md:pb-20">
+          <div className="container">
+            <OmniContextAd
+              placement="home_after_deals"
+              context={{ topic: "travel", intent: "package", route: "/" }}
+              variant="native"
+              excludeCampaignIds={["do-italie-travel-inspiration-v1"]}
+            />
           </div>
         </section>
 
