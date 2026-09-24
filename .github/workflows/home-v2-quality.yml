@@ -37,7 +37,7 @@ jobs:
         run: pnpm run check
 
       - name: Truth / UX regression tests
-        run: pnpm exec vitest run server/homeV2Truth.test.ts server/seoIndexingRecovery.test.ts server/trackingConsentTruth.test.ts server/akcniZuzkaBrand.test.ts --maxWorkers=2 --minWorkers=1
+        run: pnpm exec vitest run server/homeV2Truth.test.ts server/seoIndexingRecovery.test.ts server/trackingConsentTruth.test.ts server/akcniZuzkaBrand.test.ts server/omniNetworkContextualAds.test.ts --maxWorkers=2 --minWorkers=1
 
       - name: Build
         run: pnpm run build
